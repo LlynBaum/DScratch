@@ -61,7 +61,6 @@
 
     <ItemGroup>
       <AdditionalFiles Include="Layout\MainLayout.razor" />
-      <AdditionalFiles Include="Layout\NavMenu.razor" />
       <AdditionalFiles Include="Pages\Error.razor" />
       <AdditionalFiles Include="Pages\Home.razor" />
       <AdditionalFiles Include="Pages\NotFound.razor" />

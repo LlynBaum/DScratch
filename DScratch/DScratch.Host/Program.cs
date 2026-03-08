@@ -1,4 +1,4 @@
-using DScratch.Components;
+using DScratch.Host.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
