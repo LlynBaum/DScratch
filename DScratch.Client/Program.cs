@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-builder.Services.AddSingleton<Wasm>();
+ServiceRegistration.RegisterServices(builder.Services, builder.Configuration);
 
-var app = builder.Build();
-
-await app.RunAsync();
+await builder.Build().RunAsync();

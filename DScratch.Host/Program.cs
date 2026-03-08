@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
-builder.Services.AddSingleton<Wasm>();
+ServiceRegistration.RegisterServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();
 
