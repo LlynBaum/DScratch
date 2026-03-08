@@ -1,4 +1,4 @@
 <Solution>
-  <Project Path="DScratch/DScratch.Client/DScratch.Client.csproj" />
-  <Project Path="DScratch\DScratch.Host\DScratch.Host.csproj" />
+  <Project Path="DScratch.Client\DScratch.Client.csproj" />
+  <Project Path="DScratch.Host\DScratch.Host.csproj" />
 </Solution>

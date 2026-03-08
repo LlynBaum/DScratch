@@ -1,14 +1,15 @@
+using DScratch.Client;
 using DScratch.Host.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
+builder.Services.AddSingleton<Wasm>();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
@@ -28,6 +29,6 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(DScratch.Client._Imports).Assembly);
+    .AddAdditionalAssemblies(typeof(_Imports).Assembly);
 
 app.Run();
