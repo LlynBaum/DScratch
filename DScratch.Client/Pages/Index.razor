@@ -1,4 +1,15 @@
 ﻿@page "/"
-@rendermode InteractiveWebAssembly
 
-<p>Hi</p>
+<HeadContent>
+    <link rel="stylesheet" href="@Assets["prosemirror.css"]"  />
+    <script src="@Assets["js/editor.bundle.js"]" type="module"></script>
+</HeadContent>
+
+<p>DScratch</p>
+
+<script>
+    window.addEventListener("load", () => {
+        window.initProseMirror("editor");
+    })
+</script>
+<div id="editor"></div>

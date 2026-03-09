@@ -13,4 +13,16 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.1"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Update="Scripts/editor.js">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+    </ItemGroup>
+
+    <Target Name="BundleJS" BeforeTargets="Build">
+        <Exec Command="npm install" WorkingDirectory="Scripts" />
+        <Exec Command="npx esbuild editor.js --bundle --minify --outfile=../wwwroot/js/editor.bundle.js" WorkingDirectory="Scripts" />
+    </Target>
+
 </Project>
