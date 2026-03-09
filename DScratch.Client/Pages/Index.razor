@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using DScratch.Client.Components
 
 <HeadContent>
     <link rel="stylesheet" href="@Assets["prosemirror.css"]"  />
@@ -6,6 +7,8 @@
 </HeadContent>
 
 <p>DScratch</p>
+<EditorMenu />
+
 
 <script>
     window.addEventListener("load", () => {
