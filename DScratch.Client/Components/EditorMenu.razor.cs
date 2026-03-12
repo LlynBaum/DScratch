@@ -1,9 +1,9 @@
 using DScratch.Client.Updates;
 using Microsoft.AspNetCore.Components;
 
-namespace DScratch.Client.Components;
+namespace DScratch.Client.Pages;
 
-public partial class EditorMenu(UpdateDispatcher updateDispatcher) : ComponentBase
+public partial class EditorMenu(UpdateDispatcher updateDispatcher)
 {
     private async Task BoldAsync()
     {
