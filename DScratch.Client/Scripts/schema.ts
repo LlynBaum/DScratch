@@ -31,7 +31,7 @@ export const nodes = {
     } as NodeSpec,
 
     /// A horizontal rule (`<hr>`).
-    horizontal_rule: {
+    horizontalRule: {
         group: "block",
         parseDOM: [{tag: "hr"}],
         toDOM() { return hrDOM }
@@ -58,7 +58,7 @@ export const nodes = {
     /// A code listing. Disallows marks or non-text inline
     /// nodes by default. Represented as a `<pre>` element with a
     /// `<code>` element inside of it.
-    code_block: {
+    codeBlock: {
         content: "text*",
         marks: "",
         group: "block",
@@ -121,9 +121,9 @@ export const marks = {
         },
         inclusive: false,
         parseDOM: [{tag: "a[href]", getAttrs(dom: HTMLElement) {
-                return {href: dom.getAttribute("href"), title: dom.getAttribute("title")}
+                return {href: dom.getAttribute("href")}
             }}],
-        toDOM(node) { let {href, title} = node.attrs; return ["a", {href, title}, 0] }
+        toDOM(node) { let {href} = node.attrs; return ["a", {href}, 0] }
     } as MarkSpec,
 
     /// An emphasis mark. Rendered as an `<em>` element. Has parse rules

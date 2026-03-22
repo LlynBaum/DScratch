@@ -2,11 +2,13 @@ import {schema} from "./schema";
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {toggleMark, setBlockType, wrapIn} from "prosemirror-commands"
+import {Attrs, Slice} from "prosemirror-model";
+import {ReplaceStep, Transform} from "prosemirror-transform";
 
 interface Update {
-    type: string;
-    method: string;
-    [key: string]: string;
+    readonly type: string;
+    readonly name: string;
+    readonly attrs?: Attrs | null;
 }
 
 declare global {
@@ -22,25 +24,49 @@ window.initProseMirror = (elementId: string) => {
     const state = EditorState.create({schema});
 
     window.editorView = new EditorView(target, { state });
-    console.log("ProseMirror initialized!");
+    console.info("ProseMirror initialized!");
 };
 
 window.applyCSharpUpdate = (update: Update) => {
+    window.editorView.focus();
     switch (update.type){
-        case "marks":
+        case "insertNode":
+            insertNode(update, window.editorView);
+            break;
+        case "setBlockType":
+            updateNodeType(update, window.editorView);
+            break;
+        case "toggleMark":
             updateMarks(update, window.editorView);
             break;
+        case "wrapIn":
+            updateWrap(update, window.editorView);
+            break;
+            
     }
 }
 
-function updateMarks(update: Update, editorView: EditorView) {
-    editorView.focus();
-    let command = undefined;
-    if(update.method === "toggle"){
-        command = toggleMark(schema.marks[update.markName]);
+function insertNode(update: Update, editorView: EditorView){
+    const tr = new Transform(editorView.state.doc);
+    const node = schema.nodes[update.name].create();
+    
+    if(editorView.state.selection.from != editorView.state.selection.to){ // TODO: does this basically replace the content with the thing that should be inserted?
+        tr.delete(editorView.state.selection.from, editorView.state.selection.to);
     }
+    tr.insert(editorView.state.selection.from, node);
+}
 
-    if(command){
-        command(editorView.state, editorView.dispatch, editorView);
-    }
+function updateNodeType(update: Update, editorView: EditorView){
+    const command = setBlockType(schema.nodes[update.name], update.attrs);
+    command(editorView.state, editorView.dispatch, editorView);
+}
+
+function updateMarks(update: Update, editorView: EditorView) {
+    const command = toggleMark(schema.marks[update.name], update.attrs);
+    command(editorView.state, editorView.dispatch, editorView);
+}
+
+function updateWrap(update: Update, editorView: EditorView) {
+    const command = wrapIn(schema.nodes[update.name], update.attrs);
+    command(editorView.state, editorView.dispatch, editorView);
 }

@@ -6,6 +6,6 @@ public partial class EditorMenu(UpdateDispatcher updateDispatcher)
 {
     private async Task BoldAsync()
     {
-        await updateDispatcher.DispatchAsync(new ToggleMark("strong"));
+        await updateDispatcher.DispatchAsync(Commands.ToggleMark.Strong);
     }
 }
