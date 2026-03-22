@@ -1,4 +1,4 @@
-import schema from "./schema";
+import {schema} from "./schema";
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {toggleMark, setBlockType, wrapIn} from "prosemirror-commands"
