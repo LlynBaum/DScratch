@@ -2,8 +2,8 @@ import {schema} from "./schema";
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {toggleMark, setBlockType, wrapIn} from "prosemirror-commands"
-import {Attrs, Slice} from "prosemirror-model";
-import {ReplaceStep, Transform} from "prosemirror-transform";
+import {Attrs} from "prosemirror-model";
+import {Transform} from "prosemirror-transform";
 
 interface Update {
     readonly type: string;
