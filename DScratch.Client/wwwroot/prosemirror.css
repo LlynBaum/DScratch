@@ -1,4 +1,5 @@
 .ProseMirror {
+    outline: none;
     position: relative;
 }
 
