@@ -19,6 +19,11 @@ public partial class EditorMenu(UpdateDispatcher updateDispatcher)
         await updateDispatcher.DispatchAsync(Commands.ToggleMark.Code);
     }
 
+    public async Task BlockquoteAsync() // TODO: add function to revert this
+    {
+        await updateDispatcher.DispatchAsync(Commands.WrapIn.Blockquote);
+    }
+    
     private async Task ParagraphAsync()
     {
         await updateDispatcher.DispatchAsync(Commands.SetBlockType.Paragraph);
