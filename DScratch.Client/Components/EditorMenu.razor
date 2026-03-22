@@ -2,4 +2,17 @@
 
 <div class="menu">
     <button @onclick="BoldAsync">Bold</button>
+    <button @onclick="ItalicAsync">Italic</button>
+    <button @onclick="CodeAsync">Code</button>
+    
+    <div>|</div>
+    
+    <button @onclick="ParagraphAsync">Paragraph</button>
+    <button @onclick="async () => await HeadingAsync(1)">Heading 1</button>
+    <button @onclick="async () => await HeadingAsync(2)">Heading 2</button>
+    <button @onclick="async () => await HeadingAsync(3)">Heading 3</button>
+    <button @onclick="async () => await HeadingAsync(4)">Heading 4</button>
+    <button @onclick="async () => await HeadingAsync(5)">Heading 5</button>
+    <button @onclick="async () => await HeadingAsync(6)">Heading 6</button>
+    <button @onclick="CodeBlockAsync">Code Block</button>
 </div>
