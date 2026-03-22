@@ -1,0 +1,14 @@
+.paper {
+    background-color: white;
+    height: 80%;
+    width: min-content;
+    aspect-ratio: 210 / 297;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+#editor {
+    --paper-padding: 8px;
+    padding: 0 var(--paper-padding);
+    height: 100%;
+    width: 100%;
+}

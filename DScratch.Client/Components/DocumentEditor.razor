@@ -1,21 +1,15 @@
-﻿@page "/"
-@using DScratch.Client.Components
-
-<HeadContent>
+﻿<HeadContent>
     <link rel="stylesheet" href="@Assets["prosemirror.css"]"  />
     <script src="@Assets["js/editor.bundle.js"]" type="module"></script>
 </HeadContent>
 
-<p>DScratch</p>
-<EditorMenu />
+
+<div class="paper">
+    <div id="editor"></div>
+</div>
 
 <script>
     window.addEventListener("load", () => {
         window.initProseMirror("editor");
     })
 </script>
-
-<div class="editor-body">
-    <div id="editor"></div> 
-</div>
-

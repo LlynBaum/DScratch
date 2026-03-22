@@ -1,7 +1,6 @@
 using DScratch.Client.Updates;
-using Microsoft.AspNetCore.Components;
 
-namespace DScratch.Client.Pages;
+namespace DScratch.Client.Components;
 
 public partial class EditorMenu(UpdateDispatcher updateDispatcher)
 {

@@ -1,10 +1,7 @@
-.editor {
-    height: calc(100% - 5vh);
+.menu {
+    height: 100%;
     width: 100%;
-}
-
-.editor-menu {
-    height: 5vh;
+    padding: 0 8px;
     display: flex;
     flex-direction: row;
     align-items: center;
