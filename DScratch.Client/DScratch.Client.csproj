@@ -22,7 +22,7 @@
 
     <Target Name="BundleJS" BeforeTargets="Build">
         <Exec Command="npm install" WorkingDirectory="Scripts" />
-        <Exec Command="npx esbuild editor.js --bundle --minify --outfile=../wwwroot/js/editor.bundle.js" WorkingDirectory="Scripts" />
+        <Exec Command="npx esbuild editor.ts --bundle --minify --outfile=../wwwroot/js/editor.bundle.js" WorkingDirectory="Scripts" />
     </Target>
 
 </Project>

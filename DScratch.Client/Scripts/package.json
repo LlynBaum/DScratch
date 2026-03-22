@@ -2,7 +2,7 @@
   "name": "scripts",
   "version": "1.0.0",
   "description": "",
-  "main": "editor.js",
+  "main": "editor.ts",
   "keywords": [],
   "author": "",
   "license": "ISC",
