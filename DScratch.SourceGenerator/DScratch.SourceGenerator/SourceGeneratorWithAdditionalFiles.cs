@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
@@ -26,7 +27,7 @@ public class SourceGeneratorWithAdditionalFiles : IIncrementalGenerator
         if (files.IsDefaultOrEmpty)
         {
             context.ReportDiagnostic(Diagnostic.Create(
-                new DiagnosticDescriptor("DS001", "Debug", $"Found file: schema.ts", "Debug", DiagnosticSeverity.Warning, true), 
+                new DiagnosticDescriptor("DS001", "Debug", "Not Found file: schema.ts", "Debug", DiagnosticSeverity.Warning, true), 
                 Location.None));
             return;
         }
@@ -37,7 +38,7 @@ public class SourceGeneratorWithAdditionalFiles : IIncrementalGenerator
         if (text == null) return;
 
         var tokens = new Scanner(text).ScanTokens();
-        var schemaDefinitionParts = new Parser(tokens).Parse();
+        var schemaDefinitionParts = new Parser(tokens).Parse(); // TODO: debug this shit, does return empty list haha
         
         // Build up the source code.
         var sb = new StringBuilder();
@@ -54,13 +55,25 @@ public class SourceGeneratorWithAdditionalFiles : IIncrementalGenerator
             
             foreach (var node in schemaDefinitionPart.Nodes)
             {
-                sb.Append("\t\t\t").AppendLine($"public PmNode Create{node.Name}()");
+                sb.Append("\t\t\t").Append($"public static PmNode Create{Capitalize(node.Name)}(");
+                for (var index = 0; index < node.Attrs.Count; index++)
+                {
+                    var attr = node.Attrs[index];
+                    sb.Append($"{attr.GetTypeString()} {attr.Name}");
+                    if (index != node.Attrs.Count - 1) sb.Append(", ");
+                }
+                sb.AppendLine(")");
+                
                 sb.Append("\t\t\t").AppendLine("{");
                 
-                sb.Append("\t\t\t\t").AppendLine($"return new PmNode();");
+                sb.Append("\t\t\t\t").AppendLine($"return new PmNode(Name: {node.Name}, Args: new Dictionary<string, object?>() {{");
+                foreach (var attr in node.Attrs)
+                {
+                    sb.AppendLine($"{{ \"{attr.Name}\", {attr.Name} }},");
+                }
+                sb.AppendLine("});");
                 
                 sb.Append("\t\t\t").AppendLine("}");
-                
             }
             
             sb.Append("\t\t").AppendLine("}");
@@ -70,6 +83,13 @@ public class SourceGeneratorWithAdditionalFiles : IIncrementalGenerator
         sb.AppendLine("}");
         
         // Add the source code to the compilation.
-        context.AddSource($"PmSchema.g.cs", sb.ToString());
+        context.AddSource("PmSchema.g.cs", sb.ToString());
+    }
+    
+    private static string Capitalize(string input)
+    {
+        if (string.IsNullOrEmpty(input)) return input;
+
+        return char.ToUpper(input[0]) + input.Substring(1);
     }
 }

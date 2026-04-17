@@ -36,6 +36,17 @@ public class Node
             if (types.Any(t => t == "string")) return AttrType.String;
             throw new InvalidOperationException();
         }
+
+        public string GetTypeString()
+        {
+            return Type switch
+            {
+                AttrType.Number => "double",
+                AttrType.Bool => "bool",
+                AttrType.String => "string",
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
     }
     
     public enum AttrType
