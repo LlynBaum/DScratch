@@ -186,7 +186,7 @@ export const schema = new Schema({nodes, marks});";
         // Add the additional file separately from the compilation.
         driver = driver.AddAdditionalTexts(
             ImmutableArray.Create<AdditionalText>(
-                new TestAdditionalFile("./schema.ts", DddRegistryText))
+                new TestAdditionalFile("./Scripts/schema.ts", DddRegistryText))
         );
 
         // To run generators, we can use an empty compilation.
