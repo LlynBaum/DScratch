@@ -1,4 +1,6 @@
 <Solution>
   <Project Path="DScratch.Client\DScratch.Client.csproj" />
   <Project Path="DScratch.Host\DScratch.Host.csproj" />
+  <Project Path="DScratch.SourceGenerator/DScratch.SourceGenerator.Tests/DScratch.SourceGenerator.Tests.csproj" />
+  <Project Path="DScratch.SourceGenerator/DScratch.SourceGenerator/DScratch.SourceGenerator.csproj" />
 </Solution>

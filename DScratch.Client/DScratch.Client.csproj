@@ -20,6 +20,12 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\DScratch.SourceGenerator\DScratch.SourceGenerator\DScratch.SourceGenerator.csproj" 
+                        OutputItemType="SourceGenerator" 
+                        ReferenceOutputAssembly="false" />
+    </ItemGroup>
+
     <Target Name="BundleJS" BeforeTargets="Build">
         <Exec Command="npm install" WorkingDirectory="Scripts" />
         <Exec Command="npx esbuild editor.ts --bundle --minify --outfile=../wwwroot/js/editor.bundle.js" WorkingDirectory="Scripts" />
