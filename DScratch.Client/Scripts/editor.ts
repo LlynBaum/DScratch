@@ -3,6 +3,7 @@ import {EditorState, Transaction} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {toggleMark, setBlockType, wrapIn} from "prosemirror-commands"
 import {Attrs} from "prosemirror-model";
+import {dispatchCSharp, PmStep} from "./cSharpTransaction";
 
 interface Update {
     readonly type: string;
@@ -14,9 +15,9 @@ declare global {
     interface Window {
         initProseMirror?: (elementId: string) => void;
         editorView: EditorView;
-        getSelection?: () => any;
+        getUserSelection?: () => any;
         applyCSharpUpdate?: (update: Update) => void;
-        dispatchCSharpTransaction?: () => void;
+        dispatchCSharpTransaction?: (steps: PmStep[]) => void;
     }
 }
 
@@ -28,12 +29,13 @@ window.initProseMirror = (elementId: string) => {
     console.info("ProseMirror initialized!");
 };
 
-window.getSelection = () => {
+window.getUserSelection = () => {
     return window.editorView.state.selection.toJSON();
 }
 
-window.dispatchCSharpTransaction = () => {
-    
+window.dispatchCSharpTransaction = (steps: PmStep[]) => {
+    const { state, dispatch } = window.editorView;
+    dispatchCSharp(state, dispatch, steps);
 }
 
 window.applyCSharpUpdate = (update: Update) => {
