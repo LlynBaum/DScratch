@@ -1,9 +1,8 @@
 import {schema} from "./schema";
-import {EditorState} from "prosemirror-state"
+import {EditorState, Transaction} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {toggleMark, setBlockType, wrapIn} from "prosemirror-commands"
 import {Attrs} from "prosemirror-model";
-import {Transform} from "prosemirror-transform";
 
 interface Update {
     readonly type: string;
@@ -15,7 +14,9 @@ declare global {
     interface Window {
         initProseMirror?: (elementId: string) => void;
         editorView: EditorView;
+        getSelection?: () => any;
         applyCSharpUpdate?: (update: Update) => void;
+        dispatchCSharpTransaction?: () => void;
     }
 }
 
@@ -26,6 +27,14 @@ window.initProseMirror = (elementId: string) => {
     window.editorView = new EditorView(target, { state });
     console.info("ProseMirror initialized!");
 };
+
+window.getSelection = () => {
+    return window.editorView.state.selection.toJSON();
+}
+
+window.dispatchCSharpTransaction = () => {
+    
+}
 
 window.applyCSharpUpdate = (update: Update) => {
     window.editorView.focus();
@@ -47,13 +56,14 @@ window.applyCSharpUpdate = (update: Update) => {
 }
 
 function insertNode(update: Update, editorView: EditorView){
-    const tr = new Transform(editorView.state.doc);
+    const tr = new Transaction(editorView.state.doc);
     const node = schema.nodes[update.name].create();
     
     if(editorView.state.selection.from != editorView.state.selection.to){ // TODO: does this basically replace the content with the thing that should be inserted?
         tr.delete(editorView.state.selection.from, editorView.state.selection.to);
     }
     tr.insert(editorView.state.selection.from, node);
+    editorView.dispatch(tr);
 }
 
 function updateNodeType(update: Update, editorView: EditorView){

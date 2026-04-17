@@ -1,4 +1,4 @@
-namespace DScratch.Client.Updates;
+namespace DScratch.Client.Updates.ProseMirrorCommand;
 
 public static class Commands
 {

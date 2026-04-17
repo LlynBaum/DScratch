@@ -1,4 +1,5 @@
 using DScratch.Client.Updates;
+using DScratch.Client.Updates.ProseMirrorCommand;
 
 namespace DScratch.Client.Components;
 
