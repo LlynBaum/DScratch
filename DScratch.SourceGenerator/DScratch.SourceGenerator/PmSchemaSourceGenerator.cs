@@ -10,7 +10,7 @@ namespace DScratch.SourceGenerator;
 /// A source generator that creates C# classes based on the schema.ts for ProseMirror.
 /// </summary>
 [Generator]
-public class SourceGeneratorWithAdditionalFiles : IIncrementalGenerator
+public class PmSchemaSourceGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {

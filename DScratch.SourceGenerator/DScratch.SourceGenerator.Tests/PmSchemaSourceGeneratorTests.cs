@@ -8,7 +8,7 @@ using Xunit;
 
 namespace DScratch.SourceGenerator.Tests;
 
-public class SourceGeneratorWithAdditionalFilesTests
+public class PmSchemaSourceGeneratorTests
 {
     private const string DddRegistryText = @"import {DOMOutputSpec, MarkSpec, NodeSpec, Schema} from ""prosemirror-model"";
 
@@ -178,7 +178,7 @@ export const schema = new Schema({nodes, marks});";
     public void GenerateClassesBasedOnDDDRegistry()
     {
         // Create an instance of the source generator.
-        var generator = new SourceGeneratorWithAdditionalFiles();
+        var generator = new PmSchemaSourceGenerator();
 
         // Source generators should be tested using 'GeneratorDriver'.
         GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
@@ -190,7 +190,7 @@ export const schema = new Schema({nodes, marks});";
         );
 
         // To run generators, we can use an empty compilation.
-        var compilation = CSharpCompilation.Create(nameof(SourceGeneratorWithAdditionalFilesTests));
+        var compilation = CSharpCompilation.Create(nameof(PmSchemaSourceGeneratorTests));
 
         // Run generators. Don't forget to use the new compilation rather than the previous one.
         driver.RunGeneratorsAndUpdateCompilation(compilation, out var newCompilation, out _);
