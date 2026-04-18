@@ -15,14 +15,18 @@ public class Parser(List<Token> tokens)
         {
             if (tokens[current++].Type == TokenType.Export && tokens[current++].Type == TokenType.Const)
             {
-                schemaParts.Add(ParseDefinition());
+                var part = ParseDefinition();
+                if (part is not null)
+                {
+                    schemaParts.Add(part);
+                }
             }
         }
 
         return schemaParts;
     }
 
-    private SchemaDefinitionPart ParseDefinition()
+    private SchemaDefinitionPart? ParseDefinition()
     {
         var schemaPart = new SchemaDefinitionPart
         {
@@ -32,6 +36,8 @@ public class Parser(List<Token> tokens)
         if (tokens[current].Type != TokenType.Identifier) throw new InvalidOperationException();
         
         schemaPart.Name = tokens[current++].Text;
+
+        if (schemaPart.Name == "schema") return null;
         
         if (tokens[current++].Type != TokenType.BraceOpen) throw new InvalidOperationException();
         
@@ -83,8 +89,9 @@ public class Parser(List<Token> tokens)
             if (tokens[current++].Type != TokenType.BraceClose) throw new InvalidOperationException();
             if (tokens[current].Type == TokenType.Comma) current++;
         }
-        
-        while (tokens[current++].Type != TokenType.Comma) { }
+
+        current++;
+        while (tokens[current].Type != TokenType.BraceClose && tokens[current++].Type != TokenType.Comma) { }
         return spec;
     }
 
