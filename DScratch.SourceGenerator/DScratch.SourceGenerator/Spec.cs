@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DScratch.SourceGenerator;
 
-public class Node
+public class Spec
 {
     public string Name { get; set; } = null!;
 

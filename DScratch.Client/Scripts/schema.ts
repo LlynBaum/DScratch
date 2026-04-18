@@ -96,7 +96,7 @@ export const nodes = {
     } as NodeSpec,
 
     /// A hard line break, represented in the DOM as `<br>`.
-    hard_break: {
+    hardBreak: {
         inline: true,
         group: "inline",
         selectable: false,

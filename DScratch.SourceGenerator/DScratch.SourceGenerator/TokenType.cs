@@ -2,7 +2,7 @@ namespace DScratch.SourceGenerator;
 
 public enum TokenType
 {
-    ConstExport,
+    Const,
     Identifier,
     Colon,
     Comma,
@@ -13,5 +13,8 @@ public enum TokenType
     Null,
     True,
     False,
-    Eof
+    Eof,
+    Export,
+    ArrayOpen,
+    ArrayClose
 }

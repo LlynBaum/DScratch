@@ -9,7 +9,8 @@ public class Scanner(string source)
         { "true", TokenType.True },
         { "false", TokenType.False },
         { "null", TokenType.Null },
-        { "export const", TokenType.ConstExport }
+        { "export", TokenType.Export },
+        { "const", TokenType.Const }
     };
 
     private readonly List<Token> tokens = [];
@@ -44,6 +45,12 @@ public class Scanner(string source)
                 break;
             case '}':
                 AddToken(TokenType.BraceClose);
+                break;
+            case '[':
+                AddToken(TokenType.ArrayOpen);
+                break;
+            case ']':
+                AddToken(TokenType.ArrayClose);
                 break;
             case ',':
                 AddToken(TokenType.Comma);

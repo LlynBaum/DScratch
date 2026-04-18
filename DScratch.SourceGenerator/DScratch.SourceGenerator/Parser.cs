@@ -13,9 +13,8 @@ public class Parser(List<Token> tokens)
 
         while (tokens[current].Type != TokenType.Eof)
         {
-            if (tokens[current++].Type == TokenType.ConstExport)
+            if (tokens[current++].Type == TokenType.Export && tokens[current++].Type == TokenType.Const)
             {
-                current++; 
                 schemaParts.Add(ParseDefinition());
             }
         }
@@ -25,48 +24,51 @@ public class Parser(List<Token> tokens)
 
     private SchemaDefinitionPart ParseDefinition()
     {
-        var schemaPart = new SchemaDefinitionPart();
+        var schemaPart = new SchemaDefinitionPart
+        {
+            Nodes = []
+        };
 
         if (tokens[current].Type != TokenType.Identifier) throw new InvalidOperationException();
         
-        schemaPart.Name = (string)tokens[current++].Literal!;
+        schemaPart.Name = tokens[current++].Text;
         
-        if (tokens[current++].Type != TokenType.Colon) throw new InvalidOperationException();
         if (tokens[current++].Type != TokenType.BraceOpen) throw new InvalidOperationException();
         
         while (tokens[current].Type != TokenType.BraceClose)
         {
-            schemaPart.Nodes.Add(ParseNode());
+            schemaPart.Nodes.Add(ParseSpec());
         }
 
         return schemaPart;
     }
 
-    private Node ParseNode()
+    private Spec ParseSpec()
     {
-        var node = new Node
+        var spec = new Spec
         {
             Attrs = []
         };
 
         if (tokens[current].Type != TokenType.Identifier) throw new InvalidOperationException();
-        node.Name = (string)tokens[current++].Literal!;
+        spec.Name = tokens[current++].Text;
 
         if (tokens[current++].Type != TokenType.Colon) throw new InvalidOperationException();
         if (tokens[current++].Type != TokenType.BraceOpen) throw new InvalidOperationException();
 
-        while (tokens[current++].Type != TokenType.BraceClose)
+        while (tokens[current].Type != TokenType.BraceClose)
         {
             if (tokens[current].Type != TokenType.Identifier) throw new InvalidOperationException();
             if (tokens[current++].Literal is not "attrs")
             {
                 var openBraces = 0;
-                while (tokens[current].Type != TokenType.Comma && openBraces == 0)
+                while (!(tokens[current].Type is TokenType.Comma or TokenType.BraceClose && openBraces == 0))
                 {
-                    if (tokens[current].Type == TokenType.BraceOpen) openBraces++;
-                    if (tokens[current].Type == TokenType.BraceClose) openBraces--;
+                    if (tokens[current].Type is TokenType.BraceOpen or TokenType.ArrayOpen) openBraces++;
+                    if (tokens[current].Type is TokenType.BraceClose or TokenType.ArrayClose) openBraces--;
                     current++;
                 }
+                if (tokens[current].Type == TokenType.Comma) current++;
                 continue;
             }
             
@@ -76,21 +78,22 @@ public class Parser(List<Token> tokens)
             while (tokens[current++].Type != TokenType.BraceClose)
             {
                 if (tokens[current].Type != TokenType.Comma) current++;
-                node.Attrs.Add(ParseAttr());
+                spec.Attrs.Add(ParseAttr());
             }
             if (tokens[current++].Type != TokenType.BraceClose) throw new InvalidOperationException();
-            if (tokens[current].Type != TokenType.Comma) current++;
+            if (tokens[current].Type == TokenType.Comma) current++;
         }
-
-        return node;
+        
+        while (tokens[current++].Type != TokenType.Comma) { }
+        return spec;
     }
 
-    private Node.Attr ParseAttr()
+    private Spec.Attr ParseAttr()
     {
         if (tokens[current].Type != TokenType.Identifier) throw new InvalidOperationException();
-        var attr = new Node.Attr
+        var attr = new Spec.Attr
         {
-            Name = (string)tokens[current++].Literal!
+            Name = tokens[current++].Text
         };
 
         if (tokens[current++].Type != TokenType.Colon) throw new InvalidOperationException();
