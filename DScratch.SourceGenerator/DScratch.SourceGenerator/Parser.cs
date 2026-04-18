@@ -65,7 +65,7 @@ public class Parser(List<Token> tokens)
         while (tokens[current].Type != TokenType.BraceClose)
         {
             if (tokens[current].Type != TokenType.Identifier) throw new InvalidOperationException();
-            if (tokens[current++].Literal is not "attrs")
+            if (tokens[current++].Text is not "attrs")
             {
                 var openBraces = 0;
                 while (!(tokens[current].Type is TokenType.Comma or TokenType.BraceClose && openBraces == 0))
@@ -81,11 +81,13 @@ public class Parser(List<Token> tokens)
             if (tokens[current++].Type != TokenType.Colon) throw new InvalidOperationException();
             if (tokens[current++].Type != TokenType.BraceOpen) throw new InvalidOperationException();
 
-            while (tokens[current++].Type != TokenType.BraceClose)
+            while (tokens[current].Type != TokenType.BraceClose)
             {
-                if (tokens[current].Type != TokenType.Comma) current++;
+                if (tokens[current].Type == TokenType.Comma) current++;
                 spec.Attrs.Add(ParseAttr());
             }
+
+            current++;
             if (tokens[current++].Type != TokenType.BraceClose) throw new InvalidOperationException();
             if (tokens[current].Type == TokenType.Comma) current++;
         }
@@ -108,18 +110,22 @@ public class Parser(List<Token> tokens)
     
         // First Param
         if (tokens[current].Type != TokenType.Identifier) throw new InvalidOperationException();
-        if (tokens[current].Literal is "validate")
+        if (tokens[current].Text is "validate")
         {
             current++;
             if (tokens[current++].Type != TokenType.Colon) throw new InvalidOperationException();
             attr.From((tokens[current++].Literal as string)!);
         }
-        else if (tokens[current].Literal is "default")
+        else if (tokens[current].Text is "default")
         {
             current++;
             if (tokens[current++].Type != TokenType.Colon) throw new InvalidOperationException();
             attr.HasDefaultValue = true;
             attr.DefaultValue = tokens[current++].Literal;
+        }
+        else
+        {
+            throw new InvalidOperationException();
         }
     
         if (tokens[current++].Type != TokenType.Comma) throw new InvalidOperationException();

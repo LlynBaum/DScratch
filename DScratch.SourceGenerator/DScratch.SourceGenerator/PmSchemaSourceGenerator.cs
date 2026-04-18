@@ -37,7 +37,7 @@ public class PmSchemaSourceGenerator : IIncrementalGenerator
         if (text == null) return;
 
         var tokens = new Scanner(text).ScanTokens();
-        var schemaDefinitionParts = new Parser(tokens).Parse(); // TODO: debug this shit, does return empty list haha
+        var schemaDefinitionParts = new Parser(tokens).Parse();
         
         // Build up the source code.
         var sb = new StringBuilder();
