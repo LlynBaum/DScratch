@@ -1,4 +1,4 @@
-namespace DScratch.Client.Updates.ProseMirrorCommand;
+namespace DScratch.Client.JsBridge.ProseMirrorCommand;
 
 public class UpdateCommand(string type, string name)
 {

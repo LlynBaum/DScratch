@@ -1,6 +1,6 @@
 using Microsoft.JSInterop;
 
-namespace DScratch.Client.Updates.ProseMirrorCommand;
+namespace DScratch.Client.JsBridge.ProseMirrorCommand;
 
 public class UpdateDispatcher(IJSRuntime jsRuntime)
 {
