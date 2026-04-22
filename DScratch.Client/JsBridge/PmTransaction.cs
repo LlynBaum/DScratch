@@ -9,8 +9,26 @@ public class PmTransaction(IJSRuntime jsRuntime)
 
     private readonly List<PmStep> steps = [];
 
-    private readonly Lazy<PmSelection> editorState = new Lazy<PmSelection>(() => LoadState(jsRuntime));
-    public PmSelection EditorState => editorState.Value;
+    private PmSelection? editorState;
+
+    /// <summary>
+    /// Get the current selection of the User.
+    /// </summary>
+    /// <remarks>Does not update when updating steps.</remarks>
+    /// <returns></returns>
+    public async Task<PmSelection> GetSelection()
+    {
+        editorState ??= await jsRuntime.GetValueAsync<PmSelection>(UserSelectionJsMethod);
+        return editorState;
+    }
+    
+    /// <summary>
+    /// Dispatch the Transaction and commit it.
+    /// </summary>
+    public async Task DispatchAsync()
+    {
+        await jsRuntime.InvokeVoidAsync(TransactionJsMethod, steps);
+    }
 
     public PmTransaction Replace() // TODO: slice param
     {
@@ -47,19 +65,6 @@ public class PmTransaction(IJSRuntime jsRuntime)
             { "to", to }
         });
         return this;
-    }
-    
-    public async Task DispatchAsync()
-    {
-        await jsRuntime.InvokeVoidAsync(TransactionJsMethod, steps);
-    }
-
-    private static PmSelection LoadState(IJSRuntime jsRuntime)
-    {
-        return jsRuntime.GetValueAsync<PmSelection>(UserSelectionJsMethod)
-            .ConfigureAwait(false)
-            .GetAwaiter()
-            .GetResult(); // TODO: bad, very bad, but what else then?
     }
 
     private void AddStep(string name, Dictionary<string, object?>? args = null)
