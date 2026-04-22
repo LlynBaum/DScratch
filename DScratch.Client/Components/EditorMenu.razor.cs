@@ -1,41 +1,42 @@
+using DScratch.Client.JsBridge;
 using DScratch.Client.JsBridge.ProseMirrorCommand;
 
 namespace DScratch.Client.Components;
 
-public partial class EditorMenu(UpdateDispatcher updateDispatcher)
+public partial class EditorMenu(IPmBridge pmBridge)
 {
     private async Task BoldAsync()
     {
-        await updateDispatcher.DispatchAsync(Commands.ToggleMark.Strong);
+        await pmBridge.DispatchCommandAsync(Commands.ToggleMark.Strong);
     }
 
     private async Task ItalicAsync()
     {
-        await updateDispatcher.DispatchAsync(Commands.ToggleMark.Italic);
+        await pmBridge.DispatchCommandAsync(Commands.ToggleMark.Italic);
     }
     
     private async Task CodeAsync()
     {
-        await updateDispatcher.DispatchAsync(Commands.ToggleMark.Code);
+        await pmBridge.DispatchCommandAsync(Commands.ToggleMark.Code);
     }
 
     public async Task BlockquoteAsync() // TODO: add function to revert this
     {
-        await updateDispatcher.DispatchAsync(Commands.WrapIn.Blockquote);
+        await pmBridge.DispatchCommandAsync(Commands.WrapIn.Blockquote);
     }
     
     private async Task ParagraphAsync()
     {
-        await updateDispatcher.DispatchAsync(Commands.SetBlockType.Paragraph);
+        await pmBridge.DispatchCommandAsync(Commands.SetBlockType.Paragraph);
     }
     
     private async Task HeadingAsync(ushort level)
     {
-        await updateDispatcher.DispatchAsync(Commands.SetBlockType.Heading(level));
+        await pmBridge.DispatchCommandAsync(Commands.SetBlockType.Heading(level));
     }
     
     private async Task CodeBlockAsync()
     {
-        await updateDispatcher.DispatchAsync(Commands.SetBlockType.CodeBlock);
+        await pmBridge.DispatchCommandAsync(Commands.SetBlockType.CodeBlock);
     }
 }

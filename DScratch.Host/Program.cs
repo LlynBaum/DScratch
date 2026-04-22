@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
-ServiceRegistration.RegisterServices(builder.Services, builder.Configuration);
+ServiceRegistration.RegisterServices(builder.Services, builder.Configuration, true);
 
 var app = builder.Build();
 
