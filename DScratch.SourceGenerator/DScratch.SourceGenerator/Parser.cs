@@ -88,7 +88,6 @@ public class Parser(List<Token> tokens)
             }
 
             current++;
-            if (tokens[current++].Type != TokenType.BraceClose) throw new InvalidOperationException();
             if (tokens[current].Type == TokenType.Comma) current++;
         }
 
@@ -128,16 +127,19 @@ public class Parser(List<Token> tokens)
             throw new InvalidOperationException();
         }
     
-        if (tokens[current++].Type != TokenType.Comma) throw new InvalidOperationException();
+        if (tokens[current++].Type is not TokenType.Comma)
+        {
+            return attr;
+        }
     
         // Second Param (Optional)
-        if (tokens[current].Literal is "validate")
+        if (tokens[current].Text is "validate")
         {
             current++;
             if (tokens[current++].Type != TokenType.Colon) throw new InvalidOperationException();
             attr.From((tokens[current++].Literal as string)!);
         }
-        else if (tokens[current].Literal is "default")
+        else if (tokens[current].Text is "default")
         {
             current++;
             if (tokens[current++].Type != TokenType.Colon) throw new InvalidOperationException();

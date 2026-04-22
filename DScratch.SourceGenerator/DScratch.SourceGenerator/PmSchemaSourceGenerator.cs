@@ -58,10 +58,10 @@ public class PmSchemaSourceGenerator : IIncrementalGenerator
             foreach (var node in schemaDefinitionPart.Nodes)
             {
                 sb.Append("\t\t\t").Append($"public static PmNode Create{Capitalize(node.Name)}(");
-                for (var index = 0; index < node.Attrs.Count; index++)
+                var attrs = node.Attrs.OrderBy(a => a.HasDefaultValue).Select((a, index) => (a, index));
+                foreach (var (attr, index) in attrs)
                 {
-                    var attr = node.Attrs[index];
-                    sb.Append($"{attr.GetTypeString()} {attr.Name}");
+                    sb.Append($"{attr.GetTypeString()} {attr.Name}{attr.GetDefaultValueString()}");
                     if (index != node.Attrs.Count - 1) sb.Append(", ");
                 }
                 sb.AppendLine(")");
@@ -71,7 +71,7 @@ public class PmSchemaSourceGenerator : IIncrementalGenerator
                 sb.Append("\t\t\t\t").AppendLine($"return new PmNode(Name: \"{node.Name}\", Args: new Dictionary<string, object?>() {{");
                 foreach (var attr in node.Attrs)
                 {
-                    sb.AppendLine($"{{ \"{attr.Name}\", {attr.Name} }},");
+                    sb.Append("\t\t\t\t\t").AppendLine($"{{ \"{attr.Name}\", {attr.Name} }},");
                 }
                 sb.Append("\t\t\t\t").AppendLine("});");
                 

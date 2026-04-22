@@ -39,13 +39,21 @@ public class Spec
 
         public string GetTypeString()
         {
+            var nullable = IsNullable ? "?" : "";
             return Type switch
             {
-                AttrType.Number => "double",
-                AttrType.Bool => "bool",
-                AttrType.String => "string",
+                AttrType.Number => "double" + nullable,
+                AttrType.Bool => "bool" + nullable,
+                AttrType.String => "string" + nullable,
                 _ => throw new ArgumentOutOfRangeException()
             };
+        }
+
+        public string GetDefaultValueString()
+        {
+            return  HasDefaultValue 
+                ? $" = {DefaultValue?.ToString() ?? "null"}" 
+                : "";
         }
     }
     
