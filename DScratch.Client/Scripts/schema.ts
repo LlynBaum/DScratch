@@ -7,13 +7,13 @@ const preDOM: DOMOutputSpec = ["pre", ["code", 0]];
 const brDOM: DOMOutputSpec = ["br"];
 
 export const nodes = {
-    /// NodeSpec The top level document node.
+    // NodeSpec The top level document node.
     doc: {
         content: "block+"
     } as NodeSpec,
 
-    /// A plain paragraph textblock. Represented in the DOM
-    /// as a `<p>` element.
+    // A plain paragraph textblock. Represented in the DOM
+    // as a `<p>` element.
     paragraph: {
         content: "inline*",
         group: "block",
@@ -21,7 +21,7 @@ export const nodes = {
         toDOM() { return pDOM }
     } as NodeSpec,
 
-    /// A blockquote (`<blockquote>`) wrapping one or more blocks.
+    // A blockquote (`<blockquote>`) wrapping one or more blocks.
     blockquote: {
         content: "block+",
         group: "block",
@@ -30,16 +30,16 @@ export const nodes = {
         toDOM() { return blockquoteDOM }
     } as NodeSpec,
 
-    /// A horizontal rule (`<hr>`).
+    // A horizontal rule (`<hr>`).
     horizontalRule: {
         group: "block",
         parseDOM: [{tag: "hr"}],
         toDOM() { return hrDOM }
     } as NodeSpec,
 
-    /// A heading textblock, with a `level` attribute that
-    /// should hold the number 1 to 6. Parsed and serialized as `<h1>` to
-    /// `<h6>` elements.
+    // A heading textblock, with a `level` attribute that
+    // should hold the number 1 to 6. Parsed and serialized as `<h1>` to
+    // `<h6>` elements.
     heading: {
         attrs: {level: {default: 1, validate: "number"}},
         content: "inline*",
@@ -55,9 +55,9 @@ export const nodes = {
         toDOM(node) { return ["h" + node.attrs.level, 0] }
     } as NodeSpec,
 
-    /// A code listing. Disallows marks or non-text inline
-    /// nodes by default. Represented as a `<pre>` element with a
-    /// `<code>` element inside of it.
+    // A code listing. Disallows marks or non-text inline
+    // nodes by default. Represented as a `<pre>` element with a
+    // `<code>` element inside of it.
     codeBlock: {
         content: "text*",
         marks: "",
@@ -68,14 +68,14 @@ export const nodes = {
         toDOM() { return preDOM }
     } as NodeSpec,
 
-    /// The text node.
+    // The text node.
     text: {
         group: "inline"
     } as NodeSpec,
 
-    /// An inline image (`<img>`) node. Supports `src`,
-    /// `alt`, and `href` attributes. The latter two default to the empty
-    /// string.
+    // An inline image (`<img>`) node. Supports `src`,
+    // `alt`, and `href` attributes. The latter two default to the empty
+    // string.
     image: {
         inline: true,
         attrs: {
@@ -95,7 +95,7 @@ export const nodes = {
         toDOM(node) { let {src, alt, title} = node.attrs; return ["img", {src, alt, title}] }
     } as NodeSpec,
 
-    /// A hard line break, represented in the DOM as `<br>`.
+    // A hard line break, represented in the DOM as `<br>`.
     hardBreak: {
         inline: true,
         group: "inline",
@@ -109,11 +109,11 @@ const emDOM: DOMOutputSpec = ["em", 0];
 const strongDOM: DOMOutputSpec = ["strong", 0];
 const codeDOM: DOMOutputSpec = ["code", 0];
 
-/// [Specs](#model.MarkSpec) for the marks in the schema.
+// [Specs](#model.MarkSpec) for the marks in the schema.
 export const marks = {
-    /// A link. Has `href` and `title` attributes. `title`
-    /// defaults to the empty string. Rendered and parsed as an `<a>`
-    /// element.
+    // A link. Has `href` and `title` attributes. `title`
+    // defaults to the empty string. Rendered and parsed as an `<a>`
+    // element.
     link: {
         attrs: {
             href: {validate: "string"},
@@ -126,8 +126,8 @@ export const marks = {
         toDOM(node) { let {href} = node.attrs; return ["a", {href}, 0] }
     } as MarkSpec,
 
-    /// An emphasis mark. Rendered as an `<em>` element. Has parse rules
-    /// that also match `<i>` and `font-style: italic`.
+    // An emphasis mark. Rendered as an `<em>` element. Has parse rules
+    // that also match `<i>` and `font-style: italic`.
     em: {
         parseDOM: [
             {tag: "i"}, {tag: "em"},
@@ -137,8 +137,8 @@ export const marks = {
         toDOM() { return emDOM }
     } as MarkSpec,
 
-    /// A strong mark. Rendered as `<strong>`, parse rules also match
-    /// `<b>` and `font-weight: bold`.
+    // A strong mark. Rendered as `<strong>`, parse rules also match
+    // `<b>` and `font-weight: bold`.
     strong: {
         parseDOM: [
             {tag: "strong"},
@@ -152,7 +152,7 @@ export const marks = {
         toDOM() { return strongDOM }
     } as MarkSpec,
 
-    /// Code font mark. Represented as a `<code>` element.
+    // Code font mark. Represented as a `<code>` element.
     code: {
         code: true,
         parseDOM: [{tag: "code"}],
