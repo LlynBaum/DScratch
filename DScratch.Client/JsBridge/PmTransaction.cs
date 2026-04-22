@@ -1,6 +1,6 @@
 ﻿using Microsoft.JSInterop;
 
-namespace DScratch.Client.Updates;
+namespace DScratch.Client.JsBridge;
 
 public class PmTransaction(IJSRuntime jsRuntime)
 {
