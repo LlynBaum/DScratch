@@ -157,6 +157,23 @@ export const marks = {
         code: true,
         parseDOM: [{tag: "code"}],
         toDOM() { return codeDOM }
+    } as MarkSpec,
+    
+    color: {
+        attrs: {
+            color: {validate: "string"}
+        },
+        parseDOM: [{
+            style: "color",
+            getAttrs: (value) => {
+                return value ? { color: value } : false;
+            }}
+        ],
+        toDOM(node) {
+            const span = document.createElement("span");
+            span.style.color = node.attrs.color;
+            return { dom: span, contentDOM: span };
+        }
     } as MarkSpec
 }
 

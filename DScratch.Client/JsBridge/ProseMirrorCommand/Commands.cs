@@ -37,6 +37,14 @@ public static class Commands
         }};
         
         public static UpdateCommand Code => new UpdateCommand(TypeName, "code");
+
+        public static UpdateCommand Color(string color) => new UpdateCommand(TypeName, "color")
+        {
+            Attrs = new()
+            {
+                { "color", color }
+            }
+        };
     }
     
     public static class WrapIn

@@ -6,5 +6,5 @@ public class UpdateCommand(string type, string name)
 
     public string Name { get; } = name;
 
-    public Dictionary<string, object>? Attrs;
+    public Dictionary<string, object>? Attrs { get; init; }
 }

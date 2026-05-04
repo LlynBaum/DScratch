@@ -5,6 +5,8 @@ namespace DScratch.Client.Components;
 
 public partial class EditorMenu(IPmBridge pmBridge)
 {
+    private string color = "#000000";
+    
     private async Task BoldAsync()
     {
         await pmBridge.DispatchCommandAsync(Commands.ToggleMark.Strong);
@@ -38,5 +40,11 @@ public partial class EditorMenu(IPmBridge pmBridge)
     private async Task CodeBlockAsync()
     {
         await pmBridge.DispatchCommandAsync(Commands.SetBlockType.CodeBlock);
+    }
+    
+    private async Task OnColorChangeAsync()
+    {
+        var command = Commands.ToggleMark.Color(color); // TODO: When you switch colors, it removes the previous color, instead of updating color.
+        await pmBridge.DispatchCommandAsync(command);
     }
 }

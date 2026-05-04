@@ -19,4 +19,8 @@
     <button @onclick="async () => await HeadingAsync(5)">Heading 5</button>
     <button @onclick="async () => await HeadingAsync(6)">Heading 6</button>
     <button @onclick="CodeBlockAsync">Code Block</button>
+    
+    <div>|</div>
+    
+    <input type="color" @bind="color" @bind:event="onchange" @bind:after="OnColorChangeAsync" />
 </div>
