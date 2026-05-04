@@ -2,7 +2,7 @@ namespace DScratch.Client.JsBridge.ProseMirrorCommand;
 
 public static class Commands
 {
-    public static class InsertNode // TODO: replace this with a generic "Transform" command, where you can define a transformation in C#
+    public static class InsertNode
     {
         public const string TypeName = "insertNode";
 

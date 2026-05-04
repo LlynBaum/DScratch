@@ -169,7 +169,7 @@ public class PmTransaction(IJSRuntime jsRuntime)
     }
 
     private record PmStep(string Name, Dictionary<string, object?> Args);
-    
+
     public class PmSelection
     {
         public int From { get; }

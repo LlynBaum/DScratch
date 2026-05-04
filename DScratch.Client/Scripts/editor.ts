@@ -1,7 +1,9 @@
 import {schema} from "./schema";
-import {EditorState, Transaction} from "prosemirror-state"
-import {EditorView} from "prosemirror-view"
-import {toggleMark, setBlockType, wrapIn} from "prosemirror-commands"
+import {EditorState, Transaction} from "prosemirror-state";
+import {EditorView} from "prosemirror-view";
+import {toggleMark, setBlockType, wrapIn, baseKeymap} from "prosemirror-commands";
+import {undo, redo, history} from "prosemirror-history";
+import {keymap} from "prosemirror-keymap"
 import {Attrs} from "prosemirror-model";
 import {dispatchCSharp, PmStep} from "./cSharpTransaction";
 
@@ -23,7 +25,14 @@ declare global {
 
 window.initProseMirror = (elementId: string) => {
     const target = document.getElementById(elementId);
-    const state = EditorState.create({schema});
+    const state = EditorState.create({
+        schema, 
+        plugins: [
+            history(),
+            keymap({"Mod-z": undo, "Mod-y": redo}),
+            keymap(baseKeymap)
+        ]
+    });
 
     window.editorView = new EditorView(target, { state });
     console.info("ProseMirror initialized!");
@@ -61,7 +70,7 @@ function insertNode(update: Update, editorView: EditorView){
     const tr = new Transaction(editorView.state.doc);
     const node = schema.nodes[update.name].create();
     
-    if(editorView.state.selection.from != editorView.state.selection.to){ // TODO: does this basically replace the content with the thing that should be inserted?
+    if(editorView.state.selection.from != editorView.state.selection.to) {
         tr.delete(editorView.state.selection.from, editorView.state.selection.to);
     }
     tr.insert(editorView.state.selection.from, node);

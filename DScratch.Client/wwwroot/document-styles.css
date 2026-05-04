@@ -1,0 +1,14 @@
+@scope (#editor) {
+    :scope {
+        color: var(--paragraph-color);
+    }
+    
+    h1 {
+        color: currentColor;
+    }
+
+    p {
+        color: currentColor;
+        margin: var(--paragraph-gap) 0;
+    }
+}
