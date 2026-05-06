@@ -37,7 +37,12 @@ public static class Commands
         }};
         
         public static UpdateCommand Code => new UpdateCommand(TypeName, "code");
-
+    }
+    
+    public static class AddMark
+    {
+        public const string TypeName = "addMark";
+        
         public static UpdateCommand Color(string color) => new UpdateCommand(TypeName, "color")
         {
             Attrs = new()

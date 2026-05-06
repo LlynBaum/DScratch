@@ -44,7 +44,7 @@ public partial class EditorMenu(IPmBridge pmBridge)
     
     private async Task OnColorChangeAsync()
     {
-        var command = Commands.ToggleMark.Color(color); // TODO: When you switch colors, it removes the previous color, instead of updating color.
+        var command = Commands.AddMark.Color(color);
         await pmBridge.DispatchCommandAsync(command);
     }
 }

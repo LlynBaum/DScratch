@@ -59,6 +59,9 @@ window.applyCSharpUpdate = (update: Update) => {
         case "toggleMark":
             updateMarks(update, window.editorView);
             break;
+        case "addMark":
+            addMarks(update, window.editorView);
+            break;
         case "wrapIn":
             updateWrap(update, window.editorView);
             break;
@@ -85,6 +88,12 @@ function updateNodeType(update: Update, editorView: EditorView){
 function updateMarks(update: Update, editorView: EditorView) {
     const command = toggleMark(schema.marks[update.name], update.attrs);
     command(editorView.state, editorView.dispatch, editorView);
+}
+
+function addMarks(update: Update, editorView: EditorView) {
+    const tr = editorView.state.tr;
+    tr.addMark(editorView.state.selection.from, editorView.state.selection.to, schema.marks.color.create(update.attrs));
+    editorView.dispatch(tr);
 }
 
 function updateWrap(update: Update, editorView: EditorView) {
