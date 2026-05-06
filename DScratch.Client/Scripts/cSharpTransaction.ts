@@ -1,5 +1,5 @@
 import {EditorState, Transaction} from "prosemirror-state";
-import {Node} from "prosemirror-model"
+import {Node, Mark} from "prosemirror-model"
 
 export interface PmStep {
     name: string;
@@ -7,41 +7,45 @@ export interface PmStep {
 }
 
 export const dispatchCSharp = (state: EditorState, dispatch: (tr: Transaction) => void, steps: PmStep[]) => {
-    let tr = state.tr;
+    const tr = state.tr;
 
     steps.forEach(step => {
         switch (step.name) {
             case "replace":
                 const slice = sliceFrom(step.args.slice);
-                
-                tr = tr.replace(step.args.from ?? state.selection.from, step.args.to, slice);
+                tr.replace(step.args.from ?? state.selection.from, step.args.to, slice);
                 break;
             case "replaceWith": {
                 const nodes = createNodes(step.args.nodes);
-                tr = tr.replaceWith(step.args.from, step.args.to, nodes);
+                tr.replaceWith(step.args.from, step.args.to, nodes);
                 break;
             }
             case "delete": {
-                tr = tr.delete(step.args.from, step.args.to);
+                tr.delete(step.args.from, step.args.to);
                 break;
             }
             case "insert": {
                 const content = createNodes(step.args.content);
-                tr = tr.insert(step.args.pos, content);
+                tr.insert(step.args.pos, content);
                 break;
             }
             case "replaceRange": {
                 const slice = sliceFrom(step.args.slice);
-                tr = tr.replaceRange(step.args.from, step.args.to, slice!);
+                tr.replaceRange(step.args.from, step.args.to, slice!);
                 break;
             }
             case "replaceRangeWith": {
                 const node = createNode(step.args.node);
-                tr = tr.replaceRangeWith(step.args.from, step.args.to, node);
+                tr.replaceRangeWith(step.args.from, step.args.to, node);
                 break;
             }
             case "deleteRange": {
-                tr = tr.deleteRange(step.args.from, step.args.to);
+                tr.deleteRange(step.args.from, step.args.to);
+                break;
+            }
+            case "addMark": {
+                const mark = createMark(step.args.mark);
+                tr.addMark(step.args.from, step.args.to, mark);
                 break;
             }
         }
@@ -54,11 +58,15 @@ export const dispatchCSharp = (state: EditorState, dispatch: (tr: Transaction) =
     return;
 
     function createNode(node: any) : Node {
-        return state.schema.nodes[node.name].create(node.attrs)
+        return state.schema.nodes[node.name].create(node.args)
     }
     
     function createNodes(nodes: any[]) : Node[] {
         return nodes.map(createNode)
+    }
+    
+    function createMark(mark: any): Mark {
+        return state.schema.mark(mark.name, mark.args);
     }
     
     function sliceFrom(args: any) {

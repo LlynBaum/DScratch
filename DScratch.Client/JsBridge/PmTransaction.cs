@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using System.Text.Json.Serialization;
+using Microsoft.JSInterop;
 
 namespace DScratch.Client.JsBridge;
 
@@ -16,9 +17,15 @@ public class PmTransaction(IJSRuntime jsRuntime)
     /// </summary>
     /// <remarks>Does not update when updating steps.</remarks>
     /// <returns></returns>
-    public async Task<PmSelection> GetSelection()
+    public async Task<PmSelection> GetSelectionAsync()
     {
-        editorState ??= await jsRuntime.GetValueAsync<PmSelection>(UserSelectionJsMethod);
+        editorState ??= await jsRuntime.InvokeAsync<PmSelection>(UserSelectionJsMethod);
+
+        if (editorState is null)
+        {
+            throw new ArgumentNullException(nameof(editorState), "Failed to load EditorState for Transaction.");
+        }
+        
         return editorState;
     }
     
@@ -163,6 +170,37 @@ public class PmTransaction(IJSRuntime jsRuntime)
         return this;
     }
 
+   /// <summary>
+   /// Add the given mark to the inline content between from and to.
+   /// </summary>
+   /// <param name="from">From where the mark should be set.</param>
+   /// <param name="to">To where the mark should be set.</param>
+   /// <param name="mark">The mark to set.</param>
+    public void AddMark(int from, int to, PmNode mark)
+    {
+        AddStep("addMark", new Dictionary<string, object?>
+        {
+            { "from", from },
+            { "to", to },
+            { "mark", mark }
+        });
+    }
+    
+    /// <summary>
+    /// Add the given mark to the inline content between the selection.
+    /// </summary>
+    /// <param name="selection">The selection from and to, where the mark should be added.</param>
+    /// <param name="mark">The mark to set.</param>
+    public void AddMark(PmSelection selection, PmNode mark)
+    {
+        AddStep("addMark", new Dictionary<string, object?>
+        {
+            { "from", selection.From },
+            { "to", selection.To },
+            { "mark", mark }
+        });
+    }
+
     private void AddStep(string name, Dictionary<string, object?>? args = null)
     {
         steps.Add(new PmStep(name, args ?? []));
@@ -172,8 +210,10 @@ public class PmTransaction(IJSRuntime jsRuntime)
 
     public class PmSelection
     {
-        public int From { get; }
-            
-        public int To { get; }
+        [JsonRequired]
+        public int From { get; init; }
+
+        [JsonRequired]
+        public int To { get; init; }
     }
 }

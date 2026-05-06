@@ -44,7 +44,9 @@ public partial class EditorMenu(IPmBridge pmBridge)
     
     private async Task OnColorChangeAsync()
     {
-        var command = Commands.AddMark.Color(color);
-        await pmBridge.DispatchCommandAsync(command);
+        var tr = pmBridge.StartTransaction();
+        var selection = await tr.GetSelectionAsync();
+        tr.AddMark(selection, PmSchema.Marks.CreateColor(color)); 
+        await tr.DispatchAsync();
     }
 }

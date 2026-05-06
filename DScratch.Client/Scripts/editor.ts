@@ -1,8 +1,8 @@
 import {schema} from "./schema";
 import {EditorState, Transaction} from "prosemirror-state";
 import {EditorView} from "prosemirror-view";
-import {toggleMark, setBlockType, wrapIn, baseKeymap} from "prosemirror-commands";
-import {undo, redo, history} from "prosemirror-history";
+import {baseKeymap, setBlockType, toggleMark, wrapIn} from "prosemirror-commands";
+import {history, redo, undo} from "prosemirror-history";
 import {keymap} from "prosemirror-keymap"
 import {Attrs} from "prosemirror-model";
 import {dispatchCSharp, PmStep} from "./cSharpTransaction";
@@ -39,7 +39,11 @@ window.initProseMirror = (elementId: string) => {
 };
 
 window.getUserSelection = () => {
-    return window.editorView.state.selection.toJSON();
+    const selection = window.editorView.state.selection;
+    return {
+        From: selection.from,
+        To: selection.to
+    };
 }
 
 window.dispatchCSharpTransaction = (steps: PmStep[]) => {
@@ -69,6 +73,7 @@ window.applyCSharpUpdate = (update: Update) => {
     }
 }
 
+/* I keep this for reference for later, when I need it, but should not be used as a command anymore. */
 function insertNode(update: Update, editorView: EditorView){
     const tr = new Transaction(editorView.state.doc);
     const node = schema.nodes[update.name].create();

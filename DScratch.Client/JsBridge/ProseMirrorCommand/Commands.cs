@@ -2,13 +2,6 @@ namespace DScratch.Client.JsBridge.ProseMirrorCommand;
 
 public static class Commands
 {
-    public static class InsertNode
-    {
-        public const string TypeName = "insertNode";
-
-        public static UpdateCommand HorizontalRule => new UpdateCommand(TypeName, "horizontalRule");
-    }
-    
     public static class SetBlockType
     {
         public const string TypeName = "setBlockType";
@@ -37,19 +30,6 @@ public static class Commands
         }};
         
         public static UpdateCommand Code => new UpdateCommand(TypeName, "code");
-    }
-    
-    public static class AddMark
-    {
-        public const string TypeName = "addMark";
-        
-        public static UpdateCommand Color(string color) => new UpdateCommand(TypeName, "color")
-        {
-            Attrs = new()
-            {
-                { "color", color }
-            }
-        };
     }
     
     public static class WrapIn
