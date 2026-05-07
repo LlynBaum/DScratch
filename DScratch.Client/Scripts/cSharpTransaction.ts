@@ -1,5 +1,6 @@
 import {EditorState, Transaction} from "prosemirror-state";
 import {Node, Mark} from "prosemirror-model"
+import {liftTarget} from "prosemirror-transform";
 
 export interface PmStep {
     name: string;
@@ -8,7 +9,7 @@ export interface PmStep {
 
 export const dispatchCSharp = (state: EditorState, dispatch: (tr: Transaction) => void, steps: PmStep[]) => {
     const tr = state.tr;
-
+    
     steps.forEach(step => {
         switch (step.name) {
             case "replace":
@@ -46,6 +47,14 @@ export const dispatchCSharp = (state: EditorState, dispatch: (tr: Transaction) =
             case "addMark": {
                 const mark = createMark(step.args.mark);
                 tr.addMark(step.args.from, step.args.to, mark);
+                break;
+            }
+            case "liftToTarget": {
+                const pos = tr.doc.resolve(step.args.pos).blockRange()!;
+                const depth = liftTarget(pos);
+                if(depth) {
+                    tr.lift(pos, depth);
+                }
                 break;
             }
         }

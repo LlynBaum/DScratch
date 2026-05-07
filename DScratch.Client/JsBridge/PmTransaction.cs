@@ -201,6 +201,31 @@ public class PmTransaction(IJSRuntime jsRuntime)
         });
     }
 
+    /// <summary>
+    /// Split the content in the given range off from its parent,
+    /// if there is sibling content before or after it,
+    /// and move it up the tree to the depth specified by target.
+    /// </summary>
+    /// <remarks>Uses the `from` from current selection as position.</remarks>
+    public void LiftToTarget()
+    {
+        AddStep("liftToTarget");
+    }
+    
+    /// <summary>
+    /// Split the content in the given range off from its parent,
+    /// if there is sibling content before or after it,
+    /// and move it up the tree to the depth specified by target.
+    /// </summary>
+    /// <param name="position">The Position to resolve the target from.</param>
+    public void LiftToTarget(int position)
+    {
+        AddStep("liftToTarget", new Dictionary<string, object?>
+        {
+            { "pos", position },
+        });
+    }
+    
     private void AddStep(string name, Dictionary<string, object?>? args = null)
     {
         steps.Add(new PmStep(name, args ?? []));

@@ -22,8 +22,13 @@ public partial class EditorMenu(IPmBridge pmBridge)
         await pmBridge.DispatchCommandAsync(Commands.ToggleMark.Code);
     }
 
-    public async Task BlockquoteAsync() // TODO: add function to revert this
+    private async Task BlockquoteAsync() 
     {
+        // TODO: this can revert the wrapIn, but how can I find out, if it is already wraped or not...
+        var transaction = pmBridge.StartTransaction();
+        transaction.LiftToTarget();
+        await transaction.DispatchAsync();
+        
         await pmBridge.DispatchCommandAsync(Commands.WrapIn.Blockquote);
     }
     
