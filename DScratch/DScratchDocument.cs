@@ -2,5 +2,10 @@
 
 public class DScratchDocument
 {
-    public DPage Page { get; } = new DPage();
+    public DPage Page { get; }
+
+    public DScratchDocument(DPage? page = null)
+    {
+        Page = page ?? DPage.Create(1);
+    }
 }
