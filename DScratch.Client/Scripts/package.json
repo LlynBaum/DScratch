@@ -8,12 +8,5 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "prosemirror-model": "^1.25.4",
-    "prosemirror-schema-basic": "^1.2.4",
-    "prosemirror-state": "^1.4.4",
-    "prosemirror-view": "^1.41.6",
-    "prosemirror-commands": "^1.7.1",
-    "prosemirror-history": "^1.5.0",
-    "prosemirror-keymap": "^1.2.3"
   }
 }

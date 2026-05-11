@@ -1,4 +1,4 @@
-import {DOMOutputSpec, MarkSpec, NodeSpec, Schema} from "prosemirror-model";
+/*
 
 const pDOM: DOMOutputSpec = ["p", 0];
 const blockquoteDOM: DOMOutputSpec = ["blockquote", 0];
@@ -178,3 +178,4 @@ export const marks = {
 }
 
 export const schema = new Schema({nodes, marks});
+*/

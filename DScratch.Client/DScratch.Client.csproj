@@ -21,9 +21,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DScratch.SourceGenerator\DScratch.SourceGenerator\DScratch.SourceGenerator.csproj" 
-                        OutputItemType="Analyzer" 
-                        ReferenceOutputAssembly="false" />
         <AdditionalFiles Include="Scripts\schema.ts" />
     </ItemGroup>
 
