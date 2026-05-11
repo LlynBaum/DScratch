@@ -41,12 +41,9 @@ public class PmTransaction(IJSRuntime jsRuntime)
     /// Replace current selection with given Slice.
     /// </summary>
     /// <returns>The Transaction for chaining.</returns>
-    public PmTransaction Replace(PmSlice? slice = null)
+    public PmTransaction Replace()
     {
-        AddStep("replace", new Dictionary<string, object?>
-        {
-            { "slice", slice }
-        });
+        AddStep("replace");
         return this;
     }
     
@@ -54,13 +51,12 @@ public class PmTransaction(IJSRuntime jsRuntime)
     /// Replace the part of the document between from and to with the given slice.
     /// </summary>
     /// <returns>The Transaction for chaining.</returns>
-    public PmTransaction Replace(int from, int? to = null, PmSlice? slice = null)
+    public PmTransaction Replace(int from, int? to = null)
     {
         AddStep("replace", new Dictionary<string, object?>
         {
             { "from", from },
-            { "to", to },
-            { "slice", slice }
+            { "to", to }
         });
 
         return this;
@@ -128,13 +124,12 @@ public class PmTransaction(IJSRuntime jsRuntime)
     /// and is useful in situations where you need more precise control over what happens.
     /// </summary>
     /// <returns>The Transaction for chaining.</returns>
-    public PmTransaction ReplaceRange(int from, int to, PmSlice slice)
+    public PmTransaction ReplaceRange(int from, int to)
     {
         AddStep("replaceRange", new Dictionary<string, object?>
         {
             { "from", from },
-            { "to", to },
-            { "slice", slice }
+            { "to", to }
         });
         return this;
     }

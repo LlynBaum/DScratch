@@ -24,6 +24,10 @@
         <AdditionalFiles Include="Scripts\schema.ts" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\DScratch\DScratch.csproj" />
+    </ItemGroup>
+
     <Target Name="BundleJS" BeforeTargets="Build">
         <Exec Command="npm install" WorkingDirectory="Scripts" />
         <Exec Command="npx esbuild editor.ts --bundle --outfile=../wwwroot/js/editor.bundle.js" WorkingDirectory="Scripts" />

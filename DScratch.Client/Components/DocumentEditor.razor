@@ -6,11 +6,7 @@
 
 
 <div class="paper">
-    <div id="editor"></div>
+    <div contenteditable @oninput="Callback">
+        
+    </div>
 </div>
-
-<script>
-    window.addEventListener("load", () => {
-        window.initProseMirror("editor");
-    })
-</script>
