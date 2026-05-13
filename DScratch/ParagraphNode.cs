@@ -1,6 +1,6 @@
 namespace DScratch;
 
-public class ParagraphNode(DNode? origin = null, DNode? rightOrigin = null) : DNode(origin, rightOrigin)
+public class ParagraphNode(string id, DNode? origin = null, DNode? rightOrigin = null) : DNode(id, origin, rightOrigin)
 {
     public string Value { get; private set; } = string.Empty;
     
@@ -11,11 +11,12 @@ public class ParagraphNode(DNode? origin = null, DNode? rightOrigin = null) : DN
         var end = start;
         while (true)
         {
-            if(end.RightOrigin is null) break;
-            end = end.RightOrigin;
+            if(end?.RightOrigin is null) break;
+            end = end.NextChar;
         }
-        
-        var (insert, idx) = FindCharNode(start);
+
+        if (start.Origin is null) throw new NullReferenceException("Origin must be set on DNode, to be able to insert it.");
+        var (insert, idx) = FindCharNode(start.Origin);
 
         if(insert is null) return; // TODO: should not happen, but how to protect?
 
@@ -26,15 +27,15 @@ public class ParagraphNode(DNode? origin = null, DNode? rightOrigin = null) : DN
         Value = Value.Insert(idx, value);
     }
 
-    private (CharNode? node, int idx) FindCharNode(CharNode node, CharNode? start = null)
+    private (CharNode? node, int idx) FindCharNode(DNode node)
     {
         var idx = 0;
-        var current = start ?? Characters;
+        var current = Characters;
         while (true)
         {
             if (current is null) return (null, -1);
-            if (current.Equals(current)) return (node, idx);
-            current = current.RightOrigin;
+            if (current.Id == node.Id) return (current, idx);
+            current = current.NextChar;
             idx++;
         }
     }
@@ -46,7 +47,7 @@ public class ParagraphNode(DNode? origin = null, DNode? rightOrigin = null) : DN
         while (current is not null)
         {
             str += current.Value;
-            current = node.RightOrigin;
+            current = node.NextChar;
         }
 
         return str;
