@@ -10,6 +10,4 @@ public partial class DocumentEditor
     {
         
     }
-    
-    
 }
