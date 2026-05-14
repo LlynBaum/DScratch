@@ -2,7 +2,7 @@ function initEditor() {
     const editor = document.getElementById("editor");
     editor?.addEventListener("click", e => {
         const element = e.target as HTMLElement;
-        if(element.classList.contains("paper")) {
+        if(element.hasAttribute("contenteditable")) {
             const lastParagraph = element.querySelector<HTMLElement>("p:last-of-type")!;
             if (!lastParagraph) return;
             
@@ -43,6 +43,7 @@ function initEditor() {
             }
         }
         
+        // @ts-ignore ts does not know what DotNet will be here when WASM has loaded
         await DotNet.invokeMethodAsync("DScratch.Client", "OnKeyPressCallback", payload);
     });
 

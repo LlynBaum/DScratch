@@ -3,6 +3,6 @@
 @switch (Node)
 {
     case ParagraphNode paragraphNode:
-        <p data-path-id="@paragraphNode.Id">@paragraphNode.Value</p>
+        <p data-path-id="@paragraphNode.Id">&ZeroWidthSpace;@paragraphNode.Value</p>
         break;
 }
