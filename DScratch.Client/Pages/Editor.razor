@@ -1,8 +1,13 @@
 @page "/"
-@rendermode InteractiveWebAssembly
 @using DScratch.Client.Components
 
-<div class="editor">
+<HeadContent>
+    <link rel="stylesheet" href="@Assets["document-styles.css"]"  />
+    <link rel="stylesheet" href="@Assets["document-tokens.css"]"  />
+    <script src="@Assets["js/editor.bundle.js"]" type="module"></script>
+</HeadContent>
+
+<div id="editor">
     <div class="editor-menu">
         <EditorMenu />
     </div>

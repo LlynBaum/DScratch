@@ -1,12 +1,14 @@
-using Microsoft.AspNetCore.Components;
+using DScratch.Client.Scripts;
+using Microsoft.JSInterop;
 
 namespace DScratch.Client.Components;
 
 public partial class DocumentEditor
 {
     private DScratchDocument document = new DScratchDocument();
-    
-    private void Callback(ChangeEventArgs args)
+
+    [JSInvokable]
+    public static void OnKeyPress(KeyPressInfo keyPressInfo)
     {
         
     }
