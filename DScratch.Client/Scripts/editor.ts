@@ -51,7 +51,7 @@ function initEditor() {
         const result: string[] = [];
         let current = element.parentElement; // Event is fired on text node within p element
         
-        while (current && !current.classList.contains("paper")) {
+        while (current && !current.hasAttribute("contenteditable")) {
             result.push(current.getAttribute("data-path-id")!);
             current = current.parentElement;
         }

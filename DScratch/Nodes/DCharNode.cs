@@ -5,4 +5,9 @@ public class DCharNode(char value, string id, DCharNode? origin, DCharNode? righ
     public char Value { get; } = value;
 
     public DCharNode? NextChar => (DCharNode?)RightOrigin;
+
+    public override void InsertChild(DNode node)
+    {
+        throw new InvalidOperationException("Can not insert Nodes into DCharNode.");
+    }
 }

@@ -6,29 +6,18 @@ public class ParagraphNode(string id, DNode? origin = null, DNode? rightOrigin =
 
     public DCharNode? Characters => (DCharNode?)FirstChild;
 
-    public void Insert(DCharNode node)
+    public override void InsertChild(DNode node)
     {
-        if (Characters is null)
+        if (node is not DCharNode charNode)
         {
-            FirstChild = node;
-            return;
-        }
-
-        if (node.Origin is null)
-        {
-            // TODO: insert at beginning
-        }
-        else
-        {
-            var insert = node.Origin;
-            insert.RightOrigin?.Origin = node;
-            insert.RightOrigin = node;
+            throw new InvalidOperationException("Can only insert DCharNode into Paragraph.");
         }
         
+        base.InsertChild(node);
         var index = node.Origin is not null ? FindCharNodeIndex(node.Origin) : 0;
-        Value = Value.Insert(index, node.Value.ToString());
+        Value = Value.Insert(index, charNode.Value.ToString());
     }
-
+    
     private int FindCharNodeIndex(DNode node)
     {
         var idx = 0;

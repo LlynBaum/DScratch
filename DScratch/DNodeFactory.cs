@@ -4,9 +4,9 @@ namespace DScratch;
 
 public class DNodeFactory(INodeIdGenerator nodeIdGenerator)
 {
-    public DCharNode Char(char value, DCharNode? origin, DCharNode? rightOrigin)
+    public DCharNode Char(char value)
     {
         var id = nodeIdGenerator.GetNextId();
-        return new DCharNode(value, id, origin, rightOrigin);
+        return new DCharNode(value, id, null, null);
     }
 }

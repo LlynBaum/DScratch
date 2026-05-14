@@ -12,6 +12,30 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode?
 
     public bool IsDeleted { get; protected set; } = false;
 
+    /// <summary>
+    /// Insert node as a child. The insert will be based on the origin and rightOrigin of the given node.
+    /// </summary>
+    /// <param name="node">The node to insert.</param>
+    public virtual void InsertChild(DNode node)
+    {
+        if (FirstChild is null)
+        {
+            FirstChild = node;
+            return;
+        }
+
+        if (node.Origin is null)
+        {
+            FirstChild.Origin = node;
+            FirstChild = node;
+        }
+        else
+        {
+            var insert = node.Origin;
+            insert.RightOrigin?.Origin = node;
+            insert.RightOrigin = node;
+        }
+    }
     
     /// <summary>
     /// Returns the child node of this node with the index. The index is 1 based.
