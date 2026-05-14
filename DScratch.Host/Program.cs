@@ -1,3 +1,4 @@
+using DScratch;
 using DScratch.Client;
 using DScratch.Host.Components;
 
@@ -6,7 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
-ServiceRegistration.RegisterServices(builder.Services, builder.Configuration, true);
+DScratchServiceRegistration.RegisterServices(builder.Services, builder.Configuration);
+ClientServiceRegistration.RegisterServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();
 

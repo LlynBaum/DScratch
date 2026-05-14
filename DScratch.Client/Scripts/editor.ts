@@ -43,7 +43,7 @@ function initEditor() {
             }
         }
         
-        await DotNet.invokeMethodAsync("DScratch.Client", "OnKeyPress", payload);
+        await DotNet.invokeMethodAsync("DScratch.Client", "OnKeyPressCallback", payload);
     });
 
     function getPath(element: HTMLElement): string[] {

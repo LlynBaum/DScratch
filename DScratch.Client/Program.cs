@@ -1,8 +1,10 @@
+using DScratch;
 using DScratch.Client;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-ServiceRegistration.RegisterServices(builder.Services, builder.Configuration, false);
+DScratchServiceRegistration.RegisterServices(builder.Services, builder.Configuration);
+ClientServiceRegistration.RegisterServices(builder.Services, builder.Configuration);
 
 await builder.Build().RunAsync();

@@ -1,15 +1,23 @@
 using DScratch.Client.Scripts;
-using Microsoft.JSInterop;
 
 namespace DScratch.Client.Components;
 
-public partial class DocumentEditor
+public partial class DocumentEditor : IDisposable
 {
     private DScratchDocument document = new DScratchDocument();
 
-    [JSInvokable]
-    public static void OnKeyPress(KeyPressInfo keyPressInfo)
+    protected override void OnInitialized()
+    {
+        KeyPressEventHelper.OnKeyPress += OnKeyPress;
+    }
+
+    public void OnKeyPress(KeyPressInfo keyPressInfo)
     {
         
+    }
+
+    public void Dispose()
+    {
+        KeyPressEventHelper.OnKeyPress -= OnKeyPress;
     }
 }

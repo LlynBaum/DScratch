@@ -1,3 +1,5 @@
+using DScratch.Nodes;
+
 namespace DScratch;
 
 public class DPage
