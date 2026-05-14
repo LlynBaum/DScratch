@@ -1,6 +1,6 @@
 namespace DScratch.Nodes;
 
-public class ParagraphNode(string id, DNode? origin = null, DNode? rightOrigin = null) : DNode(id, origin, rightOrigin, null)
+public class DParagraphNode(string id, DNode? origin = null, DNode? rightOrigin = null) : DNode(id, origin, rightOrigin, null)
 {
     public string Value { get; private set; } = string.Empty;
 
@@ -20,7 +20,7 @@ public class ParagraphNode(string id, DNode? origin = null, DNode? rightOrigin =
     
     private int FindCharNodeIndex(DNode node)
     {
-        var idx = 0;
+        var idx = 1;
         var current = Characters;
         while (true)
         {
