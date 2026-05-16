@@ -39,14 +39,10 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode?
         }
     }
     
-    /// <summary>
-    /// Returns the child node of this node with the index. The index is 1 based.
-    /// When child can not be found or index is 0, it returns null.
-    /// </summary>
-    /// <param name="index">Index of the child node</param>
-    /// <returns>The child node or null when not found</returns>
     public DNode? GetChild(int index)
     {
+        if (index < 0) return null;
+        
         var current = FirstChild;
         for (var i = 0; i < index; i++)
         {
@@ -54,17 +50,9 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode?
             current = current.RightOrigin;
         }
 
-        return current?.Origin;
+        return current;
     }
-    
-    /// <summary>
-    /// Returns the child node of this node with the index. The index is 1 based.
-    /// When child can not be found or index is 0, it returns null.
-    /// </summary>
-    /// <param name="index">Index of the child node</param>
-    /// <typeparam name="TNode">The expected type of the child node.</typeparam>
-    /// <returns>The child node or null when not found</returns>
-    /// <exception cref="ArgumentException">When the child node at index is not of this time.</exception>
+
     public TNode? GetChild<TNode>(int index) where TNode : DNode
     {
         var node = GetChild(index);
