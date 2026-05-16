@@ -3,7 +3,7 @@ using Microsoft.JSInterop;
 
 namespace DScratch.Client.Scripts;
 
-public class KeyPressEventHelper(IServiceProvider serviceProvider, ILogger<KeyPressEventHelper> logger)
+public class InputEventHelper(IServiceProvider serviceProvider, ILogger<InputEventHelper> logger)
 {
     private readonly DScratchDocument document = new DScratchDocument();
     
