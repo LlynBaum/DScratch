@@ -1,12 +1,13 @@
 namespace DScratch.Nodes;
 
-public class DParagraphNode(string id, DNode? origin = null, DNode? rightOrigin = null) : DNode(id, origin, rightOrigin, null)
+public class DParagraphNode(string id, DNode? origin, DNode? rightOrigin, DNode? parent) 
+    : DNode(id, origin, rightOrigin, parent, null)
 {
     public string Value { get; private set; } = string.Empty;
 
     public DCharNode? Characters => (DCharNode?)FirstChild;
 
-    public override void InsertChild(DNode node)
+    internal override void InsertChild(DNode node)
     {
         if (node is not DCharNode charNode)
         {

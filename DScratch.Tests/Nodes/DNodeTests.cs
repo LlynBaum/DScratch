@@ -6,8 +6,8 @@ public class DNodeTests
     public void InsertChild_AddNodeAsFirstChild_WhenParentHasNoChildYet()
     {
         // Arrange
-        var parent = new TestNode("1", null, null, null);
-        var insert = new TestNode("2", null, null, null);
+        var parent = new TestNode("1", null, null, null, null);
+        var insert = new TestNode("2", null, null, parent, null);
         
         // Act
         parent.InsertChild(insert);
@@ -20,10 +20,10 @@ public class DNodeTests
     public void InsertChild_AddNodeAsFirstChild_WhenNodeToInsertHasOriginNull()
     {
         // Arrange
-        var parent = new TestNode("1", null, null, null);
-        var node = new TestNode("2", null, null, null);
+        var parent = new TestNode("1", null, null, null, null);
+        var node = new TestNode("2", null, null, parent, null);
         parent.FirstChild = node;
-        var insert = new TestNode("3", null, node, null);
+        var insert = new TestNode("3", null, node, parent, null);
         
         // Act
         parent.InsertChild(insert);
@@ -36,10 +36,10 @@ public class DNodeTests
     public void InsertChild_AddNodeAfterOrigin_WhenNodeToInsertHasOrigin()
     {
         // Arrange
-        var parent = new TestNode("1", null, null, null);
-        var node = new TestNode("2", null, null, null);
+        var parent = new TestNode("1", null, null, null, null);
+        var node = new TestNode("2", null, null, parent, null);
         parent.FirstChild = node;
-        var insert = new TestNode("3", node, null, null);
+        var insert = new TestNode("3", null, node, parent, null);
         
         // Act
         parent.InsertChild(insert);
@@ -56,13 +56,13 @@ public class DNodeTests
     public void InsertChild_AddNodeAfterOrigin_AndBeforeRightOrigin()
     {
         // Arrange
-        var parent = new TestNode("1", null, null, null);
-        var node = new TestNode("2", null, null, null);
+        var parent = new TestNode("1", null, null, null, null);
+        var node = new TestNode("2", null, null, parent, null);
         parent.FirstChild = node;
-        var node2 = new TestNode("3", node, null, null);
+        var node2 = new TestNode("3", node, null, parent, null);
         node.RightOrigin = node2;
 
-        var insert = new TestNode("4", node, node2, null);
+        var insert = new TestNode("4", node, node2, parent, null);
         
         // Act
         parent.InsertChild(insert);

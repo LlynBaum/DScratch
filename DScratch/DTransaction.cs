@@ -4,7 +4,7 @@ namespace DScratch;
 
 public class DTransaction(DScratchDocument document)
 {
-    public void InsertAt(DNode node, string[] path, int offset)
+    public void InsertAt(DNode node, NodePath path, int offset)
     {
         var parent = FindNode(path);
         
@@ -18,24 +18,23 @@ public class DTransaction(DScratchDocument document)
 
         node.Origin = origin;
         node.RightOrigin = rightOrigin;
+        node.Parent = parent;
         
         parent.InsertChild(node);
     }
     
-    public DNode? FindNode(string[] path)
+    public DNode? FindNode(NodePath path)
     {
-        return document.FindNode(
+        return FindNodeInternal(
             node: document.Page.Root, 
-            path: path, 
-            pathPartIndex: path.Length - 1);
+            path: path);
     }
     
-    public TNode? FindNode<TNode>(string[] path) where TNode : DNode
+    public TNode? FindNode<TNode>(NodePath path) where TNode : DNode
     {
-        var node = document.FindNode(
+        var node = FindNodeInternal(
             node: document.Page.Root, 
-            path: path, 
-            pathPartIndex: path.Length - 1);
+            path: path);
         
         return node switch
         {
@@ -43,5 +42,26 @@ public class DTransaction(DScratchDocument document)
             null => null,
             _ => throw new ArgumentException("Node was not of expected type.")
         };
+    }
+    
+    internal static DNode? FindNodeInternal(DNode? node, NodePath path)
+    {
+        var pathPartIndex = 0;
+        
+        while (true)
+        {
+            if (node is null) return null;
+
+            var id = path[pathPartIndex++];
+            var current = node;
+
+            while (current is not null && current.Id != id)
+            {
+                current = current.RightOrigin;
+            }
+
+            if (pathPartIndex >= path.Length) return current;
+            node = node.FirstChild;
+        }
     }
 }

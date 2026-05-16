@@ -1,5 +1,4 @@
 using DScratch.Client.Scripts;
-using DScratch.Nodes;
 
 namespace DScratch.Client.Components;
 
@@ -27,7 +26,7 @@ public partial class DocumentEditor(DNodeFactory nodeFactory) : IDisposable
     {
         var transaction = new DTransaction(document);
         var node = nodeFactory.Char(keyPressInfo.Key.Value[0]);
-        transaction.InsertAt(node, keyPressInfo.Path, keyPressInfo.Selection.Offset);
+        transaction.InsertAt(node, keyPressInfo.GetNodePath(), keyPressInfo.Selection.Offset);
     }
     
     public void Dispose()

@@ -17,7 +17,7 @@ public class DPage
     {
         return new DPage(pageNumber)
         {
-            Root = new DParagraphNode("Darki-0") // TODO, should be done properly later with the id generator
+            Root = new DParagraphNode("Darki-0", null, null, null) // TODO, should be done properly later with the id generator
         };
     }
 }

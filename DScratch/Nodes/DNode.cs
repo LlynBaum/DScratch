@@ -1,12 +1,14 @@
 namespace DScratch.Nodes;
 
-public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode? firstChild)
+public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode? parent, DNode? firstChild)
 {
     public string Id { get; } = id;
     
     public DNode? Origin { get; internal set; } = origin;
 
     public DNode? RightOrigin { get; internal set; } = rightOrigin;
+
+    public DNode? Parent { get; set; } = parent;
 
     public DNode? FirstChild { get; internal set; } = firstChild;
 
@@ -16,7 +18,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode?
     /// Insert node as a child. The insert will be based on the origin and rightOrigin of the given node.
     /// </summary>
     /// <param name="node">The node to insert.</param>
-    public virtual void InsertChild(DNode node)
+    internal virtual void InsertChild(DNode node)
     {
         if (FirstChild is null)
         {
@@ -72,5 +74,19 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode?
             null => null,
             _ => throw new ArgumentException("Node was not of expected type.")
         };
+    }
+    
+    public NodePath GetPath()
+    {
+        List<string> result = [];
+
+        var current = this;
+        while (current is not null)
+        {
+            result.Add(current.Id);
+            current = current.Parent;
+        }
+        
+        return new NodePath(result);
     }
 }
