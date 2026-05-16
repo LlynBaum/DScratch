@@ -4,7 +4,7 @@ namespace DScratch.Client.Components;
 
 public partial class DocumentEditor(DNodeFactory nodeFactory) : IDisposable
 {
-    private DScratchDocument document = new DScratchDocument();
+    private readonly DScratchDocument document = new DScratchDocument();
 
     protected override void OnInitialized()
     {
@@ -15,7 +15,8 @@ public partial class DocumentEditor(DNodeFactory nodeFactory) : IDisposable
     {
         if (keyPressInfo.Key.Value.Length == 1 && char.IsLetter(keyPressInfo.Key.Value, 0))
         {
-            HandleLetter(keyPressInfo);
+            HandleLetter(keyPressInfo); // TODO: I think insert does not work as expected... the output of the tree is reversed lmao
+            StateHasChanged();
             return;
         }
 
@@ -28,7 +29,7 @@ public partial class DocumentEditor(DNodeFactory nodeFactory) : IDisposable
         var node = nodeFactory.Char(keyPressInfo.Key.Value[0]);
         transaction.InsertAt(node, keyPressInfo.GetNodePath(), keyPressInfo.Selection.Offset);
     }
-    
+
     public void Dispose()
     {
         KeyPressEventHelper.OnKeyPress -= OnKeyPress;
