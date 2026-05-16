@@ -1,3 +1,3 @@
 # DScratch
 
-A Web based document editor
+A Web based document editor. Work in progress...
