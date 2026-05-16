@@ -21,6 +21,7 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=714d5906_002Df5b7_002D41d2_002D8047_002Dc7e10448f6e0/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ReturnsExpectedNode_FromGivenPath" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;NUnit3x::13F4ED47-D3F2-7A46-6ED5-94A5A15AED29::net10.0::DScratch.Tests.DTransactionTests+FindNode&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::13F4ED47-D3F2-7A46-6ED5-94A5A15AED29::net10.0::DScratch.Tests.NodePathTests&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	
