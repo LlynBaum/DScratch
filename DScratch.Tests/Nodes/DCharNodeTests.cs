@@ -14,6 +14,17 @@ public class DCharNodeTests
         
         void Act() => node.InsertChild(new TestNode("2", null, null, null, null));
     }
+    
+    [Test]
+    public void DeleteChild_ThrowsException()
+    {
+        var node = new DCharNode('a', "1", null, null, null);
+
+        Assert.Throws<InvalidOperationException>(Act);
+        return;
+        
+        void Act() => node.DeleteChild("2");
+    }
 
     [Test]
     public void NextChar_ReturnsRightOrigin()

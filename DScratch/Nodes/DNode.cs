@@ -38,6 +38,21 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode?
             insert.RightOrigin = node;
         }
     }
+
+    internal virtual void DeleteChild(string id)
+    {
+        var current = FirstChild;
+        while (current != null)
+        {
+            if (current.Id == id)
+            {
+                current.IsDeleted = true;
+                break;
+            }
+            
+            current = current.RightOrigin;
+        }
+    }
     
     public DNode? GetChild(int index)
     {

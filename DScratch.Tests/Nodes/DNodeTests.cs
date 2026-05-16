@@ -87,6 +87,23 @@ public class DNodeTests
     }
 
     [Test]
+    public void DeleteChild_SetsIsDeletedToTrue_OnExpectedNote()
+    {
+        // Arrange
+        var parent = new TestNode("1", null, null, null, null);
+        var node = new TestNode("2", null, null, parent, null);
+        parent.FirstChild = node;
+        var node2 = new TestNode("3", node, null, parent, null);
+        node.RightOrigin = node2;
+        
+        // Act
+        parent.DeleteChild("3");
+        
+        // Assert
+        Assert.That(parent.FirstChild.RightOrigin!.IsDeleted, Is.True);
+    }
+
+    [Test]
     public void GetChild_ReturnsExpectedChild_ForIndex0()
     {
         // Arrange

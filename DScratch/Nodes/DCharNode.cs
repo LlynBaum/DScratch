@@ -9,6 +9,11 @@ public class DCharNode(char value, string id, DCharNode? origin, DCharNode? righ
 
     internal override void InsertChild(DNode node)
     {
-        throw new InvalidOperationException("Can not insert Nodes into DCharNode.");
+        throw new InvalidOperationException("DCharNode has no child nodes.");
+    }
+
+    internal override void DeleteChild(string id)
+    {
+        throw new InvalidOperationException("DCharNode has no child nodes.");
     }
 }

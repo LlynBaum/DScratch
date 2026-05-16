@@ -15,18 +15,25 @@ public class DParagraphNode(string id, DNode? origin, DNode? rightOrigin, DNode?
         }
         
         base.InsertChild(node);
-        var index = node.Origin is not null ? FindCharNodeIndex(node.Origin) : 0;
+        var index = node.Origin is not null ? FindCharNodeIndex(node.Origin.Id) + 1 : 0;
         Value = Value.Insert(index, charNode.Value.ToString());
     }
-    
-    private int FindCharNodeIndex(DNode node)
+
+    internal override void DeleteChild(string id)
     {
-        var idx = 1;
+        base.DeleteChild(id);
+        var index = FindCharNodeIndex(id);
+        Value = Value.Remove(index, 1);
+    }
+
+    private int FindCharNodeIndex(string id)
+    {
+        var idx = 0;
         var current = Characters;
         while (true)
         {
-            if (current is null) throw new ArgumentException("Could not find origin node index to insert the char value.");
-            if (current.Id == node.Id) return idx;
+            if (current is null) throw new ArgumentException($"Could not find node with id \"{id}\".");
+            if (current.Id == id) return idx;
             current = current.NextChar;
             idx++;
         }
