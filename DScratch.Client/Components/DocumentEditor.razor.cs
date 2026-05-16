@@ -20,6 +20,14 @@ public partial class DocumentEditor(DNodeFactory nodeFactory) : IDisposable
             return;
         }
 
+        switch (keyPressInfo.Key.Value)
+        {
+            case "Backspace":
+                var transaction = new DTransaction(document);
+                transaction.DeleteNode(keyPressInfo.GetNodePath(), keyPressInfo.Selection.Offset);
+                break;
+        }
+
         throw new NotImplementedException();
     }
 

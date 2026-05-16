@@ -23,6 +23,24 @@ public class DTransaction(DScratchDocument document)
         parent.InsertChild(node);
     }
     
+    public void DeleteNode(NodePath path, int selectionOffset)
+    {
+        var parent = FindNode(path);
+        
+        if (parent is null)
+        {
+            throw new ArgumentException("Could not find parent Node at the expected path.");
+        }
+
+        var nodeToDelete = parent.GetChild(selectionOffset);
+        if (nodeToDelete is null)
+        {
+            throw new ArgumentException("Can not find node to delete.");
+        }
+        
+        parent.DeleteChild(nodeToDelete.Id);
+    }
+    
     public DNode? FindNode(NodePath path)
     {
         return FindNodeInternal(
