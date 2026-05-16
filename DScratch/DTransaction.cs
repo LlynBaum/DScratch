@@ -61,7 +61,7 @@ public class DTransaction(DScratchDocument document)
             }
 
             if (pathPartIndex >= path.Length) return current;
-            node = node.FirstChild;
+            node = current?.FirstChild;
         }
     }
 }

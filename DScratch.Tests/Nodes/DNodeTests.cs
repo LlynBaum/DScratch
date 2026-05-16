@@ -39,7 +39,7 @@ public class DNodeTests
         var parent = new TestNode("1", null, null, null, null);
         var node = new TestNode("2", null, null, parent, null);
         parent.FirstChild = node;
-        var insert = new TestNode("3", null, node, parent, null);
+        var insert = new TestNode("3", node, null, parent, null);
         
         // Act
         parent.InsertChild(insert);

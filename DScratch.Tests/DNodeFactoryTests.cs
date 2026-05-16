@@ -9,7 +9,10 @@ public class DNodeFactoryTests
 
         var result = factory.Char('a');
         
-        Assert.That(result.Value, Is.EqualTo('a'));
-        Assert.That(result.Id, Is.EqualTo("0"));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.Value, Is.EqualTo('a'));
+            Assert.That(result.Id, Is.EqualTo("0"));
+        }
     }
 }
