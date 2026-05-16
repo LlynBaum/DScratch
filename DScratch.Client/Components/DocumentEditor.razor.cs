@@ -15,7 +15,7 @@ public partial class DocumentEditor(DNodeFactory nodeFactory) : IDisposable
     {
         if (keyPressInfo.Key.Value.Length == 1 && char.IsLetter(keyPressInfo.Key.Value, 0))
         {
-            HandleLetter(keyPressInfo); // TODO: I think insert does not work as expected... the output of the tree is reversed lmao
+            HandleLetter(keyPressInfo);
             StateHasChanged();
             return;
         }
