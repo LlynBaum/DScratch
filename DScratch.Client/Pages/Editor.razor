@@ -26,6 +26,7 @@
     {
         if (firstRender)
         {
+            // TODO: does this work, when I render this component statically?
             var dotNetRef = DotNetObjectReference.Create(InputEventHelper);
             await JsRuntime.InvokeVoidAsync("editor.initialize", dotNetRef);
         }

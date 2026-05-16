@@ -18,6 +18,8 @@ public class DParagraphNode(string id, DNode? origin, DNode? rightOrigin, DNode?
         var index = node.Origin is not null ? FindCharNodeIndex(node.Origin.Id) + 1 : 0;
         Value = Value.Insert(index, charNode.Value.ToString());
     }
+    
+    // TODO: override nad test InsertChildRange
 
     internal override void DeleteChild(string id)
     {
