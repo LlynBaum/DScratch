@@ -13,11 +13,14 @@ public class InputEventHelper(IServiceProvider serviceProvider, ILogger<InputEve
         var handler = serviceProvider.GetKeyedService<IEditorEventHandler>(keyPressInfo.InputType);
         if (handler is not null)
         {
+            // TODO: should returns diff, what has changed so it can be applied to the dom
             handler.Handle(keyPressInfo, document);
+            // TODO: dispatcher of diff to JS
         }
         else
         {
             logger.LogWarning("No handler registered for input type: {InputType}", keyPressInfo.InputType);
         }
+        
     }
 }

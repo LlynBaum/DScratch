@@ -4,6 +4,10 @@ namespace DScratch;
 
 public class DTransaction(DScratchDocument document)
 {
+    // TODO: store steps that have been taken, then commit all in one go. Like a transaction does, instead of instant change like right now.
+    // TODO: steps can produce a diff for the dom
+    // TODO: history of past transaction, so things like ctrl-z can be possible.
+    
     public void InsertAt(DNode node, NodePath path, int offset)
     {
         var parent = FindNode(path);
