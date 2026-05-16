@@ -1,3 +1,12 @@
+let bridgeReference: any = null;
+
+export {};
+declare global {
+    interface Window {
+        editor: any;
+    }
+}
+
 function initEditor() {
     const editor = document.getElementById("editor");
     editor?.addEventListener("click", e => {
@@ -22,18 +31,29 @@ function initEditor() {
         }
     });
 
-    editor?.addEventListener("keydown", async e => {
+    editor?.addEventListener("beforeinput", async event => {
+        const handledTypes = [
+            "insertText",
+            "insertParagraph",
+            "deleteContentBackward",
+            "deleteContentForward"
+        ];
+
+        if (!handledTypes.includes(event.inputType)) {
+            return; // Let the browser handle unsupported inputs natively for now
+        }
+
+        // Stop the browser from mutating the DOM natively!
+        event.preventDefault();
+
+        event.preventDefault();
         const selection = getSelection();
         const path = getPath(selection?.anchorNode as HTMLElement);
         const endPath = getPath(selection?.focusNode as HTMLElement);
         
         const payload = {
-            Key: {
-                Value: e.key,
-                Alt: e.altKey,
-                Ctrl: e.ctrlKey,
-                Shift: e.shiftKey
-            },
+            InputType: event.inputType,
+            Data: event.data,
             Path: path,
             Selection: {
                 Offset: selection?.anchorOffset,
@@ -43,8 +63,7 @@ function initEditor() {
             }
         }
         
-        // @ts-ignore ts does not know what DotNet will be here when WASM has loaded
-        await DotNet.invokeMethodAsync("DScratch.Client", "OnKeyPressCallback", payload);
+        await bridgeReference.invokeMethodAsync("OnKeyPressCallback", payload);
     });
 
     function getPath(element: HTMLElement): string[] {
@@ -60,4 +79,9 @@ function initEditor() {
     }
 }
 
-window.addEventListener("DOMContentLoaded", initEditor);
+window.editor = {
+    initialize: (dotNetRef: any) => {
+        bridgeReference = dotNetRef;
+        initEditor();
+    }
+};

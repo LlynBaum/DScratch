@@ -38,6 +38,27 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode?
             insert.RightOrigin = node;
         }
     }
+    
+    public void InsertChildRange(DNode first, DCharNode last)
+    {
+        if (FirstChild is null)
+        {
+            FirstChild = first;
+            return;
+        }
+        
+        if (first.Origin is null)
+        {
+            FirstChild.Origin = last;
+            FirstChild = first;
+        }
+        else
+        {
+            var insert = first.Origin;
+            insert.RightOrigin?.Origin = last;
+            insert.RightOrigin = first;
+        }
+    }
 
     internal virtual void DeleteChild(string id)
     {

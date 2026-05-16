@@ -1,14 +1,23 @@
+using DScratch.Client.Scripts.EventHandlers;
 using Microsoft.JSInterop;
 
 namespace DScratch.Client.Scripts;
 
-public static class KeyPressEventHelper
+public class KeyPressEventHelper(IServiceProvider serviceProvider, ILogger<KeyPressEventHelper> logger)
 {
-    public static event Action<KeyPressInfo> OnKeyPress = null!;
+    private readonly DScratchDocument document = new DScratchDocument();
     
     [JSInvokable]
-    public static void OnKeyPressCallback(KeyPressInfo keyPressInfo)
+    public void OnKeyPressCallback(KeyPressInfo keyPressInfo)
     {
-        OnKeyPress.Invoke(keyPressInfo);
+        var handler = serviceProvider.GetKeyedService<IEditorEventHandler>(keyPressInfo.InputType);
+        if (handler is not null)
+        {
+            handler.Handle(keyPressInfo, document);
+        }
+        else
+        {
+            logger.LogWarning("No handler registered for input type: {InputType}", keyPressInfo.InputType);
+        }
     }
 }

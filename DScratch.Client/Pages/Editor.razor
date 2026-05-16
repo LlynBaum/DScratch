@@ -1,5 +1,8 @@
 @page "/"
 @using DScratch.Client.Components
+@using DScratch.Client.Scripts
+@inject KeyPressEventHelper KeyPressEventHelper
+@inject IJSRuntime JsRuntime
 
 <HeadContent>
     <link rel="stylesheet" href="@Assets["document-styles.css"]"  />
@@ -16,3 +19,16 @@
         <DocumentEditor />
     </div>
 </div>
+
+@code {
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var dotNetRef = DotNetObjectReference.Create(KeyPressEventHelper);
+            await JsRuntime.InvokeVoidAsync("editor.initialize", dotNetRef);
+        }
+    }
+
+}

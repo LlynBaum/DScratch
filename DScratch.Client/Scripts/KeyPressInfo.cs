@@ -2,24 +2,15 @@ namespace DScratch.Client.Scripts;
 
 public class KeyPressInfo
 {
-    public required KeyInfo Key { get; init; }
+    public required string InputType { get; init; }
+    
+    public required string? Data { get; set; }
     
     public required string[] Path { get; init; }
     
     public required SelectionInfo Selection { get; init; }
 
     public NodePath GetNodePath() => NodePath.FromJs(Path);
-    
-    public class KeyInfo
-    {
-        public required string Value { get; init; }
-        
-        public bool Alt { get; init; }
-        
-        public bool Ctrl { get; init; }
-        
-        public bool Shift { get; init; }
-    }
     
     public class SelectionInfo
     {

@@ -23,6 +23,31 @@ public class DTransaction(DScratchDocument document)
         parent.InsertChild(node);
     }
     
+    public void InsertRange(DNode first, DCharNode last, NodePath path, int offset)
+    {
+        var parent = FindNode(path);
+        
+        if (parent is null)
+        {
+            throw new ArgumentException("Could not find parent Node at the expected path.");
+        }
+        
+        var origin = parent.GetChild(offset - 1);
+        var rightOrigin = parent.GetChild(offset);
+
+        var current = first;
+        while (current is not null)
+        {
+            current.Parent = parent;
+            current = current.RightOrigin;
+        }
+        
+        first.Origin = origin;
+        last.RightOrigin = rightOrigin;
+        
+        parent.InsertChildRange(first, last);
+    }
+    
     public void DeleteNode(NodePath path, int offset)
     {
         var parent = FindNode(path);
