@@ -39,7 +39,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode?
         }
     }
     
-    internal virtual void InsertChildRange(DNode first, DCharNode last)
+    internal virtual void InsertChildRange(DNode first, DNode last)
     {
         if (FirstChild is null)
         {

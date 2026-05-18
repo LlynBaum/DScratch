@@ -18,8 +18,33 @@ public class DParagraphNode(string id, DNode? origin, DNode? rightOrigin, DNode?
         var index = node.Origin is not null ? FindCharNodeIndex(node.Origin.Id) + 1 : 0;
         Value = Value.Insert(index, charNode.Value.ToString());
     }
-    
-    // TODO: override nad test InsertChildRange
+
+    internal override void InsertChildRange(DNode first, DNode last)
+    {
+        if (first is not DCharNode firstChar)
+        {
+            throw new InvalidOperationException("Can only insert DCharNode into Paragraph.");
+        }
+        
+        var str = "";
+        var current = firstChar;
+        while (current is not null)
+        {
+            str += current.Value;
+            
+            if (current.RightOrigin is not (null or DCharNode))
+            {
+                throw new InvalidOperationException("Can only insert DCharNode into Paragraph.");
+            }
+            
+            current = current.NextChar;
+        }
+        
+        base.InsertChildRange(first, last);
+        
+        var index = first.Origin is not null ? FindCharNodeIndex(first.Origin.Id) + 1 : 0;
+        Value = Value.Insert(index, str);
+    }
 
     internal override void DeleteChild(string id)
     {
