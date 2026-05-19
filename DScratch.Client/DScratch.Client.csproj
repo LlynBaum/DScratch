@@ -21,10 +21,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <AdditionalFiles Include="Scripts\schema.ts" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\DScratch\DScratch.csproj" />
     </ItemGroup>
 

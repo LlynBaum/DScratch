@@ -1,3 +1,5 @@
+import { applyTransaction } from "./transaction";
+
 let bridgeReference: any = null;
 
 export {};
@@ -83,5 +85,6 @@ window.editor = {
     initialize: (dotNetRef: any) => {
         bridgeReference = dotNetRef;
         initEditor();
-    }
+    },
+    applyTransaction: applyTransaction
 };

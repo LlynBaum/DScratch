@@ -23,7 +23,7 @@ public static class StepHelpers
                 return new StepDiff.DeleteTextDiff(path.Path, offset, 1);
             }
 
-            return new StepDiff.DeleteElementDiff(node.Id);
+            return new StepDiff.DeleteElementDiff(path.Path);
         }
     } 
 }
