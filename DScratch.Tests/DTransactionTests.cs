@@ -1,4 +1,5 @@
 using DScratch.Nodes;
+using DScratch.Transactions;
 
 namespace DScratch.Tests;
 
@@ -24,7 +25,7 @@ public class DTransactionTests
             var node = new TestNode("-1", null, null, null, null);
             
             // Act
-            Transaction.InsertAt(node, new NodePath(["2", "3"]), 0);
+            Transaction.Insert(node, new NodePath(["2", "3"]), 0);
             
             // Assert
             var insertedNode = Document.Page.Root.RightOrigin?.FirstChild?.FirstChild;
@@ -47,7 +48,7 @@ public class DTransactionTests
             var node = new TestNode("-1", null, null, null, null);
             
             // Act
-            Transaction.InsertAt(node, new NodePath(["2", "4"]), 0);
+            Transaction.Insert(node, new NodePath(["2", "4"]), 0);
             
             // Assert
             var insertedNode = Document.Page.Root.RightOrigin?.FirstChild?.RightOrigin?.FirstChild;
@@ -70,7 +71,7 @@ public class DTransactionTests
             var node = new TestNode("-1", null, null, null, null);
             
             // Act
-            Transaction.InsertAt(node, new NodePath(["2", "4"]), 1);
+            Transaction.Insert(node, new NodePath(["2", "4"]), 1);
             
             // Assert
             var insertedNode = Document.Page.Root.RightOrigin?.FirstChild?.RightOrigin?.FirstChild?.RightOrigin;

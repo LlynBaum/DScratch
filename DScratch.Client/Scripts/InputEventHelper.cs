@@ -3,7 +3,7 @@ using Microsoft.JSInterop;
 
 namespace DScratch.Client.Scripts;
 
-public class InputEventHelper(IServiceProvider serviceProvider, ILogger<InputEventHelper> logger)
+public class InputEventHelper(IDScratchService dScratchService, IServiceProvider serviceProvider, ILogger<InputEventHelper> logger)
 {
     private readonly DScratchDocument document = new DScratchDocument();
     
@@ -13,9 +13,15 @@ public class InputEventHelper(IServiceProvider serviceProvider, ILogger<InputEve
         var handler = serviceProvider.GetKeyedService<IEditorEventHandler>(keyPressInfo.InputType);
         if (handler is not null)
         {
-            // TODO: should returns diff, what has changed so it can be applied to the dom
-            handler.Handle(keyPressInfo, document);
-            // TODO: dispatcher of diff to JS
+            var transaction = handler.Handle(keyPressInfo, document);
+
+            if (transaction is null)
+            {
+                return;
+            }
+
+            var result = dScratchService.Apply(transaction);
+            // TODO: dispatcher result to JS
         }
         else
         {
