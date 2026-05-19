@@ -4,7 +4,7 @@ namespace DScratch.Transactions.Steps;
 
 internal class InsertRangeStep(DNode first, DCharNode last, NodePath path, int offset) : IStep
 {
-    public IStep.StepDiff Execute(DScratchDocument document)
+    public IReadOnlyList<StepDiff> Execute(DScratchDocument document)
     {
         var parent = document.FindNode(path);
         if (parent is null)
@@ -15,9 +15,11 @@ internal class InsertRangeStep(DNode first, DCharNode last, NodePath path, int o
         var origin = parent.GetChild(offset - 1);
         var rightOrigin = parent.GetChild(offset);
 
+        var steps = new List<StepDiff>();
         var current = first;
         while (current is not null)
         {
+            steps.Add(current.ToInsert(path, offset));
             current.Parent = parent;
             current = current.RightOrigin;
         }
@@ -26,14 +28,11 @@ internal class InsertRangeStep(DNode first, DCharNode last, NodePath path, int o
         last.RightOrigin = rightOrigin;
         
         parent.InsertChildRange(first, last);
-
-        return new InsertRangeDiff(path, offset);
+        return steps;
     }
 
-    public IStep.StepDiff Revert(DScratchDocument document)
+    public IReadOnlyList<StepDiff> Revert(DScratchDocument document)
     {
         throw new NotImplementedException();
     }
-
-    public record InsertRangeDiff(NodePath Path, int Offset) : IStep.StepDiff(IStep.StepType.InsertRange);
 }

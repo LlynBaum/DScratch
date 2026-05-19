@@ -4,7 +4,7 @@ namespace DScratch.Transactions.Steps;
 
 internal class InsertStep(DNode node, NodePath path, int offset) : IStep
 {
-    public IStep.StepDiff Execute(DScratchDocument document)
+    public IReadOnlyList<StepDiff> Execute(DScratchDocument document)
     {
         var parent = document.FindNode(path);
         if (parent is null)
@@ -20,14 +20,11 @@ internal class InsertStep(DNode node, NodePath path, int offset) : IStep
         node.Parent = parent;
         
         parent.InsertChild(node);
-
-        return new InsertDiff(path, offset);
+        return [node.ToInsert(path, offset)];
     }
 
-    public IStep.StepDiff Revert(DScratchDocument document)
+    public IReadOnlyList<StepDiff> Revert(DScratchDocument document)
     {
         throw new NotImplementedException();
     }
-
-    public record InsertDiff(NodePath Path, int Offset) : IStep.StepDiff(IStep.StepType.Insert);
 }

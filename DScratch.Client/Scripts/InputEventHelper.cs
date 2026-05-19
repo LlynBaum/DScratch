@@ -27,6 +27,5 @@ public class InputEventHelper(IDScratchService dScratchService, IServiceProvider
         {
             logger.LogWarning("No handler registered for input type: {InputType}", keyPressInfo.InputType);
         }
-        
     }
 }

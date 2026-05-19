@@ -2,7 +2,7 @@ namespace DScratch.Transactions.Steps;
 
 public class DeleteStep(NodePath path, int offset) : IStep
 {
-    public IStep.StepDiff Execute(DScratchDocument document)
+    public IReadOnlyList<StepDiff> Execute(DScratchDocument document)
     {
         var parent = document.FindNode(path);
         
@@ -18,14 +18,11 @@ public class DeleteStep(NodePath path, int offset) : IStep
         }
         
         parent.DeleteChild(nodeToDelete.Id);
-        
-        return new DeleteDiff(path, offset);
+        return [nodeToDelete.ToDelete(path, offset)];
     }
 
-    public IStep.StepDiff Revert(DScratchDocument document)
+    public IReadOnlyList<StepDiff> Revert(DScratchDocument document)
     {
         throw new NotImplementedException();
     }
-    
-    public record DeleteDiff(NodePath Path, int Offset) : IStep.StepDiff(IStep.StepType.Delete);
 }

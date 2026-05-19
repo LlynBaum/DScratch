@@ -2,6 +2,8 @@ namespace DScratch.Nodes;
 
 public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode? parent, DNode? firstChild)
 {
+    public abstract string TagName { get; }
+    
     public string Id { get; } = id;
     
     public DNode? Origin { get; internal set; } = origin;

@@ -7,13 +7,10 @@ public class DTransaction(DScratchDocument document)
 {
     private readonly List<IStep> steps = [];
     
-    // TODO: store steps that have been taken, then commit all in one go. Like a transaction does, instead of instant change like right now.
-    // TODO: steps can produce a diff for the dom
-    // TODO: history of past transaction, so things like ctrl-z can be possible.
-
-    internal IReadOnlyList<IStep.StepDiff> Commit()
+    internal TransactionResult Commit()
     {
-        return steps.Select(s => s.Execute(document)).ToList();
+        var diffs = steps.SelectMany(s => s.Execute(document)).ToList();
+        return new TransactionResult(diffs);
     }
     
     public DTransaction Insert(DNode node, NodePath path, int offset)

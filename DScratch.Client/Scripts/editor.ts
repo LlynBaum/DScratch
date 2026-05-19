@@ -63,7 +63,7 @@ function initEditor() {
             }
         }
         
-        await bridgeReference.invokeMethodAsync("OnKeyPressCallback", payload);
+        await bridgeReference?.invokeMethodAsync("OnKeyPressCallback", payload);
     });
 
     function getPath(element: HTMLElement): string[] {

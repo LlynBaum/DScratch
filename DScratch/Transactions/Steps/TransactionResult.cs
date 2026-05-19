@@ -1,3 +1,3 @@
 namespace DScratch.Transactions.Steps;
 
-public record TransactionResult(IReadOnlyList<IStep.StepDiff> Diffs);
+public record TransactionResult(IReadOnlyList<StepDiff> Diffs);

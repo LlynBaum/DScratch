@@ -3,6 +3,8 @@ namespace DScratch.Nodes;
 public class DParagraphNode(string id, DNode? origin, DNode? rightOrigin, DNode? parent) 
     : DNode(id, origin, rightOrigin, parent, null)
 {
+    public override string TagName => "p";
+    
     public string Value { get; private set; } = string.Empty;
 
     public DCharNode? Characters => (DCharNode?)FirstChild;
