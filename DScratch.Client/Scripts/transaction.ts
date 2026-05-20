@@ -96,6 +96,7 @@ function handleSplitTextStep(step: SplitTextStep) {
 
     // TODO: split only allows to split text, everything else can be done with move. But does it do that xD
     // TODO: maybe do it fancy like insertElement...?
+    // TODO: maybe instead of split, move can take a length and only moves the length of the text... or maybe just a moveText that moves the text
     if(element instanceof Text) {
         element.splitText(step.Offset);
     }
