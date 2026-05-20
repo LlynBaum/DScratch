@@ -1,4 +1,5 @@
 import { applyTransaction } from "./transaction";
+import { handleInput } from "./inputs";
 
 let bridgeReference: any = null;
 
@@ -11,106 +12,30 @@ declare global {
 
 function initEditor() {
     const editor = document.getElementById("editor");
-    editor?.addEventListener("click", e => {
-        const element = e.target as HTMLElement;
-        if(element.hasAttribute("contenteditable")) {
-            const lastParagraph = element.querySelector<HTMLElement>("p:last-of-type")!;
-            if (!lastParagraph) return;
-            
-            const selection = window.getSelection();
-
-            const textNode = lastParagraph.firstChild || lastParagraph;
-            const offset = textNode.nodeType === Node.TEXT_NODE
-                ? (textNode.textContent?.length || 0)
-                : 0;
-
-            const range = document.createRange();
-            range.setStart(textNode, offset);
-            range.collapse(true);
-
-            selection?.removeAllRanges();
-            selection?.addRange(range);
-        }
-    });
-
-    editor?.addEventListener("beforeinput", async event => {
-        const handledTypes = [
-            "insertText",
-            "insertParagraph",
-            "deleteContentBackward",
-            "deleteContentForward"
-        ];
-
-        if (!handledTypes.includes(event.inputType)) {
-            return; // Let the browser handle unsupported inputs natively for now
-        }
-
-        event.preventDefault();
-        
-        const selection = getSelection();
-        
-        const anchorElement = selection?.anchorNode?.nodeType == Node.ELEMENT_NODE 
-            ? selection.anchorNode as Element
-            : selection?.anchorNode?.parentElement!;
-
-        const focusElement = selection?.focusNode?.nodeType == Node.ELEMENT_NODE
-            ? selection.focusNode as Element
-            : selection?.focusNode?.parentElement!;
-        
-        const path = getPath(anchorElement);
-        const offset = getAbsolutOffset(anchorElement, selection?.anchorNode!, selection?.anchorOffset);
-        const endPath = getPath(focusElement);
-        const endOffset = getAbsolutOffset(focusElement, selection?.focusNode!, selection?.focusOffset);
-        
-        const payload = {
-            InputType: event.inputType,
-            Data: event.data,
-            Path: path,
-            Selection: {
-                Offset: offset,
-                Direction: selection?.direction,
-                End: endPath,
-                EndOffset: endOffset
-            }
-        }
-        
-        await bridgeReference?.invokeMethodAsync("OnKeyPressCallback", payload);
-    });
+    editor?.addEventListener("click", setCursorToEnd);
+    editor?.addEventListener("beforeinput", async event => await handleInput(event, bridgeReference));
 }
 
-function getPath(element: Element): string[] {
-    const result: string[] = [];
-    let current = element.parentElement; // Event is fired on text node within p element
-
-    while (current && !current.hasAttribute("contenteditable")) {
-        result.push(current.getAttribute("data-path-id")!);
-        current = current.parentElement;
-    }
-
-    return result;
-}
-
-function getAbsolutOffset(parent: Element, targetNode: Node, relativeOffset?: number) {
-    if(!relativeOffset) {
-        return 0;
+function setCursorToEnd(event: PointerEvent) {
+    const element = event.target as HTMLElement;
+    if (!element.hasAttribute("contenteditable")) {
+        return;
     }
     
-    const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
+    const lastParagraph = element.querySelector<HTMLElement>("p:last-of-type")!;
+    if (!lastParagraph) return;
     
-    let absolutOffset = 0;
-    let currentNode = walker.nextNode();
+    const selection = window.getSelection();
+    const textNode = lastParagraph.firstChild || lastParagraph;
+    const offset = textNode.nodeType === Node.TEXT_NODE
+        ? (textNode.textContent?.length || 0)
+        : 0;
     
-    while (currentNode) {
-        if(currentNode == targetNode) {
-            absolutOffset += relativeOffset;
-            break;
-        }
-        
-        absolutOffset += currentNode.nodeValue?.length || 0;
-        currentNode = walker.nextNode();
-    }
-    
-    return absolutOffset;
+    const range = document.createRange();
+    range.setStart(textNode, offset);
+    range.collapse(true);
+    selection?.removeAllRanges();
+    selection?.addRange(range);
 }
 
 window.editor = {

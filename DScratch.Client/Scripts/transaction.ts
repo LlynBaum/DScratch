@@ -113,7 +113,6 @@ function handleMoveStep(step: MoveStep) {
     insertElement(element, newParent, step.TargetOffset);
 }
 
-// TODO: really that fancy. I mean it HAS to be the given parent. Everything else might break my C# stuff
 function insertElement(element: Element, parent: Element, offset: number) {
     if(!parent.hasChildNodes()){
         parent.appendChild(element);
