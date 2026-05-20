@@ -72,18 +72,25 @@ function handleInsertTextStep(step: InsertTextStep) {
     const element = findNode(step.Parent);
     if (!element) return;
 
-    // TODO: <p> abc <b> def </b> ghi </p>     insert text here does not work currently - maybe unify with insert elements
-    const text = element.innerText;
-    element.innerText = text.slice(0, step.Offset) + step.Text + text.slice(step.Offset);
+    const { node, relativeOffset } = findTextNodeAtOffset(element, step.Offset);
+    if(node) {
+        const text = node.textContent;
+        node.textContent = text.slice(0, relativeOffset) + step.Text + text.slice(relativeOffset);
+        
+    } else {
+        element.appendChild(document.createTextNode(step.Text));
+    }
 }
 
 function handleDeleteTextStep(step: DeleteTextStep) {
     const element = findNode(step.Parent);
     if (!element) return;
 
-    // TODO: <p> abc <b> def </b> ghi </p>     removing text here does not work currently - maybe unify with delete elements
-    const text = element.innerText;
-    element.innerText = text.slice(0, step.Offset) + text.slice(step.Offset + step.Length);
+    const { node, relativeOffset } = findTextNodeAtOffset(element, step.Offset);
+    if(node) {
+        const text = node.textContent;
+        node.textContent = text.slice(0, relativeOffset) + text.slice(relativeOffset + step.Length);
+    }
 }
 
 function handleInsertElementStep(step: InsertElementStep) {
@@ -119,29 +126,10 @@ function insertElement(element: Element, parent: Element, offset: number) {
         return;
     }
 
-    let currentOffset = 0;
-    let targetTextNode: Text | null = null;
-    let relativeOffset = 0;
-
-    const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
-    let currentNode = walker.nextNode() as Text | null;
-
-    while (currentNode) {
-        const nodeLength = currentNode.textContent?.length || 0;
-
-        if (currentOffset + nodeLength >= offset) {
-            targetTextNode = currentNode;
-            relativeOffset = offset - currentOffset;
-            break;
-        }
-
-        currentOffset += nodeLength;
-        currentNode = walker.nextNode() as Text | null;
-    }
-
-    if (targetTextNode) {
-        const remainingTextNode = targetTextNode.splitText(relativeOffset);
-        targetTextNode.parentNode?.insertBefore(element, remainingTextNode);
+    const { node, relativeOffset } = findTextNodeAtOffset(parent, offset);
+    if (node) {
+        const remainingTextNode = node.splitText(relativeOffset);
+        node.parentNode?.insertBefore(element, remainingTextNode);
     } else {
         parent.appendChild(element);
     }
@@ -154,4 +142,23 @@ function findNode(path: string[]) : HTMLElement | null {
         console.error(`Could not find node at path '${query}'.`);
     }
     return element;
+}
+
+function findTextNodeAtOffset(parent: Element, offset: number){
+    const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
+    
+    let currentOffset = 0;
+    let currentNode = walker.nextNode() as Text | null;
+    
+    while (currentNode) {
+        const nodeLength = currentNode.textContent?.length || 0;
+
+        if (currentOffset + nodeLength >= offset) {
+            return { node: currentNode, relativeOffset: offset - currentOffset };
+        }
+
+        currentOffset += nodeLength;
+        currentNode = walker.nextNode() as Text | null;
+    }
+    return { node: null, relativeOffset: 0 };
 }
