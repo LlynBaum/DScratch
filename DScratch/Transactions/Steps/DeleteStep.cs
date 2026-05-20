@@ -11,13 +11,13 @@ public class DeleteStep(NodePath path, int offset) : IStep
             throw new ArgumentException("Could not find parent Node at the expected path.");
         }
 
-        var nodeToDelete = parent.GetChild(offset - 1);
+        var nodeToDelete = parent.ChildNodes[offset - 1];
         if (nodeToDelete is null)
         {
             throw new ArgumentException("Can not find node to delete.");
         }
         
-        parent.DeleteChild(nodeToDelete.Id);
+        nodeToDelete.Delete();
         return [nodeToDelete.ToDelete(path, offset)];
     }
 

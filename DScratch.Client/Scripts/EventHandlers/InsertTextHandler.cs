@@ -14,8 +14,8 @@ public class InsertTextHandler(DNodeFactory nodeFactory) : IEditorEventHandler
         }
         
         var transaction = new DTransaction(document);
-        var (first, last) = nodeFactory.String(keyPressInfo.Data);
-        transaction.InsertRange(first, last, keyPressInfo.GetNodePath(), keyPressInfo.Selection.Offset);
+        var textNode = nodeFactory.String(keyPressInfo.Data);
+        transaction.Insert(textNode, keyPressInfo.GetNodePath(), keyPressInfo.Selection.Offset);
         return transaction;
     }
 }

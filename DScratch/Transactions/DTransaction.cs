@@ -19,12 +19,6 @@ public class DTransaction(DScratchDocument document)
         return this;
     }
     
-    public DTransaction InsertRange(DNode first, DCharNode last, NodePath path, int offset)
-    {
-        steps.Add(new InsertRangeStep(first, last, path, offset));
-        return this;
-    }
-    
     public DTransaction DeleteNode(NodePath path, int offset)
     {
         steps.Add(new DeleteStep(path, offset));

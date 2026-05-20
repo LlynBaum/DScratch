@@ -2,13 +2,13 @@ using DScratch.Nodes;
 
 namespace DScratch.Tests.Nodes;
 
-public class DParagraphNodeTests
+public class ParagraphNodeTests
 {
     [Test]
     public void InsertChild_ThrowsInvalidOperationException_WhenNodeIsNodCharNode()
     {
         // Arrange
-        var paragraph = new DParagraphNode("1", null, null, null);
+        var paragraph = new ParagraphNode("1", null, null, null);
         var node = new TestNode("2", null, null, paragraph, null);
 
         // Assert
@@ -23,10 +23,10 @@ public class DParagraphNodeTests
     public void InsertChild_UpdatesTextValue_AsExpected()
     {
         // Arrange
-        var paragraph = new DParagraphNode("1", null, null, null);
-        var char1 = new DCharNode('a', "2", null, null, paragraph);
-        var char3 = new DCharNode('c', "3", char1, null, paragraph);
-        var char2 = new DCharNode('b', "4", char1, char3, paragraph);
+        var paragraph = new ParagraphNode("1", null, null, null);
+        var char1 = new CharNode('a', "2", null, null, paragraph);
+        var char3 = new CharNode('c', "3", char1, null, paragraph);
+        var char2 = new CharNode('b', "4", char1, char3, paragraph);
         
         // Act
         paragraph.InsertChild(char1);
@@ -44,10 +44,10 @@ public class DParagraphNodeTests
     public void InsertChildRange_UpdatesTextValue_AsExpected()
     {
         // Arrange
-        var paragraph = new DParagraphNode("1", null, null, null);
-        var char1 = new DCharNode('a', "2", null, null, paragraph);
-        var char3 = new DCharNode('c', "3", char1, null, paragraph);
-        var char2 = new DCharNode('b', "4", char1, char3, paragraph);
+        var paragraph = new ParagraphNode("1", null, null, null);
+        var char1 = new CharNode('a', "2", null, null, paragraph);
+        var char3 = new CharNode('c', "3", char1, null, paragraph);
+        var char2 = new CharNode('b', "4", char1, char3, paragraph);
         char1.RightOrigin = char2;
         char3.Origin = char2;
         
@@ -65,10 +65,10 @@ public class DParagraphNodeTests
     public void DeleteChild_RemovesCharacterFromValueString()
     {
         // Arrange
-        var paragraph = new DParagraphNode("1", null, null, null);
-        var char1 = new DCharNode('a', "2", null, null, paragraph);
-        var char3 = new DCharNode('c', "3", char1, null, paragraph);
-        var char2 = new DCharNode('b', "4", char1, char3, paragraph);
+        var paragraph = new ParagraphNode("1", null, null, null);
+        var char1 = new CharNode('a', "2", null, null, paragraph);
+        var char3 = new CharNode('c', "3", char1, null, paragraph);
+        var char2 = new CharNode('b', "4", char1, char3, paragraph);
         paragraph.InsertChild(char1);
         paragraph.InsertChild(char3);
         paragraph.InsertChild(char2);

@@ -1,8 +1,8 @@
 namespace DScratch.Nodes;
 
-public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode? parent, DNode? firstChild)
+public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode? parent, List<DNode>? childNodes = null)
 {
-    public abstract string TagName { get; }
+    private readonly List<DNode> childNodes = childNodes ?? [];
     
     public string Id { get; } = id;
     
@@ -10,96 +10,56 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode?
 
     public DNode? RightOrigin { get; internal set; } = rightOrigin;
 
+    public bool IsDeleted { get; private set; }
+
     public DNode? Parent { get; set; } = parent;
+    
+    public IReadOnlyList<DNode> ChildNodes => childNodes;
 
-    public DNode? FirstChild { get; internal set; } = firstChild;
+    public DNode? FirstChild => childNodes.FirstOrDefault();
 
-    public bool IsDeleted { get; protected set; } = false;
+    public DNode? LastChild => childNodes.LastOrDefault();
 
+    internal void Remove()
+    {
+        Origin?.RightOrigin = RightOrigin;
+        RightOrigin?.Origin = Origin;
+        Parent?.RemoveChild(this);
+    }
+    
+    private void RemoveChild(DNode node)
+    {
+        var index = childNodes.FindIndex(n => n.Id == node.Id);
+        childNodes.RemoveAt(index);
+    }
+
+    internal void Delete()
+    {
+        IsDeleted = true;
+    }
+    
     /// <summary>
     /// Insert node as a child. The insert will be based on the origin and rightOrigin of the given node.
     /// </summary>
     /// <param name="node">The node to insert.</param>
     internal virtual void InsertChild(DNode node)
     {
-        if (FirstChild is null)
-        {
-            FirstChild = node;
-            return;
-        }
-
         if (node.Origin is null)
         {
-            FirstChild.Origin = node;
-            FirstChild = node;
+            FirstChild?.Origin = node;
+            childNodes.Insert(0, node);
         }
         else
         {
             var insert = node.Origin;
             insert.RightOrigin?.Origin = node;
             insert.RightOrigin = node;
-        }
-    }
-    
-    internal virtual void InsertChildRange(DNode first, DNode last)
-    {
-        if (FirstChild is null)
-        {
-            FirstChild = first;
-            return;
-        }
-        
-        if (first.Origin is null)
-        {
-            FirstChild.Origin = last;
-            FirstChild = first;
-        }
-        else
-        {
-            var insert = first.Origin;
-            insert.RightOrigin?.Origin = last;
-            insert.RightOrigin = first;
-        }
-    }
-
-    internal virtual void DeleteChild(string id)
-    {
-        var current = FirstChild;
-        while (current != null)
-        {
-            if (current.Id == id)
-            {
-                current.IsDeleted = true;
-                break;
-            }
             
-            current = current.RightOrigin;
+            var index = childNodes.FindIndex(n => n.Id == insert.Id);
+            childNodes.Insert(index + 1, node);
         }
-    }
-    
-    public DNode? GetChild(int index)
-    {
-        if (index < 0) return null;
         
-        var current = FirstChild;
-        for (var i = 0; i < index; i++)
-        {
-            if(current is null) break;
-            current = current.RightOrigin;
-        }
-
-        return current;
-    }
-
-    public TNode? GetChild<TNode>(int index) where TNode : DNode
-    {
-        var node = GetChild(index);
-        return node switch
-        {
-            TNode t => t,
-            null => null,
-            _ => throw new ArgumentException("Node was not of expected type.")
-        };
+        // TODO: try merge with Origin or RightOrigin
     }
     
     public NodePath GetPath()

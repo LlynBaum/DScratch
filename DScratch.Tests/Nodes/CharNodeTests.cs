@@ -2,12 +2,12 @@ using DScratch.Nodes;
 
 namespace DScratch.Tests.Nodes;
 
-public class DCharNodeTests
+public class CharNodeTests
 {
     [Test]
     public void InsertChild_ThrowsException()
     {
-        var node = new DCharNode('a', "1", null, null, null);
+        var node = new CharNode('a', "1", null, null, null);
 
         Assert.Throws<InvalidOperationException>(Act);
         return;
@@ -18,7 +18,7 @@ public class DCharNodeTests
     [Test]
     public void DeleteChild_ThrowsException()
     {
-        var node = new DCharNode('a', "1", null, null, null);
+        var node = new CharNode('a', "1", null, null, null);
 
         Assert.Throws<InvalidOperationException>(Act);
         return;
@@ -29,9 +29,9 @@ public class DCharNodeTests
     [Test]
     public void NextChar_ReturnsRightOrigin()
     {
-        var node = new DCharNode('a', "1", null, null, null);
-        var node2 = new DCharNode('a', "2", null, null, null);
-        var node3 = new DCharNode('a', "3", node2, node, null);
+        var node = new CharNode('a', "1", null, null, null);
+        var node2 = new CharNode('a', "2", null, null, null);
+        var node3 = new CharNode('a', "3", node2, node, null);
 
         var actual = node3.NextChar;
         

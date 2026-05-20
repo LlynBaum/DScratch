@@ -4,26 +4,37 @@ namespace DScratch;
 
 public class DNodeFactory(INodeIdGenerator nodeIdGenerator)
 {
-    public (DCharNode first, DCharNode last) String(string value)
+    public TextNode String(string value)
     {
-        var id = nodeIdGenerator.GetNextId();
-        var firstNode = new DCharNode(value[0], id, null, null, null);
+        var textNode = new TextNode(nodeIdGenerator.GetNextId(), null, null, null);
+        
+        var firstNode = new CharNode(
+            value: value[0], 
+            id: nodeIdGenerator.GetNextId(), 
+            origin: null, 
+            rightOrigin: null, 
+            parent: textNode);
         
         var current = firstNode;
         for (var i = 1; i < value.Length; i++)
         {
-            id = nodeIdGenerator.GetNextId();
-            var newNode = new DCharNode(value[i], id, current, null, null);
+            var newNode = new CharNode(
+                value: value[i],
+                id: nodeIdGenerator.GetNextId(), 
+                origin: current,
+                rightOrigin: null,
+                parent: textNode);
+            
             current.RightOrigin = newNode;
             current = newNode;
         }
 
-        return (firstNode, current);
+        return textNode;
     }
     
-    public DCharNode Char(char value)
+    public CharNode Char(char value)
     {
         var id = nodeIdGenerator.GetNextId();
-        return new DCharNode(value, id, null, null, null);
+        return new CharNode(value, id, null, null, null);
     }
 }

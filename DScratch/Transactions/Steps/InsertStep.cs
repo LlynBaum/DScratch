@@ -12,8 +12,8 @@ internal class InsertStep(DNode node, NodePath path, int offset) : IStep
             throw new ArgumentException("Could not find parent Node at the expected path.");
         }
         
-        var origin = parent.GetChild(offset - 1);
-        var rightOrigin = parent.GetChild(offset);
+        var origin = parent.ChildNodes[offset - 1];
+        var rightOrigin = parent.ChildNodes[offset];
 
         node.Origin = origin;
         node.RightOrigin = rightOrigin;

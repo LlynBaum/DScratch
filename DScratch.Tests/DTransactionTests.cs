@@ -155,7 +155,7 @@ public class DTransactionTests
             Assert.Throws<ArgumentException>(Act);
             return;
 
-            void Act() => Transaction.FindNode<DCharNode>(new NodePath(["1"]));
+            void Act() => Transaction.FindNode<CharNode>(new NodePath(["1"]));
         }
     }
     

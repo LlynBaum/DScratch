@@ -125,8 +125,9 @@ function insertElement(element: Element, parent: Element, offset: number) {
         parent.appendChild(element);
         return;
     }
-
+    
     const { node, relativeOffset } = findTextNodeAtOffset(parent, offset);
+    
     if (node) {
         const remainingTextNode = node.splitText(relativeOffset);
         node.parentNode?.insertBefore(element, remainingTextNode);

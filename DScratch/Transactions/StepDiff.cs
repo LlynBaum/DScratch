@@ -1,5 +1,6 @@
 namespace DScratch.Transactions;
 
+// ReSharper disable NotAccessedPositionalProperty.Global / is deserialized to be used in JS.
 public abstract record StepDiff(string Type)
 {
     /// <summary>
