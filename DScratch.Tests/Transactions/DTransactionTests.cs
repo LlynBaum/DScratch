@@ -1,7 +1,8 @@
 using DScratch.Nodes;
+using DScratch.Tests.Helpers;
 using DScratch.Transactions;
 
-namespace DScratch.Tests;
+namespace DScratch.Tests.Transactions;
 
 public class DTransactionTests
 {

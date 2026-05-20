@@ -1,4 +1,5 @@
 using DScratch.Nodes;
+using DScratch.Tests.Helpers;
 
 namespace DScratch.Tests.Nodes;
 

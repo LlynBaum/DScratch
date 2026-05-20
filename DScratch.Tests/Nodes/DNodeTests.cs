@@ -1,4 +1,6 @@
-﻿namespace DScratch.Tests.Nodes;
+﻿using DScratch.Tests.Helpers;
+
+namespace DScratch.Tests.Nodes;
 
 public class DNodeTests
 {

@@ -1,4 +1,4 @@
-namespace DScratch.Tests;
+namespace DScratch.Tests.Helpers;
 
 public class TestNodeIdGenerator : INodeIdGenerator
 {

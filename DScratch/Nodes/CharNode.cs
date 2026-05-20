@@ -4,8 +4,6 @@ public class CharNode(char value, string id, CharNode? origin, CharNode? rightOr
     : DNode(id, origin, rightOrigin, parent)
 {
     public char Value { get; } = value;
-
-    public CharNode? NextChar => (CharNode?)RightOrigin;
     
     internal override void InsertChild(DNode node)
     {
