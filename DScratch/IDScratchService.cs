@@ -5,5 +5,7 @@ namespace DScratch;
 
 public interface IDScratchService
 {
-    TransactionResult Apply(DTransaction transaction);
+    ITransaction StartTransaction(DScratchDocument document);
+    
+    TransactionResult Apply(ITransaction transaction);
 }

@@ -3,23 +3,23 @@ using DScratch.Transactions.Steps;
 
 namespace DScratch.Transactions;
 
-public class DTransaction(DScratchDocument document)
+internal class DTransaction(DScratchDocument document) : ITransaction
 {
     private readonly List<IStep> steps = [];
     
-    internal TransactionResult Commit()
+    public TransactionResult Commit()
     {
         var diffs = steps.SelectMany(s => s.Execute(document)).ToList();
         return new TransactionResult(diffs);
     }
     
-    public DTransaction Insert(DNode node, NodePath path, int offset)
+    public ITransaction Insert(DNode node, NodePath path, int offset)
     {
         steps.Add(new InsertStep(node, path, offset));
         return this;
     }
     
-    public DTransaction DeleteNode(NodePath path, int offset)
+    public ITransaction DeleteNode(NodePath path, int offset)
     {
         steps.Add(new DeleteStep(path, offset));
         return this;
