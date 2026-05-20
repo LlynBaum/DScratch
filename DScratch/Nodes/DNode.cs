@@ -12,7 +12,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode?
 
     public bool IsDeleted { get; private set; }
 
-    public DNode? Parent { get; set; } = parent;
+    public DNode? Parent { get; internal set; } = parent;
     
     public IReadOnlyList<DNode> ChildNodes => childNodes;
 
