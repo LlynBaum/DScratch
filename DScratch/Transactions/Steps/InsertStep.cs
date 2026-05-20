@@ -20,7 +20,7 @@ internal class InsertStep(DNode node, NodePath path, int offset) : IStep
         node.Parent = parent;
         
         parent.InsertChild(node);
-        return [node.ToInsert(path, offset)];
+        return node.ToInsert(path, offset);
     }
 
     public IReadOnlyList<StepDiff> Revert(DScratchDocument document)

@@ -1,7 +1,7 @@
 namespace DScratch.Nodes;
 
 public class CharNode(char value, string id, CharNode? origin, CharNode? rightOrigin, DNode? parent) 
-    : DNode(id, origin, rightOrigin, parent, null)
+    : DNode(id, origin, rightOrigin, parent)
 {
     public char Value { get; } = value;
 
