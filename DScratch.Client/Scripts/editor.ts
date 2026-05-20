@@ -45,40 +45,72 @@ function initEditor() {
             return; // Let the browser handle unsupported inputs natively for now
         }
 
-        // Stop the browser from mutating the DOM natively!
         event.preventDefault();
-
-        event.preventDefault();
+        
         const selection = getSelection();
-        const path = getPath(selection?.anchorNode as HTMLElement);
-        const endPath = getPath(selection?.focusNode as HTMLElement);
+        
+        const anchorElement = selection?.anchorNode?.nodeType == Node.ELEMENT_NODE 
+            ? selection.anchorNode as Element
+            : selection?.anchorNode?.parentElement!;
+
+        const focusElement = selection?.focusNode?.nodeType == Node.ELEMENT_NODE
+            ? selection.focusNode as Element
+            : selection?.focusNode?.parentElement!;
+        
+        const path = getPath(anchorElement);
+        const offset = getAbsolutOffset(anchorElement, selection?.anchorNode!, selection?.anchorOffset);
+        const endPath = getPath(focusElement);
+        const endOffset = getAbsolutOffset(focusElement, selection?.focusNode!, selection?.focusOffset);
         
         const payload = {
             InputType: event.inputType,
             Data: event.data,
             Path: path,
             Selection: {
-                Offset: selection?.anchorOffset,
+                Offset: offset,
                 Direction: selection?.direction,
                 End: endPath,
-                EndOffset: selection?.focusOffset
+                EndOffset: endOffset
             }
         }
         
         await bridgeReference?.invokeMethodAsync("OnKeyPressCallback", payload);
     });
+}
 
-    function getPath(element: HTMLElement): string[] {
-        const result: string[] = [];
-        let current = element.parentElement; // Event is fired on text node within p element
-        
-        while (current && !current.hasAttribute("contenteditable")) {
-            result.push(current.getAttribute("data-path-id")!);
-            current = current.parentElement;
-        }
+function getPath(element: Element): string[] {
+    const result: string[] = [];
+    let current = element.parentElement; // Event is fired on text node within p element
 
-        return result;
+    while (current && !current.hasAttribute("contenteditable")) {
+        result.push(current.getAttribute("data-path-id")!);
+        current = current.parentElement;
     }
+
+    return result;
+}
+
+function getAbsolutOffset(parent: Element, targetNode: Node, relativeOffset?: number) {
+    if(!relativeOffset) {
+        return 0;
+    }
+    
+    const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
+    
+    let absolutOffset = 0;
+    let currentNode = walker.nextNode();
+    
+    while (currentNode) {
+        if(currentNode == targetNode) {
+            absolutOffset += relativeOffset;
+            break;
+        }
+        
+        absolutOffset += currentNode.nodeValue?.length || 0;
+        currentNode = walker.nextNode();
+    }
+    
+    return absolutOffset;
 }
 
 window.editor = {
