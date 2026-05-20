@@ -1,6 +1,6 @@
-using DScratch.Nodes;
 using DScratch.Tests.Helpers;
 using DScratch.Transactions;
+using DScratch.Transactions.Steps;
 
 namespace DScratch.Tests.Transactions;
 
@@ -15,172 +15,68 @@ public class DTransactionTests
         Document = new DScratchDocument();
         Transaction = new DTransaction(Document);
     }
-    
-    private class InsertAt : DTransactionTests
-    {
-        [Test]
-        public void GivenNode_IsInsertedAsChildOfNodeFromGivenPath()
-        {
-            // Arrange
-            DefaultNodes();
-            var node = new TestNode("-1", null, null, null, null);
-            
-            // Act
-            Transaction.Insert(node, new NodePath(["2", "3"]), 0);
-            
-            // Assert
-            var insertedNode = Document.Page.Root.RightOrigin?.FirstChild?.FirstChild;
-            
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(insertedNode?.Id, Is.EqualTo("-1"));
-                
-                Assert.That(node.Parent?.Id, Is.EqualTo("3"));
-                Assert.That(node.Origin, Is.Null);
-                Assert.That(node.RightOrigin, Is.Null);
-            }
-        }
 
-        [Test]
-        public void GivenNode_IsInsertedAsChildOfNodeFromGivenPath_AsFirstChild()
+    [Test]
+    public void Commit()
+    {
+        var testStep = new TestStep();
+        ((List<IStep>)Transaction.Steps).Add(testStep);
+        
+        // Act
+        var result = Transaction.Commit();
+        
+        // Assert
+        using (Assert.EnterMultipleScope())
         {
-            // Arrange
-            DefaultNodes();
-            var node = new TestNode("-1", null, null, null, null);
-            
-            // Act
-            Transaction.Insert(node, new NodePath(["2", "4"]), 0);
-            
             // Assert
-            var insertedNode = Document.Page.Root.RightOrigin?.FirstChild?.RightOrigin?.FirstChild;
-            
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(insertedNode?.Id, Is.EqualTo("-1"));
-                
-                Assert.That(node.Parent?.Id, Is.EqualTo("4"));
-                Assert.That(node.Origin, Is.Null);
-                Assert.That(node.RightOrigin?.Id, Is.EqualTo("6"));
-            }
+            Assert.That(testStep.Executed, Is.True);
+            Assert.That(testStep.Reverted, Is.False);
+
+            Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
         }
         
-        [Test]
-        public void GivenNode_IsInsertedAsChildOfNodeFromGivenPath_AfterExistingChild()
-        {
-            // Arrange
-            DefaultNodes();
-            var node = new TestNode("-1", null, null, null, null);
-            
-            // Act
-            Transaction.Insert(node, new NodePath(["2", "4"]), 1);
-            
-            // Assert
-            var insertedNode = Document.Page.Root.RightOrigin?.FirstChild?.RightOrigin?.FirstChild?.RightOrigin;
-            
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(insertedNode?.Id, Is.EqualTo("-1"));
-                
-                Assert.That(node.Parent?.Id, Is.EqualTo("4"));
-                Assert.That(node.Origin?.Id, Is.EqualTo("6"));
-                Assert.That(node.RightOrigin, Is.Null);
-            }
-        }
+        Assert.That(result.Diffs, Has.Count.EqualTo(1));
+        Assert.That(result.Diffs.Single(), Is.TypeOf<TestStepDiff>());
     }
     
-    private class DeleteNode : DTransactionTests
+    [Test]
+    public void Insert_AddsInsertStep()
     {
-        [Test]
-        public void DeletesNodeAtPathAndOffset()
-        {
-            // Arrange
-            DefaultNodes();
-            
-            // Act
-            Transaction.DeleteNode(new NodePath(["2"]), 2);
-            
-            // Assert
-            var deletedNode = Document.Page.Root.RightOrigin?.FirstChild?.RightOrigin?.RightOrigin!;
-            Assert.That(deletedNode.IsDeleted, Is.True);
-        }
+        // Act
+        Transaction.Insert(TestNode.Empty(), new NodePath([]), 0);
+        
+        // Assert
+        Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
+        var step = Transaction.Steps.Single();
+        Assert.That(step, Is.TypeOf<InsertStep>());
     }
     
-    private class FindNode : DTransactionTests
+    [Test]
+    public void DeleteNode_AddsDeleteStep()
     {
-        [Test]
-        public void ReturnsExpectedNode_FromGivenPath()
-        {
-            // Arrange
-            DefaultNodes();
-            
-            // Act
-            var result = Transaction.FindNode(new NodePath(["2", "4"]));
-            
-            // Assert
-            Assert.That(result, Is.Not.Null, "Expected to find a node at path \"2__4\".");
-            Assert.That(result.Id, Is.EqualTo("4"));
-        }
+        // Act
+        Transaction.DeleteNode(new NodePath([]), 0);
         
-        [Test]
-        public void ReturnsExpectedNode_WhenNodeWasOfExpectedType()
-        {
-            // Arrange
-            DefaultNodes();
-            
-            // Act
-            var result = Transaction.FindNode<TestNode>(new NodePath(["2", "4"]));
-            
-            // Assert
-            Assert.That(result, Is.Not.Null, "Expected to find a node at path \"2__4\".");
-            Assert.That(result.Id, Is.EqualTo("4"));
-        }
-        
-        [Test]
-        public void ReturnsNull_WhenNodeWasNotFound()
-        {
-            // Arrange
-            Document.Page.Root = new TestNode("1", null, null, null, null);
-            
-            // Act
-            var result = Transaction.FindNode<TestNode>(new NodePath(["2"]));
-            
-            // Assert
-            Assert.That(result, Is.Null);
-        }
-        
-        [Test]
-        public void ThrowsArgumentException_WhenNodeWasNotOfExpectedType()
-        {
-            Document.Page.Root = new TestNode("1", null, null, null, null);
-
-            Assert.Throws<ArgumentException>(Act);
-            return;
-
-            void Act() => Transaction.FindNode<CharNode>(new NodePath(["1"]));
-        }
+        // Assert
+        Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
+        Assert.That(Transaction.Steps.Single(), Is.TypeOf<DeleteStep>());
     }
     
-    private class FindNodeInternal : DTransactionTests
+    private class TestStep : IStep
     {
+        public bool Executed;
+        public bool Reverted;
         
-    }
+        public IReadOnlyList<StepDiff> Execute(DScratchDocument document)
+        {
+            Executed = true;
+            return [new TestStepDiff()];
+        }
 
-    private void DefaultNodes()
-    {
-        var node1 = new TestNode("1", null, null, null, null);
-        var node2 = new TestNode("2", node1, null, null, null);
-        node1.RightOrigin = node2;
-            
-        var node3 = new TestNode("3", null, null, node2, null);
-        node2.FirstChild = node3;
-        var node4 = new TestNode("4", node3, null, node2, null);
-        node3.RightOrigin = node4;
-        var node5 = new TestNode("5", node4, null, node2, null);
-        node4.RightOrigin = node5;
-        
-        var node6 = new TestNode("6", null, null, node4, null);
-        node4.FirstChild = node6;
-
-        Document.Page.Root = node1;
+        public IReadOnlyList<StepDiff> Revert(DScratchDocument document)
+        {
+            Reverted = true;
+            return [new TestStepDiff()];
+        }
     }
 }

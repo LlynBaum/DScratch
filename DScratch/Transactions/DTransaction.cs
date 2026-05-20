@@ -6,6 +6,8 @@ namespace DScratch.Transactions;
 internal class DTransaction(DScratchDocument document) : ITransaction
 {
     private readonly List<IStep> steps = [];
+
+    public IReadOnlyList<IStep> Steps => steps;
     
     public TransactionResult Commit()
     {
