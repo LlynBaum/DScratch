@@ -1,7 +1,6 @@
 enum StepType {
     insertText = "insertText",
     deleteText = "deleteText",
-    splitText = "splitText", // TODO: maybe useful as well?
     insertElement = "insertElement",
     deleteElement = "deleteElement",
     move = "move",
@@ -55,10 +54,7 @@ export function applyTransaction(transaction: Step[]){
                 break;
             case StepType.deleteText:
                 handleDeleteTextStep(step as DeleteTextStep);
-                break;
-            case StepType.splitText:
-                handleSplitTextStep(step as SplitTextStep);
-                break;
+                break
             case StepType.insertElement:
                 handleInsertElementStep(step as InsertElementStep);
                 break;
@@ -88,18 +84,6 @@ function handleDeleteTextStep(step: DeleteTextStep) {
     // TODO: <p> abc <b> def </b> ghi </p>     removing text here does not work currently - maybe unify with delete elements
     const text = element.innerText;
     element.innerText = text.slice(0, step.Offset) + text.slice(step.Offset + step.Length);
-}
-
-function handleSplitTextStep(step: SplitTextStep) {
-    const element = findNode(step.TargetNodePath);
-    if (!element) return;
-
-    // TODO: split only allows to split text, everything else can be done with move. But does it do that xD
-    // TODO: maybe do it fancy like insertElement...?
-    // TODO: maybe instead of split, move can take a length and only moves the length of the text... or maybe just a moveText that moves the text
-    if(element instanceof Text) {
-        element.splitText(step.Offset);
-    }
 }
 
 function handleInsertElementStep(step: InsertElementStep) {
@@ -165,7 +149,7 @@ function insertElement(element: Element, parent: Element, offset: number) {
 }
 
 function findNode(path: string[]) : HTMLElement | null {
-    const query = path.map(p => `[${p}]`).join(" ");
+    const query = path.map(p => `[data-path-id='${p}']`).join(" ");
     const element = document.querySelector<HTMLElement>(query);
     if(!element) {
         console.error(`Could not find node at path '${query}'.`);

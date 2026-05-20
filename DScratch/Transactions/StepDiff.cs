@@ -19,13 +19,6 @@ public abstract record StepDiff(string Type)
     public record DeleteTextDiff(string[] Parent, int Offset, int Length) : StepDiff("deleteText");
 
     /// <summary>
-    /// Split text into two text nodes in the DOM.
-    /// </summary>
-    /// <param name="TargetNodePath">The parent of the text node</param>
-    /// <param name="Offset">The offset where it should be split at</param>
-    public record SplitTextDiff(string[] TargetNodePath, int Offset) : StepDiff("splitText");
-
-    /// <summary>
     /// Inserts a Node as an DOM element.
     /// </summary>
     /// <param name="Parent">parent of the new element</param>
