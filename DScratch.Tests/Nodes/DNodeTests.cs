@@ -30,20 +30,29 @@ public class DNodeTests
     {
         // Arrange
         var node = new TestNode("2", null, null, null);
+        
         var node2 = new TestNode("3", node, null, null);
         node.RightOrigin = node2;
         
-        var parent = new TestNode("1", null, null, null, [node, node2]);
+        var node3 = new TestNode("4", node2, null, null);
+        node2.RightOrigin = node3;
+        
+        var parent = new TestNode("1", null, null, null, [node, node2, node3]);
         node.Parent = parent;
         node2.Parent = parent;
+        node3.Parent = parent;
         
         // Act
-        node.Remove();
+        node2.Remove();
         
         // Assert
-        Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
-        Assert.That(parent.ChildNodes, Is.EquivalentTo([node2]));
-        Assert.That(node.RightOrigin, Is.Null);
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+        Assert.That(parent.ChildNodes, Is.EquivalentTo([node, node3]));
+        Assert.That(node2.Origin, Is.Null);
+        Assert.That(node2.RightOrigin, Is.Null);
+        
+        Assert.That(node.RightOrigin!.Id, Is.EqualTo(node3.Id));
+        Assert.That(node3.Origin!.Id, Is.EqualTo(node.Id));
     }
 
     [Test]
@@ -174,12 +183,12 @@ public class DNodeTests
         var mid2 = new TestNode("2", null, null, null, [mid]);
         mid.Parent = mid2;
         var parent = new TestInlineElementNode("1", null, null, null, [mid2]);
-        node.Parent = parent;
+        mid2.Parent = parent;
         
         // Act
-        var path = node.GetPath();
+        var path = node.GetElementPath();
         
-        Assert.That(path, Has.Length.EqualTo(3));
+        Assert.That(path, Has.Length.EqualTo(2));
         Assert.That(path.Path, Is.EquivalentTo(["1", "3"]));
     }
 }
