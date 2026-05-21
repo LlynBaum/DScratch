@@ -7,7 +7,7 @@ public static class DScratchServiceRegistration
 {
     public static void RegisterServices(IServiceCollection serviceCollection, IConfiguration configuration)
     {
-        serviceCollection.AddScoped<DNodeFactory>();
+        serviceCollection.AddScoped<INodeFactory, DNodeFactory>();
         serviceCollection.AddScoped<IDScratchService, DScratchService>();
     }
 }

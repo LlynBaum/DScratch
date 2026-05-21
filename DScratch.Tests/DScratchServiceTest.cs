@@ -13,7 +13,7 @@ public class DScratchServiceTest
     {
         // Arrange
         var transactionMock = new Mock<ITransaction>();
-        var service = new DScratchService();
+        var service = new DScratchService(Mock.Of<INodeFactory>());
 
         transactionMock.Setup(t => t.Commit()).Returns(new TransactionResult([new TestStepDiff()]));
         

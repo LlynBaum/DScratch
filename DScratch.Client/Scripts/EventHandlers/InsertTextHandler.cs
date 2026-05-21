@@ -1,21 +1,21 @@
-using DScratch.Transactions;
+using DScratch.Transactions.Steps;
 
 namespace DScratch.Client.Scripts.EventHandlers;
 
-public class InsertTextHandler(DNodeFactory nodeFactory) : IEditorEventHandler
+public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventHandler
 {
     public const string EventName = "insertText";
     
-    public DTransaction? Handle(KeyPressInfo keyPressInfo, DScratchDocument document)
+    public TransactionResult Handle(KeyPressInfo keyPressInfo, DScratchDocument document)
     {
         if (keyPressInfo.Data is null)
         {
-            return null;
+            return TransactionResult.Empty;
         }
         
-        var transaction = new DTransaction(document);
-        var textNode = nodeFactory.String(keyPressInfo.Data);
+        var transaction = dScratchService.StartTransaction(document);
+        var textNode = dScratchService.NodeFactory.String(keyPressInfo.Data);
         transaction.Insert(textNode, keyPressInfo.GetNodePath(), keyPressInfo.Selection.Offset);
-        return transaction;
+        return dScratchService.Apply(transaction);
     }
 }

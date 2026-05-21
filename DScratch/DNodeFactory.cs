@@ -2,7 +2,7 @@ using DScratch.Nodes;
 
 namespace DScratch;
 
-public class DNodeFactory(INodeIdGenerator nodeIdGenerator)
+internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
 {
     public TextNode String(string value)
     {

@@ -1,15 +1,15 @@
-using DScratch.Transactions;
+using DScratch.Transactions.Steps;
 
 namespace DScratch.Client.Scripts.EventHandlers;
 
-public class DeleteContentBackwardHandler : IEditorEventHandler
+public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IEditorEventHandler
 {
     public const string EventName = "deleteContentBackward";
     
-    public DTransaction Handle(KeyPressInfo keyPressInfo, DScratchDocument document)
+    public TransactionResult Handle(KeyPressInfo keyPressInfo, DScratchDocument document)
     {
-        var transaction = new DTransaction(document);
+        var transaction = dScratchService.StartTransaction(document);
         transaction.DeleteNode(keyPressInfo.GetNodePath(), keyPressInfo.Selection.Offset);
-        return transaction;
+        return dScratchService.Apply(transaction);
     }
 }

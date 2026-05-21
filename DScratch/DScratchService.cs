@@ -3,10 +3,12 @@ using DScratch.Transactions.Steps;
 
 namespace DScratch;
 
-public class DScratchService : IDScratchService
+public class DScratchService(INodeFactory nodeFactory) : IDScratchService
 {
     // TODO: history of past transaction, so things like ctrl-z can be possible.
     private readonly Stack<ITransaction> transactions = [];
+
+    public INodeFactory NodeFactory => nodeFactory;
 
     public ITransaction StartTransaction(DScratchDocument document)
     {

@@ -3,7 +3,7 @@ using Microsoft.JSInterop;
 
 namespace DScratch.Client.Scripts;
 
-public class InputEventHelper(IDScratchService dScratchService, IServiceProvider serviceProvider, ILogger<InputEventHelper> logger)
+public class InputEventHelper(IServiceProvider serviceProvider, ILogger<InputEventHelper> logger)
 {
     private readonly DScratchDocument document = new DScratchDocument();
     
@@ -13,14 +13,12 @@ public class InputEventHelper(IDScratchService dScratchService, IServiceProvider
         var handler = serviceProvider.GetKeyedService<IEditorEventHandler>(keyPressInfo.InputType);
         if (handler is not null)
         {
-            var transaction = handler.Handle(keyPressInfo, document);
-
-            if (transaction is null)
+            var result = handler.Handle(keyPressInfo, document);
+            if (result.IsEmpty)
             {
                 return;
             }
 
-            var result = dScratchService.Apply(transaction);
             // TODO: dispatcher result to JS
         }
         else
