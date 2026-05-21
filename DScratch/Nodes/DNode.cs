@@ -74,7 +74,8 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode?
             result.Add(current.Id);
             current = current.Parent;
         }
-        
+
+        result.Reverse();
         return new NodePath(result);
     }
 
@@ -90,6 +91,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode?
             current = current.Parent;
         }
         
+        result.Reverse();
         return new NodePath(result);
     }
 }

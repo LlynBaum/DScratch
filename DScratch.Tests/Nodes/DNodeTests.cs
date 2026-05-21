@@ -1,57 +1,101 @@
-﻿using DScratch.Tests.Helpers;
-using DScratch.Tests.Helpers.TestNodes;
+﻿using DScratch.Tests.Helpers.TestNodes;
 
 namespace DScratch.Tests.Nodes;
 
 public class DNodeTests
 {
     [Test]
+    public void FirstAndLastChild_ReturnExpectedNode()
+    {
+        // Arrange
+        var node1 = new TestNode("2", null, null, null);
+        var node2 = new TestNode("2", null, null, null);
+        var node3 = new TestNode("2", null, null, null);
+        var parent = new TestNode("1", null, null, null, [node1, node2, node3]);
+        
+        // Act
+        var first = parent.FirstChild;
+        var last = parent.LastChild;
+        
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(first, Is.EqualTo(node1));
+            Assert.That(last, Is.EqualTo(node3));
+        });
+    }
+    
+    [Test]
+    public void Remove_RemovesNodeFromTree()
+    {
+        // Arrange
+        var node = new TestNode("2", null, null, null);
+        var node2 = new TestNode("3", node, null, null);
+        node.RightOrigin = node2;
+        
+        var parent = new TestNode("1", null, null, null, [node, node2]);
+        node.Parent = parent;
+        node2.Parent = parent;
+        
+        // Act
+        node.Remove();
+        
+        // Assert
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
+        Assert.That(parent.ChildNodes, Is.EquivalentTo([node2]));
+        Assert.That(node.RightOrigin, Is.Null);
+    }
+    
+    [Test]
     public void InsertChild_AddNodeAsFirstChild_WhenParentHasNoChildYet()
     {
         // Arrange
-        var parent = new TestNode("1", null, null, null, null);
-        var insert = new TestNode("2", null, null, parent, null);
+        var parent = new TestNode("1", null, null, null);
+        var insert = new TestNode("2", null, null, parent);
         
         // Act
         parent.InsertChild(insert);
 
         // Assert
-        Assert.That(parent.FirstChild?.Id, Is.EqualTo(insert.Id));
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
+        Assert.That(parent.ChildNodes, Is.EquivalentTo([insert]));
     }
     
     [Test]
     public void InsertChild_AddNodeAsFirstChild_WhenNodeToInsertHasOriginNull()
     {
         // Arrange
-        var parent = new TestNode("1", null, null, null, null);
-        var node = new TestNode("2", null, null, parent, null);
-        parent.FirstChild = node;
-        var insert = new TestNode("3", null, node, parent, null);
+        var node = new TestNode("2", null, null, null);
+        var parent = new TestNode("1", null, null, null, [node]);
+        
+        var insert = new TestNode("3", null, node, parent);
         
         // Act
         parent.InsertChild(insert);
 
         // Assert
-        Assert.That(parent.FirstChild.Id, Is.EqualTo(insert.Id));
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+        Assert.That(parent.ChildNodes, Is.EquivalentTo([insert, node]));
     }
     
     [Test]
     public void InsertChild_AddNodeAfterOrigin_WhenNodeToInsertHasOrigin()
     {
         // Arrange
-        var parent = new TestNode("1", null, null, null, null);
-        var node = new TestNode("2", null, null, parent, null);
-        parent.FirstChild = node;
-        var insert = new TestNode("3", node, null, parent, null);
+        var node = new TestNode("2", null, null, null);
+        var parent = new TestNode("1", null, null, null, [node]);
+        
+        var insert = new TestNode("3", node, null, parent);
         
         // Act
         parent.InsertChild(insert);
         
         // Assert
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(parent.FirstChild.Id, Is.EqualTo(node.Id));
-            Assert.That(parent.FirstChild.RightOrigin?.Id, Is.EqualTo(insert.Id));
+            Assert.That(parent.ChildNodes[0].Id, Is.EqualTo(node.Id));
+            Assert.That(parent.ChildNodes[1].Id, Is.EqualTo(insert.Id));
         }
     }
     
@@ -59,122 +103,68 @@ public class DNodeTests
     public void InsertChild_AddNodeAfterOrigin_AndBeforeRightOrigin()
     {
         // Arrange
-        var parent = new TestNode("1", null, null, null, null);
-        var node = new TestNode("2", null, null, parent, null);
-        parent.FirstChild = node;
-        var node2 = new TestNode("3", node, null, parent, null);
+        var node = new TestNode("2", null, null, null);
+        var node2 = new TestNode("3", node, null, null);
         node.RightOrigin = node2;
+        var parent = new TestNode("1", null, null, null, [node, node2]);
 
-        var insert = new TestNode("4", node, node2, parent, null);
+        var insert = new TestNode("4", node, node2, parent);
         
         // Act
         parent.InsertChild(insert);
         
         // Assert
-        var child1 = parent.FirstChild;
-        var child2 = child1.RightOrigin;
-        var child3 = child2?.RightOrigin;
-        
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
         using (Assert.EnterMultipleScope())
         {
+            var child1 = parent.ChildNodes[0];
             Assert.That(child1.Id, Is.EqualTo(node.Id));
             Assert.That(child1.RightOrigin?.Id, Is.EqualTo(insert.Id));
             
-            Assert.That(child2?.Id, Is.EqualTo(insert.Id));
+            var child2 = parent.ChildNodes[1];
+            Assert.That(child2.Id, Is.EqualTo(insert.Id));
             Assert.That(child2.Origin?.Id, Is.EqualTo(node.Id));
             Assert.That(child2.RightOrigin?.Id, Is.EqualTo(node2.Id));
             
-            Assert.That(child3?.Id, Is.EqualTo(node2.Id));
+            var child3 = parent.ChildNodes[2];
+            Assert.That(child3.Id, Is.EqualTo(node2.Id));
             Assert.That(child3.Origin?.Id, Is.EqualTo(insert.Id));
         }
     }
 
-    // TODO: test InsertChildRange
-    
     [Test]
-    public void DeleteChild_SetsIsDeletedToTrue_OnExpectedNote()
+    public void GetPath_ReturnsExpectedPathToNode()
     {
         // Arrange
-        var parent = new TestNode("1", null, null, null, null);
-        var node = new TestNode("2", null, null, parent, null);
-        parent.FirstChild = node;
-        var node2 = new TestNode("3", node, null, parent, null);
-        node.RightOrigin = node2;
+        var node = new TestNode("3", null, null, null);
+        var mid = new TestNode("2", null, null, null, [node]);
+        node.Parent = mid;
+        var parent = new TestNode("1", null, null, null, [mid]);
+        mid.Parent = parent;
         
         // Act
-        parent.DeleteChild("3");
+        var path = node.GetPath();
         
-        // Assert
-        Assert.That(parent.FirstChild.RightOrigin!.IsDeleted, Is.True);
-    }
-
-    [Test]
-    public void GetChild_ReturnsExpectedChild_ForIndex0()
-    {
-        // Arrange
-        var parent = new TestNode("1", null, null, null, null);
-        var node = new TestNode("2", null, null, parent, null);
-        parent.FirstChild = node;
-        var node2 = new TestNode("3", node, null, parent, null);
-        node.RightOrigin = node2;
-        
-        // Act
-        var result = parent.GetChild(0);
-        
-        // Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Id, Is.EqualTo("2"));
+        Assert.That(path, Has.Length.EqualTo(3));
+        Assert.That(path.Path, Is.EquivalentTo(["1", "2", "3"]));
     }
     
     [Test]
-    public void GetChild_ReturnsExpectedChild()
+    public void GetElementPath_ReturnsExpectedPathToNode()
     {
         // Arrange
-        var parent = new TestNode("1", null, null, null, null);
-        var node = new TestNode("2", null, null, parent, null);
-        parent.FirstChild = node;
-        var node2 = new TestNode("3", node, null, parent, null);
-        node.RightOrigin = node2;
+        var node = new TestNode("4", null, null, null);
+        var mid = new TestInlineElementNode("3", null, null, null, [node]);
+        node.Parent = mid;
+        var mid2 = new TestNode("2", null, null, null, [mid]);
+        mid.Parent = mid2;
+        var parent = new TestInlineElementNode("1", null, null, null, [mid2]);
+        node.Parent = parent;
         
         // Act
-        var result = parent.GetChild(1);
+        var path = node.GetPath();
         
-        // Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Id, Is.EqualTo("3"));
-    }
-    
-    [Test]
-    public void GetChild_ReturnsNull_WhenGivenIndex_IsGreaterThenChildCount()
-    {
-        // Arrange
-        var parent = new TestNode("1", null, null, null, null);
-        var node = new TestNode("2", null, null, parent, null);
-        parent.FirstChild = node;
-        var node2 = new TestNode("3", node, null, parent, null);
-        node.RightOrigin = node2;
-        
-        // Act
-        var result = parent.GetChild(2);
-        
-        // Assert
-        Assert.That(result, Is.Null);
-    }
-    
-    [Test]
-    public void GetChild_ReturnsNull_WhenGivenIndexIsBelow0()
-    {
-        // Arrange
-        var parent = new TestNode("1", null, null, null, null);
-        var node = new TestNode("2", null, null, parent, null);
-        parent.FirstChild = node;
-        var node2 = new TestNode("3", node, null, parent, null);
-        node.RightOrigin = node2;
-        
-        // Act
-        var result = parent.GetChild(-1);
-        
-        // Assert
-        Assert.That(result, Is.Null);
+        Assert.That(path, Has.Length.EqualTo(3));
+        Assert.That(path.Path, Is.EquivalentTo(["1", "3"]));
     }
 }
