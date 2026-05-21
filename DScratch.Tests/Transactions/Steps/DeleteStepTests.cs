@@ -33,6 +33,7 @@ public class DeleteStepTests
     {
         var node3 = new TestNode("3", null, null, null);
         var node4 = new TestNode("4", node3, null, null);
+        node3.RightOrigin = node4;
         var node5 = new TestNode("5", node4, null, null);
         node4.RightOrigin = node5;
         
