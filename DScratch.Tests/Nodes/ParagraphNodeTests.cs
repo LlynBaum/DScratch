@@ -7,11 +7,64 @@ namespace DScratch.Tests.Nodes;
 public class ParagraphNodeTests
 {
     [Test]
-    public void InsertChild_ThrowsInvalidOperationException_WhenNodeIsNodCharNode()
+    public void TagName_ReturnsExpectedDomElementName()
+    {
+        var paragraph = new ParagraphNode("1", null, null, null);
+        Assert.That(paragraph.TagName, Is.EqualTo("p"));
+    }
+
+    [Test]
+    public void Length_ReturnsLengthCombines_FromAllChildNodes()
+    {
+        // Arrange
+        var charNode1 = new CharNode('a', "4", null, null, null);
+        var testNode1 = new TextNode("3", null, null, null, [charNode1]);
+        charNode1.Parent = testNode1;
+        
+        var charNode2 = new CharNode('b', "6", null, null, null);
+        var testNode2 = new TextNode("5", null, null, null, [charNode2]);
+        charNode2.Parent = testNode2;
+        
+        var paragraph = new ParagraphNode("2", null, null, null, [testNode1, testNode2]);
+        testNode1.Parent = paragraph;
+        testNode2.Parent = paragraph;
+        
+        // Act
+        var result = paragraph.Length;
+
+        // Assert
+        Assert.That(result, Is.EqualTo(2));
+    }
+    
+    [Test]
+    public void TextContent_ReturnsTextContentCombines_FromAllChildNodes()
+    {
+        // Arrange
+        var charNode1 = new CharNode('a', "4", null, null, null);
+        var testNode1 = new TextNode("3", null, null, null, [charNode1]);
+        charNode1.Parent = testNode1;
+        
+        var charNode2 = new CharNode('b', "6", null, null, null);
+        var testNode2 = new TextNode("5", null, null, null, [charNode2]);
+        charNode2.Parent = testNode2;
+        
+        var paragraph = new ParagraphNode("2", null, null, null, [testNode1, testNode2]);
+        testNode1.Parent = paragraph;
+        testNode2.Parent = paragraph;
+        
+        // Act
+        var result = paragraph.TextContent;
+
+        // Assert
+        Assert.That(result, Is.EqualTo("ab"));
+    }
+    
+    [Test]
+    public void InsertChild_ThrowsInvalidOperationException_WhenNodeIsNotText()
     {
         // Arrange
         var paragraph = new ParagraphNode("1", null, null, null);
-        var node = new TestNode("2", null, null, paragraph, null);
+        var node = new TestNode("2", null, null, paragraph);
 
         // Assert
         Assert.Throws<InvalidOperationException>(Act);
@@ -19,66 +72,5 @@ public class ParagraphNodeTests
 
         // Act
         void Act() => paragraph.InsertChild(node);
-    }
-    
-    [Test]
-    public void InsertChild_UpdatesTextValue_AsExpected()
-    {
-        // Arrange
-        var paragraph = new ParagraphNode("1", null, null, null);
-        var char1 = new CharNode('a', "2", null, null, paragraph);
-        var char3 = new CharNode('c', "3", char1, null, paragraph);
-        var char2 = new CharNode('b', "4", char1, char3, paragraph);
-        
-        // Act
-        paragraph.InsertChild(char1);
-        paragraph.InsertChild(char3);
-        paragraph.InsertChild(char2);
-        
-        // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(paragraph.Value, Is.EqualTo("abc"));
-        });
-    }
-    
-    [Test]
-    public void InsertChildRange_UpdatesTextValue_AsExpected()
-    {
-        // Arrange
-        var paragraph = new ParagraphNode("1", null, null, null);
-        var char1 = new CharNode('a', "2", null, null, paragraph);
-        var char3 = new CharNode('c', "3", char1, null, paragraph);
-        var char2 = new CharNode('b', "4", char1, char3, paragraph);
-        char1.RightOrigin = char2;
-        char3.Origin = char2;
-        
-        // Act
-        paragraph.InsertChildRange(char1, char3);
-        
-        // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(paragraph.Value, Is.EqualTo("abc"));
-        });
-    }
-
-    [Test]
-    public void DeleteChild_RemovesCharacterFromValueString()
-    {
-        // Arrange
-        var paragraph = new ParagraphNode("1", null, null, null);
-        var char1 = new CharNode('a', "2", null, null, paragraph);
-        var char3 = new CharNode('c', "3", char1, null, paragraph);
-        var char2 = new CharNode('b', "4", char1, char3, paragraph);
-        paragraph.InsertChild(char1);
-        paragraph.InsertChild(char3);
-        paragraph.InsertChild(char2);
-        
-        // Act
-        paragraph.DeleteChild("4");
-        
-        // Assert
-        Assert.That(paragraph.Value, Is.EqualTo("ac"));
     }
 }

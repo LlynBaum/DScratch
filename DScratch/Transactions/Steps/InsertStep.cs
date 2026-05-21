@@ -17,7 +17,6 @@ internal class InsertStep(DNode node, NodePath path, int offset) : IStep
 
         node.Origin = origin;
         node.RightOrigin = rightOrigin;
-        node.Parent = parent;
         
         parent.InsertChild(node);
         return node.ToInsert(path, offset);

@@ -45,13 +45,28 @@ public class DNodeTests
         Assert.That(parent.ChildNodes, Is.EquivalentTo([node2]));
         Assert.That(node.RightOrigin, Is.Null);
     }
+
+    [Test]
+    public void InsertChild_SetsParentToItSelf()
+    {
+        // Arrange
+        var parent = new TestNode("1", null, null, null);
+        var insert = new TestNode("2", null, null, null);
+        
+        // Act
+        parent.InsertChild(insert);
+
+        // Assert
+        Assert.That(insert.Parent, Is.Not.Null);
+        Assert.That(insert.Parent.Id, Is.EqualTo(parent.Id));
+    }
     
     [Test]
     public void InsertChild_AddNodeAsFirstChild_WhenParentHasNoChildYet()
     {
         // Arrange
         var parent = new TestNode("1", null, null, null);
-        var insert = new TestNode("2", null, null, parent);
+        var insert = new TestNode("2", null, null, null);
         
         // Act
         parent.InsertChild(insert);
@@ -68,7 +83,7 @@ public class DNodeTests
         var node = new TestNode("2", null, null, null);
         var parent = new TestNode("1", null, null, null, [node]);
         
-        var insert = new TestNode("3", null, node, parent);
+        var insert = new TestNode("3", null, node, null);
         
         // Act
         parent.InsertChild(insert);
@@ -85,7 +100,7 @@ public class DNodeTests
         var node = new TestNode("2", null, null, null);
         var parent = new TestNode("1", null, null, null, [node]);
         
-        var insert = new TestNode("3", node, null, parent);
+        var insert = new TestNode("3", node, null, null);
         
         // Act
         parent.InsertChild(insert);
@@ -108,7 +123,7 @@ public class DNodeTests
         node.RightOrigin = node2;
         var parent = new TestNode("1", null, null, null, [node, node2]);
 
-        var insert = new TestNode("4", node, node2, parent);
+        var insert = new TestNode("4", node, node2, null);
         
         // Act
         parent.InsertChild(insert);

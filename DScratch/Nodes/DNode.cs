@@ -46,6 +46,8 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode?
     /// <param name="node">The node to insert.</param>
     internal virtual void InsertChild(DNode node)
     {
+        node.Parent = this;
+        
         if (node.Origin is null)
         {
             FirstChild?.Origin = node;
