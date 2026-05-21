@@ -41,6 +41,11 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode?
     {
         IsDeleted = true;
     }
+
+    internal void AppendChild(DNode node)
+    {
+        childNodes.Add(node);
+    }
     
     /// <summary>
     /// Insert node as a child. The insert will be based on the origin and rightOrigin of the given node.

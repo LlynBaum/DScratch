@@ -14,6 +14,7 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
             origin: null, 
             rightOrigin: null, 
             parent: textNode);
+        textNode.AppendChild(firstNode);
         
         var current = firstNode;
         for (var i = 1; i < value.Length; i++)
@@ -27,6 +28,7 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
             
             current.RightOrigin = newNode;
             current = newNode;
+            textNode.AppendChild(newNode);
         }
 
         return textNode;
