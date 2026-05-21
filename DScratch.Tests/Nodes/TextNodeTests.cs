@@ -9,9 +9,9 @@ public class TextNodeTests
     public void Length_ReturnsLengthCombines_FromAllChildNodes()
     {
         // Arrange
-        var charNode1 = new CharNode('a', "3", null, null, null);
-        var charNode2 = new CharNode('b', "2", null, null, null);
-        var testNode = new TextNode("1", null, null, null, [charNode1, charNode2]);
+        var charNode1 = new CharNode('a', "3", null, null);
+        var charNode2 = new CharNode('b', "2", null, null);
+        var testNode = new TextNode("1", null, null, [charNode1, charNode2]);
         charNode1.Parent = testNode;
         charNode2.Parent = testNode;
         
@@ -26,9 +26,9 @@ public class TextNodeTests
     public void TextContent_ReturnsTextContentCombines_FromAllChildNodes()
     {
         // Arrange
-        var charNode1 = new CharNode('a', "3", null, null, null);
-        var charNode2 = new CharNode('b', "2", null, null, null);
-        var testNode = new TextNode("1", null, null, null, [charNode1, charNode2]);
+        var charNode1 = new CharNode('a', "3", null, null);
+        var charNode2 = new CharNode('b', "2", null, null);
+        var testNode = new TextNode("1", null, null, [charNode1, charNode2]);
         charNode1.Parent = testNode;
         charNode2.Parent = testNode;
         
@@ -43,8 +43,11 @@ public class TextNodeTests
     public void InsertChild_ThrowsInvalidOperationException_WhenNodeIsNotCharNode()
     {
         // Arrange
-        var testNode = new TextNode("1", null, null, null);
-        var node = new TestNode("2", null, null, testNode);
+        var testNode = new TextNode("1", null, null);
+        var node = new TestNode("2", null, null)
+        {
+            Parent = testNode
+        };
 
         // Assert
         Assert.Throws<InvalidOperationException>(Act);

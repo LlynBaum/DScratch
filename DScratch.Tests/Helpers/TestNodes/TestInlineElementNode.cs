@@ -3,8 +3,8 @@ using DScratch.Nodes.NodeTypes;
 
 namespace DScratch.Tests.Helpers.TestNodes;
 
-public class TestInlineElementNode(string id, DNode? origin, DNode? rightOrigin, DNode? parent, List<DNode>? childNodes = null) 
-    : DNode(id, origin, rightOrigin, parent, childNodes), IElement, IText
+public class TestInlineElementNode(string id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null) 
+    : DNode(id, origin, rightOrigin, childNodes), IElement, IText
 {
     public string TagName => "test";
     public int Length => ChildNodes.Cast<IText>().Sum(t => t.Length);

@@ -2,8 +2,8 @@ using DScratch.Nodes.NodeTypes;
 
 namespace DScratch.Nodes;
 
-public class ParagraphNode(string id, DNode? origin, DNode? rightOrigin, DNode? parent, List<DNode>? childNodes = null)
-    : DNode(id, origin, rightOrigin, parent, childNodes), IElement, IText
+public class ParagraphNode(string id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null)
+    : DNode(id, origin, rightOrigin, childNodes), IElement, IText
 {
     public string TagName => "p";
     

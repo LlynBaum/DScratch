@@ -31,14 +31,14 @@ public class DeleteStepTests
     
     private void DefaultNodes()
     {
-        var node3 = new TestNode("3", null, null, null);
-        var node4 = new TestNode("4", node3, null, null);
+        var node3 = new TestNode("3", null, null);
+        var node4 = new TestNode("4", node3, null);
         node3.RightOrigin = node4;
-        var node5 = new TestNode("5", node4, null, null);
+        var node5 = new TestNode("5", node4, null);
         node4.RightOrigin = node5;
         
-        var node1 = new TestNode("1", null, null, null);
-        var node2 = new TestNode("2", node1, null, null, [node3, node4, node5]);
+        var node1 = new TestNode("1", null, null);
+        var node2 = new TestNode("2", node1, null, [node3, node4, node5]);
         node1.RightOrigin = node2;
 
         node3.Parent = node2;

@@ -2,8 +2,8 @@ using DScratch.Nodes.NodeTypes;
 
 namespace DScratch.Nodes;
 
-public class TextNode(string id, DNode? origin, DNode? rightOrigin, DNode? parent, List<DNode>? childNodes = null) 
-    : DNode(id, origin, rightOrigin, parent, childNodes), IText
+public class TextNode(string id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null) 
+    : DNode(id, origin, rightOrigin, childNodes), IText
 {
     public int Length => ChildNodes.Count;
 

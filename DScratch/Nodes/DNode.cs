@@ -2,7 +2,7 @@ using DScratch.Nodes.NodeTypes;
 
 namespace DScratch.Nodes;
 
-public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode? parent, List<DNode>? childNodes = null)
+public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null)
 {
     private readonly List<DNode> childNodes = childNodes ?? [];
     
@@ -14,7 +14,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode?
 
     public bool IsDeleted { get; private set; }
 
-    public DNode? Parent { get; internal set; } = parent;
+    public DNode? Parent { get; internal set; }
     
     public IReadOnlyList<DNode> ChildNodes => childNodes;
 
@@ -44,6 +44,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode?
 
     internal void AppendChild(DNode node)
     {
+        node.Parent = this;
         childNodes.Add(node);
     }
     

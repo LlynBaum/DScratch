@@ -8,10 +8,10 @@ public class DNodeTests
     public void FirstAndLastChild_ReturnExpectedNode()
     {
         // Arrange
-        var node1 = new TestNode("2", null, null, null);
-        var node2 = new TestNode("2", null, null, null);
-        var node3 = new TestNode("2", null, null, null);
-        var parent = new TestNode("1", null, null, null, [node1, node2, node3]);
+        var node1 = new TestNode("2", null, null);
+        var node2 = new TestNode("2", null, null);
+        var node3 = new TestNode("2", null, null);
+        var parent = new TestNode("1", null, null, [node1, node2, node3]);
         
         // Act
         var first = parent.FirstChild;
@@ -29,15 +29,15 @@ public class DNodeTests
     public void Remove_RemovesNodeFromTree()
     {
         // Arrange
-        var node = new TestNode("2", null, null, null);
+        var node = new TestNode("2", null, null);
         
-        var node2 = new TestNode("3", node, null, null);
+        var node2 = new TestNode("3", node, null);
         node.RightOrigin = node2;
         
-        var node3 = new TestNode("4", node2, null, null);
+        var node3 = new TestNode("4", node2, null);
         node2.RightOrigin = node3;
         
-        var parent = new TestNode("1", null, null, null, [node, node2, node3]);
+        var parent = new TestNode("1", null, null, [node, node2, node3]);
         node.Parent = parent;
         node2.Parent = parent;
         node3.Parent = parent;
@@ -59,8 +59,8 @@ public class DNodeTests
     public void InsertChild_SetsParentToItSelf()
     {
         // Arrange
-        var parent = new TestNode("1", null, null, null);
-        var insert = new TestNode("2", null, null, null);
+        var parent = new TestNode("1", null, null);
+        var insert = new TestNode("2", null, null);
         
         // Act
         parent.InsertChild(insert);
@@ -74,8 +74,8 @@ public class DNodeTests
     public void InsertChild_AddNodeAsFirstChild_WhenParentHasNoChildYet()
     {
         // Arrange
-        var parent = new TestNode("1", null, null, null);
-        var insert = new TestNode("2", null, null, null);
+        var parent = new TestNode("1", null, null);
+        var insert = new TestNode("2", null, null);
         
         // Act
         parent.InsertChild(insert);
@@ -89,10 +89,10 @@ public class DNodeTests
     public void InsertChild_AddNodeAsFirstChild_WhenNodeToInsertHasOriginNull()
     {
         // Arrange
-        var node = new TestNode("2", null, null, null);
-        var parent = new TestNode("1", null, null, null, [node]);
+        var node = new TestNode("2", null, null);
+        var parent = new TestNode("1", null, null, [node]);
         
-        var insert = new TestNode("3", null, node, null);
+        var insert = new TestNode("3", null, node);
         
         // Act
         parent.InsertChild(insert);
@@ -106,10 +106,10 @@ public class DNodeTests
     public void InsertChild_AddNodeAfterOrigin_WhenNodeToInsertHasOrigin()
     {
         // Arrange
-        var node = new TestNode("2", null, null, null);
-        var parent = new TestNode("1", null, null, null, [node]);
+        var node = new TestNode("2", null, null);
+        var parent = new TestNode("1", null, null, [node]);
         
-        var insert = new TestNode("3", node, null, null);
+        var insert = new TestNode("3", node, null);
         
         // Act
         parent.InsertChild(insert);
@@ -127,12 +127,12 @@ public class DNodeTests
     public void InsertChild_AddNodeAfterOrigin_AndBeforeRightOrigin()
     {
         // Arrange
-        var node = new TestNode("2", null, null, null);
-        var node2 = new TestNode("3", node, null, null);
+        var node = new TestNode("2", null, null);
+        var node2 = new TestNode("3", node, null);
         node.RightOrigin = node2;
-        var parent = new TestNode("1", null, null, null, [node, node2]);
+        var parent = new TestNode("1", null, null, [node, node2]);
 
-        var insert = new TestNode("4", node, node2, null);
+        var insert = new TestNode("4", node, node2);
         
         // Act
         parent.InsertChild(insert);
@@ -160,10 +160,10 @@ public class DNodeTests
     public void GetPath_ReturnsExpectedPathToNode()
     {
         // Arrange
-        var node = new TestNode("3", null, null, null);
-        var mid = new TestNode("2", null, null, null, [node]);
+        var node = new TestNode("3", null, null);
+        var mid = new TestNode("2", null, null, [node]);
         node.Parent = mid;
-        var parent = new TestNode("1", null, null, null, [mid]);
+        var parent = new TestNode("1", null, null, [mid]);
         mid.Parent = parent;
         
         // Act
@@ -177,12 +177,12 @@ public class DNodeTests
     public void GetElementPath_ReturnsExpectedPathToNode()
     {
         // Arrange
-        var node = new TestNode("4", null, null, null);
-        var mid = new TestInlineElementNode("3", null, null, null, [node]);
+        var node = new TestNode("4", null, null);
+        var mid = new TestInlineElementNode("3", null, null, [node]);
         node.Parent = mid;
-        var mid2 = new TestNode("2", null, null, null, [mid]);
+        var mid2 = new TestNode("2", null, null, [mid]);
         mid.Parent = mid2;
-        var parent = new TestInlineElementNode("1", null, null, null, [mid2]);
+        var parent = new TestInlineElementNode("1", null, null, [mid2]);
         mid2.Parent = parent;
         
         // Act

@@ -13,7 +13,7 @@ public class StepHelpersTests
         public void CharNode_ReturnsInsertTextDiff()
         {
             // Arrange
-            var node = new CharNode('a', "2", null, null, null);
+            var node = new CharNode('a', "2", null, null);
 
             // Act
             var path = new NodePath(["1"]);
@@ -36,10 +36,10 @@ public class StepHelpersTests
         public void Element_ReturnsInsertElementDiff()
         {
             // Arrange
-            var charNode = new CharNode('a', "4", null, null, null);
-            var testNode = new TextNode("3", null, null, null, [charNode]);
+            var charNode = new CharNode('a', "4", null, null);
+            var testNode = new TextNode("3", null, null, [charNode]);
             charNode.Parent = testNode;
-            var paragraph = new ParagraphNode("2", null, null, null, [testNode]);
+            var paragraph = new ParagraphNode("2", null, null, [testNode]);
             testNode.Parent = paragraph;
             
             // Act
@@ -73,23 +73,23 @@ public class StepHelpersTests
         public void TextElement_ReturnsExpectedSteps()
         {
             // Arrange
-            var charNode1 = new CharNode('a', "4", null, null, null);
-            var leftNode = new TextNode("3", null, null, null, [charNode1]);
+            var charNode1 = new CharNode('a', "4", null, null);
+            var leftNode = new TextNode("3", null, null, [charNode1]);
             charNode1.Parent = leftNode;
 
-            var charNode2 = new CharNode('b', "4", null, null, null);
-            var node = new TextNode("5", null, null, null, [charNode2]);
-            var testElement = new TestInlineElementNode("6", leftNode, null, null, [node]);
+            var charNode2 = new CharNode('b', "4", null, null);
+            var node = new TextNode("5", null, null, [charNode2]);
+            var testElement = new TestInlineElementNode("6", leftNode, null, [node]);
             leftNode.RightOrigin = testElement;
             charNode2.Parent = node;
             node.Parent = testElement;
             
-            var charNode3 = new CharNode('c', "7", null, null, null);
-            var rightNode = new TextNode("8", testElement, null, null, [charNode3]);
+            var charNode3 = new CharNode('c', "7", null, null);
+            var rightNode = new TextNode("8", testElement, null, [charNode3]);
             testElement.RightOrigin = rightNode;
             charNode3.Parent = rightNode;
             
-            var paragraph = new ParagraphNode("2", null, null, null, [node, testElement, rightNode]);
+            var paragraph = new ParagraphNode("2", null, null, [node, testElement, rightNode]);
             leftNode.Parent = paragraph;
             testElement.Parent = paragraph;
             rightNode.Parent = paragraph;
@@ -163,7 +163,7 @@ public class StepHelpersTests
         public void CharNode_ReturnsDeleteTextDiff()
         {
             // Arrange
-            var node = new CharNode('a', "2", null, null, null);
+            var node = new CharNode('a', "2", null, null);
             
             // Act
             var path = new NodePath(["1"]);
@@ -184,9 +184,9 @@ public class StepHelpersTests
         public void TextNode_ReturnDeleteTextDiff()
         {
             // Arrange
-            var charNode = new CharNode('a', "4", null, null, null);
-            var charNode2 = new CharNode('b', "5", null, null, null);
-            var testNode = new TextNode("3", null, null, null, [charNode, charNode2]);
+            var charNode = new CharNode('a', "4", null, null);
+            var charNode2 = new CharNode('b', "5", null, null);
+            var testNode = new TextNode("3", null, null, [charNode, charNode2]);
             charNode.Parent = testNode;
             charNode2.Parent = testNode;
             
