@@ -1,3 +1,4 @@
+using DScratch.Nodes;
 using DScratch.Tests.Helpers.TestNodes;
 using DScratch.Transactions.Steps;
 
@@ -19,20 +20,20 @@ public class InsertStepTests
     {
         // Arrange
         DefaultNodes();
-        var node = new TestNode("-1", null, null);
-        var step = new InsertStep(node, new NodePath(["2"]), 2);
+        var node = new CharNode('a', "-1", null, null);
+        var step = new InsertStep(node, new NodePath(["2"]), 1);
         
         // Act
         step.Execute(Document);
         
         // Assert
-        var insertedNode = Document.Page.Root.RightOrigin?.FirstChild?.FirstChild;
+        var insertedNode = Document.Page.Root.RightOrigin?.FirstChild?.RightOrigin?.FirstChild;
         
         using (Assert.EnterMultipleScope())
         {
             Assert.That(insertedNode?.Id, Is.EqualTo("-1"));
             
-            Assert.That(node.Parent?.Id, Is.EqualTo("3"));
+            Assert.That(node.Parent?.Id, Is.EqualTo("2"));
             Assert.That(node.Origin, Is.Null);
             Assert.That(node.RightOrigin, Is.Null);
         }

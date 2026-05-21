@@ -20,12 +20,12 @@ public class DeleteStepTests
         // Arrange
         DefaultNodes();
         var step = new DeleteStep(new NodePath(["2"]), 2);
-            
+        
         // Act
         step.Execute(Document);
             
         // Assert
-        var deletedNode = Document.Page.Root.RightOrigin?.FirstChild?.RightOrigin?.RightOrigin!;
+        var deletedNode = Document.Page.Root.RightOrigin?.FirstChild?.RightOrigin!;
         Assert.That(deletedNode.IsDeleted, Is.True);
     }
     
