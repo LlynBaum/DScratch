@@ -1,4 +1,5 @@
 using DScratch.Tests.Helpers;
+using DScratch.Tests.Helpers.TestNodes;
 using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 

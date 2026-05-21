@@ -1,3 +1,5 @@
+using DScratch.Nodes.NodeTypes;
+
 namespace DScratch.Nodes;
 
 public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode? parent, List<DNode>? childNodes = null)
@@ -69,6 +71,21 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, DNode?
         var current = this;
         while (current is not null)
         {
+            result.Add(current.Id);
+            current = current.Parent;
+        }
+        
+        return new NodePath(result);
+    }
+
+    public NodePath GetElementPath()
+    {
+        List<string> result = [];
+
+        var current = this;
+        while (current is not null)
+        {
+            if(current is not IElement) continue;
             result.Add(current.Id);
             current = current.Parent;
         }

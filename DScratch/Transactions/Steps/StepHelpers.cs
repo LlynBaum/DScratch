@@ -3,7 +3,7 @@ using DScratch.Nodes.NodeTypes;
 
 namespace DScratch.Transactions.Steps;
 
-public static class StepHelpers
+internal static class StepHelpers
 {
     extension(DNode node)
     {
