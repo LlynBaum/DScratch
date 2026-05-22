@@ -16,11 +16,17 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         {
             throw new ArgumentException($"Parent with given path not found: {keyPressInfo.GetNodePath()}");
         }
+
+        if (keyPressInfo.Selection.Offset < 1)
+        {
+            // so we are at the start of a text element... like a p element... we have to delete it, and move text over to previous element, if possible, else fuck it xD
+            throw new NotImplementedException();
+        }
         
-        var offset = parent.ActiveChildNodes[keyPressInfo.Selection.Offset];
+        // TODO: when selection is not just cursor position, but a selection, then delete everything that is selected.
         
-        
-        transaction.DeleteNode();
+        var nodeToDelete = parent.ActiveChildNodes.ToList()[keyPressInfo.Selection.Offset - 1];
+        transaction.DeleteNode(nodeToDelete);
         return dScratchService.Apply(transaction);
     }
 }

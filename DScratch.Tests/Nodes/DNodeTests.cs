@@ -43,6 +43,42 @@ public class DNodeTests
     }
     
     [Test]
+    public void FirstChild_ReturnExpectedNode()
+    {
+        // Arrange
+        var node1 = new TestNode("2", null, null);
+        var node2 = new TestNode("2", null, null);
+        var node3 = new TestNode("2", null, null);
+        var parent = new TestNode("1", null, null, [node1, node2, node3]);
+        
+        node1.Delete();
+        
+        // Act
+        var first = parent.FirstChild;
+        
+        // Assert
+        Assert.That(first, Is.EqualTo(node2));
+    }
+    
+    [Test]
+    public void LastChild_ReturnExpectedNode()
+    {
+        // Arrange
+        var node1 = new TestNode("2", null, null);
+        var node2 = new TestNode("2", null, null);
+        var node3 = new TestNode("2", null, null);
+        var parent = new TestNode("1", null, null, [node1, node2, node3]);
+        
+        node3.Delete();
+        
+        // Act
+        var last = parent.LastChild;
+        
+        // Assert
+        Assert.That(last, Is.EqualTo(node2));
+    }
+    
+    [Test]
     public void Delete_MarksItselfAndAllChildNodes_AsIsDeleted()
     {
         // Arrange

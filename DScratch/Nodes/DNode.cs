@@ -20,9 +20,9 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
     
     public IEnumerable<DNode> ActiveChildNodes => childNodes.Where(c => !c.IsDeleted);
 
-    public DNode? FirstChild => childNodes.FirstOrDefault();
+    public DNode? FirstChild => ActiveChildNodes.FirstOrDefault();
 
-    public DNode? LastChild => childNodes.LastOrDefault();
+    public DNode? LastChild => ActiveChildNodes.LastOrDefault();
 
     internal void Remove()
     {
@@ -80,6 +80,11 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
     public int IndexOf(DNode node)
     {
         return ActiveChildNodes.ToList().FindIndex(n => n.Id == node.Id);
+    }
+
+    public DNode? ChildAt(int index)
+    {
+        return ActiveChildNodes.Skip(index).First();
     }
     
     public NodePath GetPath()
