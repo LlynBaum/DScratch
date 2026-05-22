@@ -307,6 +307,21 @@ public class DNodeTests
         // Assert
         Assert.That(result, Is.Null);
     }
+    
+    [Test]
+    public void ChildAt_ReturnsNull_WhenIndexIsBelowZero()
+    {
+        // Arrange
+        var node = new TestNode("2", null, null);
+        var node2 = new TestNode("3", null, null);
+        var parent = new TestNode("1", null, null, [node, node2]);
+        
+        // Act
+        var result = parent.ChildAt(-1);
+        
+        // Assert
+        Assert.That(result, Is.Null);
+    }
 
     [Test]
     public void GetPath_ReturnsExpectedPathToNode()

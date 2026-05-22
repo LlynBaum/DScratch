@@ -22,7 +22,9 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         }
 
         var rightOrigin = parent.ChildAt(keyPressInfo.Selection.Offset);
-        var textNode = dScratchService.NodeFactory.String(keyPressInfo.Data, rightOrigin?.Origin, rightOrigin);
+        var origin = parent.ChildAt(keyPressInfo.Selection.Offset - 1);
+        
+        var textNode = dScratchService.NodeFactory.String(keyPressInfo.Data, origin, rightOrigin);
         transaction.Insert(textNode, parent);
         return dScratchService.Apply(transaction);
     }
