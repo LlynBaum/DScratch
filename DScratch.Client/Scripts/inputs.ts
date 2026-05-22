@@ -39,7 +39,7 @@ export async function handleInput(event: InputEvent, bridgeReference: any) {
 
 function getPath(element: Element): string[] {
     const result: string[] = [];
-    let current = element.parentElement; // Event is fired on text node within p element
+    let current: Element | null = element;
 
     while (current && !current.hasAttribute("contenteditable")) {
         result.push(current.getAttribute("data-path-id")!);

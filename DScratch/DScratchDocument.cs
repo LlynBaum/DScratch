@@ -15,6 +15,8 @@ public class DScratchDocument
     {
         var pathPartIndex = 0;
         var node = Page.Root;
+
+        if (path.IsRoot) return Page.Root;
         
         while (true)
         {

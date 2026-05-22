@@ -1,5 +1,12 @@
+using System.Text.Json.Serialization;
+
 namespace DScratch.Transactions;
 
+[JsonDerivedType(typeof(InsertTextDiff))]
+[JsonDerivedType(typeof(DeleteTextDiff))]
+[JsonDerivedType(typeof(InsertElementDiff))]
+[JsonDerivedType(typeof(DeleteElementDiff))]
+[JsonDerivedType(typeof(MoveDiff))]
 // ReSharper disable NotAccessedPositionalProperty.Global / is deserialized to be used in JS.
 public abstract record StepDiff(string Type)
 {

@@ -6,6 +6,8 @@ public readonly struct NodePath(List<string> path)
 
     public string[] Path => path.ToArray();
 
+    public bool IsRoot => Length == 0 || (Length == 1 && Path[0] == "root");
+
     public static NodePath Root => new NodePath(["root"]);
 
     public string this[int index] => path[index];

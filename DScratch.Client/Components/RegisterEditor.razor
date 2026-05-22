@@ -14,7 +14,8 @@
         {
             var dotNetRef = DotNetObjectReference.Create(InputEventHelper);
             await JsInvoker.InitializeEditor(dotNetRef);
-            await JsInvoker.ApplyTransaction(DScratchService.InitialTransaction());
+            var initialTransaction = DScratchService.InitialTransaction();
+            await JsInvoker.ApplyTransaction(initialTransaction);
         }
     }
 
