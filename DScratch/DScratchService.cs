@@ -22,4 +22,9 @@ public class DScratchService(INodeFactory nodeFactory) : IDScratchService
         transactions.Push(transaction);
         return transaction.Commit();
     }
+
+    public TransactionResult InitialTransaction()
+    { 
+        return new TransactionResult(document.Page.Root.ToInsert());
+    }
 }

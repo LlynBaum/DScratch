@@ -5,7 +5,6 @@ namespace DScratch.Client.Scripts;
 
 public class InputEventHelper(IJSRuntime jsRuntime, IServiceProvider serviceProvider, ILogger<InputEventHelper> logger)
 {
-    private const string ApplyTransactionJs = "applyTransaction";
     
     [JSInvokable]
     public async Task OnKeyPressCallbackAsync(KeyPressInfo keyPressInfo)
@@ -19,7 +18,7 @@ public class InputEventHelper(IJSRuntime jsRuntime, IServiceProvider serviceProv
                 return;
             }
 
-            await jsRuntime.InvokeVoidAsync(ApplyTransactionJs, result.Diffs);
+            await jsRuntime.InvokeVoidAsync(ScriptConstants.ApplyTransactionJs, result.Diffs);
         }
         else
         {

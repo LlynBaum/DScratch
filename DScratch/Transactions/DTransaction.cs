@@ -8,7 +8,9 @@ internal class DTransaction(DScratchDocument document) : ITransaction
     private readonly List<IStep> steps = [];
 
     public IReadOnlyList<IStep> Steps => steps;
-    
+
+    public DNode Root => document.Page.Root;
+
     public TransactionResult Commit()
     {
         var diffs = steps.SelectMany(s => s.Execute(document)).ToList();

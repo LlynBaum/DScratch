@@ -4,6 +4,7 @@
 @rendermode InteractiveWebAssembly
 @inject InputEventHelper InputEventHelper
 @inject IJSRuntime JsRuntime
+@inject IDScratchService DScratchService 
 
 @code {
 
@@ -12,7 +13,8 @@
         if (firstRender && RuntimeInformation.ProcessArchitecture == Architecture.Wasm)
         {
             var dotNetRef = DotNetObjectReference.Create(InputEventHelper);
-            await JsRuntime.InvokeVoidAsync("editor.initialize", dotNetRef);
+            await JsRuntime.InvokeVoidAsync(ScriptConstants.EditorInitialize, dotNetRef);
+            await JsRuntime.InvokeVoidAsync(ScriptConstants.ApplyTransactionJs, DScratchService.InitialTransaction());
         }
     }
 
