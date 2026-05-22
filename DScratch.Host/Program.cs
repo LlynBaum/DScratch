@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
-DScratchServiceRegistration.RegisterServices(builder.Services, builder.Configuration);
+DScratchServiceRegistration.RegisterServices(builder.Services);
 ClientServiceRegistration.RegisterServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();
