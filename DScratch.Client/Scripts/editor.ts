@@ -3,7 +3,6 @@ import { handleInput } from "./inputs";
 
 let bridgeReference: any = null;
 
-export {};
 declare global {
     interface Window {
         editor: any;

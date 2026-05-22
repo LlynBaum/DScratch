@@ -1,0 +1,19 @@
+@using System.Runtime.InteropServices
+@using DScratch.Client.Scripts
+
+@rendermode InteractiveWebAssembly
+@inject InputEventHelper InputEventHelper
+@inject IJSRuntime JsRuntime
+
+@code {
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && RuntimeInformation.ProcessArchitecture == Architecture.Wasm)
+        {
+            var dotNetRef = DotNetObjectReference.Create(InputEventHelper);
+            await JsRuntime.InvokeVoidAsync("editor.initialize", dotNetRef);
+        }
+    }
+
+}
