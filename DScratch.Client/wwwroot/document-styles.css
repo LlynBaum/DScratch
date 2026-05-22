@@ -3,6 +3,10 @@
         color: var(--paragraph-color);
     }
     
+    * {
+        outline: none;
+    }
+    
     h1 {
         color: currentColor;
     }
