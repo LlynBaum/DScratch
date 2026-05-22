@@ -30,7 +30,7 @@ interface InsertElementStep extends Step {
 }
 
 interface DeleteElementStep extends Step {
-    oath: string[];
+    path: string[];
 }
 
 interface MoveStep extends Step {
@@ -71,9 +71,12 @@ function handleInsertTextStep(step: InsertTextStep) {
     if(node) {
         const text = node.textContent;
         node.textContent = text.slice(0, relativeOffset) + step.text + text.slice(relativeOffset);
+        setSelection(node, relativeOffset + 1);
         
     } else {
-        element.appendChild(document.createTextNode(step.text));
+        const createdNode = document.createTextNode(step.text);
+        element.appendChild(createdNode);
+        setSelection(createdNode, step.text.length);
     }
 }
 
@@ -85,6 +88,7 @@ function handleDeleteTextStep(step: DeleteTextStep) {
     if(node) {
         const text = node.textContent;
         node.textContent = text.slice(0, relativeOffset) + text.slice(relativeOffset + step.length);
+        setSelection(node, relativeOffset + 1);
     }
 }
 
@@ -95,13 +99,15 @@ function handleInsertElementStep(step: InsertElementStep) {
     const element = document.createElement(step.tagName);
     element.setAttribute("data-path-id", step.newNodeId);
     insertElement(element, parent, step.offset);
+    setSelection(element, 0);
 }
 
 function handleDeleteElementStep(step: DeleteElementStep) {
-    const element = findNode(step.oath);
+    const element = findNode(step.path);
     if (!element) return;
     
     element.remove();
+   // TODO: this might work out of the box of the browser, but check. Else seek for the a previous text node and set selection there. 
 }
 
 function handleMoveStep(step: MoveStep) {
@@ -113,6 +119,7 @@ function handleMoveStep(step: MoveStep) {
     
     element.remove();
     insertElement(element, newParent, step.targetOffset);
+    // TODO: this might work out of the box of the browser, but check. Else seek for the a previous text node and set selection there.
 }
 
 function insertElement(element: Element, parent: Element, offset: number) {
@@ -157,4 +164,14 @@ function findTextNodeAtOffset(parent: Element, offset: number){
         currentNode = walker.nextNode() as Text | null;
     }
     return { node: null, relativeOffset: 0 };
+}
+
+function setSelection(node: Node, offset: number) {
+    const selection = window.getSelection();
+    selection?.removeAllRanges();
+
+    const range = document.createRange();
+    range.setStart(node, offset);
+    range.collapse(true);
+    selection?.addRange(range)
 }
