@@ -3,7 +3,7 @@ using Microsoft.JSInterop;
 
 namespace DScratch.Client.Scripts;
 
-public class InputEventHelper(IJSRuntime jsRuntime, IServiceProvider serviceProvider, ILogger<InputEventHelper> logger)
+public class InputEventHelper(DJsInvoker jsInvoker, IServiceProvider serviceProvider, ILogger<InputEventHelper> logger)
 {
     
     [JSInvokable]
@@ -18,7 +18,7 @@ public class InputEventHelper(IJSRuntime jsRuntime, IServiceProvider serviceProv
                 return;
             }
 
-            await jsRuntime.InvokeVoidAsync(ScriptConstants.ApplyTransactionJs, result.Diffs);
+            await jsInvoker.ApplyTransaction(result);
         }
         else
         {

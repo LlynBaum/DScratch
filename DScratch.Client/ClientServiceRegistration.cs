@@ -9,6 +9,7 @@ public static class ClientServiceRegistration
     { 
         EventHandlerRegistration.Register(services);
         services.AddScoped<InputEventHelper>();
+        services.AddScoped<DJsInvoker>();
         services.AddScoped<INodeIdGenerator, NodeIdGenerator>();
     }
 }
