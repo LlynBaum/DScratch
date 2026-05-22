@@ -16,12 +16,12 @@ internal static class StepHelpers
             return node switch
             {
                 CharNode charNode => [new StepDiff.InsertTextDiff(path.Path, offset, charNode.Value.ToString())],
-                IElement element and IText text =>
+                TextNode textNode => [new StepDiff.InsertTextDiff(path.Path, offset, textNode.TextContent)],
+                IElement element => 
                 [
-                    new StepDiff.InsertElementDiff(path.Path, offset, element.TagName, node.Id),
-                    new StepDiff.InsertTextDiff(path.Path, offset, text.TextContent) // TODO: test with js, should work in theory but not sure
+                    new StepDiff.InsertElementDiff(path.Path, offset, element.TagName, node.Id), 
+                    ..node.ChildNodes.SelectMany(c => c.ToInsert())
                 ],
-                IElement element => [new StepDiff.InsertElementDiff(path.Path, offset, element.TagName, node.Id)],
                 _ => throw new ArgumentException("Node type is not an element or char.")
             };
         }

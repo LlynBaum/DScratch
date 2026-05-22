@@ -85,19 +85,19 @@ public class StepHelpersTests
             var leftNode = new TextNode("3", null, null, [charNode1]);
             charNode1.Parent = leftNode;
 
-            var charNode2 = new CharNode('b', "4", null, null);
-            var node = new TextNode("5", null, null, [charNode2]);
-            var testElement = new TestInlineElementNode("6", leftNode, null, [node]);
+            var charNode2 = new CharNode('b', "5", null, null);
+            var node = new TextNode("6", null, null, [charNode2]);
+            var testElement = new TestInlineElementNode("7", leftNode, null, [node]);
             leftNode.RightOrigin = testElement;
             charNode2.Parent = node;
             node.Parent = testElement;
             
-            var charNode3 = new CharNode('c', "7", null, null);
-            var rightNode = new TextNode("8", testElement, null, [charNode3]);
+            var charNode3 = new CharNode('c', "8", null, null);
+            var rightNode = new TextNode("9", testElement, null, [charNode3]);
             testElement.RightOrigin = rightNode;
             charNode3.Parent = rightNode;
 
-            var paragraph = new ParagraphNode("2", null, null, [node, testElement, rightNode]);
+            var paragraph = new ParagraphNode("2", null, null, [leftNode, testElement, rightNode]);
             leftNode.Parent = paragraph;
             testElement.Parent = paragraph;
             rightNode.Parent = paragraph;
@@ -137,8 +137,8 @@ public class StepHelpersTests
                 var insertTestElement = (StepDiff.InsertElementDiff)result[2];
                 Assert.That(insertTestElement.Parent, Is.EquivalentTo(["1", paragraph.Id]));
                 Assert.That(insertTestElement.Offset, Is.EqualTo(1));
-                Assert.That(insertTestElement.NewNodeId, Is.EqualTo(paragraph.Id));
-                Assert.That(insertTestElement.TagName, Is.EqualTo(paragraph.TagName));
+                Assert.That(insertTestElement.NewNodeId, Is.EqualTo("7"));
+                Assert.That(insertTestElement.TagName, Is.EqualTo(testElement.TagName));
                 
                 var insertText = (StepDiff.InsertTextDiff)result[3];
                 Assert.That(insertText.Parent, Is.EquivalentTo(["1", paragraph.Id, testElement.Id]));
