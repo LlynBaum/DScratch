@@ -17,6 +17,8 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
     public DNode? Parent { get; internal set; }
     
     public IReadOnlyList<DNode> ChildNodes => childNodes;
+    
+    public IEnumerable<DNode> ActiveChildNodes => childNodes.Where(c => !c.IsDeleted);
 
     public DNode? FirstChild => childNodes.FirstOrDefault();
 
@@ -77,7 +79,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
     
     public int IndexOf(DNode node)
     {
-        return childNodes.FindIndex(n => n.Id == node.Id);
+        return ActiveChildNodes.ToList().FindIndex(n => n.Id == node.Id);
     }
     
     public NodePath GetPath()

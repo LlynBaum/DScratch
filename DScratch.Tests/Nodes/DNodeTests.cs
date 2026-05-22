@@ -5,6 +5,23 @@ namespace DScratch.Tests.Nodes;
 public class DNodeTests
 {
     [Test]
+    public void ActiveChildNodes_ReturnOnlyNonDeletedChildNodes()
+    {
+        // Arrange
+        var node1 = new TestNode("2", null, null);
+        var node2 = new TestNode("3", null, null);
+        var node3 = new TestNode("4", null, null);
+        var parent = new TestNode("1", null, null, [node1, node2, node3]);
+        node2.Delete();
+        
+        // Act
+        var activeChildNodes = parent.ActiveChildNodes.Select(c => c.Id).ToList();
+        
+        // Assert
+        Assert.That(activeChildNodes, Is.EquivalentTo(["2", "4"]));
+    }
+    
+    [Test]
     public void FirstAndLastChild_ReturnExpectedNode()
     {
         // Arrange
@@ -190,6 +207,39 @@ public class DNodeTests
         
         // Assert
         Assert.That(result, Is.EqualTo(1));
+    }
+    
+    [Test]
+    public void IndexOf_ReturnsNegativeOne_WhenChildIsDeleted()
+    {
+        // Arrange
+        var node = new TestNode("2", null, null);
+        var node2 = new TestNode("3", node, null);
+        node.RightOrigin = node2;
+        var parent = new TestNode("1", null, null, [node, node2]);
+        
+        node2.Delete();
+        
+        // Act
+        var result = parent.IndexOf(node2);
+        
+        // Assert
+        Assert.That(result, Is.EqualTo(-1));
+    }
+    
+    [Test]
+    public void IndexOf_ReturnsNegativeOne_WhenChildIsNotFound()
+    {
+        // Arrange
+        var node = new TestNode("2", null, null);
+        var node2 = new TestNode("3", null, null);
+        var parent = new TestNode("1", null, null, [node]);
+        
+        // Act
+        var result = parent.IndexOf(node2);
+        
+        // Assert
+        Assert.That(result, Is.EqualTo(-1));
     }
 
     [Test]

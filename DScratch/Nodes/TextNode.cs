@@ -3,10 +3,9 @@ namespace DScratch.Nodes;
 public class TextNode(string id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null) 
     : DNode(id, origin, rightOrigin, childNodes)
 {
-    public int Length => ChildNodes.Count(c => !c.IsDeleted);
+    public int Length => ActiveChildNodes.Count();
 
-    public string TextContent => ChildNodes
-        .Where(c => !c.IsDeleted)
+    public string TextContent => ActiveChildNodes
         .Cast<CharNode>()
         .Aggregate(string.Empty, (text, node) => text + node.Value);
 
