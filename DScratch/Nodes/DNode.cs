@@ -40,6 +40,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
     internal void Delete()
     {
         IsDeleted = true;
+        childNodes.ForEach(n => n.Delete());
     }
 
     internal void AppendChild(DNode node)

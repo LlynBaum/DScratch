@@ -26,6 +26,26 @@ public class DNodeTests
     }
     
     [Test]
+    public void Delete_MarksItselfAndAllChildNodes_AsIsDeleted()
+    {
+        // Arrange
+        var node1 = new TestNode("2", null, null);
+        var node2 = new TestNode("2", null, null, [node1]);
+        var node3 = new TestNode("2", null, null, [node2]);
+        
+        // Act
+        node3.Delete();
+        
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(node1.IsDeleted, Is.True);
+            Assert.That(node2.IsDeleted, Is.True);
+            Assert.That(node3.IsDeleted, Is.True);
+        });
+    }
+    
+    [Test]
     public void Remove_RemovesNodeFromTree()
     {
         // Arrange
@@ -154,6 +174,22 @@ public class DNodeTests
             Assert.That(child3.Id, Is.EqualTo(node2.Id));
             Assert.That(child3.Origin?.Id, Is.EqualTo(insert.Id));
         }
+    }
+
+    [Test]
+    public void IndexOf_ReturnsIndexOfGivenChildNode()
+    {
+        // Arrange
+        var node = new TestNode("2", null, null);
+        var node2 = new TestNode("3", node, null);
+        node.RightOrigin = node2;
+        var parent = new TestNode("1", null, null, [node, node2]);
+        
+        // Act
+        var result = parent.IndexOf(node2);
+        
+        // Assert
+        Assert.That(result, Is.EqualTo(1));
     }
 
     [Test]
