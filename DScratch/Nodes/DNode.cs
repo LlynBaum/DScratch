@@ -84,7 +84,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
 
     public DNode? ChildAt(int index)
     {
-        return ActiveChildNodes.Skip(index).First();
+        return ActiveChildNodes.Skip(index).FirstOrDefault();
     }
     
     public NodePath GetPath()

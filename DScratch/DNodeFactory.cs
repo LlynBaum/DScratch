@@ -4,9 +4,9 @@ namespace DScratch;
 
 internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
 {
-    public TextNode String(string value)
+    public TextNode String(string value, DNode? origin, DNode? rightOrigin)
     {
-        var textNode = new TextNode(nodeIdGenerator.GetNextId(), null, null);
+        var textNode = new TextNode(nodeIdGenerator.GetNextId(), origin, rightOrigin);
         
         var firstNode = new CharNode(
             value: value[0], 
@@ -32,9 +32,9 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
         return textNode;
     }
     
-    public CharNode Char(char value)
+    public CharNode Char(char value, CharNode? origin, CharNode? rightOrigin)
     {
         var id = nodeIdGenerator.GetNextId();
-        return new CharNode(value, id, null, null);
+        return new CharNode(value, id, origin, rightOrigin);
     }
 }

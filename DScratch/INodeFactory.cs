@@ -4,7 +4,7 @@ namespace DScratch;
 
 public interface INodeFactory
 {
-    TextNode String(string value);
+    TextNode String(string value, DNode? origin, DNode? rightOrigin);
 
-    CharNode Char(char value);
+    CharNode Char(char value, CharNode? origin, CharNode? rightOrigin);
 }

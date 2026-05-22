@@ -14,16 +14,15 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         }
         
         var transaction = dScratchService.StartTransaction(document);
-        var textNode = dScratchService.NodeFactory.String(keyPressInfo.Data);
 
         var parent = transaction.FindNode(keyPressInfo.GetNodePath());
         if (parent is null)
         {
             throw new ArgumentException($"Parent with given path not found: {keyPressInfo.GetNodePath()}");
         }
-        
-        keyPressInfo.Selection.Offset
-        
+
+        var rightOrigin = parent.ChildAt(keyPressInfo.Selection.Offset);
+        var textNode = dScratchService.NodeFactory.String(keyPressInfo.Data, rightOrigin?.Origin, rightOrigin);
         transaction.Insert(textNode, parent);
         return dScratchService.Apply(transaction);
     }

@@ -277,6 +277,36 @@ public class DNodeTests
         // Assert
         Assert.That(result, Is.EqualTo(-1));
     }
+    
+    [Test]
+    public void ChildAt_ReturnsExpectedChild()
+    {
+        // Arrange
+        var node = new TestNode("2", null, null);
+        var node2 = new TestNode("3", null, null);
+        var parent = new TestNode("1", null, null, [node, node2]);
+        
+        // Act
+        var result = parent.ChildAt(1);
+        
+        // Assert
+        Assert.That(result, Is.EqualTo(node2));
+    }
+    
+    [Test]
+    public void ChildAt_ReturnsNull_WhenIndexIsOutOfBounds()
+    {
+        // Arrange
+        var node = new TestNode("2", null, null);
+        var node2 = new TestNode("3", null, null);
+        var parent = new TestNode("1", null, null, [node, node2]);
+        
+        // Act
+        var result = parent.ChildAt(2);
+        
+        // Assert
+        Assert.That(result, Is.Null);
+    }
 
     [Test]
     public void GetPath_ReturnsExpectedPathToNode()
