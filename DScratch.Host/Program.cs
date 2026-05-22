@@ -8,7 +8,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 DScratchServiceRegistration.RegisterServices(builder.Services);
-ClientServiceRegistration.RegisterServices(builder.Services, builder.Configuration);
+ClientServiceRegistration.RegisterServices(builder.Services);
 
 var app = builder.Build();
 
