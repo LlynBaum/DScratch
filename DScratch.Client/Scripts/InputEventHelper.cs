@@ -3,12 +3,14 @@ using Microsoft.JSInterop;
 
 namespace DScratch.Client.Scripts;
 
-public class InputEventHelper(IServiceProvider serviceProvider, ILogger<InputEventHelper> logger)
+public class InputEventHelper(IJSRuntime jsRuntime, IServiceProvider serviceProvider, ILogger<InputEventHelper> logger)
 {
+    private const string ApplyTransactionJs = "applyTransaction";
+    
     private readonly DScratchDocument document = new DScratchDocument();
     
     [JSInvokable]
-    public void OnKeyPressCallback(KeyPressInfo keyPressInfo)
+    public async Task OnKeyPressCallbackAsync(KeyPressInfo keyPressInfo)
     {
         var handler = serviceProvider.GetKeyedService<IEditorEventHandler>(keyPressInfo.InputType);
         if (handler is not null)
@@ -19,7 +21,7 @@ public class InputEventHelper(IServiceProvider serviceProvider, ILogger<InputEve
                 return;
             }
 
-            // TODO: dispatcher result to JS
+            await jsRuntime.InvokeVoidAsync(ApplyTransactionJs, result.Diffs);
         }
         else
         {
