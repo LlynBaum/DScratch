@@ -7,48 +7,43 @@ enum StepType {
 }
 
 interface Step {
-    Type: StepType;
+    type: StepType;
 }
 
 interface InsertTextStep extends Step {
-    Parent: string[];
-    Offset: number;
-    Text: string;
+    parent: string[];
+    offset: number;
+    text: string;
 }
 
 interface DeleteTextStep extends Step {
-    Parent: string[]; 
-    Offset: number; 
-    Length: number;
-}
-
-interface SplitTextStep extends Step {
-    TargetNodePath: string[];
-    Offset: number;
+    parent: string[]; 
+    offset: number; 
+    length: number;
 }
 
 interface InsertElementStep extends Step {
-    Parent: string[];
-    Offset: number;
-    TagName: string;
-    NewNodeId: string;
+    parent: string[];
+    offset: number;
+    tagName: string;
+    newNodeId: string;
 }
 
 interface DeleteElementStep extends Step {
-    Path: string[];
+    oath: string[];
 }
 
 interface MoveStep extends Step {
-    TargetNodePath: string[];
-    TargetParentPath: string[];
-    TargetOffset: number;
+    targetNodePath: string[];
+    targetParentPath: string[];
+    targetOffset: number;
 }
 
 export function applyTransaction(transaction: Step[]){
     transaction.map(handle);
     
     function handle(step: Step) {
-        switch (step.Type) {
+        switch (step.type) {
             case StepType.insertText:
                 handleInsertTextStep(step as InsertTextStep);
                 break;
@@ -69,55 +64,55 @@ export function applyTransaction(transaction: Step[]){
 }
 
 function handleInsertTextStep(step: InsertTextStep) {
-    const element = findNode(step.Parent);
+    const element = findNode(step.parent);
     if (!element) return;
 
-    const { node, relativeOffset } = findTextNodeAtOffset(element, step.Offset);
+    const { node, relativeOffset } = findTextNodeAtOffset(element, step.offset);
     if(node) {
         const text = node.textContent;
-        node.textContent = text.slice(0, relativeOffset) + step.Text + text.slice(relativeOffset);
+        node.textContent = text.slice(0, relativeOffset) + step.text + text.slice(relativeOffset);
         
     } else {
-        element.appendChild(document.createTextNode(step.Text));
+        element.appendChild(document.createTextNode(step.text));
     }
 }
 
 function handleDeleteTextStep(step: DeleteTextStep) {
-    const element = findNode(step.Parent);
+    const element = findNode(step.parent);
     if (!element) return;
 
-    const { node, relativeOffset } = findTextNodeAtOffset(element, step.Offset);
+    const { node, relativeOffset } = findTextNodeAtOffset(element, step.offset);
     if(node) {
         const text = node.textContent;
-        node.textContent = text.slice(0, relativeOffset) + text.slice(relativeOffset + step.Length);
+        node.textContent = text.slice(0, relativeOffset) + text.slice(relativeOffset + step.length);
     }
 }
 
 function handleInsertElementStep(step: InsertElementStep) {
-    const parent = findNode(step.Parent);
+    const parent = findNode(step.parent);
     if (!parent) return;
     
-    const element = document.createElement(step.TagName);
-    element.setAttribute("data-path-id", step.NewNodeId);
-    insertElement(element, parent, step.Offset);
+    const element = document.createElement(step.tagName);
+    element.setAttribute("data-path-id", step.newNodeId);
+    insertElement(element, parent, step.offset);
 }
 
 function handleDeleteElementStep(step: DeleteElementStep) {
-    const element = findNode(step.Path);
+    const element = findNode(step.oath);
     if (!element) return;
     
     element.remove();
 }
 
 function handleMoveStep(step: MoveStep) {
-    const element = findNode(step.TargetNodePath);
+    const element = findNode(step.targetNodePath);
     if (!element) return;
     
-    const newParent = findNode(step.TargetParentPath);
+    const newParent = findNode(step.targetParentPath);
     if (!newParent) return;
     
     element.remove();
-    insertElement(element, newParent, step.TargetOffset);
+    insertElement(element, newParent, step.targetOffset);
 }
 
 function insertElement(element: Element, parent: Element, offset: number) {
