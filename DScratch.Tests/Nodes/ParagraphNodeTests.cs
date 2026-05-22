@@ -24,10 +24,16 @@ public class ParagraphNodeTests
         var charNode2 = new CharNode('b', "6", null, null);
         var testNode2 = new TextNode("5", null, null, [charNode2]);
         charNode2.Parent = testNode2;
+        testNode2.Delete();
         
-        var paragraph = new ParagraphNode("2", null, null, [testNode1, testNode2]);
+        var charNode3 = new CharNode('c', "8", null, null);
+        var testNode3 = new TextNode("7", null, null, [charNode3]);
+        charNode3.Parent = testNode3;
+        
+        var paragraph = new ParagraphNode("2", null, null, [testNode1, testNode2, testNode3]);
         testNode1.Parent = paragraph;
         testNode2.Parent = paragraph;
+        testNode3.Parent = paragraph;
         
         // Act
         var result = paragraph.Length;
@@ -47,16 +53,22 @@ public class ParagraphNodeTests
         var charNode2 = new CharNode('b', "6", null, null);
         var testNode2 = new TextNode("5", null, null, [charNode2]);
         charNode2.Parent = testNode2;
+        testNode2.Delete();
         
-        var paragraph = new ParagraphNode("2", null, null, [testNode1, testNode2]);
+        var charNode3 = new CharNode('c', "8", null, null);
+        var testNode3 = new TextNode("7", null, null, [charNode3]);
+        charNode3.Parent = testNode3;
+        
+        var paragraph = new ParagraphNode("2", null, null, [testNode1, testNode2, testNode3]);
         testNode1.Parent = paragraph;
         testNode2.Parent = paragraph;
+        testNode3.Parent = paragraph;
         
         // Act
         var result = paragraph.TextContent;
 
         // Assert
-        Assert.That(result, Is.EqualTo("ab"));
+        Assert.That(result, Is.EqualTo("ac"));
     }
     
     [Test]
