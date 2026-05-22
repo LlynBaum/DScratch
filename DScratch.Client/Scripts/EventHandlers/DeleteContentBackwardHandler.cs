@@ -6,9 +6,9 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
 {
     public const string EventName = "deleteContentBackward";
     
-    public TransactionResult Handle(KeyPressInfo keyPressInfo, DScratchDocument document)
+    public TransactionResult Handle(KeyPressInfo keyPressInfo)
     {
-        var transaction = dScratchService.StartTransaction(document);
+        var transaction = dScratchService.StartTransaction();
         
         var parent = transaction.FindNode(keyPressInfo.GetNodePath());
         if (parent is null)

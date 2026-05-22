@@ -23,7 +23,7 @@ public class InsertTextHandlerTests
         serviceMock = new Mock<IDScratchService>();
         
         serviceMock.Setup(s => s.NodeFactory).Returns(factoryMock.Object);
-        serviceMock.Setup(s => s.StartTransaction(It.IsAny<DScratchDocument>())).Returns(transactionMock.Object);
+        serviceMock.Setup(s => s.StartTransaction()).Returns(transactionMock.Object);
 
         handler = new InsertTextHandler(serviceMock.Object);
     }
@@ -43,7 +43,7 @@ public class InsertTextHandlerTests
             .Returns(TransactionResult.Empty);
 
         // Act
-        handler.Handle(GetKeyPressInfo(1), new DScratchDocument());
+        handler.Handle(GetKeyPressInfo(1));
         
         // Assert
         factoryMock.Verify(f => f.String(
@@ -70,7 +70,7 @@ public class InsertTextHandlerTests
             .Returns(TransactionResult.Empty);
 
         // Act
-        handler.Handle(GetKeyPressInfo(0), new DScratchDocument());
+        handler.Handle(GetKeyPressInfo(0));
         
         // Assert
         factoryMock.Verify(f => f.String(

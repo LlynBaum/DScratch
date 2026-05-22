@@ -7,7 +7,7 @@ public interface IDScratchService
 {
     INodeFactory NodeFactory { get; }
     
-    ITransaction StartTransaction(DScratchDocument document);
+    ITransaction StartTransaction();
     
     TransactionResult Apply(ITransaction transaction);
 }

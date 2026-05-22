@@ -6,14 +6,14 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
 {
     public const string EventName = "insertText";
     
-    public TransactionResult Handle(KeyPressInfo keyPressInfo, DScratchDocument document)
+    public TransactionResult Handle(KeyPressInfo keyPressInfo)
     {
         if (keyPressInfo.Data is null)
         {
             return TransactionResult.Empty;
         }
         
-        var transaction = dScratchService.StartTransaction(document);
+        var transaction = dScratchService.StartTransaction();
 
         var parent = transaction.FindNode(keyPressInfo.GetNodePath());
         if (parent is null)

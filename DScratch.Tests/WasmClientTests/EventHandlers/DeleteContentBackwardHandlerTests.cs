@@ -23,7 +23,7 @@ public class DeleteContentBackwardHandlerTests
         serviceMock = new Mock<IDScratchService>();
         
         serviceMock.Setup(s => s.NodeFactory).Returns(factoryMock.Object);
-        serviceMock.Setup(s => s.StartTransaction(It.IsAny<DScratchDocument>())).Returns(transactionMock.Object);
+        serviceMock.Setup(s => s.StartTransaction()).Returns(transactionMock.Object);
 
         handler = new DeleteContentBackwardHandler(serviceMock.Object);
     }
@@ -40,7 +40,7 @@ public class DeleteContentBackwardHandlerTests
             .Returns(TransactionResult.Empty);
 
         // Act
-        var result = handler.Handle(GetKeyPressInfo(2), new DScratchDocument());
+        var result = handler.Handle(GetKeyPressInfo(2));
         
         // Assert
         transactionMock.Verify(t => t.DeleteNode(node: It.IsAny<TextNode>()), Times.Never);
@@ -59,7 +59,7 @@ public class DeleteContentBackwardHandlerTests
             .Returns(TransactionResult.Empty);
 
         // Act
-        handler.Handle(GetKeyPressInfo(1), new DScratchDocument());
+        handler.Handle(GetKeyPressInfo(1));
         
         // Assert
         transactionMock.Verify(t => t.DeleteNode(node: It.Is<TextNode>(n => n == child)));

@@ -5,12 +5,14 @@ namespace DScratch;
 
 public class DScratchService(INodeFactory nodeFactory) : IDScratchService
 {
+    private readonly DScratchDocument document = new DScratchDocument();
+    
     // TODO: history of past transaction, so things like ctrl-z can be possible.
     private readonly Stack<ITransaction> transactions = [];
 
     public INodeFactory NodeFactory => nodeFactory;
 
-    public ITransaction StartTransaction(DScratchDocument document)
+    public ITransaction StartTransaction()
     {
         return new DTransaction(document);
     }

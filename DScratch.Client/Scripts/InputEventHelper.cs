@@ -7,15 +7,13 @@ public class InputEventHelper(IJSRuntime jsRuntime, IServiceProvider serviceProv
 {
     private const string ApplyTransactionJs = "applyTransaction";
     
-    private readonly DScratchDocument document = new DScratchDocument();
-    
     [JSInvokable]
     public async Task OnKeyPressCallbackAsync(KeyPressInfo keyPressInfo)
     {
         var handler = serviceProvider.GetKeyedService<IEditorEventHandler>(keyPressInfo.InputType);
         if (handler is not null)
         {
-            var result = handler.Handle(keyPressInfo, document);
+            var result = handler.Handle(keyPressInfo);
             if (result.IsEmpty)
             {
                 return;
