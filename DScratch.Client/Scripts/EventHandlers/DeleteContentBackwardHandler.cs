@@ -11,7 +11,6 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         var transaction = dScratchService.StartTransaction(document);
         
         var parent = transaction.FindNode(keyPressInfo.GetNodePath());
-
         if (parent is null)
         {
             throw new ArgumentException($"Parent with given path not found: {keyPressInfo.GetNodePath()}");
@@ -25,7 +24,9 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         
         // TODO: when selection is not just cursor position, but a selection, then delete everything that is selected.
         
-        var nodeToDelete = parent.ActiveChildNodes.ToList()[keyPressInfo.Selection.Offset - 1];
+        var nodeToDelete = parent.ChildAt(keyPressInfo.Selection.Offset - 1);
+        if (nodeToDelete is null) return TransactionResult.Empty;
+        
         transaction.DeleteNode(nodeToDelete);
         return dScratchService.Apply(transaction);
     }

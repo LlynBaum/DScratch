@@ -9,15 +9,19 @@ namespace DScratch.Tests.WasmClientTests.EventHandlers;
 
 public class InsertTextHandlerTests
 {
-    private readonly Mock<ITransaction> transactionMock = new Mock<ITransaction>();
-    private readonly Mock<INodeFactory> factoryMock = new Mock<INodeFactory>();
-    private readonly Mock<IDScratchService> serviceMock = new Mock<IDScratchService>();
+    private Mock<ITransaction> transactionMock;
+    private Mock<INodeFactory> factoryMock;
+    private Mock<IDScratchService> serviceMock;
 
     private InsertTextHandler handler;
-
+    
     [SetUp]
     public void SetUp()
     {
+        transactionMock = new Mock<ITransaction>();
+        factoryMock = new Mock<INodeFactory>();
+        serviceMock = new Mock<IDScratchService>();
+        
         serviceMock.Setup(s => s.NodeFactory).Returns(factoryMock.Object);
         serviceMock.Setup(s => s.StartTransaction(It.IsAny<DScratchDocument>())).Returns(transactionMock.Object);
 
