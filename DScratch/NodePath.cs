@@ -5,7 +5,9 @@ public readonly struct NodePath(List<string> path)
     public int Length => path.Count;
 
     public string[] Path => path.ToArray();
-    
+
+    public static NodePath Root => new NodePath(["root"]);
+
     public string this[int index] => path[index];
     
     public override string ToString()

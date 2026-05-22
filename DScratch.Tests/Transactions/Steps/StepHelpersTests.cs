@@ -11,6 +11,27 @@ public class StepHelpersTests
     private class ToInsert
     {
         [Test]
+        public void WhenParentIsNull_FallbackToRoot()
+        {
+            // Arrange
+            var node = new TestInlineElementNode("1", null, null);
+
+            // Act
+            var result = node.ToInsert();
+            
+            // Assert
+            Assert.That(result, Has.Length.EqualTo(1));
+            Assert.That(result.Single(), Is.TypeOf<StepDiff.InsertElementDiff>());
+            
+            var step = (StepDiff.InsertElementDiff)result.Single();
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(step.Parent, Is.EquivalentTo(["root"]));
+                Assert.That(step.Offset, Is.EqualTo(0));
+            }
+        }
+        
+        [Test]
         public void CharNode_ReturnsInsertTextDiff()
         {
             // Arrange
