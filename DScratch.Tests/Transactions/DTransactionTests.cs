@@ -44,7 +44,7 @@ public class DTransactionTests
     public void Insert_AddsInsertStep()
     {
         // Act
-        Transaction.Insert(TestNode.Empty(), new NodePath([]), 0);
+        Transaction.Insert(TestNode.Empty(), TestNode.Empty());
         
         // Assert
         Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
@@ -56,7 +56,7 @@ public class DTransactionTests
     public void DeleteNode_AddsDeleteStep()
     {
         // Act
-        Transaction.DeleteNode(new NodePath([]), 0);
+        Transaction.DeleteNode(TestNode.Empty());
         
         // Assert
         Assert.That(Transaction.Steps, Has.Count.EqualTo(1));

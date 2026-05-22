@@ -11,27 +11,13 @@ public class DeleteStepTests
     public void SetUp()
     {
         Document = new DScratchDocument();
-        DefaultNodes();
     }
     
     [Test]
     public void DeletesNodeAtPathAndOffset()
     {
         // Arrange
-        DefaultNodes();
-        var step = new DeleteStep(new NodePath(["2"]), 2);
-        
-        // Act
-        step.Execute(Document);
-            
-        // Assert
-        var deletedNode = Document.Page.Root.RightOrigin?.FirstChild?.RightOrigin!;
-        Assert.That(deletedNode.IsDeleted, Is.True);
-    }
-    
-    private void DefaultNodes()
-    {
-        var node3 = new TestNode("3", null, null);
+        var node3 = new TestInlineElementNode("3", null, null);
         var node4 = new TestNode("4", node3, null);
         node3.RightOrigin = node4;
         var node5 = new TestNode("5", node4, null);
@@ -46,5 +32,12 @@ public class DeleteStepTests
         node5.Parent = node2;
         
         Document.Page.Root = node1;
+        
+        // Act
+        var step = new DeleteStep(node3);
+        step.Execute(Document);
+            
+        // Assert
+        Assert.That(node3.IsDeleted, Is.True);
     }
 }

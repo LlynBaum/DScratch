@@ -15,15 +15,17 @@ internal class DTransaction(DScratchDocument document) : ITransaction
         return new TransactionResult(diffs);
     }
     
-    public ITransaction Insert(DNode node, NodePath path, int offset)
+    public ITransaction Insert(DNode node, DNode parent)
     {
-        steps.Add(new InsertStep(node, path, offset));
+        steps.Add(new InsertStep(node, parent));
         return this;
     }
     
-    public ITransaction DeleteNode(NodePath path, int offset)
+    public ITransaction DeleteNode(DNode node)
     {
-        steps.Add(new DeleteStep(path, offset));
+        steps.Add(new DeleteStep(node));
         return this;
     }
+
+    public DNode? FindNode(NodePath path) => document.FindNode(path);
 }

@@ -7,7 +7,9 @@ public interface ITransaction
 {
     internal TransactionResult Commit();
 
-    ITransaction Insert(DNode node, NodePath path, int offset);
+    ITransaction Insert(DNode node, DNode parent);
 
-    ITransaction DeleteNode(NodePath path, int offset);
+    ITransaction DeleteNode(DNode node);
+
+    DNode? FindNode(NodePath path);
 }
