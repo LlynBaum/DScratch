@@ -35,13 +35,16 @@ public class StepHelpersTests
         public void CharNode_ReturnsInsertTextDiff()
         {
             // Arrange
-            var existing = new CharNode('a', "3", null, null);
-            var node = new CharNode('a', "2", existing, null);
+            var existing = new CharNode('a', "4", null, null);
+            var node = new CharNode('a', "3", existing, null);
             existing.RightOrigin = node;
+
+            var textNode = new TextNode("2", null, null, [existing, node]);
+            existing.Parent = textNode;
+            node.Parent = textNode;
             
-            var parent = new TestInlineElementNode("1", null, null, [existing, node]);
-            existing.Parent = parent;
-            node.Parent = parent;
+            var parent = new TestInlineElementNode("1", null, null, [textNode]);
+            textNode.Parent = parent;
 
             // Act
             var result = node.ToInsertSteps();

@@ -14,7 +14,7 @@ internal static class StepHelpers
             
             return node switch
             {
-                CharNode charNode => [new StepDiff.InsertTextDiff(path.Path, GetAbsolutTextOffsetOrDefault(node), charNode.Value.ToString())],
+                CharNode charNode => [new StepDiff.InsertTextDiff(path.Path, node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, charNode.Value.ToString())],
                 TextNode textNode => [new StepDiff.InsertTextDiff(path.Path, GetAbsolutTextOffsetOrDefault(node), textNode.TextContent)],
                 IInlineElement element => 
                 [
@@ -26,7 +26,7 @@ internal static class StepHelpers
                     new StepDiff.InsertElementBlockDiff(path.Path, node.Origin?.GetElementPath().Path, element.TagName, node.Id),
                     ..node.ChildNodes.SelectMany(c => c.ToInsertSteps())
                 ],
-                _ => throw new ArgumentException("Node type is not an element or char.")
+                _ => throw new ArgumentException("Node type is not an element, text or char node.")
             };
         }
         
@@ -43,5 +43,5 @@ internal static class StepHelpers
         }
     }
 
-    private static int GetAbsolutTextOffsetOrDefault(DNode node) => node.Parent?.GetAbsolutTextOffset(node) ?? 0;
+    private static int GetAbsolutTextOffsetOrDefault(DNode node) => node.ParentElement?.FindAbsolutTextOffset(node) ?? 0;
 }
