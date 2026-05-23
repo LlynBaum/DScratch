@@ -31,7 +31,7 @@ internal static class StepHelpers
             var path = node.GetElementPath();
             return node switch
             {
-                CharNode => new StepDiff.DeleteTextDiff(path.Path, node.Parent!.IndexOf(node), 1),
+                CharNode => new StepDiff.DeleteTextDiff(path.Path, node.Parent!.IndexOf(node), 1), // TODO: calc absolut offset, JS can not handle relative offsets
                 TextNode textNode => new StepDiff.DeleteTextDiff(path.Path, node.Parent!.IndexOf(node), textNode.Length),
                 IElement => new StepDiff.DeleteElementDiff(path.Path),
                 _ => throw new ArgumentException("Node type is not an element, text or char.")

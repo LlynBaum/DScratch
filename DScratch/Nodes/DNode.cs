@@ -66,11 +66,11 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
         }
         else
         {
-            var insert = node.Origin;
-            insert.RightOrigin?.Origin = node;
-            insert.RightOrigin = node;
+            var origin = node.Origin;
+            origin.RightOrigin?.Origin = node;
+            origin.RightOrigin = node;
             
-            var index = childNodes.FindIndex(n => n.Id == insert.Id);
+            var index = childNodes.FindIndex(n => n.Id == origin.Id);
             childNodes.Insert(index + 1, node);
         }
         
