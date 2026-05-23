@@ -52,12 +52,18 @@ public class DeleteContentBackwardHandlerTests
     public void Handle_CreatesExpectedChanges()
     {
         // Arrange
-        var char1 = new CharNode('a', "5", null, null);
-        var char2 = new CharNode('a', "4", null, null);
-        var char3 = new CharNode('a', "3", null, null);
-        var child1 = new TextNode("2", null, null, [char1, char2]);
-        var child2 = new TextNode("2", null, null, [char3]);
+        var char1 = new CharNode('a', "6", null, null);
+        var char2 = new CharNode('a', "5", null, null);
+        var char3 = new CharNode('a', "4", null, null);
+        var child1 = new TextNode("3", null, null, [char1, char2]);
+        char1.Parent = child1;
+        char2.Parent = child1;
+        var child2 = new TextNode("2", child1, null, [char3]);
+        char3.Parent = child1;
+        child1.RightOrigin = child2;
         var parent = new TestInlineElementNode("1", null, null, [child1, child2]);
+        child1.Parent = parent;
+        child2.Parent = parent;
         
         transactionMock.Setup(t => t.FindNode(It.IsAny<NodePath>())).Returns(parent);
         serviceMock.Setup(s => s.Apply(It.Is<ITransaction>(t => t == transactionMock.Object)))

@@ -1,4 +1,4 @@
-using DScratch.Nodes.NodeTypes;
+using DScratch.Nodes;
 using DScratch.Transactions.Steps;
 
 namespace DScratch.Client.Scripts.EventHandlers;
@@ -25,10 +25,10 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         
         // TODO: when selection is not just cursor position, but a selection, then delete everything that is selected.
         
-        var currentOffset = 0;
-        var walker = new TreeWalker<IShowText>(parent);
-        var current = walker.NextNode();
+        var walker = new TreeWalker<TextNode>(parent);
         
+        var currentOffset = 0;
+        var current = walker.NextNode();
         while (current is not null)
         {
             var length = current.Length; // Some Length ops can be more expensive, so avoid calling multiple times
@@ -41,7 +41,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             current = walker.NextNode();
         }
 
-        var nodeToDelete = walker.Current?.ChildAt(keyPressInfo.Selection.Offset - currentOffset);
+        var nodeToDelete = current?.ChildAt(keyPressInfo.Selection.Offset - currentOffset - 1);
         if (nodeToDelete is null) return TransactionResult.Empty;
         
         transaction.DeleteNode(nodeToDelete);

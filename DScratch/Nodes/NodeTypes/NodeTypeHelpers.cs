@@ -8,5 +8,5 @@ public static class NodeTypeHelpers
     
     public static bool IsTextNode(this DNode node) => node is TextNode;
 
-    public static bool CanShowText(this DNode node) => node is IShowText;
+    public static bool IsTextOrInline(this DNode node) => node.IsTextNode() || node.IsInlineNode();
 }

@@ -3,15 +3,13 @@ using DScratch.Nodes.NodeTypes;
 namespace DScratch.Nodes;
 
 public class ParagraphNode(string id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null)
-    : DNode(id, origin, rightOrigin, childNodes), IElement, IShowText
+    : DNode(id, origin, rightOrigin, childNodes), IElement
 {
     public string TagName => "p";
 
-    public int Length => ActiveChildNodes.OfType<IShowText>().Sum(e => e.Length);
-
     internal override void InsertChild(DNode node)
     {
-        if (!(node.CanShowText() || node.IsInlineNode()))
+        if (!(node.IsTextOrInline() || node.IsInlineNode()))
         {
             throw new InvalidOperationException("Can only insert text or inline elements into block node.");
         }

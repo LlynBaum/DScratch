@@ -5,6 +5,8 @@ namespace DScratch;
 
 public class TreeWalker<TFilter>(DNode parent) where TFilter : IDNode
 {
+    private const bool EnableDebug = false;
+    
     public DNode? Current { get; private set; } = parent;
 
     public TFilter? NextNode()
@@ -29,7 +31,7 @@ public class TreeWalker<TFilter>(DNode parent) where TFilter : IDNode
     {
         if (current?.FirstChild is not null)
         {
-            TreeVisualizer.TraceNextStep(current, current.FirstChild);
+            if (EnableDebug) TreeVisualizer.TraceNextStep(current, current.FirstChild);
             return current.FirstChild;
         }
 
@@ -45,7 +47,7 @@ public class TreeWalker<TFilter>(DNode parent) where TFilter : IDNode
             node = node.Parent;
         }
 
-        TreeVisualizer.TraceNextStep(current, node);
+        if (EnableDebug) TreeVisualizer.TraceNextStep(current, node);
         return node;
     }
 }
