@@ -85,7 +85,7 @@ public class DeleteContentBackwardHandlerTests
             InputType = InsertTextHandler.EventName,
             Selection = new KeyPressInfo.SelectionInfo
             {
-                Direction = "",
+                Direction = SelectionDirection.None,
                 Offset = offset,
                 End = [],
                 EndOffset = 0

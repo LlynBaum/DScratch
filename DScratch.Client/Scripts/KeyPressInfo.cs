@@ -1,3 +1,6 @@
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
+
 namespace DScratch.Client.Scripts;
 
 public class KeyPressInfo
@@ -16,7 +19,7 @@ public class KeyPressInfo
     {
         public int Offset { get; init; }
         
-        public required string Direction { get; init; }
+        public SelectionDirection Direction { get; init; }
         
         public required string[] End { get; init; }
         
@@ -24,4 +27,17 @@ public class KeyPressInfo
         
         public int EndOffset { get; init; }
     }
+}
+
+[JsonConverter(typeof(JsonStringEnumConverter<SelectionDirection>))]
+public enum SelectionDirection
+{
+    [EnumMember(Value = "none")]
+    None,
+    
+    [EnumMember(Value = "backward")]
+    Backward,
+    
+    [EnumMember(Value = "forward")]
+    Forward
 }
