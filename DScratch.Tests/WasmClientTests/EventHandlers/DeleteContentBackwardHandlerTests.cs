@@ -1,6 +1,7 @@
 using DScratch.Client.Scripts;
 using DScratch.Client.Scripts.EventHandlers;
 using DScratch.Nodes;
+using DScratch.Tests.Helpers.TestNodes;
 using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 using Moq;
@@ -51,18 +52,22 @@ public class DeleteContentBackwardHandlerTests
     public void Handle_CreatesExpectedChanges()
     {
         // Arrange
-        var child = new TextNode("2", null, null);
-        var parent = new TextNode("1", null, null, [child]);
+        var char1 = new CharNode('a', "5", null, null);
+        var char2 = new CharNode('a', "4", null, null);
+        var char3 = new CharNode('a', "3", null, null);
+        var child1 = new TextNode("2", null, null, [char1, char2]);
+        var child2 = new TextNode("2", null, null, [char3]);
+        var parent = new TestInlineElementNode("1", null, null, [child1, child2]);
         
         transactionMock.Setup(t => t.FindNode(It.IsAny<NodePath>())).Returns(parent);
         serviceMock.Setup(s => s.Apply(It.Is<ITransaction>(t => t == transactionMock.Object)))
             .Returns(TransactionResult.Empty);
 
         // Act
-        handler.Handle(GetKeyPressInfo(1));
+        handler.Handle(GetKeyPressInfo(3));
         
         // Assert
-        transactionMock.Verify(t => t.DeleteNode(node: It.Is<TextNode>(n => n == child)));
+        transactionMock.Verify(t => t.DeleteNode(node: It.Is<CharNode>(n => n == char3)));
     }
     
     private static KeyPressInfo GetKeyPressInfo(int offset)
