@@ -27,6 +27,7 @@ public class TreeWalkerTests
         testNode1.Parent = paragraph;
         testNode2.Parent = paragraph;
         testNode3.Parent = paragraph;
+        testNode4.Parent = paragraph;
         
         // Act & Assert
         var walker = new TreeWalker<TextNode>(paragraph);
@@ -87,5 +88,55 @@ public class TreeWalkerTests
         
         Assert.That(walker.NextNode(), Is.Null);
         Assert.That(walker.Current, Is.Null);
+    }
+    
+    [Test]
+    public void NextSibling_FiltersExpectedNodes()
+    {
+        // Arrange
+        var testNode1 = new TextNode("2", null, null);
+        var testNode2 = new TestInlineElementNode("3", testNode1, null);
+        testNode1.RightOrigin = testNode2;
+        var testNode3 = new TextNode("4", testNode2, null);
+        testNode2.RightOrigin = testNode3;
+        
+        var paragraph = new ParagraphNode("1", null, null, [testNode1, testNode2, testNode3]);
+        testNode1.Parent = paragraph;
+        testNode2.Parent = paragraph;
+        testNode3.Parent = paragraph;
+        
+        // Act & Assert
+        var walker = new TreeWalker<TextNode>(testNode1);
+        
+        Assert.That(walker.Current, Is.EqualTo(testNode1));
+        
+        Assert.That(walker.NextSibling(), Is.EqualTo(testNode3));
+        Assert.That(walker.Current, Is.Not.Null);
+        Assert.That(walker.Current, Is.EqualTo(testNode3));
+
+        Assert.That(walker.NextSibling(), Is.Null);
+        Assert.That(walker.Current, Is.Null);
+    }
+    
+    [Test]
+    public void FirstChild_FiltersExpectedNodes()
+    {
+        // Arrange
+        var testNode1 = new TestInlineElementNode("2", null, null);
+        var testNode2 = new TextNode("3", testNode1, null);
+        testNode1.RightOrigin = testNode2;
+        var testNode3 = new TextNode("4", testNode2, null);
+        testNode2.RightOrigin = testNode3;
+        
+        var paragraph = new ParagraphNode("1", null, null, [testNode1, testNode2, testNode3]);
+        testNode1.Parent = paragraph;
+        testNode2.Parent = paragraph;
+        testNode3.Parent = paragraph;
+        
+        // Act & Assert
+        var walker = new TreeWalker<TextNode>(paragraph);
+        
+        Assert.That(walker.FirstChild(), Is.EqualTo(testNode2));
+        Assert.That(walker.Current, Is.EqualTo(testNode2));
     }
 }

@@ -23,6 +23,42 @@ public class TreeWalker<TFilter>(DNode parent, bool includeDeleted = false)
         Current = null;
         return default;
     }
+    
+    public TFilter? NextSibling()
+    {
+        var next = Current?.RightOrigin;
+        while (next is not null)
+        {
+            if (next is TFilter filteredNode)
+            {
+                Current = next;
+                return filteredNode;
+            }
+
+            next = next.RightOrigin;
+        }
+
+        Current = null;
+        return default;
+    }
+
+    public TFilter? FirstChild()
+    {
+        var next = Current?.FirstChild;
+        while (next is not null)
+        {
+            if (next is TFilter filteredNode)
+            {
+                Current = next;
+                return filteredNode;
+            }
+
+            next = next.RightOrigin;
+        }
+
+        Current = null;
+        return default;
+    }
 }
 
 public class TreeWalker<TFilter1, TFilter2>(DNode parent, bool includeDeleted = false) 
@@ -43,6 +79,29 @@ public class TreeWalker<TFilter1, TFilter2>(DNode parent, bool includeDeleted = 
                     return (default, filter2);
                 default:
                     next = Next(next);
+                    break;
+            }
+        }
+
+        Current = null;
+        return default;
+    }
+    
+    public (TFilter1?, TFilter2?) NextSibling()
+    {
+        var next = Current?.RightOrigin;
+        while (next is not null)
+        {
+            switch (next)
+            {
+                case TFilter1 filter1:
+                    Current = next;
+                    return (filter1, default);
+                case TFilter2 filter2:
+                    Current = next;
+                    return (default, filter2);
+                default:
+                    next = Current?.RightOrigin;
                     break;
             }
         }

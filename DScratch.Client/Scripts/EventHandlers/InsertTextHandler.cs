@@ -24,11 +24,27 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
 
         DNode? rightOrigin;
         DNode? origin;
-        if (keyPressInfo.Selection.Direction is SelectionDirection.None)
+        if (keyPressInfo.Selection.Direction is SelectionDirection.None) // TODO: test test test
         {
-            // TODO: this only works, because each TextNode is currently length 1... update to seeking with tree walker
-            rightOrigin = parent.ChildAt(keyPressInfo.Selection.Offset);
-            origin = parent.ChildAt(keyPressInfo.Selection.Offset - 1);
+            var walker = new TreeWalker<TextNode>(parent);
+            var node = walker.FirstChild();
+
+            var currentOffset = 0;
+            while (node is not null)
+            {
+                var length = node.Length;
+                if (currentOffset + length >= keyPressInfo.Selection.Offset - 1)
+                {
+                    break;
+                }
+
+                currentOffset += length;
+                node = walker.NextSibling();
+            }
+
+            // if right origin char is not a child of this node, it should be null, since they are not siblings in that case
+            origin = node?.ChildAt(keyPressInfo.Selection.Offset - 1 - currentOffset);
+            rightOrigin = node?.ChildAt(keyPressInfo.Selection.Offset - currentOffset);
         }
         else
         {
