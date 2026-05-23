@@ -109,7 +109,7 @@ function handleDeleteTextStep(step: DeleteTextStep) {
     if(node) {
         const text = node.textContent;
         node.textContent = text.slice(0, relativeOffset) + text.slice(relativeOffset + step.length);
-        setSelection(node, relativeOffset + 1);
+        setSelection(node, relativeOffset);
     }
 }
 
