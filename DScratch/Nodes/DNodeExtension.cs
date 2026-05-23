@@ -8,7 +8,7 @@ public static class DNodeExtension
     {
         public int FindAbsolutTextOffset(CharNode child)
         {
-            var walker = new TreeWalker<TextNode>(node);
+            var walker = new TreeWalker<TextNode>(node, child.IsDeleted);
 
             var offset = 0;
             var current = walker.NextNode();
@@ -18,8 +18,12 @@ public static class DNodeExtension
                 {
                     break;
                 }
+                
+                if (!current.IsDeleted)
+                {
+                    offset += current.Length;
+                }
 
-                offset += current.Length;
                 current = walker.NextNode();
             }
 
@@ -34,7 +38,7 @@ public static class DNodeExtension
         
         public int FindAbsolutTextOffset(TextNode child)
         {
-            var walker = new TreeWalker<TextNode>(node);
+            var walker = new TreeWalker<TextNode>(node, child.IsDeleted);
 
             var offset = 0;
             var current = walker.NextNode();
@@ -44,8 +48,12 @@ public static class DNodeExtension
                 {
                     break;
                 }
-
-                offset += current.Length;
+                
+                if (!current.IsDeleted)
+                {
+                    offset += current.Length;
+                }
+                
                 current = walker.NextNode();
             }
 
@@ -59,7 +67,7 @@ public static class DNodeExtension
         
         public int FindAbsolutTextOffset<TNode>(DNode child) where TNode : IDNode
         {
-            var walker = new TreeWalker<TextNode, TNode>(node);
+            var walker = new TreeWalker<TextNode, TNode>(node, child.IsDeleted);
 
             var offset = 0;
             var (currentTextNode, _) = walker.NextNode();
@@ -70,7 +78,11 @@ public static class DNodeExtension
                     break;
                 }
 
-                offset += currentTextNode?.Length ?? 0;
+                if (currentTextNode is not null && !currentTextNode.IsDeleted)
+                {
+                    offset += currentTextNode.Length;
+                }
+
                 (currentTextNode, _) = walker.NextNode();
             }
 
