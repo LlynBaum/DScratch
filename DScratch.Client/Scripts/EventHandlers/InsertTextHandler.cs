@@ -1,3 +1,4 @@
+using DScratch.Nodes;
 using DScratch.Transactions.Steps;
 
 namespace DScratch.Client.Scripts.EventHandlers;
@@ -21,8 +22,29 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
             throw new ArgumentException($"Parent with given path not found: {keyPressInfo.GetNodePath()}");
         }
 
-        var rightOrigin = parent.ChildAt(keyPressInfo.Selection.Offset);
-        var origin = parent.ChildAt(keyPressInfo.Selection.Offset - 1);
+        DNode? rightOrigin;
+        DNode? origin;
+        if (keyPressInfo.Selection.Direction is SelectionDirection.None)
+        {
+            // TODO: this only works, because each TextNode is currently length 1... update to seeking with tree walker
+            rightOrigin = parent.ChildAt(keyPressInfo.Selection.Offset);
+            origin = parent.ChildAt(keyPressInfo.Selection.Offset - 1);
+        }
+        else
+        {
+            var rightOriginOffset = keyPressInfo.Selection.Direction is SelectionDirection.Forward
+                ? keyPressInfo.Selection.Offset
+                : keyPressInfo.Selection.EndOffset;
+            
+            var originOffset = keyPressInfo.Selection.Direction is SelectionDirection.Forward
+                ? keyPressInfo.Selection.EndOffset
+                : keyPressInfo.Selection.Offset;
+            
+            rightOrigin = parent.ChildAt(rightOriginOffset);
+            origin = parent.ChildAt(originOffset);
+            
+            // TODO: slice and then delete new slice
+        }
         
         var textNode = dScratchService.NodeFactory.String(keyPressInfo.Data, origin, rightOrigin);
         transaction.Insert(textNode, parent);

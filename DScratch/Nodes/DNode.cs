@@ -45,6 +45,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
     {
         IsDeleted = true;
         childNodes.ForEach(n => n.Delete());
+        // TODO: Notify parent, if all child nodes are deleted, we can assume the whole node is deleted
     }
 
     internal void AppendChild(DNode node)
@@ -53,10 +54,6 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
         childNodes.Add(node);
     }
     
-    /// <summary>
-    /// Insert node as a child. The insert will be based on the origin and rightOrigin of the given node.
-    /// </summary>
-    /// <param name="node">The node to insert.</param>
     internal virtual void InsertChild(DNode node)
     {
         node.Parent = this;
@@ -77,6 +74,10 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
         }
         
         // TODO: try merge with Origin or RightOrigin
+        /*
+         * When merging new with another. Maybe this can work: just set the id of the new node to the node,
+         * where the content was merged into. I think ToInsertStep actually would handle that, since the op is based on id
+         */
     }
     
     public int IndexOf(IDNode node)
