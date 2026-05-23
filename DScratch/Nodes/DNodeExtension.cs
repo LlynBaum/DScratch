@@ -26,7 +26,7 @@ public static class DNodeExtension
             var relativeOffset = current?.IndexOf(child);
             if (relativeOffset is null or -1)
             {
-                throw new InvalidOperationException("Can not find absolut offset of node. Probably node is node a child of given parent.");
+                throw new InvalidOperationException("Can not find absolut offset of node. Probably the node is node a child of given parent.");
             }
             
             return offset + relativeOffset.Value;
@@ -40,7 +40,7 @@ public static class DNodeExtension
             var current = walker.NextNode();
             while (current is not null)
             {
-                if (current.Id == child.Parent!.Id)
+                if (current.Id == child.Id)
                 {
                     break;
                 }
@@ -49,13 +49,12 @@ public static class DNodeExtension
                 current = walker.NextNode();
             }
 
-            var relativeOffset = current?.IndexOf(child);
-            if (relativeOffset is null or -1)
+            if (current is null)
             {
-                throw new InvalidOperationException("Can not find absolut offset of node. Probably node is node a child of given parent.");
+                throw new InvalidOperationException("Can not find absolut offset of node. Probably the node is node a child of given parent.");
             }
             
-            return offset + relativeOffset.Value;
+            return offset;
         }
         
         public int FindAbsolutTextOffset<TNode>(DNode child) where TNode : IDNode
@@ -75,13 +74,12 @@ public static class DNodeExtension
                 (currentTextNode, _) = walker.NextNode();
             }
 
-            var relativeOffset = walker.Current?.IndexOf(child);
-            if (relativeOffset is null or -1)
+            if (walker.Current is null)
             {
-                throw new InvalidOperationException("Can not find absolut offset of node. Probably node is node a child of given parent.");
+                throw new InvalidOperationException("Can not find absolut offset of node. Probably the node is node a child of given parent.");
             }
             
-            return offset + relativeOffset.Value;
+            return offset;
         }
     }
 }

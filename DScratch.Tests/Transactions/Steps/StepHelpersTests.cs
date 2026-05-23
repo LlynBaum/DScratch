@@ -198,12 +198,21 @@ public class StepHelpersTests
         public void CharNode_ReturnsDeleteTextDiff()
         {
             // Arrange
-            var node = new CharNode('a', "2", null, null);
-            var parent = new TestInlineElementNode("1", null, null, [TestNode.Empty(), node]);
-            node.Parent = parent;
+            var node1 = new CharNode('a', "5", null, null);
+            var text1 = new TextNode("4", null, null, [node1]);
+            node1.Parent = text1;
+            
+            var node2 = new CharNode('a', "3", null, null);
+            var text2 = new TextNode("2", text1, null, [node2]);
+            node2.Parent = text2;
+            text1.RightOrigin = text2;
+            
+            var parent = new TestInlineElementNode("1", null, null, [text1, text2]);
+            text1.Parent = parent;
+            text2.Parent = parent;
             
             // Act
-            var result = node.ToDeleteSteps();
+            var result = node2.ToDeleteSteps();
             
             // Assert
             Assert.That(result, Is.TypeOf<StepDiff.DeleteTextDiff>());
@@ -220,17 +229,23 @@ public class StepHelpersTests
         public void TextNode_ReturnDeleteTextDiff()
         {
             // Arrange
-            var charNode = new CharNode('a', "4", null, null);
-            var charNode2 = new CharNode('b', "5", null, null);
-            var testNode = new TextNode("3", null, null, [charNode, charNode2]);
-            charNode.Parent = testNode;
-            charNode2.Parent = testNode;
+            var node1 = new CharNode('a', "6", null, null);
+            var text1 = new TextNode("5", null, null, [node1]);
+            node1.Parent = text1;
             
-            var parent = new TestInlineElementNode("1", null, null, [TestNode.Empty(), testNode]);
-            testNode.Parent = parent;
+            var node21 = new CharNode('a', "4", null, null);
+            var node22 = new CharNode('a', "3", null, null);
+            var text2 = new TextNode("2", text1, null, [node21, node22]);
+            node21.Parent = text2;
+            node22.Parent = text2;
+            text1.RightOrigin = text2;
+            
+            var parent = new TestInlineElementNode("1", null, null, [text1, text2]);
+            text1.Parent = parent;
+            text2.Parent = parent;
             
             // Act
-            var result = testNode.ToDeleteSteps();
+            var result = text2.ToDeleteSteps();
             
             // Assert
             Assert.That(result, Is.TypeOf<StepDiff.DeleteTextDiff>());
