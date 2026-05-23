@@ -1,9 +1,11 @@
 enum StepType {
     insertText = "insertText",
     deleteText = "deleteText",
-    insertElement = "insertElement",
+    insertElementInline = "insertElementInline",
+    insertElementBlock = "insertElementBlock",
     deleteElement = "deleteElement",
-    move = "move",
+    moveInline = "moveInline",
+    moveBlock = "moveBlock",
 }
 
 interface Step {
@@ -22,9 +24,16 @@ interface DeleteTextStep extends Step {
     length: number;
 }
 
-interface InsertElementStep extends Step {
+interface InsertElementInlineStep extends Step {
     parent: string[];
     offset: number;
+    tagName: string;
+    newNodeId: string;
+}
+
+interface InsertElementBlockStep extends Step {
+    parent: string[];
+    previousSibling: string[] | null;
     tagName: string;
     newNodeId: string;
 }
@@ -33,10 +42,16 @@ interface DeleteElementStep extends Step {
     path: string[];
 }
 
-interface MoveStep extends Step {
+interface MoveInlineStep extends Step {
     targetNodePath: string[];
     targetParentPath: string[];
     targetOffset: number;
+}
+
+interface MoveBlockStep extends Step {
+    targetNodePath: string[];
+    targetParentPath: string[];
+    previousSibling: string[] | null;
 }
 
 export function applyTransaction(transaction: Step[]){
@@ -50,14 +65,20 @@ export function applyTransaction(transaction: Step[]){
             case StepType.deleteText:
                 handleDeleteTextStep(step as DeleteTextStep);
                 break
-            case StepType.insertElement:
-                handleInsertElementStep(step as InsertElementStep);
+            case StepType.insertElementInline:
+                handleInsertElementInlineStep(step as InsertElementInlineStep);
+                break;
+            case StepType.insertElementBlock:
+                handleInsertElementBlockStep(step as InsertElementBlockStep);
                 break;
             case StepType.deleteElement:
                 handleDeleteElementStep(step as DeleteElementStep);
                 break;
-            case StepType.move:
-                handleMoveStep(step as MoveStep);
+            case StepType.moveInline:
+                handleMoveInlineStep(step as MoveInlineStep);
+                break;
+            case StepType.moveBlock:
+                handleMoveBlockStep(step as MoveBlockStep);
                 break;
         }
     }
@@ -92,14 +113,23 @@ function handleDeleteTextStep(step: DeleteTextStep) {
     }
 }
 
-function handleInsertElementStep(step: InsertElementStep) {
+function handleInsertElementInlineStep(step: InsertElementInlineStep) {
     const parent = findNode(step.parent);
     if (!parent) return;
-    
-    const element = document.createElement(step.tagName);
-    element.setAttribute("data-path-id", step.newNodeId);
-    insertElement(element, parent, step.offset);
+
+    const element = createElement(step.tagName, step.newNodeId);
+    insertElementInline(element, parent, step.offset);
     setSelection(element, 0);
+}
+
+function handleInsertElementBlockStep(step: InsertElementBlockStep) {
+    const parent = findNode(step.parent);
+    if (!parent) return;
+
+    const previousSibling = step.previousSibling && findNode(step.previousSibling);
+
+    const element = createElement(step.tagName, step.newNodeId);
+    insertElementBlock(element, parent, previousSibling);
 }
 
 function handleDeleteElementStep(step: DeleteElementStep) {
@@ -110,19 +140,32 @@ function handleDeleteElementStep(step: DeleteElementStep) {
    // TODO: this might work out of the box of the browser, but check. Else seek for the a previous text node and set selection there. 
 }
 
-function handleMoveStep(step: MoveStep) {
+function handleMoveInlineStep(step: MoveInlineStep) {
     const element = findNode(step.targetNodePath);
-    if (!element) return;
-    
     const newParent = findNode(step.targetParentPath);
-    if (!newParent) return;
-    
-    element.remove();
-    insertElement(element, newParent, step.targetOffset);
+    if (element && newParent) {
+        insertElementInline(element, newParent, step.targetOffset);
+    }
     // TODO: this might work out of the box of the browser, but check. Else seek for the a previous text node and set selection there.
 }
 
-function insertElement(element: Element, parent: Element, offset: number) {
+function handleMoveBlockStep(step: MoveBlockStep) {
+    const element = findNode(step.targetNodePath);
+    const newParent = findNode(step.targetParentPath);
+    if (element && newParent) {
+        const previousSibling = step.previousSibling && findNode(step.previousSibling);
+        insertElementBlock(element, newParent, previousSibling);
+    }
+    // TODO: this might work out of the box of the browser, but check. Else seek for the a previous text node and set selection there.
+}
+
+function createElement(tagName: string, id: string) {
+    const element = document.createElement(tagName);
+    element.setAttribute("data-path-id", id);
+    return element;
+}
+
+function insertElementInline(element: Element, parent: Element, offset: number) {
     if(!parent.hasChildNodes()){
         parent.appendChild(element);
         return;
@@ -136,6 +179,11 @@ function insertElement(element: Element, parent: Element, offset: number) {
     } else {
         parent.appendChild(element);
     }
+}
+
+function insertElementBlock(element: Element, parent: Element, previousSibling: Element | null) {
+    const referenceNode = previousSibling ? previousSibling.nextSibling : parent.firstChild;
+    parent.insertBefore(element, referenceNode);
 }
 
 function findNode(path: string[]) : HTMLElement | null {

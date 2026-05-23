@@ -2,6 +2,8 @@ namespace DScratch.Nodes.NodeTypes;
 
 public static class NodeTypeHelpers
 {
+    public static bool IsElement(this DNode node) => node is IElement;
+    
     public static bool IsBlockNode(this DNode node) => node is IBlockElement;
 
     public static bool IsInlineNode(this DNode node) => node is IInlineElement;

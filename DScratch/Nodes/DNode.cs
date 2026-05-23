@@ -15,6 +15,8 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
     public bool IsDeleted { get; private set; }
 
     public DNode? Parent { get; internal set; }
+
+    public DNode? ParentElement => Parent?.IsElement() ?? true ? Parent : Parent.ParentElement;
     
     public IReadOnlyList<DNode> ChildNodes => childNodes;
     
@@ -120,5 +122,10 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
         
         result.Reverse();
         return new NodePath(result);
+    }
+
+    public override string ToString()
+    {
+        return $"[{GetPath()}] - {GetType().Name}(ID: {Id})";
     }
 }

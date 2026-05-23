@@ -19,10 +19,17 @@ public class StepDiffTests
     }
     
     [Test]
-    public void ExpectedType_InsertElementDiff()
+    public void ExpectedType_InsertElementInlineDiff()
     {
-        var step = new StepDiff.InsertElementDiff([], 0, "", "");
-        Assert.That(step.Type, Is.EqualTo("insertElement"));
+        var step = new StepDiff.InsertElementInlineDiff([], 0, "", "");
+        Assert.That(step.Type, Is.EqualTo("insertElementInline"));
+    }
+    
+    [Test]
+    public void ExpectedType_InsertElementBlockDiff()
+    {
+        var step = new StepDiff.InsertElementBlockDiff([], null, "", "");
+        Assert.That(step.Type, Is.EqualTo("insertElementBlock"));
     }
     
     [Test]
@@ -33,9 +40,16 @@ public class StepDiffTests
     }
     
     [Test]
-    public void ExpectedType_MoveDiff()
+    public void ExpectedType_MoveInlineDiff()
     {
-        var step = new StepDiff.MoveDiff([], [], 0);
-        Assert.That(step.Type, Is.EqualTo("move"));
+        var step = new StepDiff.MoveInlineDiff([], [], 0);
+        Assert.That(step.Type, Is.EqualTo("moveInline"));
+    }
+    
+    [Test]
+    public void ExpectedType_MoveBlockDiff()
+    {
+        var step = new StepDiff.MoveBlockDiff([], [], null);
+        Assert.That(step.Type, Is.EqualTo("moveBlock"));
     }
 }

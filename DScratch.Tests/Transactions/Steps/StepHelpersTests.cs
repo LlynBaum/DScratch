@@ -21,9 +21,9 @@ public class StepHelpersTests
             
             // Assert
             Assert.That(result, Has.Length.EqualTo(1));
-            Assert.That(result.Single(), Is.TypeOf<StepDiff.InsertElementDiff>());
+            Assert.That(result.Single(), Is.TypeOf<StepDiff.InsertElementInlineDiff>());
             
-            var step = (StepDiff.InsertElementDiff)result.Single();
+            var step = (StepDiff.InsertElementInlineDiff)result.Single();
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(step.Parent, Is.EquivalentTo(["root"]));
@@ -40,6 +40,7 @@ public class StepHelpersTests
             existing.RightOrigin = node;
             
             var parent = new TestInlineElementNode("1", null, null, [existing, node]);
+            existing.Parent = parent;
             node.Parent = parent;
 
             // Act
@@ -79,15 +80,15 @@ public class StepHelpersTests
             Assert.That(result, Has.Length.EqualTo(2));
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(result[0], Is.TypeOf<StepDiff.InsertElementDiff>());
+                Assert.That(result[0], Is.TypeOf<StepDiff.InsertElementBlockDiff>());
                 Assert.That(result[1], Is.TypeOf<StepDiff.InsertTextDiff>());
             }
             
             using (Assert.EnterMultipleScope())
             {
-                var insertParagraph = (StepDiff.InsertElementDiff)result[0];
+                var insertParagraph = (StepDiff.InsertElementBlockDiff)result[0];
                 Assert.That(insertParagraph.Parent, Is.EquivalentTo(["1"]));
-                Assert.That(insertParagraph.Offset, Is.EqualTo(1));
+                Assert.That(insertParagraph.PreviousSibling, Is.Null);
                 Assert.That(insertParagraph.NewNodeId, Is.EqualTo(paragraph.Id));
                 Assert.That(insertParagraph.TagName, Is.EqualTo(paragraph.TagName));
                 
@@ -133,10 +134,10 @@ public class StepHelpersTests
             Assert.That(result, Has.Length.EqualTo(5));
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(result[0], Is.TypeOf<StepDiff.InsertElementDiff>());
+                Assert.That(result[0], Is.TypeOf<StepDiff.InsertElementBlockDiff>());
                 Assert.That(result[1], Is.TypeOf<StepDiff.InsertTextDiff>());
                 
-                Assert.That(result[2], Is.TypeOf<StepDiff.InsertElementDiff>());
+                Assert.That(result[2], Is.TypeOf<StepDiff.InsertElementInlineDiff>());
                 Assert.That(result[3], Is.TypeOf<StepDiff.InsertTextDiff>());
                 
                 Assert.That(result[4], Is.TypeOf<StepDiff.InsertTextDiff>());
@@ -144,9 +145,9 @@ public class StepHelpersTests
             
             using (Assert.EnterMultipleScope())
             {
-                var insertParagraph = (StepDiff.InsertElementDiff)result[0];
+                var insertParagraph = (StepDiff.InsertElementBlockDiff)result[0];
                 Assert.That(insertParagraph.Parent, Is.EquivalentTo(["1"]));
-                Assert.That(insertParagraph.Offset, Is.EqualTo(1));
+                Assert.That(insertParagraph.PreviousSibling, Is.Null);
                 Assert.That(insertParagraph.NewNodeId, Is.EqualTo(paragraph.Id));
                 Assert.That(insertParagraph.TagName, Is.EqualTo(paragraph.TagName));
                 
@@ -155,7 +156,7 @@ public class StepHelpersTests
                 Assert.That(insertLeftText.Offset, Is.EqualTo(0));
                 Assert.That(insertLeftText.Text, Is.EqualTo("a"));
                 
-                var insertTestElement = (StepDiff.InsertElementDiff)result[2];
+                var insertTestElement = (StepDiff.InsertElementInlineDiff)result[2];
                 Assert.That(insertTestElement.Parent, Is.EquivalentTo(["1", paragraph.Id]));
                 Assert.That(insertTestElement.Offset, Is.EqualTo(1));
                 Assert.That(insertTestElement.NewNodeId, Is.EqualTo("7"));

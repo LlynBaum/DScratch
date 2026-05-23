@@ -11,15 +11,19 @@ internal static class StepHelpers
         {
             // We can not start the path at this node, since it is not in the DOM. So we take the parent node as first possible element
             var path = node.Parent?.GetElementPath() ?? NodePath.Root;
-            var offset = node.Parent?.IndexOf(node) ?? 0; // TODO: always offset? I mean would that work, when i just pass 0, that I can insert after element without having text there?
             
             return node switch
             {
-                CharNode charNode => [new StepDiff.InsertTextDiff(path.Path, offset, charNode.Value.ToString())],
-                TextNode textNode => [new StepDiff.InsertTextDiff(path.Path, offset, textNode.TextContent)],
-                IElement element => 
+                CharNode charNode => [new StepDiff.InsertTextDiff(path.Path, GetAbsolutTextOffsetOrDefault(node), charNode.Value.ToString())],
+                TextNode textNode => [new StepDiff.InsertTextDiff(path.Path, GetAbsolutTextOffsetOrDefault(node), textNode.TextContent)],
+                IInlineElement element => 
                 [
-                    new StepDiff.InsertElementDiff(path.Path, offset, element.TagName, node.Id), 
+                    new StepDiff.InsertElementInlineDiff(path.Path, GetAbsolutTextOffsetOrDefault(node), element.TagName, node.Id),
+                    ..node.ChildNodes.SelectMany(c => c.ToInsert())
+                ],
+                IBlockElement element => 
+                [
+                    new StepDiff.InsertElementBlockDiff(path.Path, node.Origin?.GetElementPath().Path, element.TagName, node.Id),
                     ..node.ChildNodes.SelectMany(c => c.ToInsert())
                 ],
                 _ => throw new ArgumentException("Node type is not an element or char.")
@@ -31,11 +35,13 @@ internal static class StepHelpers
             var path = node.GetElementPath();
             return node switch
             {
-                CharNode => new StepDiff.DeleteTextDiff(path.Path, node.Parent!.IndexOf(node), 1), // TODO: calc absolut offset, JS can not handle relative offsets
-                TextNode textNode => new StepDiff.DeleteTextDiff(path.Path, node.Parent!.IndexOf(node), textNode.Length),
+                CharNode => new StepDiff.DeleteTextDiff(path.Path, GetAbsolutTextOffsetOrDefault(node), 1),
+                TextNode textNode => new StepDiff.DeleteTextDiff(path.Path, node.ParentElement!.IndexOf(node), textNode.Length),
                 IElement => new StepDiff.DeleteElementDiff(path.Path),
                 _ => throw new ArgumentException("Node type is not an element, text or char.")
             };
         }
     }
+
+    private static int GetAbsolutTextOffsetOrDefault(DNode node) => node.Parent?.GetAbsolutTextOffset(node) ?? 0;
 }
