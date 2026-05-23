@@ -1,12 +1,8 @@
-using DScratch.Nodes.NodeTypes;
-
 namespace DScratch.Nodes;
 
 public class CharNode(char value, string id, CharNode? origin, CharNode? rightOrigin) 
-    : DNode(id, origin, rightOrigin), IShowText
+    : DNode(id, origin, rightOrigin)
 {
-    public int Length => 1;
-    
     public char Value { get; } = value;
     
     internal override void InsertChild(DNode node)

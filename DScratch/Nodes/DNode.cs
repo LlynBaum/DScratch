@@ -77,7 +77,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
         // TODO: try merge with Origin or RightOrigin
     }
     
-    public int IndexOf(DNode node)
+    public int IndexOf(IDNode node)
     {
         return ActiveChildNodes.ToList().FindIndex(n => n.Id == node.Id);
     }

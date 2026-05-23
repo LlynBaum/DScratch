@@ -1,3 +1,6 @@
 namespace DScratch.Nodes.NodeTypes;
 
-public interface IDNode;
+public interface IDNode
+{
+    string Id { get; }
+}
