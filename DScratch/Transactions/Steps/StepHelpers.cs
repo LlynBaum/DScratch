@@ -15,10 +15,10 @@ internal static class StepHelpers
             return node switch
             {
                 CharNode charNode => [new StepDiff.InsertTextDiff(path.Path, node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, charNode.Value.ToString())],
-                TextNode textNode => [new StepDiff.InsertTextDiff(path.Path, GetAbsolutTextOffsetOrDefault(node), textNode.TextContent)],
+                TextNode textNode => [new StepDiff.InsertTextDiff(path.Path, node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, textNode.TextContent)],
                 IInlineElement element => 
                 [
-                    new StepDiff.InsertElementInlineDiff(path.Path, GetAbsolutTextOffsetOrDefault(node), element.TagName, node.Id),
+                    new StepDiff.InsertElementInlineDiff(path.Path, node.ParentElement?.FindAbsolutTextOffset<IInlineElement>(node) ?? 0, element.TagName, node.Id),
                     ..node.ChildNodes.SelectMany(c => c.ToInsertSteps())
                 ],
                 IBlockElement element => 
@@ -35,13 +35,11 @@ internal static class StepHelpers
             var path = node.GetElementPath();
             return node switch
             {
-                CharNode => new StepDiff.DeleteTextDiff(path.Path, GetAbsolutTextOffsetOrDefault(node), 1),
-                TextNode textNode => new StepDiff.DeleteTextDiff(path.Path, GetAbsolutTextOffsetOrDefault(node), textNode.Length),
+                CharNode charNode => new StepDiff.DeleteTextDiff(path.Path, node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, 1),
+                TextNode textNode => new StepDiff.DeleteTextDiff(path.Path, node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, textNode.Length),
                 IElement => new StepDiff.DeleteElementDiff(path.Path),
                 _ => throw new ArgumentException("Node type is not an element, text or char.")
             };
         }
     }
-
-    private static int GetAbsolutTextOffsetOrDefault(DNode node) => node.ParentElement?.FindAbsolutTextOffset(node) ?? 0;
 }

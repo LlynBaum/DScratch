@@ -2,7 +2,6 @@ using DScratch.Nodes;
 using DScratch.Tests.Helpers.TestNodes;
 using DScratch.Transactions;
 using DScratch.Transactions.Steps;
-using NUnit.Framework.Internal;
 
 namespace DScratch.Tests.Transactions.Steps;
 

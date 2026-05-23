@@ -1,3 +1,5 @@
+using DScratch.Nodes.NodeTypes;
+
 namespace DScratch.Nodes;
 
 public static class DNodeExtension
@@ -17,8 +19,8 @@ public static class DNodeExtension
                     break;
                 }
 
-                offset = current.Length;
-                current= walker.NextNode();
+                offset += current.Length;
+                current = walker.NextNode();
             }
 
             var relativeOffset = current?.IndexOf(child);
@@ -30,7 +32,7 @@ public static class DNodeExtension
             return offset + relativeOffset.Value;
         }
         
-        public int FindAbsolutTextOffset(DNode child)
+        public int FindAbsolutTextOffset(TextNode child)
         {
             var walker = new TreeWalker<TextNode>(node);
 
@@ -38,16 +40,42 @@ public static class DNodeExtension
             var current = walker.NextNode();
             while (current is not null)
             {
-                if (current.Id == child.Id)
+                if (current.Id == child.Parent!.Id)
                 {
                     break;
                 }
 
-                offset = current.Length;
-                current= walker.NextNode();
+                offset += current.Length;
+                current = walker.NextNode();
             }
 
             var relativeOffset = current?.IndexOf(child);
+            if (relativeOffset is null or -1)
+            {
+                throw new InvalidOperationException("Can not find absolut offset of node. Probably node is node a child of given parent.");
+            }
+            
+            return offset + relativeOffset.Value;
+        }
+        
+        public int FindAbsolutTextOffset<TNode>(DNode child) where TNode : IDNode
+        {
+            var walker = new TreeWalker<TextNode, TNode>(node);
+
+            var offset = 0;
+            var (currentTextNode, _) = walker.NextNode();
+            while (walker.Current is not null)
+            {
+                if (walker.Current!.Id == child.Id)
+                {
+                    break;
+                }
+
+                offset += currentTextNode?.Length ?? 0;
+                (currentTextNode, _) = walker.NextNode();
+            }
+
+            var relativeOffset = walker.Current?.IndexOf(child);
             if (relativeOffset is null or -1)
             {
                 throw new InvalidOperationException("Can not find absolut offset of node. Probably node is node a child of given parent.");

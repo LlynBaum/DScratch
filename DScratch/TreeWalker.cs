@@ -3,12 +3,8 @@ using DScratch.Nodes.NodeTypes;
 
 namespace DScratch;
 
-public class TreeWalker<TFilter>(DNode parent) where TFilter : IDNode
+public class TreeWalker<TFilter>(DNode parent) : TreeWalkerBase(parent) where TFilter : IDNode
 {
-    private const bool EnableDebug = false;
-    
-    public DNode? Current { get; private set; } = parent;
-
     public TFilter? NextNode()
     {
         var next = Next(Current);
@@ -26,8 +22,41 @@ public class TreeWalker<TFilter>(DNode parent) where TFilter : IDNode
         Current = null;
         return default;
     }
+}
 
-    private static DNode? Next(DNode? current)
+public class TreeWalker<TFilter1, TFilter2>(DNode parent) : TreeWalkerBase(parent) where TFilter1 : IDNode where TFilter2 : IDNode
+{
+    public (TFilter1?, TFilter2?) NextNode()
+    {
+        var next = Next(Current);
+        while (next is not null)
+        {
+            switch (next)
+            {
+                case TFilter1 filter1:
+                    Current = next;
+                    return (filter1, default);
+                case TFilter2 filter2:
+                    Current = next;
+                    return (default, filter2);
+                default:
+                    next = Next(next);
+                    break;
+            }
+        }
+
+        Current = null;
+        return default;
+    }
+}
+
+public abstract class TreeWalkerBase(DNode parent)
+{
+    private const bool EnableDebug = false;
+    
+    public DNode? Current { get; protected set; } = parent;
+    
+    protected static DNode? Next(DNode? current)
     {
         if (current?.FirstChild is not null)
         {
@@ -52,7 +81,7 @@ public class TreeWalker<TFilter>(DNode parent) where TFilter : IDNode
     }
 }
 
-public static class TreeVisualizer
+internal static class TreeVisualizer
 {
     public static void TraceNextStep(DNode? current, DNode? next)
     {
