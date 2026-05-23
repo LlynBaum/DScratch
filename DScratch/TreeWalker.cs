@@ -3,7 +3,8 @@ using DScratch.Nodes.NodeTypes;
 
 namespace DScratch;
 
-public class TreeWalker<TFilter>(DNode parent) : TreeWalkerBase(parent) where TFilter : IDNode
+public class TreeWalker<TFilter>(DNode parent, bool includeDeleted = false) 
+    : TreeWalkerBase(parent, includeDeleted) where TFilter : IDNode
 {
     public TFilter? NextNode()
     {
@@ -24,7 +25,8 @@ public class TreeWalker<TFilter>(DNode parent) : TreeWalkerBase(parent) where TF
     }
 }
 
-public class TreeWalker<TFilter1, TFilter2>(DNode parent) : TreeWalkerBase(parent) where TFilter1 : IDNode where TFilter2 : IDNode
+public class TreeWalker<TFilter1, TFilter2>(DNode parent, bool includeDeleted = false) 
+    : TreeWalkerBase(parent, includeDeleted) where TFilter1 : IDNode where TFilter2 : IDNode
 {
     public (TFilter1?, TFilter2?) NextNode()
     {
@@ -50,18 +52,18 @@ public class TreeWalker<TFilter1, TFilter2>(DNode parent) : TreeWalkerBase(paren
     }
 }
 
-public abstract class TreeWalkerBase(DNode parent)
+public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
 {
     private const bool EnableDebug = false;
     
     public DNode? Current { get; protected set; } = parent;
     
-    protected static DNode? Next(DNode? current)
+    protected DNode? Next(DNode? current)
     {
         if (current?.FirstChild is not null)
         {
             if (EnableDebug) TreeVisualizer.TraceNextStep(current, current.FirstChild);
-            return current.FirstChild;
+            return NextIfDeleted(current.FirstChild);
         }
 
         var node = current;
@@ -77,7 +79,16 @@ public abstract class TreeWalkerBase(DNode parent)
         }
 
         if (EnableDebug) TreeVisualizer.TraceNextStep(current, node);
-        return node;
+        return NextIfDeleted(node);
+    }
+
+    private DNode? NextIfDeleted(DNode? node)
+    {
+        if (includeDeleted)
+        {
+            return node;
+        }
+        return node?.IsDeleted ?? false ? Next(node) : node;
     }
 }
 
