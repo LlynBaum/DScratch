@@ -7,7 +7,7 @@ internal static class StepHelpers
 {
     extension(DNode node)
     {
-        public StepDiff[] ToInsert()
+        public StepDiff[] ToInsertSteps()
         {
             // We can not start the path at this node, since it is not in the DOM. So we take the parent node as first possible element
             var path = node.Parent?.GetElementPath() ?? NodePath.Root;
@@ -19,18 +19,18 @@ internal static class StepHelpers
                 IInlineElement element => 
                 [
                     new StepDiff.InsertElementInlineDiff(path.Path, GetAbsolutTextOffsetOrDefault(node), element.TagName, node.Id),
-                    ..node.ChildNodes.SelectMany(c => c.ToInsert())
+                    ..node.ChildNodes.SelectMany(c => c.ToInsertSteps())
                 ],
                 IBlockElement element => 
                 [
                     new StepDiff.InsertElementBlockDiff(path.Path, node.Origin?.GetElementPath().Path, element.TagName, node.Id),
-                    ..node.ChildNodes.SelectMany(c => c.ToInsert())
+                    ..node.ChildNodes.SelectMany(c => c.ToInsertSteps())
                 ],
                 _ => throw new ArgumentException("Node type is not an element or char.")
             };
         }
         
-        public StepDiff ToDelete()
+        public StepDiff ToDeleteSteps()
         {
             var path = node.GetElementPath();
             return node switch

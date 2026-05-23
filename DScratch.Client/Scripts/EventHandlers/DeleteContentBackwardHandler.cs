@@ -44,7 +44,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         var nodeToDelete = current?.ChildAt(keyPressInfo.Selection.Offset - currentOffset - 1);
         if (nodeToDelete is null) return TransactionResult.Empty;
         
-        transaction.DeleteNode(nodeToDelete);
+        transaction.Delete(nodeToDelete);
         return dScratchService.Apply(transaction);
     }
 }

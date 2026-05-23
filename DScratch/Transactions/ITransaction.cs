@@ -11,7 +11,7 @@ public interface ITransaction
 
     ITransaction Insert(DNode node, DNode parent);
 
-    ITransaction DeleteNode(DNode node);
+    ITransaction Delete(DNode node);
 
     DNode? FindNode(NodePath path);
 }

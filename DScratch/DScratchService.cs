@@ -25,6 +25,6 @@ public class DScratchService(INodeFactory nodeFactory) : IDScratchService
 
     public TransactionResult InitialTransaction()
     { 
-        return new TransactionResult(document.Page.Root.ToInsert());
+        return new TransactionResult(document.Page.Root.ToInsertSteps());
     }
 }

@@ -44,7 +44,7 @@ public class DeleteContentBackwardHandlerTests
         var result = handler.Handle(GetKeyPressInfo(2));
         
         // Assert
-        transactionMock.Verify(t => t.DeleteNode(node: It.IsAny<TextNode>()), Times.Never);
+        transactionMock.Verify(t => t.Delete(node: It.IsAny<TextNode>()), Times.Never);
         Assert.That(result.IsEmpty, Is.True);
     }
     
@@ -73,7 +73,7 @@ public class DeleteContentBackwardHandlerTests
         handler.Handle(GetKeyPressInfo(3));
         
         // Assert
-        transactionMock.Verify(t => t.DeleteNode(node: It.Is<CharNode>(n => n == char3)));
+        transactionMock.Verify(t => t.Delete(node: It.Is<CharNode>(n => n == char3)));
     }
     
     private static KeyPressInfo GetKeyPressInfo(int offset)

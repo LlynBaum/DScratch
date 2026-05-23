@@ -7,7 +7,7 @@ public class DeleteStep(DNode node) : IStep
     public IReadOnlyList<StepDiff> Execute(DScratchDocument document)
     {
         node.Delete();
-        return [node.ToDelete()];
+        return [node.ToDeleteSteps()];
     }
 
     public IReadOnlyList<StepDiff> Revert(DScratchDocument document)

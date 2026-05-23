@@ -56,7 +56,7 @@ public class DTransactionTests
     public void DeleteNode_AddsDeleteStep()
     {
         // Act
-        Transaction.DeleteNode(TestNode.Empty());
+        Transaction.Delete(TestNode.Empty());
         
         // Assert
         Assert.That(Transaction.Steps, Has.Count.EqualTo(1));

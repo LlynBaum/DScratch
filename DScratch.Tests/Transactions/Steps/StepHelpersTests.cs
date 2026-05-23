@@ -17,7 +17,7 @@ public class StepHelpersTests
             var node = new TestInlineElementNode("1", null, null);
 
             // Act
-            var result = node.ToInsert();
+            var result = node.ToInsertSteps();
             
             // Assert
             Assert.That(result, Has.Length.EqualTo(1));
@@ -44,7 +44,7 @@ public class StepHelpersTests
             node.Parent = parent;
 
             // Act
-            var result = node.ToInsert();
+            var result = node.ToInsertSteps();
             
             // Assert
             Assert.That(result, Has.Length.EqualTo(1));
@@ -74,7 +74,7 @@ public class StepHelpersTests
             paragraph.Parent = parent;
             
             // Act
-            var result = paragraph.ToInsert();
+            var result = paragraph.ToInsertSteps();
             
             // Assert
             Assert.That(result, Has.Length.EqualTo(2));
@@ -128,7 +128,7 @@ public class StepHelpersTests
             paragraph.Parent = parent;
             
             // Act
-            var result = paragraph.ToInsert();
+            var result = paragraph.ToInsertSteps();
 
             // Assert
             Assert.That(result, Has.Length.EqualTo(5));
@@ -186,7 +186,7 @@ public class StepHelpersTests
             return;
 
             // Act
-            void Act() => testNode.ToInsert();
+            void Act() => testNode.ToInsertSteps();
         }
     }
     
@@ -201,7 +201,7 @@ public class StepHelpersTests
             node.Parent = parent;
             
             // Act
-            var result = node.ToDelete();
+            var result = node.ToDeleteSteps();
             
             // Assert
             Assert.That(result, Is.TypeOf<StepDiff.DeleteTextDiff>());
@@ -228,7 +228,7 @@ public class StepHelpersTests
             testNode.Parent = parent;
             
             // Act
-            var result = testNode.ToDelete();
+            var result = testNode.ToDeleteSteps();
             
             // Assert
             Assert.That(result, Is.TypeOf<StepDiff.DeleteTextDiff>());
@@ -250,7 +250,7 @@ public class StepHelpersTests
             testElement.Parent = parent;
             
             // Act
-            var result = testElement.ToDelete();
+            var result = testElement.ToDeleteSteps();
             
             // Assert
             Assert.That(result, Is.TypeOf<StepDiff.DeleteElementDiff>());
@@ -270,7 +270,7 @@ public class StepHelpersTests
             return;
 
             // Act
-            void Act() => testNode.ToDelete();
+            void Act() => testNode.ToDeleteSteps();
         }
     }
 }

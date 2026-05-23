@@ -23,7 +23,7 @@ internal class DTransaction(DScratchDocument document) : ITransaction
         return this;
     }
     
-    public ITransaction DeleteNode(DNode node)
+    public ITransaction Delete(DNode node)
     {
         steps.Add(new DeleteStep(node));
         return this;
