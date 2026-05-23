@@ -1,6 +1,6 @@
 namespace DScratch.Nodes.NodeTypes;
 
-public interface IShowText
+public interface IShowText : IDNode
 {
     int Length { get; }
 }

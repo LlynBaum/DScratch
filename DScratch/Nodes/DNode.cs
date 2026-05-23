@@ -2,7 +2,7 @@ using DScratch.Nodes.NodeTypes;
 
 namespace DScratch.Nodes;
 
-public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null)
+public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null) : IDNode
 {
     private readonly List<DNode> childNodes = childNodes ?? [];
     

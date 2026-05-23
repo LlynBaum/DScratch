@@ -11,9 +11,9 @@ public class ParagraphNode(string id, DNode? origin, DNode? rightOrigin, List<DN
 
     internal override void InsertChild(DNode node)
     {
-        if (!node.IsInlineOrText())
+        if (!(node.CanShowText() || node.IsInlineNode()))
         {
-            throw new InvalidOperationException("Can only insert TextNodes or inline elements into block node.");
+            throw new InvalidOperationException("Can only insert text or inline elements into block node.");
         }
         
         base.InsertChild(node);
