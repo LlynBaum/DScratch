@@ -2,8 +2,8 @@ using DScratch.Client.Scripts;
 using DScratch.Client.Scripts.EventHandlers;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
+using DScratch.Tests.Helpers.Visualizers;
 using DScratch.Transactions;
-using DScratch.TreeVisualizer;
 
 namespace DScratch.Tests.WasmClientTests.EventHandlers;
 

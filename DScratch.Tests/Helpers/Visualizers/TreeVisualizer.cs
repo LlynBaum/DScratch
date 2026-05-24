@@ -1,6 +1,6 @@
 using DScratch.Nodes;
 
-namespace DScratch.TreeVisualizer;
+namespace DScratch.Tests.Helpers.Visualizers;
 
 public class TreeVisualizer(DNode root)
 {
