@@ -121,7 +121,7 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
     {
         if (current?.FirstChild is not null)
         {
-            if (EnableDebug) TreeVisualizer.TraceNextStep(current, current.FirstChild);
+            if (EnableDebug) TreeWalkerVisualizer.TraceNextStep(current, current.FirstChild);
             return NextIfDeleted(current.FirstChild);
         }
 
@@ -137,7 +137,7 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
             node = node.Parent;
         }
 
-        if (EnableDebug) TreeVisualizer.TraceNextStep(current, node);
+        if (EnableDebug) TreeWalkerVisualizer.TraceNextStep(current, node);
         return NextIfDeleted(node);
     }
 
@@ -151,7 +151,7 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
     }
 }
 
-internal static class TreeVisualizer
+internal static class TreeWalkerVisualizer
 {
     public static void TraceNextStep(DNode? current, DNode? next)
     {

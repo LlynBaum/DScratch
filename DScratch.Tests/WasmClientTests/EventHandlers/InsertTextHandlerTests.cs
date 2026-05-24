@@ -3,6 +3,7 @@ using DScratch.Client.Scripts.EventHandlers;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
 using DScratch.Transactions;
+using DScratch.TreeVisualizer;
 
 namespace DScratch.Tests.WasmClientTests.EventHandlers;
 
@@ -146,8 +147,12 @@ public class InsertTextHandlerTests
         });
         document.Page.Root = parent;
 
+        var visualizer = new DocumentVisualizer(document);
+        visualizer.Print();
+
         // Act
         var result = handler.Handle(GetKeyPressInfo(2, 5));
+        visualizer.Print();
         
         // Assert
         using (Assert.EnterMultipleScope())
