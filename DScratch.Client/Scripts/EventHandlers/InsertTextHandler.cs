@@ -29,7 +29,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         {
             (origin, rightOrigin) = SimpleInsert(keyPressInfo, parent);
         }
-        else  // TODO: test test test
+        else
         {
             (origin, rightOrigin) = OverrideInsert(keyPressInfo, transaction, parent);
         }
