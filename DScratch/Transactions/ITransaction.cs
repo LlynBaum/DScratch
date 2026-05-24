@@ -12,6 +12,10 @@ public interface ITransaction
     ITransaction Insert(DNode node, DNode parent);
 
     ITransaction Delete(DNode node);
+    
+    ITransaction DeleteRange(DNode? start, DNode? end);
 
     DNode? FindNode(NodePath path);
+
+    TextNode SplitText(TextNode node, int offset);
 }

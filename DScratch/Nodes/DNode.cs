@@ -4,7 +4,7 @@ namespace DScratch.Nodes;
 
 public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null) : IDNode
 {
-    private readonly List<DNode> childNodes = childNodes ?? [];
+    protected List<DNode> AllChildNodes = childNodes ?? [];
     
     public string Id { get; } = id;
     
@@ -20,9 +20,9 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
 
     public DNode? ParentElement => Parent?.IsElement() ?? true ? Parent : Parent.ParentElement;
     
-    public IReadOnlyList<DNode> ChildNodes => childNodes;
+    public IReadOnlyList<DNode> ChildNodes => AllChildNodes;
     
-    public IEnumerable<DNode> ActiveChildNodes => childNodes.Where(c => !c.IsDeleted);
+    public IEnumerable<DNode> ActiveChildNodes => AllChildNodes.Where(c => !c.IsDeleted);
 
     public DNode? FirstChild => ActiveChildNodes.FirstOrDefault();
 
@@ -39,21 +39,21 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
     
     private void RemoveChild(DNode node)
     {
-        var index = childNodes.FindIndex(n => n.Id == node.Id);
-        childNodes.RemoveAt(index);
+        var index = AllChildNodes.FindIndex(n => n.Id == node.Id);
+        AllChildNodes.RemoveAt(index);
     }
 
     internal void Delete()
     {
         IsDeleted = true;
-        childNodes.ForEach(n => n.Delete());
+        AllChildNodes.ForEach(n => n.Delete());
         // TODO: Notify parent, if all child nodes are deleted, we can assume the whole node is deleted
     }
 
     internal void AppendChild(DNode node)
     {
         node.Parent = this;
-        childNodes.Add(node);
+        AllChildNodes.Add(node);
     }
     
     internal virtual void InsertChild(DNode node)
@@ -63,7 +63,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
         if (node.Origin is null)
         {
             FirstChild?.Origin = node;
-            childNodes.Insert(0, node);
+            AllChildNodes.Insert(0, node);
         }
         else
         {
@@ -71,8 +71,8 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
             origin.RightOrigin?.Origin = node;
             origin.RightOrigin = node;
             
-            var index = childNodes.FindIndex(n => n.Id == origin.Id);
-            childNodes.Insert(index + 1, node);
+            var index = AllChildNodes.FindIndex(n => n.Id == origin.Id);
+            AllChildNodes.Insert(index + 1, node);
         }
         
         // TODO: try merge with Origin or RightOrigin

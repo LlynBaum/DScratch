@@ -14,7 +14,7 @@ public class DTransactionTests
     public void SetUp()
     {
         Document = new DScratchDocument();
-        Transaction = new DTransaction(Document);
+        Transaction = new DTransaction(Document, new TestNodeIdGenerator());
     }
 
     [Test]
@@ -63,12 +63,23 @@ public class DTransactionTests
         Assert.That(Transaction.Steps.Single(), Is.TypeOf<DeleteStep>());
     }
     
+    [Test]
+    public void DeleteNode_AddsDeleteRangeStep()
+    {
+        // Act
+        Transaction.DeleteRange(TestNode.Empty(), TestNode.Empty());
+        
+        // Assert
+        Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
+        Assert.That(Transaction.Steps.Single(), Is.TypeOf<DeleteRangeStep>());
+    }
+    
     private class TestStep : IStep
     {
         public bool Executed;
         public bool Reverted;
         
-        public IReadOnlyList<StepDiff> Execute(DScratchDocument document)
+        public IReadOnlyList<StepDiff> Execute()
         {
             Executed = true;
             return [new TestStepDiff()];

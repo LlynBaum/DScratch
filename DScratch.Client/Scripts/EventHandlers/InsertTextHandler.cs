@@ -1,4 +1,5 @@
 using DScratch.Nodes;
+using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 
 namespace DScratch.Client.Scripts.EventHandlers;
@@ -30,18 +31,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         }
         else  // TODO: test test test
         {
-            var rightOriginOffset = keyPressInfo.Selection.Direction is SelectionDirection.Forward
-                ? keyPressInfo.Selection.Offset
-                : keyPressInfo.Selection.EndOffset;
-            
-            var originOffset = keyPressInfo.Selection.Direction is SelectionDirection.Forward
-                ? keyPressInfo.Selection.EndOffset
-                : keyPressInfo.Selection.Offset;
-            
-            rightOrigin = parent.ChildAt(rightOriginOffset);
-            origin = parent.ChildAt(originOffset);
-            
-            // TODO: slice and then delete new slice
+            (origin, rightOrigin) = OverrideInsert(keyPressInfo, transaction, parent);
         }
         
         var textNode = dScratchService.NodeFactory.String(keyPressInfo.Data, origin, rightOrigin);
@@ -73,5 +63,56 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         }
 
         return (currentNode, walker.NextSibling());
+    }
+
+    private static (DNode? origin, DNode? rightOrigin) OverrideInsert(KeyPressInfo keyPressInfo,
+        ITransaction transaction, DNode parent)
+    {
+        var originOffset = keyPressInfo.Selection.Direction is SelectionDirection.Forward
+            ? keyPressInfo.Selection.Offset
+            : keyPressInfo.Selection.EndOffset;
+            
+        var rightOriginOffset = keyPressInfo.Selection.Direction is SelectionDirection.Forward
+            ? keyPressInfo.Selection.EndOffset
+            : keyPressInfo.Selection.Offset;
+        
+        var walker = new TreeWalker<TextNode>(parent);
+        var currentOffset = 0;
+        var currentNode = walker.FirstChild();
+        while (currentNode is not null)
+        {
+            var length = currentNode.Length;
+            if (currentOffset + length >= originOffset)
+            {
+                break;
+            }
+
+            currentOffset += length;
+            currentNode = walker.NextSibling();
+        }
+
+        var relativeOriginOffset = originOffset - currentOffset;
+        var origin = currentNode;
+        
+        while (currentNode is not null)
+        {
+            var length = currentNode.Length;
+            if (currentOffset + length >= rightOriginOffset)
+            {
+                break;
+            }
+
+            currentOffset += length;
+            currentNode = walker.NextSibling();
+        }
+
+        var relativeRightOriginOffset = rightOriginOffset - currentOffset;
+        var rightOrigin = currentNode;
+
+        var deleteStart = origin is not null ? transaction.SplitText(origin, relativeOriginOffset) : null;
+        var deleteEnd = rightOrigin is not null ? transaction.SplitText(rightOrigin, relativeRightOriginOffset) : null;
+
+        transaction.DeleteRange(deleteStart, deleteEnd);
+        return (origin, rightOrigin);
     }
 }

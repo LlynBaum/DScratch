@@ -3,7 +3,7 @@ using DScratch.Transactions.Steps;
 
 namespace DScratch;
 
-public class DScratchService(INodeFactory nodeFactory) : IDScratchService
+public class DScratchService(INodeFactory nodeFactory, INodeIdGenerator nodeIdGenerator) : IDScratchService
 {
     private readonly DScratchDocument document = new DScratchDocument();
     
@@ -14,7 +14,7 @@ public class DScratchService(INodeFactory nodeFactory) : IDScratchService
 
     public ITransaction StartTransaction()
     {
-        return new DTransaction(document);
+        return new DTransaction(document, nodeIdGenerator);
     }
     
     public TransactionResult Apply(ITransaction transaction)

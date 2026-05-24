@@ -4,7 +4,7 @@ namespace DScratch.Transactions.Steps;
 
 public class DeleteStep(DNode node) : IStep
 {
-    public IReadOnlyList<StepDiff> Execute(DScratchDocument document)
+    public IReadOnlyList<StepDiff> Execute()
     {
         // must be called before .Delete(), else the node can not be found anymore
         var step = node.ToDeleteSteps();

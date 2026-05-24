@@ -7,20 +7,12 @@ namespace DScratch.Tests.DScratchTests.Transactions.Steps;
 
 public class InsertStepTests
 {
-    private DScratchDocument Document { get; set; }
-
-    [SetUp]
-    public void SetUp()
-    {
-        Document = new DScratchDocument();
-    }
-    
     [Test]
     public void GivenNode_IsInsertedAsChildOfNodeFromGivenPath()
     {
         // Arrange
         var builder = new TreeBuilder();
-        DNode node1 = builder.TestNode(); // ID "0"
+        builder.TestNode(); // ID "0"
         CharNode node3 = null!;
         CharNode node4 = null!;
         var node2 = builder.Text(t => // ID "1"
@@ -29,14 +21,12 @@ public class InsertStepTests
             node4 = t.Char('a'); // ID "3"
             t.Char('a');         // ID "4"
         });
-        
-        Document.Page.Root = node1;
 
         var node = new CharNode('a', "-1", node3, node4);     
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute(Document);
+        step.Execute();
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -54,21 +44,19 @@ public class InsertStepTests
     {
         // Arrange
         var builder = new TreeBuilder();
-        DNode node1 = builder.TestNode(); // ID "0"
+        builder.TestNode(); // ID "0"
         CharNode node4 = null!;
         var node2 = builder.Text(t => // ID "1"
         {
             t.Char('a'); // ID "2"
             node4 = t.Char('b'); // ID "3"
         });
-        
-        Document.Page.Root = node1;
 
         var node = new CharNode('c', "-1", node4, null);     
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute(Document);
+        step.Execute();
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -85,7 +73,7 @@ public class InsertStepTests
     {
         // Arrange
         var builder = new TreeBuilder();
-        DNode node1 = builder.TestNode(); // ID "0"
+        builder.TestNode(); // ID "0"
         TestInlineElementNode node5 = null!;
         builder.TestNode(t => // ID "1"
         {
@@ -94,13 +82,11 @@ public class InsertStepTests
             node5 = t.TestInlineElementNode(); // ID "4"
         });
         
-        Document.Page.Root = node1;
-        
         var node = new TestInlineElementNode("-1", null, null);
         
         // Act
         var step = new InsertStep(node, node5);
-        step.Execute(Document);
+        step.Execute();
         
         // Assert
         using (Assert.EnterMultipleScope())
