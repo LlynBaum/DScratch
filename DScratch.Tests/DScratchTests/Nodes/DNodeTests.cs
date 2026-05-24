@@ -1,5 +1,6 @@
 ﻿using DScratch.Nodes;
 using DScratch.Tests.Helpers;
+using DScratch.Tests.Helpers.TestNodes;
 
 namespace DScratch.Tests.DScratchTests.Nodes;
 
@@ -148,8 +149,7 @@ public class DNodeTests
         var builder = new TreeBuilder();
         var parent = builder.TestNode();
         
-        var insertBuilder = new TreeBuilder();
-        var insert = insertBuilder.TestNode();
+        var insert = new TestNode("insert", null, null);
         
         // Act
         parent.InsertChild(insert);
@@ -166,8 +166,7 @@ public class DNodeTests
         var builder = new TreeBuilder();
         var parent = builder.TestNode();
         
-        var insertBuilder = new TreeBuilder();
-        var insert = insertBuilder.TestNode();
+        var insert = new TestNode("insert", null, null);
         
         // Act
         parent.InsertChild(insert);
