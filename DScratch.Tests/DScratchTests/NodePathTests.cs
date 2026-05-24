@@ -1,4 +1,4 @@
-namespace DScratch.Tests;
+namespace DScratch.Tests.DScratchTests;
 
 public class NodePathTests
 {

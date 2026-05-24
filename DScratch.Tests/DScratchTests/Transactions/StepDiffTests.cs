@@ -1,6 +1,6 @@
 using DScratch.Transactions;
 
-namespace DScratch.Tests.Transactions;
+namespace DScratch.Tests.DScratchTests.Transactions;
 
 public class StepDiffTests
 {

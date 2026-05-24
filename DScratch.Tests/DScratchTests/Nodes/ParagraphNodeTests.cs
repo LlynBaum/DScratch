@@ -1,7 +1,7 @@
 using DScratch.Nodes;
 using DScratch.Tests.Helpers.TestNodes;
 
-namespace DScratch.Tests.Nodes;
+namespace DScratch.Tests.DScratchTests.Nodes;
 
 public class ParagraphNodeTests
 {

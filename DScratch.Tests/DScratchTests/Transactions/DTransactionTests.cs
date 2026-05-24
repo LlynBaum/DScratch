@@ -3,7 +3,7 @@ using DScratch.Tests.Helpers.TestNodes;
 using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 
-namespace DScratch.Tests.Transactions;
+namespace DScratch.Tests.DScratchTests.Transactions;
 
 public class DTransactionTests
 {

@@ -2,7 +2,7 @@ using DScratch.Nodes;
 using DScratch.Tests.Helpers.TestNodes;
 using DScratch.Transactions.Steps;
 
-namespace DScratch.Tests.Transactions.Steps;
+namespace DScratch.Tests.DScratchTests.Transactions.Steps;
 
 public class InsertStepTests
 {

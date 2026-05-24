@@ -1,10 +1,9 @@
 using DScratch.Tests.Helpers;
-using DScratch.Tests.Nodes;
 using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 using Moq;
 
-namespace DScratch.Tests;
+namespace DScratch.Tests.DScratchTests;
 
 public class DScratchServiceTest
 {

@@ -1,6 +1,6 @@
 using DScratch.Tests.Helpers.TestNodes;
 
-namespace DScratch.Tests;
+namespace DScratch.Tests.DScratchTests;
 
 public class DScratchDocumentTests
 {
