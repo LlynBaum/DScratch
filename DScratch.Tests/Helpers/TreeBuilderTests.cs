@@ -14,6 +14,7 @@ public class TreeBuilderTests
         TextNode textP1 = null!;
         var paragraph1 = treeBuilder.Paragraph(t =>
         {
+            Assert.That(t.Root, Is.EqualTo(treeBuilder.Root));
             textP1 = t.Text("abc");
         });
         
@@ -22,6 +23,7 @@ public class TreeBuilderTests
         TextNode text3P2 = null!;
         var paragraph2 = treeBuilder.Paragraph(t =>
         {
+            Assert.That(t.Root, Is.EqualTo(treeBuilder.Root));
             text1P2 = t.Text("t1");
             text2P2 = t.Text("t2");
             text3P2 = t.Text("t3");
@@ -33,12 +35,15 @@ public class TreeBuilderTests
         TextNode textP3 = null!;
         var blockElement = treeBuilder.TestBlockElementNode(t =>
         {
+            Assert.That(t.Root, Is.EqualTo(treeBuilder.Root));
             inlineElement = t.TestInlineElementNode(t2 =>
             {
+                Assert.That(t2.Root, Is.EqualTo(treeBuilder.Root));
                 textInlineElement = t2.Text("inline text");
             });
             paragraph3 = t.Paragraph(t2 =>
             {
+                Assert.That(t2.Root, Is.EqualTo(treeBuilder.Root));
                 textP3 = t2.Text("abc");
             });
         });

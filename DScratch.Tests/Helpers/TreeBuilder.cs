@@ -5,7 +5,9 @@ namespace DScratch.Tests.Helpers;
 
 public class TreeBuilder : TreeBuilder.IParagraphTreeMaker
 {
-    public DNode Root { get; private set; } = new RootNode();
+    public RootNode Root { get; private set; }
+
+    public DNode FirstChild => Root.FirstChild!;
 
     private readonly DNode parent;
     private DNode? previousChild;
@@ -15,13 +17,15 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeMaker
 
     public TreeBuilder()
     {
+        Root = new RootNode();
         parent = Root;
         idGenerator = new TestNodeIdGenerator();
         factory =  new DNodeFactory(idGenerator);
     }
     
-    private TreeBuilder(DNode parent, TestNodeIdGenerator idGenerator)
+    private TreeBuilder(DNode parent, TestNodeIdGenerator idGenerator, RootNode rootNode)
     {
+        Root = rootNode;
         this.parent = parent;
         this.idGenerator = idGenerator;
         factory = new DNodeFactory(idGenerator);
@@ -37,7 +41,7 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeMaker
     public ParagraphNode Paragraph(Action<IParagraphTreeMaker>? configureChildNodes = null)
     {
         var paragraph = factory.Paragraph(null, null);
-        configureChildNodes?.Invoke(new TreeBuilder(paragraph, idGenerator));
+        configureChildNodes?.Invoke(GetChildTreeBuilder(paragraph));
         Append(paragraph);
         return paragraph;
     }
@@ -45,7 +49,7 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeMaker
     public TestNode TestNode(Action<TreeBuilder>? configureChildNodes = null)
     {
         var testNode = new TestNode(idGenerator.GetNextId(), null, null);
-        configureChildNodes?.Invoke(new TreeBuilder(testNode, idGenerator));
+        configureChildNodes?.Invoke(GetChildTreeBuilder(testNode));
         Append(testNode);
         return testNode;
     }
@@ -53,7 +57,7 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeMaker
     public TestInlineElementNode TestInlineElementNode(Action<TreeBuilder>? configureChildNodes = null)
     {
         var testNode = new TestInlineElementNode(idGenerator.GetNextId(), null, null);
-        configureChildNodes?.Invoke(new TreeBuilder(testNode, idGenerator));
+        configureChildNodes?.Invoke(GetChildTreeBuilder(testNode));
         Append(testNode);
         return testNode;
     }
@@ -61,7 +65,7 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeMaker
     public TestBlockElementNode TestBlockElementNode(Action<TreeBuilder>? configureChildNodes = null)
     {
         var testNode = new TestBlockElementNode(idGenerator.GetNextId(), null, null);
-        configureChildNodes?.Invoke(new TreeBuilder(testNode, idGenerator));
+        configureChildNodes?.Invoke(GetChildTreeBuilder(testNode));
         Append(testNode);
         return testNode;
     }
@@ -74,11 +78,16 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeMaker
         previousChild = node;
     }
 
-    private class RootNode() : DNode("root", null, null);
+    private TreeBuilder GetChildTreeBuilder(DNode parentNode)
+    {
+        return new TreeBuilder(parentNode, idGenerator, Root);
+    }
+
+    public class RootNode() : DNode("root", null, null);
     
     public interface ITreeMaker
     {
-        DNode Root { get; }
+        RootNode Root { get; }
     }
     
     public interface IParagraphTreeMaker : ITreeMaker

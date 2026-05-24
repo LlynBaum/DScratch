@@ -1,4 +1,5 @@
-﻿using DScratch.Tests.Helpers.TestNodes;
+﻿using DScratch.Nodes;
+using DScratch.Tests.Helpers;
 
 namespace DScratch.Tests.DScratchTests.Nodes;
 
@@ -8,37 +9,42 @@ public class DNodeTests
     public void ActiveChildNodes_ReturnOnlyNonDeletedChildNodes()
     {
         // Arrange
-        var node1 = new TestNode("2", null, null);
-        var node2 = new TestNode("3", null, null);
-        var node3 = new TestNode("4", null, null);
-        var parent = new TestNode("1", null, null, [node1, node2, node3]);
-        node2.Delete();
+        var builder = new TreeBuilder();
+        builder.TestNode(t =>
+        {
+            t.TestNode();
+            t.TestNode().Delete();
+            t.TestNode();
+        });
         
         // Act
-        var activeChildNodes = parent.ActiveChildNodes.Select(c => c.Id).ToList();
+        var activeChildNodes = builder.FirstChild.ActiveChildNodes.Select(c => c.Id).ToList();
         
         // Assert
-        Assert.That(activeChildNodes, Is.EquivalentTo(["2", "4"]));
+        Assert.That(activeChildNodes, Is.EquivalentTo(["1", "3"]));
     }
     
     [Test]
     public void FirstAndLastChild_ReturnExpectedNode()
     {
         // Arrange
-        var node1 = new TestNode("2", null, null);
-        var node2 = new TestNode("2", null, null);
-        var node3 = new TestNode("2", null, null);
-        var parent = new TestNode("1", null, null, [node1, node2, node3]);
+        var builder = new TreeBuilder();
+        builder.TestNode(t =>
+        {
+            t.TestNode();
+            t.TestNode();
+            t.TestNode();
+        });
         
         // Act
-        var first = parent.FirstChild;
-        var last = parent.LastChild;
+        var first = builder.FirstChild.FirstChild;
+        var last = builder.FirstChild.LastChild;
         
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(first, Is.EqualTo(node1));
-            Assert.That(last, Is.EqualTo(node3));
+            Assert.That(first?.Id, Is.EqualTo("1"));
+            Assert.That(last?.Id, Is.EqualTo("3"));
         });
     }
     
@@ -46,55 +52,63 @@ public class DNodeTests
     public void FirstChild_ReturnExpectedNode()
     {
         // Arrange
-        var node1 = new TestNode("2", null, null);
-        var node2 = new TestNode("2", null, null);
-        var node3 = new TestNode("2", null, null);
-        var parent = new TestNode("1", null, null, [node1, node2, node3]);
-        
-        node1.Delete();
+        var builder = new TreeBuilder();
+        builder.TestNode(t =>
+        {
+            t.TestNode().Delete();
+            t.TestNode();
+            t.TestNode();
+        });
         
         // Act
-        var first = parent.FirstChild;
+        var first = builder.FirstChild.FirstChild;
         
         // Assert
-        Assert.That(first, Is.EqualTo(node2));
+        Assert.That(first?.Id, Is.EqualTo("2"));
     }
     
     [Test]
     public void LastChild_ReturnExpectedNode()
     {
         // Arrange
-        var node1 = new TestNode("2", null, null);
-        var node2 = new TestNode("2", null, null);
-        var node3 = new TestNode("2", null, null);
-        var parent = new TestNode("1", null, null, [node1, node2, node3]);
-        
-        node3.Delete();
+        var builder = new TreeBuilder();
+        builder.TestNode(t =>
+        {
+            t.TestNode();
+            t.TestNode();
+            t.TestNode().Delete();
+        });
         
         // Act
-        var last = parent.LastChild;
+        var last = builder.FirstChild.LastChild;
         
         // Assert
-        Assert.That(last, Is.EqualTo(node2));
+        Assert.That(last?.Id, Is.EqualTo("2"));
     }
     
     [Test]
     public void Delete_MarksItselfAndAllChildNodes_AsIsDeleted()
     {
         // Arrange
-        var node1 = new TestNode("2", null, null);
-        var node2 = new TestNode("2", null, null, [node1]);
-        var node3 = new TestNode("2", null, null, [node2]);
+        var builder = new TreeBuilder();
+        var nodes = new DNode[3];
+        nodes[0] = builder.TestNode(t =>
+        {
+            nodes[1] = t.TestNode(t2 =>
+            {
+                nodes[2] = t2.TestNode();
+            });
+        });
         
         // Act
-        node3.Delete();
+        nodes[0].Delete();
         
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(node1.IsDeleted, Is.True);
-            Assert.That(node2.IsDeleted, Is.True);
-            Assert.That(node3.IsDeleted, Is.True);
+            Assert.That(nodes[0].IsDeleted, Is.True);
+            Assert.That(nodes[1].IsDeleted, Is.True);
+            Assert.That(nodes[2].IsDeleted, Is.True);
         });
     }
     
@@ -102,18 +116,17 @@ public class DNodeTests
     public void Remove_RemovesNodeFromTree()
     {
         // Arrange
-        var node = new TestNode("2", null, null);
-        
-        var node2 = new TestNode("3", node, null);
-        node.RightOrigin = node2;
-        
-        var node3 = new TestNode("4", node2, null);
-        node2.RightOrigin = node3;
-        
-        var parent = new TestNode("1", null, null, [node, node2, node3]);
-        node.Parent = parent;
-        node2.Parent = parent;
-        node3.Parent = parent;
+        var builder = new TreeBuilder();
+        DNode node = null!;
+        DNode node2 = null!;
+        DNode node3 = null!;
+
+        var parent = builder.TestNode(t =>
+        {
+            node = t.TestNode();
+            node2 = t.TestNode();
+            node3 = t.TestNode();
+        });
         
         // Act
         node2.Remove();
@@ -132,8 +145,11 @@ public class DNodeTests
     public void InsertChild_SetsParentToItSelf()
     {
         // Arrange
-        var parent = new TestNode("1", null, null);
-        var insert = new TestNode("2", null, null);
+        var builder = new TreeBuilder();
+        var parent = builder.TestNode();
+        
+        var insertBuilder = new TreeBuilder();
+        var insert = insertBuilder.TestNode();
         
         // Act
         parent.InsertChild(insert);
@@ -147,8 +163,11 @@ public class DNodeTests
     public void InsertChild_AddNodeAsFirstChild_WhenParentHasNoChildYet()
     {
         // Arrange
-        var parent = new TestNode("1", null, null);
-        var insert = new TestNode("2", null, null);
+        var builder = new TreeBuilder();
+        var parent = builder.TestNode();
+        
+        var insertBuilder = new TreeBuilder();
+        var insert = insertBuilder.TestNode();
         
         // Act
         parent.InsertChild(insert);
@@ -162,10 +181,17 @@ public class DNodeTests
     public void InsertChild_AddNodeAsFirstChild_WhenNodeToInsertHasOriginNull()
     {
         // Arrange
-        var node = new TestNode("2", null, null);
-        var parent = new TestNode("1", null, null, [node]);
+        var builder = new TreeBuilder();
+        DNode node = null!;
+        var parent = builder.TestNode(t =>
+        {
+            node = t.TestNode();
+        });
         
-        var insert = new TestNode("3", null, node);
+        var insertBuilder = new TreeBuilder();
+        var insert = insertBuilder.TestNode();
+        insert.Origin = null;
+        insert.RightOrigin = node;
         
         // Act
         parent.InsertChild(insert);
@@ -179,10 +205,17 @@ public class DNodeTests
     public void InsertChild_AddNodeAfterOrigin_WhenNodeToInsertHasOrigin()
     {
         // Arrange
-        var node = new TestNode("2", null, null);
-        var parent = new TestNode("1", null, null, [node]);
+        var builder = new TreeBuilder();
+        DNode node = null!;
+        var parent = builder.TestNode(t =>
+        {
+            node = t.TestNode();
+        });
         
-        var insert = new TestNode("3", node, null);
+        var insertBuilder = new TreeBuilder();
+        var insert = insertBuilder.TestNode();
+        insert.Origin = node;
+        insert.RightOrigin = null;
         
         // Act
         parent.InsertChild(insert);
@@ -200,12 +233,19 @@ public class DNodeTests
     public void InsertChild_AddNodeAfterOrigin_AndBeforeRightOrigin()
     {
         // Arrange
-        var node = new TestNode("2", null, null);
-        var node2 = new TestNode("3", node, null);
-        node.RightOrigin = node2;
-        var parent = new TestNode("1", null, null, [node, node2]);
+        var builder = new TreeBuilder();
+        DNode node = null!;
+        DNode node2 = null!;
+        var parent = builder.TestNode(t =>
+        {
+            node = t.TestNode();
+            node2 = t.TestNode();
+        });
 
-        var insert = new TestNode("4", node, node2);
+        var insertBuilder = new TreeBuilder();
+        var insert = insertBuilder.TestNode();
+        insert.Origin = node;
+        insert.RightOrigin = node2;
         
         // Act
         parent.InsertChild(insert);
@@ -233,10 +273,13 @@ public class DNodeTests
     public void IndexOf_ReturnsIndexOfGivenChildNode()
     {
         // Arrange
-        var node = new TestNode("2", null, null);
-        var node2 = new TestNode("3", node, null);
-        node.RightOrigin = node2;
-        var parent = new TestNode("1", null, null, [node, node2]);
+        var builder = new TreeBuilder();
+        DNode node2 = null!;
+        var parent = builder.TestNode(t =>
+        {
+            t.TestNode();
+            node2 = t.TestNode();
+        });
         
         // Act
         var result = parent.IndexOf(node2);
@@ -249,10 +292,13 @@ public class DNodeTests
     public void IndexOf_ReturnsNegativeOne_WhenChildIsDeleted()
     {
         // Arrange
-        var node = new TestNode("2", null, null);
-        var node2 = new TestNode("3", node, null);
-        node.RightOrigin = node2;
-        var parent = new TestNode("1", null, null, [node, node2]);
+        var builder = new TreeBuilder();
+        DNode node2 = null!;
+        var parent = builder.TestNode(t =>
+        {
+            t.TestNode();
+            node2 = t.TestNode();
+        });
         
         node2.Delete();
         
@@ -267,9 +313,14 @@ public class DNodeTests
     public void IndexOf_ReturnsNegativeOne_WhenChildIsNotFound()
     {
         // Arrange
-        var node = new TestNode("2", null, null);
-        var node2 = new TestNode("3", null, null);
-        var parent = new TestNode("1", null, null, [node]);
+        var builder = new TreeBuilder();
+        var parent = builder.TestNode(t =>
+        {
+            t.TestNode();
+        });
+        
+        var insertBuilder = new TreeBuilder();
+        var node2 = insertBuilder.TestNode();
         
         // Act
         var result = parent.IndexOf(node2);
@@ -282,9 +333,13 @@ public class DNodeTests
     public void ChildAt_ReturnsExpectedChild()
     {
         // Arrange
-        var node = new TestNode("2", null, null);
-        var node2 = new TestNode("3", null, null);
-        var parent = new TestNode("1", null, null, [node, node2]);
+        var builder = new TreeBuilder();
+        DNode node2 = null!;
+        var parent = builder.TestNode(t =>
+        {
+            t.TestNode();
+            node2 = t.TestNode();
+        });
         
         // Act
         var result = parent.ChildAt(1);
@@ -297,9 +352,12 @@ public class DNodeTests
     public void ChildAt_ReturnsNull_WhenIndexIsOutOfBounds()
     {
         // Arrange
-        var node = new TestNode("2", null, null);
-        var node2 = new TestNode("3", null, null);
-        var parent = new TestNode("1", null, null, [node, node2]);
+        var builder = new TreeBuilder();
+        var parent = builder.TestNode(t =>
+        {
+            t.TestNode();
+            t.TestNode();
+        });
         
         // Act
         var result = parent.ChildAt(2);
@@ -312,9 +370,12 @@ public class DNodeTests
     public void ChildAt_ReturnsNull_WhenIndexIsBelowZero()
     {
         // Arrange
-        var node = new TestNode("2", null, null);
-        var node2 = new TestNode("3", null, null);
-        var parent = new TestNode("1", null, null, [node, node2]);
+        var builder = new TreeBuilder();
+        var parent = builder.TestNode(t =>
+        {
+            t.TestNode();
+            t.TestNode();
+        });
         
         // Act
         var result = parent.ChildAt(-1);
@@ -327,35 +388,46 @@ public class DNodeTests
     public void GetPath_ReturnsExpectedPathToNode()
     {
         // Arrange
-        var node = new TestNode("3", null, null);
-        var mid = new TestNode("2", null, null, [node]);
-        node.Parent = mid;
-        var parent = new TestNode("1", null, null, [mid]);
-        mid.Parent = parent;
+        var builder = new TreeBuilder();
+        DNode node = null!;
+        builder.TestNode(t =>
+        {
+            t.TestNode(t2 =>
+            {
+                node = t2.TestNode();
+            });
+        });
         
         // Act
         var path = node.GetPath();
         
-        Assert.That(path, Has.Length.EqualTo(3));
-        Assert.That(path.Path, Is.EquivalentTo(["1", "2", "3"]));
+        // Assert
+        Assert.That(path, Has.Length.EqualTo(4));
+        Assert.That(path.Path, Is.EquivalentTo(["root", "0", "1", "2"]));
     }
     
     [Test]
     public void GetElementPath_ReturnsExpectedPathToNode()
     {
         // Arrange
-        var node = new TestNode("4", null, null);
-        var mid = new TestInlineElementNode("3", null, null, [node]);
-        node.Parent = mid;
-        var mid2 = new TestNode("2", null, null, [mid]);
-        mid.Parent = mid2;
-        var parent = new TestInlineElementNode("1", null, null, [mid2]);
-        mid2.Parent = parent;
+        var builder = new TreeBuilder();
+        DNode node = null!;
+        builder.TestInlineElementNode(t =>
+        {
+            t.TestNode(t2 =>
+            {
+                t2.TestInlineElementNode(t3 =>
+                {
+                    node = t3.TestNode();
+                });
+            });
+        });
         
         // Act
         var path = node.GetElementPath();
         
+        // Assert
         Assert.That(path, Has.Length.EqualTo(2));
-        Assert.That(path.Path, Is.EquivalentTo(["1", "3"]));
+        Assert.That(path.Path, Is.EquivalentTo(["0", "2"]));
     }
 }
