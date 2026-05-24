@@ -15,11 +15,11 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder, TreeBuilder.ITextT
     private readonly TestNodeIdGenerator idGenerator;
     private readonly DNodeFactory factory;
 
-    public TreeBuilder()
+    public TreeBuilder(TestNodeIdGenerator? testNodeIdGenerator = null)
     {
         Root = new RootNode();
         parent = Root;
-        idGenerator = new TestNodeIdGenerator();
+        idGenerator = testNodeIdGenerator ?? new TestNodeIdGenerator();
         factory =  new DNodeFactory(idGenerator);
     }
     

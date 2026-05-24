@@ -2,5 +2,6 @@
   <Project Path="DScratch.Client\DScratch.Client.csproj" />
   <Project Path="DScratch.Host\DScratch.Host.csproj" />
   <Project Path="DScratch.Tests/DScratch.Tests.csproj" />
+  <Project Path="DScratch.TreeVisualizers/DScratch.TreeVisualizers.csproj" />
   <Project Path="DScratch/DScratch.csproj" />
 </Solution>

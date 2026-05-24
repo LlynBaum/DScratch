@@ -25,10 +25,8 @@ public class TextNode(string id, DNode? origin, DNode? rightOrigin, List<DNode>?
         var otherChildNodes = AllChildNodes.Skip(offset).ToList();
         AllChildNodes = remainingChildNodes.ToList();
         
-        var newNode = new TextNode(nextId, this, RightOrigin, otherChildNodes)
-        {
-            Parent = Parent
-        };
+        var newNode = new TextNode(nextId, this, RightOrigin, otherChildNodes);
+        Parent?.InsertChild(newNode);
         
         RightOrigin = newNode;
         return newNode;

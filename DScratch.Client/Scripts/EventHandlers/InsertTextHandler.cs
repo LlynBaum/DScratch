@@ -110,9 +110,12 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         var rightOrigin = currentNode;
 
         var deleteStart = origin is not null ? transaction.SplitText(origin, relativeOriginOffset) : null;
-        var deleteEnd = rightOrigin is not null ? transaction.SplitText(rightOrigin, relativeRightOriginOffset) : null;
-
-        transaction.DeleteRange(deleteStart, deleteEnd);
-        return (origin, rightOrigin);
+        if (rightOrigin != null)
+        {
+            transaction.SplitText(rightOrigin, relativeRightOriginOffset);
+        }
+        
+        transaction.DeleteRange(deleteStart, rightOrigin);
+        return (origin, deleteStart);
     }
 }

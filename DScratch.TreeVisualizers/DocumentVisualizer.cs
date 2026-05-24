@@ -1,4 +1,4 @@
-namespace DScratch.Tests.Helpers.Visualizers;
+namespace DScratch.TreeVisualizers;
 
 public class DocumentVisualizer(DScratchDocument document)
 {

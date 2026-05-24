@@ -1,6 +1,6 @@
 using DScratch.Nodes;
 
-namespace DScratch.Tests.Helpers.Visualizers;
+namespace DScratch.TreeVisualizers;
 
 public class TreeVisualizer(DNode root)
 {
@@ -11,30 +11,36 @@ public class TreeVisualizer(DNode root)
 
     public void Print()
     {
+        Console.WriteLine("===================");
+        
         var current = root;
         while (current is not null)
         {
             PrintNode(current);
             current = Next(current);
         }
+        
+        Console.WriteLine("=== End of Tree ===");
     }
     
     private void PrintNode(DNode node)
     {
+        var deletedChar = node.IsDeleted ? " X" : "";
+        
+        var originId = node.Origin is not null ? node.Origin.Id : "null";
+        var rightOriginId = node.RightOrigin is not null ? node.RightOrigin.Id : "null";
         switch (node)
         {
             case CharNode charNode:
-                Console.WriteLine($"{IndentationChars}{node.GetType().Name}(ID: {node.Id}) - '{charNode.Value}'");
+                Console.WriteLine($"{IndentationChars}{node.GetType().Name}(ID: {node.Id}{deletedChar}) [{originId} - {rightOriginId}] --- '{charNode.Value}'");
                 break;
             case TextNode textNode:
-                Console.WriteLine($"{IndentationChars}{node.GetType().Name}(ID: {node.Id}) - \"{textNode.TextContent}\"");
+                Console.WriteLine($"{IndentationChars}{node.GetType().Name}(ID: {node.Id}{deletedChar}) [{originId} - {rightOriginId}] --- \"{textNode.TextContent}\"");
                 break;
             default:
-                Console.WriteLine($"{IndentationChars}{node.GetType().Name}(ID: {node.Id})");
+                Console.WriteLine($"{IndentationChars}{node.GetType().Name}(ID: {node.Id}{deletedChar}) [{originId} - {rightOriginId}]");
                 break;
         }
-        
-        
     }
     
     private DNode? Next(DNode? current)

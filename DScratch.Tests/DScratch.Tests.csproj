@@ -23,6 +23,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\DScratch.Client\DScratch.Client.csproj" />
+      <ProjectReference Include="..\DScratch.TreeVisualizers\DScratch.TreeVisualizers.csproj" />
       <ProjectReference Include="..\DScratch\DScratch.csproj" />
     </ItemGroup>
 
