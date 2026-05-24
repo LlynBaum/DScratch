@@ -1,6 +1,7 @@
 using DScratch.Nodes;
 using DScratch.Transactions;
 using DScratch.Transactions.Steps;
+using DScratch.TreeVisualizers;
 
 namespace DScratch.Client.Scripts.EventHandlers;
 
@@ -110,6 +111,13 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         var rightOrigin = currentNode;
 
         var deleteStart = origin is not null ? transaction.SplitText(origin, relativeOriginOffset) : null;
+
+        if (origin is not null && rightOrigin is not null && origin.Id == rightOrigin.Id)
+        {
+            rightOrigin = deleteStart;
+            relativeRightOriginOffset -= origin.Length;
+        }
+        
         if (rightOrigin != null)
         {
             transaction.SplitText(rightOrigin, relativeRightOriginOffset);

@@ -45,10 +45,10 @@ public class TreeVisualizer(DNode root)
     
     private DNode? Next(DNode? current)
     {
-        if (current?.FirstChild is not null)
+        if (current?.ChildNodes.Count > 0)
         {
             indentation += IndentationIncrease;
-            return current.FirstChild;
+            return current.ChildNodes[0];
         }
 
         var node = current;
