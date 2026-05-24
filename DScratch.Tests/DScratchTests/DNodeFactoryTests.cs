@@ -7,23 +7,22 @@ namespace DScratch.Tests.DScratchTests;
 public class DNodeFactoryTests
 {
     [Test]
-    public void ReturnsCharNode_WithNewId()
+    public void ReturnsParagraphNode_WithNewId()
     {
         var factory = new DNodeFactory(new TestNodeIdGenerator());
 
-        var testNode = new CharNode('a', "1", null, null);
-        var testNode2 = new CharNode('a', "2", null, null);
-        var result = factory.Char('a', testNode, testNode2);
+        var testNode = new ParagraphNode("1", null, null);
+        var testNode2 = new ParagraphNode("2", null, null);
+        var result = factory.Paragraph(testNode, testNode2);
         
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(result.Value, Is.EqualTo('a'));
             Assert.That(result.Id, Is.EqualTo("0"));
             Assert.That(result.Origin, Is.EqualTo(testNode));
             Assert.That(result.RightOrigin, Is.EqualTo(testNode2));
         }
     }
-
+    
     [Test]
     public void ReturnsTextNode_WithNewId()
     {
@@ -52,6 +51,24 @@ public class DNodeFactoryTests
             var child3 = result.ChildNodes[2];
             Assert.That(child3, Is.TypeOf<CharNode>());
             Assert.That((child3 as CharNode)!.Value, Is.EqualTo('c'));
+        }
+    }
+    
+    [Test]
+    public void ReturnsCharNode_WithNewId()
+    {
+        var factory = new DNodeFactory(new TestNodeIdGenerator());
+
+        var testNode = new CharNode('a', "1", null, null);
+        var testNode2 = new CharNode('a', "2", null, null);
+        var result = factory.Char('a', testNode, testNode2);
+        
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.Value, Is.EqualTo('a'));
+            Assert.That(result.Id, Is.EqualTo("0"));
+            Assert.That(result.Origin, Is.EqualTo(testNode));
+            Assert.That(result.RightOrigin, Is.EqualTo(testNode2));
         }
     }
 }
