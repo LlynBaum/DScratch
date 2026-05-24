@@ -12,6 +12,11 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
     public TextNode String(string value, DNode? origin, DNode? rightOrigin)
     {
         var textNode = new TextNode(nodeIdGenerator.GetNextId(), origin, rightOrigin);
+
+        if (string.IsNullOrEmpty(value))
+        {
+            return textNode;
+        }
         
         var firstNode = new CharNode(
             value: value[0], 

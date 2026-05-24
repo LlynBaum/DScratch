@@ -115,5 +115,7 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder, TreeBuilder.ITextT
         TextNode Text(Action<ITextTreeBuilder>? configureChildNodes = null);
         
         TextNode Text(string value);
+
+        TestInlineElementNode TestInlineElementNode(Action<TreeBuilder>? configureChildNodes = null);
     }
 }

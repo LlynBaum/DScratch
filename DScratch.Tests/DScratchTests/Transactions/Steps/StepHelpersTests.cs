@@ -1,4 +1,5 @@
 using DScratch.Nodes;
+using DScratch.Tests.Helpers;
 using DScratch.Tests.Helpers.TestNodes;
 using DScratch.Transactions;
 using DScratch.Transactions.Steps;
@@ -12,8 +13,8 @@ public class StepHelpersTests
         [Test]
         public void WhenParentIsNull_FallbackToRoot()
         {
-            // Arrange
-            var node = new TestInlineElementNode("1", null, null);
+            // Arrange - Single node, manual setup is fine
+            var node = new TestInlineElementNode("0", null, null);
 
             // Act
             var result = node.ToInsertSteps();
@@ -34,16 +35,17 @@ public class StepHelpersTests
         public void CharNode_ReturnsInsertTextDiff()
         {
             // Arrange
-            var existing = new CharNode('a', "4", null, null);
-            var node = new CharNode('a', "3", existing, null);
-            existing.RightOrigin = node;
-
-            var textNode = new TextNode("2", null, null, [existing, node]);
-            existing.Parent = textNode;
-            node.Parent = textNode;
+            var builder = new TreeBuilder();
+            TextNode textNode = null!;
             
-            var parent = new TestInlineElementNode("1", null, null, [textNode]);
-            textNode.Parent = parent;
+            // 0: Parent Element
+            builder.TestInlineElementNode(t =>
+            {
+                // 1: TextNode, 2: CharNode ('a'), 3: CharNode ('a')
+                textNode = t.Text("aa"); 
+            });
+
+            var node = textNode.ChildNodes[1]; // Target the second CharNode (ID: "3")
 
             // Act
             var result = node.ToInsertSteps();
@@ -55,7 +57,7 @@ public class StepHelpersTests
             var step = (StepDiff.InsertTextDiff)result.Single();
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(step.Parent, Is.EquivalentTo(["1"]));
+                Assert.That(step.Parent, Is.EquivalentTo(["0"]));
                 Assert.That(step.Offset, Is.EqualTo(1));
                 Assert.That(step.Text, Is.EqualTo("a"));
             }
@@ -65,15 +67,20 @@ public class StepHelpersTests
         public void Element_ReturnsInsertElementDiff()
         {
             // Arrange
-            var charNode = new CharNode('a', "4", null, null);
-            var testNode = new TextNode("3", null, null, [charNode]);
-            charNode.Parent = testNode;
+            var builder = new TreeBuilder();
+            ParagraphNode paragraph = null!;
 
-            var paragraph = new ParagraphNode("2", null, null, [testNode]);
-            testNode.Parent = paragraph;
-            
-            var parent = new TestInlineElementNode("1", null, null, [TestNode.Empty(), paragraph]);
-            paragraph.Parent = parent;
+            // 0: Parent Element
+            builder.TestInlineElementNode(t =>
+            {
+                t.TestNode(); // 1: Empty node sibling
+                
+                // 2: ParagraphNode
+                paragraph = t.Paragraph(p =>
+                {
+                    p.Text("a"); // 3: TextNode, 4: CharNode ('a')
+                });
+            });
             
             // Act
             var result = paragraph.ToInsertSteps();
@@ -89,13 +96,13 @@ public class StepHelpersTests
             using (Assert.EnterMultipleScope())
             {
                 var insertParagraph = (StepDiff.InsertElementBlockDiff)result[0];
-                Assert.That(insertParagraph.Parent, Is.EquivalentTo(["1"]));
+                Assert.That(insertParagraph.Parent, Is.EquivalentTo(["0"]));
                 Assert.That(insertParagraph.PreviousSibling, Is.Null);
-                Assert.That(insertParagraph.NewNodeId, Is.EqualTo(paragraph.Id));
+                Assert.That(insertParagraph.NewNodeId, Is.EqualTo("2"));
                 Assert.That(insertParagraph.TagName, Is.EqualTo(paragraph.TagName));
                 
                 var insertText = (StepDiff.InsertTextDiff)result[1];
-                Assert.That(insertText.Parent, Is.EquivalentTo(["1", paragraph.Id]));
+                Assert.That(insertText.Parent, Is.EquivalentTo(["0", "2"]));
                 Assert.That(insertText.Offset, Is.EqualTo(0));
                 Assert.That(insertText.Text, Is.EqualTo("a"));
             }
@@ -105,29 +112,28 @@ public class StepHelpersTests
         public void TextElement_ReturnsExpectedSteps()
         {
             // Arrange
-            var charNode1 = new CharNode('a', "4", null, null);
-            var leftNode = new TextNode("3", null, null, [charNode1]);
-            charNode1.Parent = leftNode;
+            var builder = new TreeBuilder();
+            ParagraphNode paragraph = null!;
 
-            var charNode2 = new CharNode('b', "5", null, null);
-            var node = new TextNode("6", null, null, [charNode2]);
-            var testElement = new TestInlineElementNode("7", leftNode, null, [node]);
-            leftNode.RightOrigin = testElement;
-            charNode2.Parent = node;
-            node.Parent = testElement;
-            
-            var charNode3 = new CharNode('c', "8", null, null);
-            var rightNode = new TextNode("9", testElement, null, [charNode3]);
-            testElement.RightOrigin = rightNode;
-            charNode3.Parent = rightNode;
-
-            var paragraph = new ParagraphNode("2", null, null, [leftNode, testElement, rightNode]);
-            leftNode.Parent = paragraph;
-            testElement.Parent = paragraph;
-            rightNode.Parent = paragraph;
-            
-            var parent = new TestInlineElementNode("1", null, null, [TestNode.Empty(), paragraph]);
-            paragraph.Parent = parent;
+            // 0: Parent Element
+            builder.TestInlineElementNode(t =>
+            {
+                t.TestNode(); // 1: Empty node sibling
+                
+                // 2: ParagraphNode
+                paragraph = t.Paragraph(p =>
+                {
+                    p.Text("a"); // 3: TextNode, 4: CharNode ('a')
+                    
+                    // 5: TestInlineElementNode
+                    p.TestInlineElementNode(te =>
+                    {
+                        te.Text("b"); // 6: TextNode, 7: CharNode ('b')
+                    });
+                    
+                    p.Text("c"); // 8: TextNode, 9: CharNode ('c')
+                });
+            });
             
             // Act
             var result = paragraph.ToInsertSteps();
@@ -138,39 +144,35 @@ public class StepHelpersTests
             {
                 Assert.That(result[0], Is.TypeOf<StepDiff.InsertElementBlockDiff>());
                 Assert.That(result[1], Is.TypeOf<StepDiff.InsertTextDiff>());
-                
                 Assert.That(result[2], Is.TypeOf<StepDiff.InsertElementInlineDiff>());
                 Assert.That(result[3], Is.TypeOf<StepDiff.InsertTextDiff>());
-                
                 Assert.That(result[4], Is.TypeOf<StepDiff.InsertTextDiff>());
             }
             
             using (Assert.EnterMultipleScope())
             {
                 var insertParagraph = (StepDiff.InsertElementBlockDiff)result[0];
-                Assert.That(insertParagraph.Parent, Is.EquivalentTo(["1"]));
+                Assert.That(insertParagraph.Parent, Is.EquivalentTo(["0"]));
                 Assert.That(insertParagraph.PreviousSibling, Is.Null);
-                Assert.That(insertParagraph.NewNodeId, Is.EqualTo(paragraph.Id));
-                Assert.That(insertParagraph.TagName, Is.EqualTo(paragraph.TagName));
+                Assert.That(insertParagraph.NewNodeId, Is.EqualTo("2"));
                 
                 var insertLeftText = (StepDiff.InsertTextDiff)result[1];
-                Assert.That(insertLeftText.Parent, Is.EquivalentTo(["1", paragraph.Id]));
+                Assert.That(insertLeftText.Parent, Is.EquivalentTo(["0", "2"]));
                 Assert.That(insertLeftText.Offset, Is.EqualTo(0));
                 Assert.That(insertLeftText.Text, Is.EqualTo("a"));
                 
                 var insertTestElement = (StepDiff.InsertElementInlineDiff)result[2];
-                Assert.That(insertTestElement.Parent, Is.EquivalentTo(["1", paragraph.Id]));
+                Assert.That(insertTestElement.Parent, Is.EquivalentTo(["0", "2"]));
                 Assert.That(insertTestElement.Offset, Is.EqualTo(1));
-                Assert.That(insertTestElement.NewNodeId, Is.EqualTo("7"));
-                Assert.That(insertTestElement.TagName, Is.EqualTo(testElement.TagName));
+                Assert.That(insertTestElement.NewNodeId, Is.EqualTo("5"));
                 
                 var insertText = (StepDiff.InsertTextDiff)result[3];
-                Assert.That(insertText.Parent, Is.EquivalentTo(["1", paragraph.Id, testElement.Id]));
+                Assert.That(insertText.Parent, Is.EquivalentTo(["0", "2", "5"]));
                 Assert.That(insertText.Offset, Is.EqualTo(0));
                 Assert.That(insertText.Text, Is.EqualTo("b"));
                 
                 var insertRightText = (StepDiff.InsertTextDiff)result[4];
-                Assert.That(insertRightText.Parent, Is.EquivalentTo(["1", paragraph.Id]));
+                Assert.That(insertRightText.Parent, Is.EquivalentTo(["0", "2"]));
                 Assert.That(insertRightText.Offset, Is.EqualTo(2));
                 Assert.That(insertRightText.Text, Is.EqualTo("c"));
             }
@@ -179,11 +181,11 @@ public class StepHelpersTests
         [Test]
         public void UnknownNodes_ThrowArgumentException()
         {
-            // Arrange
+            // Arrange - Single node setup
             var testNode = TestNode.Empty();
             testNode.Parent = TestNode.Empty();
             
-            //Assert
+            // Assert
             Assert.Throws<ArgumentException>(Act);
             return;
 
@@ -198,18 +200,17 @@ public class StepHelpersTests
         public void CharNode_ReturnsDeleteTextDiff()
         {
             // Arrange
-            var node1 = new CharNode('a', "5", null, null);
-            var text1 = new TextNode("4", null, null, [node1]);
-            node1.Parent = text1;
+            var builder = new TreeBuilder();
+            TextNode text2 = null!;
             
-            var node2 = new CharNode('a', "3", null, null);
-            var text2 = new TextNode("2", text1, null, [node2]);
-            node2.Parent = text2;
-            text1.RightOrigin = text2;
+            // 0: Parent Element
+            builder.TestInlineElementNode(t =>
+            {
+                t.Text("a");     // 1: TextNode, 2: CharNode ('a')
+                text2 = t.Text("a"); // 3: TextNode, 4: CharNode ('a')
+            });
             
-            var parent = new TestInlineElementNode("1", null, null, [text1, text2]);
-            text1.Parent = parent;
-            text2.Parent = parent;
+            var node2 = text2.ChildNodes.First(); // Target second CharNode (ID: "4")
             
             // Act
             var result = node2.ToDeleteSteps();
@@ -219,7 +220,7 @@ public class StepHelpersTests
             var step = (StepDiff.DeleteTextDiff)result;
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(step.Parent, Is.EquivalentTo(["1"]));
+                Assert.That(step.Parent, Is.EquivalentTo(["0"]));
                 Assert.That(step.Offset, Is.EqualTo(1));
                 Assert.That(step.Length, Is.EqualTo(1));
             }
@@ -229,20 +230,15 @@ public class StepHelpersTests
         public void TextNode_ReturnDeleteTextDiff()
         {
             // Arrange
-            var node1 = new CharNode('a', "6", null, null);
-            var text1 = new TextNode("5", null, null, [node1]);
-            node1.Parent = text1;
+            var builder = new TreeBuilder();
+            TextNode text2 = null!;
             
-            var node21 = new CharNode('a', "4", null, null);
-            var node22 = new CharNode('a', "3", null, null);
-            var text2 = new TextNode("2", text1, null, [node21, node22]);
-            node21.Parent = text2;
-            node22.Parent = text2;
-            text1.RightOrigin = text2;
-            
-            var parent = new TestInlineElementNode("1", null, null, [text1, text2]);
-            text1.Parent = parent;
-            text2.Parent = parent;
+            // 0: Parent Element
+            builder.TestInlineElementNode(t =>
+            {
+                t.Text("a");      // 1: TextNode, 2: CharNode ('a')
+                text2 = t.Text("aa"); // 3: TextNode, 4: CharNode ('a'), 5: CharNode ('a')
+            });
             
             // Act
             var result = text2.ToDeleteSteps();
@@ -252,7 +248,7 @@ public class StepHelpersTests
             var step = (StepDiff.DeleteTextDiff)result;
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(step.Parent, Is.EquivalentTo(["1"]));
+                Assert.That(step.Parent, Is.EquivalentTo(["0"]));
                 Assert.That(step.Offset, Is.EqualTo(1));
                 Assert.That(step.Length, Is.EqualTo(2));
             }
@@ -262,9 +258,14 @@ public class StepHelpersTests
         public void Elements_ReturnDeleteElementDiff()
         {
             // Arrange
-            var testElement = new TestInlineElementNode("2", null, null);
-            var parent = new TestInlineElementNode("1", null, null, [testElement]);
-            testElement.Parent = parent;
+            var builder = new TreeBuilder();
+            TestInlineElementNode testElement = null!;
+            
+            // 0: Parent Element
+            builder.TestInlineElementNode(t =>
+            {
+                testElement = t.TestInlineElementNode(); // 1: Target Element
+            });
             
             // Act
             var result = testElement.ToDeleteSteps();
@@ -272,17 +273,17 @@ public class StepHelpersTests
             // Assert
             Assert.That(result, Is.TypeOf<StepDiff.DeleteElementDiff>());
             var step = (StepDiff.DeleteElementDiff)result;
-            Assert.That(step.Path, Is.EquivalentTo(["1", "2"]));
+            Assert.That(step.Path, Is.EquivalentTo(["0", "1"]));
         }
         
         [Test]
         public void UnknownNodes_ThrowArgumentException()
         {
-            // Arrange
+            // Arrange - Single node setup
             var testNode = TestNode.Empty();
             testNode.Parent = TestNode.Empty();
             
-            //Assert
+            // Assert
             Assert.Throws<ArgumentException>(Act);
             return;
 

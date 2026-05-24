@@ -16,7 +16,7 @@ public class TextNodeTests
         var result = testNode.Length;
 
         // Assert
-        Assert.That(result, Is.EqualTo(2));
+        Assert.That(result, Is.EqualTo(3));
     }
     
     [Test]

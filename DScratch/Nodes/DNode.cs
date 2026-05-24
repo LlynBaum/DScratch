@@ -10,6 +10,8 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
     
     public DNode? Origin { get; internal set; } = origin;
 
+    public DNode? OriginElement => Origin?.IsElement() ?? true ? Origin : Origin.OriginElement;
+
     public DNode? RightOrigin { get; internal set; } = rightOrigin;
 
     public bool IsDeleted { get; private set; }

@@ -23,7 +23,7 @@ internal static class StepHelpers
                 ],
                 IBlockElement element => 
                 [
-                    new StepDiff.InsertElementBlockDiff(path.Path, node.Origin?.GetElementPath().Path, element.TagName, node.Id),
+                    new StepDiff.InsertElementBlockDiff(path.Path, node.OriginElement?.GetElementPath().Path, element.TagName, node.Id),
                     ..node.ChildNodes.SelectMany(c => c.ToInsertSteps())
                 ],
                 _ => throw new ArgumentException("Node type is not an element, text or char node.")
