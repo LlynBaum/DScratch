@@ -21,14 +21,18 @@ public class TextNode(string id, DNode? origin, DNode? rightOrigin, List<DNode>?
 
     internal TextNode Split(int offset, string nextId)
     {
-        var remainingChildNodes = AllChildNodes.Take(offset);
+        var remainingChildNodes = AllChildNodes.Take(offset).ToList();
         var otherChildNodes = AllChildNodes.Skip(offset).ToList();
-        AllChildNodes = remainingChildNodes.ToList();
+
+        remainingChildNodes.LastOrDefault()?.RightOrigin = null;
+        otherChildNodes.FirstOrDefault()?.Origin = null;
+        
+        AllChildNodes = remainingChildNodes;
         
         var newNode = new TextNode(nextId, this, RightOrigin, otherChildNodes);
         Parent?.InsertChild(newNode);
+        otherChildNodes.ForEach(n => n.Parent = newNode);
         
-        RightOrigin = newNode;
         return newNode;
     }
 }

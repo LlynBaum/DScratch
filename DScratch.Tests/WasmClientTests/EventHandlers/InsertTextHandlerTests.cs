@@ -148,12 +148,8 @@ public class InsertTextHandlerTests
         });
         document.Page.Root = parent;
 
-        var visualizer = new DocumentVisualizer(document);
-        visualizer.Print();
-
         // Act
         var result = handler.Handle(GetKeyPressInfo(2, 5));
-        visualizer.Print();
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -192,6 +188,9 @@ public class InsertTextHandlerTests
         // Act
         var result = handler.Handle(GetKeyPressInfo(0, 3));
         
+        var visualizer = new DocumentVisualizer(document);
+        visualizer.Print();
+        
         // Assert
         using (Assert.EnterMultipleScope())
         {
@@ -227,6 +226,9 @@ public class InsertTextHandlerTests
 
         // Act
         var result = handler.Handle(GetKeyPressInfo(6, 9));
+        
+        var visualizer = new DocumentVisualizer(document);
+        visualizer.Print();
         
         // Assert
         using (Assert.EnterMultipleScope())
