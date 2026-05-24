@@ -1,4 +1,5 @@
 using DScratch.Nodes;
+using DScratch.Tests.Helpers;
 using DScratch.Tests.Helpers.TestNodes;
 
 namespace DScratch.Tests.DScratchTests.Nodes;
@@ -9,14 +10,7 @@ public class TextNodeTests
     public void Length_ReturnsLengthCombines_FromNotDeletedChildNodes()
     {
         // Arrange
-        var charNode1 = new CharNode('a', "2", null, null);
-        var charNode2 = new CharNode('b', "3", null, null);
-        var charNode3 = new CharNode('c', "4", null, null);
-        charNode2.Delete();
-        var testNode = new TextNode("1", null, null, [charNode1, charNode2, charNode3]);
-        charNode1.Parent = testNode;
-        charNode2.Parent = testNode;
-        charNode3.Parent = testNode;
+        var testNode = new TreeBuilder().Text("abc");
         
         // Act
         var result = testNode.Length;
@@ -29,14 +23,12 @@ public class TextNodeTests
     public void TextContent_ReturnsTextContentCombines_FromNotDeletedChildNodes()
     {
         // Arrange
-        var charNode1 = new CharNode('a', "2", null, null);
-        var charNode2 = new CharNode('b', "3", null, null);
-        var charNode3 = new CharNode('c', "4", null, null);
-        charNode2.Delete();
-        var testNode = new TextNode("1", null, null, [charNode1, charNode2, charNode3]);
-        charNode1.Parent = testNode;
-        charNode2.Parent = testNode;
-        charNode3.Parent = testNode;
+        var testNode = new TreeBuilder().Text(t =>
+        {
+            t.Char('a');
+            t.Char('b').Delete();
+            t.Char('c');
+        });
         
         // Act
         var result = testNode.TextContent;

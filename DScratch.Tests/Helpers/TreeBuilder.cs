@@ -3,7 +3,7 @@ using DScratch.Tests.Helpers.TestNodes;
 
 namespace DScratch.Tests.Helpers;
 
-public class TreeBuilder : TreeBuilder.IParagraphTreeMaker
+public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder, TreeBuilder.ITextTreeBuilder
 {
     public RootNode Root { get; private set; }
 
@@ -30,6 +30,21 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeMaker
         this.idGenerator = idGenerator;
         factory = new DNodeFactory(idGenerator);
     }
+
+    public CharNode Char(char value)
+    {
+        var charNode = factory.Char(value, null, null);
+        Append(charNode);
+        return charNode;
+    }
+
+    public TextNode Text(Action<ITextTreeBuilder>? configureChildNodes = null)
+    {
+        var text = factory.String(string.Empty, null, null);
+        configureChildNodes?.Invoke(GetChildTreeBuilder(text));
+        Append(text);
+        return text;
+    }
     
     public TextNode Text(string value)
     {
@@ -38,7 +53,7 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeMaker
         return text;
     }
 
-    public ParagraphNode Paragraph(Action<IParagraphTreeMaker>? configureChildNodes = null)
+    public ParagraphNode Paragraph(Action<IParagraphTreeBuilder>? configureChildNodes = null)
     {
         var paragraph = factory.Paragraph(null, null);
         configureChildNodes?.Invoke(GetChildTreeBuilder(paragraph));
@@ -90,8 +105,15 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeMaker
         RootNode Root { get; }
     }
     
-    public interface IParagraphTreeMaker : ITreeMaker
+    public interface ITextTreeBuilder
     {
+        CharNode Char(char value);
+    }
+    
+    public interface IParagraphTreeBuilder : ITreeMaker
+    {
+        TextNode Text(Action<ITextTreeBuilder>? configureChildNodes = null);
+        
         TextNode Text(string value);
     }
 }
