@@ -136,7 +136,9 @@ public class InsertTextHandlerTests
     }
     
     [Test]
-    public void Handle_CreatesExpectedChanges_WhenTextIsSelected()
+    [TestCase(2, 5)]
+    [TestCase(5, 2)]
+    public void Handle_CreatesExpectedChanges_WhenTextIsSelected(int start, int end)
     {
         // Arrange
         var builder = new TreeBuilder(idGenerator);
@@ -149,7 +151,7 @@ public class InsertTextHandlerTests
         document.Page.Root = parent;
 
         // Act
-        var result = handler.Handle(GetKeyPressInfo(2, 5));
+        var result = handler.Handle(GetKeyPressInfo(start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -185,7 +187,9 @@ public class InsertTextHandlerTests
     }
     
     [Test]
-    public void Handle_CreatesExpectedChanges_WhenTextIsSelected_AtStart()
+    [TestCase(0, 3)]
+    [TestCase(3, 0)]
+    public void Handle_CreatesExpectedChanges_WhenTextIsSelected_AtStart(int start, int end)
     {
         // Arrange
         var builder = new TreeBuilder(idGenerator);
@@ -198,7 +202,7 @@ public class InsertTextHandlerTests
         document.Page.Root = parent;
 
         // Act
-        var result = handler.Handle(GetKeyPressInfo(0, 3));
+        var result = handler.Handle(GetKeyPressInfo(start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -224,7 +228,9 @@ public class InsertTextHandlerTests
     }
     
     [Test]
-    public void Handle_CreatesExpectedChanges_WhenTextIsSelected_InBetween()
+    [TestCase(2, 4)]
+    [TestCase(2, 4)]
+    public void Handle_CreatesExpectedChanges_WhenTextIsSelected_InBetween(int start, int end)
     {
         // Arrange
         var builder = new TreeBuilder(idGenerator);
@@ -235,7 +241,7 @@ public class InsertTextHandlerTests
         document.Page.Root = parent;
 
         // Act
-        var result = handler.Handle(GetKeyPressInfo(2, 4));
+        var result = handler.Handle(GetKeyPressInfo(start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -261,7 +267,9 @@ public class InsertTextHandlerTests
     }
     
     [Test]
-    public void Handle_CreatesExpectedChanges_WhenTextIsSelected_AtEnd()
+    [TestCase(6, 9)]
+    [TestCase(6, 9)]
+    public void Handle_CreatesExpectedChanges_WhenTextIsSelected_AtEnd(int start, int end)
     {
         // Arrange
         var builder = new TreeBuilder(idGenerator);
@@ -274,7 +282,7 @@ public class InsertTextHandlerTests
         document.Page.Root = parent;
 
         // Act
-        var result = handler.Handle(GetKeyPressInfo(6, 9));
+        var result = handler.Handle(GetKeyPressInfo(start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
