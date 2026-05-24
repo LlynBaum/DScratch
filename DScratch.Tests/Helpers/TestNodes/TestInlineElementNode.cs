@@ -7,4 +7,9 @@ public class TestInlineElementNode(string id, DNode? origin, DNode? rightOrigin,
     : DNode(id, origin, rightOrigin, childNodes), IInlineElement
 {
     public string TagName => "testinline";
+    
+    public static TestInlineElementNode Empty()
+    {
+        return new TestInlineElementNode("", null, null);
+    }
 }

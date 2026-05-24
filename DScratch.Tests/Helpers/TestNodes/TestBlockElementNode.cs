@@ -7,4 +7,9 @@ public class TestBlockElementNode(string id, DNode? origin, DNode? rightOrigin, 
     : DNode(id, origin, rightOrigin, childNodes), IBlockElement
 {
     public string TagName => "testblock";
+    
+    public static TestBlockElementNode Empty()
+    {
+        return new TestBlockElementNode("", null, null);
+    }
 }
