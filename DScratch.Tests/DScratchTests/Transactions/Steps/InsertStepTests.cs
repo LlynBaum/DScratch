@@ -21,18 +21,18 @@ public class InsertStepTests
         // Arrange
         var builder = new TreeBuilder();
         DNode node1 = builder.TestNode(); // ID "0"
-        DNode node3 = null!;
-        DNode node4 = null!;
-        DNode node2 = builder.TestNode(t => // ID "1"
+        CharNode node3 = null!;
+        CharNode node4 = null!;
+        var node2 = builder.Text(t => // ID "1"
         {
-            node3 = t.TestNode(); // ID "2"
-            node4 = t.TestNode(); // ID "3"
-            t.TestNode();         // ID "4"
+            node3 = t.Char('a'); // ID "2"
+            node4 = t.Char('a'); // ID "3"
+            t.Char('a');         // ID "4"
         });
         
         Document.Page.Root = node1;
 
-        var node = new TestNode("-1", node3, node4);
+        var node = new CharNode('a', "-1", node3, node4);     
         
         // Act
         var step = new InsertStep(node, node2);
