@@ -48,6 +48,37 @@ public class InsertStepTests
             Assert.That(node4.Origin?.Id, Is.EqualTo("-1"));
         }
     }
+    
+    [Test]
+    public void GivenNode_IsInsertedAsChildOfNodeFromGivenPath_AtPositionThree()
+    {
+        // Arrange
+        var builder = new TreeBuilder();
+        DNode node1 = builder.TestNode(); // ID "0"
+        CharNode node4 = null!;
+        var node2 = builder.Text(t => // ID "1"
+        {
+            t.Char('a'); // ID "2"
+            node4 = t.Char('b'); // ID "3"
+        });
+        
+        Document.Page.Root = node1;
+
+        var node = new CharNode('c', "-1", node4, null);     
+        
+        // Act
+        var step = new InsertStep(node, node2);
+        step.Execute(Document);
+        
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(node.Parent?.Id, Is.EqualTo("1"));
+            Assert.That(node2.ChildNodes[2].Id, Is.EqualTo("-1"));
+            
+            Assert.That(node4.RightOrigin!.Id, Is.EqualTo("-1"));
+        }
+    }
 
     [Test]
     public void GivenNode_IsInsertedAsChildOfNodeFromGivenPath_AsFirstChild()

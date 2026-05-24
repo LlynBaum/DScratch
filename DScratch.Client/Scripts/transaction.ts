@@ -58,6 +58,7 @@ export function applyTransaction(transaction: Step[]){
     transaction.map(handle);
     
     function handle(step: Step) {
+        console.log(step);
         switch (step.type) {
             case StepType.insertText:
                 handleInsertTextStep(step as InsertTextStep);
@@ -93,7 +94,6 @@ function handleInsertTextStep(step: InsertTextStep) {
         const text = node.textContent;
         node.textContent = text.slice(0, relativeOffset) + step.text + text.slice(relativeOffset);
         setSelection(node, relativeOffset + 1);
-        
     } else {
         const createdNode = document.createTextNode(step.text);
         element.appendChild(createdNode);

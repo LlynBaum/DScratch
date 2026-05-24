@@ -34,6 +34,7 @@ export async function handleInput(event: InputEvent, bridgeReference: any) {
         }
     }
 
+    console.log(payload);
     await bridgeReference?.invokeMethodAsync("OnKeyPressCallbackAsync", payload);
 }
 
