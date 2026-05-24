@@ -2,32 +2,25 @@ using DScratch.Client.Scripts;
 using DScratch.Client.Scripts.EventHandlers;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
-using DScratch.Tests.Helpers.TestNodes;
 using DScratch.Transactions;
-using DScratch.Transactions.Steps;
-using Moq;
 
 namespace DScratch.Tests.WasmClientTests.EventHandlers;
 
 public class DeleteContentBackwardHandlerTests
 {
-    private Mock<ITransaction> transactionMock;
-    private Mock<INodeFactory> factoryMock;
-    private Mock<IDScratchService> serviceMock;
+    private DScratchDocument document;
+    private IDScratchService service;
 
     private DeleteContentBackwardHandler handler;
     
     [SetUp]
     public void SetUp()
     {
-        transactionMock = new Mock<ITransaction>();
-        factoryMock = new Mock<INodeFactory>();
-        serviceMock = new Mock<IDScratchService>();
-        
-        serviceMock.Setup(s => s.NodeFactory).Returns(factoryMock.Object);
-        serviceMock.Setup(s => s.StartTransaction()).Returns(transactionMock.Object);
+        document = new DScratchDocument();
+        var idGenerator = new TestNodeIdGenerator();
+        service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator);
 
-        handler = new DeleteContentBackwardHandler(serviceMock.Object);
+        handler = new DeleteContentBackwardHandler(service);
     }
 
     [Test]
@@ -39,17 +32,17 @@ public class DeleteContentBackwardHandlerTests
         {
             p.Char('a');
         });
-        
-        transactionMock.Setup(t => t.FindNode(It.IsAny<NodePath>())).Returns(parent);
-        serviceMock.Setup(s => s.Apply(It.Is<ITransaction>(t => t == transactionMock.Object)))
-            .Returns(TransactionResult.Empty);
+        document.Page.Root = parent;
 
         // Act
         var result = handler.Handle(GetKeyPressInfo(2));
-        
+
         // Assert
-        transactionMock.Verify(t => t.Delete(node: It.IsAny<TextNode>()), Times.Never);
-        Assert.That(result.IsEmpty, Is.True);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.IsDeleted, Is.False);
+            Assert.That(result.IsEmpty, Is.True);
+        }
     }
     
     [Test]
@@ -61,26 +54,24 @@ public class DeleteContentBackwardHandlerTests
         var builder = new TreeBuilder();
         var parent = builder.TestInlineElementNode(t => 
         {
-            t.Text(txt => 
-            {
-                txt.Char('a');
-                txt.Char('a');
-            });
+            t.Text("ab");
             t.Text(txt => 
             {
                 char3 = txt.Char('a');
             });
         });
-        
-        transactionMock.Setup(t => t.FindNode(It.IsAny<NodePath>())).Returns(parent);
-        serviceMock.Setup(s => s.Apply(It.Is<ITransaction>(t => t == transactionMock.Object)))
-            .Returns(TransactionResult.Empty);
+        document.Page.Root = parent;
 
         // Act
-        handler.Handle(GetKeyPressInfo(3));
-        
+        var result = handler.Handle(GetKeyPressInfo(3));
+
         // Assert
-        transactionMock.Verify(t => t.Delete(node: It.Is<CharNode>(n => n == char3)));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(char3.IsDeleted, Is.True);
+            Assert.That(result.Diffs, Has.Count.EqualTo(1));
+        }
+        Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
     }
     
     private static KeyPressInfo GetKeyPressInfo(int offset)
@@ -88,7 +79,7 @@ public class DeleteContentBackwardHandlerTests
         return new KeyPressInfo
         {
             Data = "abc",
-            Path = [],
+            Path = ["0"],
             InputType = InsertTextHandler.EventName,
             Selection = new KeyPressInfo.SelectionInfo
             {

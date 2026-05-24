@@ -10,7 +10,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
     
     public TransactionResult Handle(KeyPressInfo keyPressInfo)
     {
-        if (keyPressInfo.Data is null)
+        if (string.IsNullOrEmpty(keyPressInfo.Data))
         {
             return TransactionResult.Empty;
         }

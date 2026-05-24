@@ -2,204 +2,172 @@ using DScratch.Client.Scripts;
 using DScratch.Client.Scripts.EventHandlers;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
-using DScratch.Tests.Helpers.TestNodes;
 using DScratch.Transactions;
-using DScratch.Transactions.Steps;
-using Moq;
 
 namespace DScratch.Tests.WasmClientTests.EventHandlers;
 
 public class InsertTextHandlerTests
 {
-    private Mock<ITransaction> transactionMock;
-    private Mock<INodeFactory> factoryMock;
-    private Mock<IDScratchService> serviceMock;
+    private DScratchDocument document;
+    private IDScratchService service;
 
     private InsertTextHandler handler;
     
     [SetUp]
     public void SetUp()
     {
-        transactionMock = new Mock<ITransaction>();
-        factoryMock = new Mock<INodeFactory>();
-        serviceMock = new Mock<IDScratchService>();
-        
-        serviceMock.Setup(s => s.NodeFactory).Returns(factoryMock.Object);
-        serviceMock.Setup(s => s.StartTransaction()).Returns(transactionMock.Object);
+        document = new DScratchDocument();
+        var idGenerator = new TestNodeIdGenerator();
+        service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator);
 
-        handler = new InsertTextHandler(serviceMock.Object);
+        handler = new InsertTextHandler(service);
     }
     
     [Test]
     public void Handle_CreatesExpectedChanges()
     {
         // Arrange
-        TextNode child = null!;
-
         var builder = new TreeBuilder();
         var parent = builder.TestInlineElementNode(t => 
         {
-            child = t.Text(c => 
+            t.Text(c => 
             {
                 c.Char('a');
             });
         });
-        var textNode = new TextNode("4", null, null);
-        
-        transactionMock.Setup(t => t.FindNode(It.IsAny<NodePath>())).Returns(parent);
-        factoryMock.Setup(f => f.String(It.IsAny<string>(), It.IsAny<DNode?>(), It.IsAny<DNode?>()))
-            .Returns(textNode);
-        serviceMock.Setup(s => s.Apply(It.Is<ITransaction>(t => t == transactionMock.Object)))
-            .Returns(TransactionResult.Empty);
+        document.Page.Root = parent;
 
         // Act
-        handler.Handle(GetDefaultKeyPressInfo(1));
-        
+        var result = handler.Handle(GetDefaultKeyPressInfo(1));
+
         // Assert
-        factoryMock.Verify(f => f.String(
-            value: It.Is<string>(s => s == "abc"),
-            origin: It.Is<TextNode>(n => n == child),
-            rightOrigin: It.Is<TextNode?>(n => n == null)));
-        transactionMock.Verify(t => t.Insert(
-            node: It.Is<TextNode>(n => n == textNode), 
-            parent: It.Is<TestInlineElementNode>(n => n == parent)));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+            Assert.That(parent.LastChild, Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.LastChild).TextContent, Is.EqualTo("abc"));
+            
+            Assert.That(result.Diffs, Has.Count.EqualTo(1));
+            Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.InsertTextDiff>());
+        }
     }
     
     [Test]
     public void Handle_CreatesExpectedChanges_WithInsertingAtStart()
     {
         // Arrange
-        TextNode child = null!;
-
         var builder = new TreeBuilder();
         var parent = builder.TestInlineElementNode(t => 
         {
-            child = t.Text(c => 
-            {
-                c.Char('a');
-            });
+            t.Text("a");
         });
-        var textNode = new TextNode("4", null, null);
-        
-        transactionMock.Setup(t => t.FindNode(It.IsAny<NodePath>())).Returns(parent);
-        factoryMock.Setup(f => f.String(It.IsAny<string>(), It.IsAny<DNode?>(), It.IsAny<DNode?>()))
-            .Returns(textNode);
-        serviceMock.Setup(s => s.Apply(It.Is<ITransaction>(t => t == transactionMock.Object)))
-            .Returns(TransactionResult.Empty);
+        document.Page.Root = parent;
 
         // Act
-        handler.Handle(GetDefaultKeyPressInfo(0));
+        var result = handler.Handle(GetDefaultKeyPressInfo(0));
         
         // Assert
-        factoryMock.Verify(f => f.String(
-            value: It.Is<string>(s => s == "abc"),
-            origin: It.Is<TextNode?>(n => n == null),
-            rightOrigin: It.Is<TextNode>(n => n == child)));
-        transactionMock.Verify(t => t.Insert(
-            node: It.Is<TextNode>(n => n == textNode), 
-            parent: It.Is<TestInlineElementNode>(n => n == parent)));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+            Assert.That(parent.FirstChild, Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.FirstChild).TextContent, Is.EqualTo("abc"));
+            
+            Assert.That(result.Diffs, Has.Count.EqualTo(1));
+            Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.InsertTextDiff>());
+        }
     }
     
     [Test]
     public void Handle_CreatesExpectedChanges_WithInsertingAtEnd()
     {
         // Arrange
-        TextNode child2 = null!;
 
         var builder = new TreeBuilder();
         var parent = builder.TestInlineElementNode(t => 
         {
-            t.Text(c => c.Char('a'));
-            child2 = t.Text(c => c.Char('a'));
+            t.Text("a");
+            t.Text("a");
         });
-        var textNode = new TextNode("6", null, null);
-        
-        transactionMock.Setup(t => t.FindNode(It.IsAny<NodePath>())).Returns(parent);
-        factoryMock.Setup(f => f.String(It.IsAny<string>(), It.IsAny<DNode?>(), It.IsAny<DNode?>()))
-            .Returns(textNode);
-        serviceMock.Setup(s => s.Apply(It.Is<ITransaction>(t => t == transactionMock.Object)))
-            .Returns(TransactionResult.Empty);
+        document.Page.Root = parent;
 
         // Act
-        handler.Handle(GetDefaultKeyPressInfo(2));
+        var result = handler.Handle(GetDefaultKeyPressInfo(2));
         
         // Assert
-        factoryMock.Verify(f => f.String(
-            value: It.Is<string>(s => s == "abc"),
-            origin: It.Is<TextNode?>(n => n == child2),
-            rightOrigin: It.Is<TextNode?>(n => n == null)));
-        transactionMock.Verify(t => t.Insert(
-            node: It.Is<TextNode>(n => n == textNode), 
-            parent: It.Is<TestInlineElementNode>(n => n == parent)));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("abc"));
+            
+            Assert.That(result.Diffs, Has.Count.EqualTo(1));
+            Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.InsertTextDiff>());
+        }
     }
     
     [Test]
     public void Handle_CreatesExpectedChanges_WithInsertingBetween()
     {
         // Arrange
-        TextNode child1 = null!;
-        TextNode child2 = null!;
-
         var builder = new TreeBuilder();
         var parent = builder.TestInlineElementNode(t => 
         {
-            child1 = t.Text(c => c.Char('a'));
-            child2 = t.Text(c => c.Char('a'));
+            t.Text("a");
+            t.Text("a");
         });
-        var textNode = new TextNode("6", null, null);
-        
-        transactionMock.Setup(t => t.FindNode(It.IsAny<NodePath>())).Returns(parent);
-        factoryMock.Setup(f => f.String(It.IsAny<string>(), It.IsAny<DNode?>(), It.IsAny<DNode?>()))
-            .Returns(textNode);
-        serviceMock.Setup(s => s.Apply(It.Is<ITransaction>(t => t == transactionMock.Object)))
-            .Returns(TransactionResult.Empty);
+        document.Page.Root = parent;
 
         // Act
-        handler.Handle(GetDefaultKeyPressInfo(1));
+        var result = handler.Handle(GetDefaultKeyPressInfo(1));
         
         // Assert
-        factoryMock.Verify(f => f.String(
-            value: It.Is<string>(s => s == "abc"),
-            origin: It.Is<TextNode>(n => n == child1),
-            rightOrigin: It.Is<TextNode>(n => n == child2)));
-        transactionMock.Verify(t => t.Insert(
-            node: It.Is<TextNode>(n => n == textNode), 
-            parent: It.Is<TestInlineElementNode>(n => n == parent)));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("abc"));
+            
+            Assert.That(result.Diffs, Has.Count.EqualTo(1));
+            Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.InsertTextDiff>());
+        }
     }
     
     [Test]
     public void Handle_CreatesExpectedChanges_WhenTextIsSelected()
     {
         // Arrange
-        TextNode child1 = null!;
-        TextNode child2 = null!;
-
         var builder = new TreeBuilder();
-        var parent = builder.Text(p => 
+        var parent = builder.TestInlineElementNode(t => 
         {
-            var t = (TreeBuilder)p;
-            child1 = t.Text(c => c.Char('a'));
-            child2 = t.Text(c => c.Char('a'));
+            t.Text("abc");
+            t.Text("def");
+            t.Text("ghi");
         });
-        var textNode = new TextNode("6", null, null);
-        
-        transactionMock.Setup(t => t.FindNode(It.IsAny<NodePath>())).Returns(parent);
-        factoryMock.Setup(f => f.String(It.IsAny<string>(), It.IsAny<DNode?>(), It.IsAny<DNode?>()))
-            .Returns(textNode);
-        serviceMock.Setup(s => s.Apply(It.Is<ITransaction>(t => t == transactionMock.Object)))
-            .Returns(TransactionResult.Empty);
+        document.Page.Root = parent;
 
         // Act
-        handler.Handle(GetKeyPressInfo(1, 3));
+        var result = handler.Handle(GetKeyPressInfo(2, 5));
         
         // Assert
-        factoryMock.Verify(f => f.String(
-            value: It.Is<string>(s => s == "abc"),
-            origin: It.Is<TextNode>(n => n == child1),
-            rightOrigin: It.Is<TextNode>(n => n == child2)));
-        transactionMock.Verify(t => t.Insert(
-            node: It.Is<TextNode>(n => n == textNode), 
-            parent: It.Is<TextNode>(n => n == parent)));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            
+            Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
+            
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("xyz"));
+            
+            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("f"));
+            
+            Assert.That(result.Diffs, Has.Count.EqualTo(3));
+            Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
+            Assert.That(result.Diffs[1], Is.TypeOf<StepDiff.DeleteTextDiff>());
+            Assert.That(result.Diffs[2], Is.TypeOf<StepDiff.InsertTextDiff>());
+        }
     }
 
     private static KeyPressInfo GetDefaultKeyPressInfo(int offset)
@@ -207,7 +175,7 @@ public class InsertTextHandlerTests
         return new KeyPressInfo
         {
             Data = "abc",
-            Path = [],
+            Path = ["0"],
             InputType = InsertTextHandler.EventName,
             Selection = new KeyPressInfo.SelectionInfo
             {
@@ -224,8 +192,8 @@ public class InsertTextHandlerTests
         var direction = offset < endOffset ? SelectionDirection.Forward : SelectionDirection.Backward;
         return new KeyPressInfo
         {
-            Data = "abc",
-            Path = [],
+            Data = "xyz",
+            Path = ["0"],
             InputType = InsertTextHandler.EventName,
             Selection = new KeyPressInfo.SelectionInfo
             {
