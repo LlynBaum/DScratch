@@ -3,16 +3,16 @@ using DScratch.Tests.Helpers.TestNodes;
 
 namespace DScratch.Tests.Helpers;
 
-public class TreeMakerTests
+public class TreeBuilderTests
 {
     [Test]
     public void CreatesExpectedResult()
     {
         // Act
-        var treeMaker = new TreeMaker();
+        var treeBuilder = new TreeBuilder();
         
         TextNode textP1 = null!;
-        var paragraph1 = treeMaker.Paragraph(t =>
+        var paragraph1 = treeBuilder.Paragraph(t =>
         {
             textP1 = t.Text("abc");
         });
@@ -20,7 +20,7 @@ public class TreeMakerTests
         TextNode text1P2 = null!;
         TextNode text2P2 = null!;
         TextNode text3P2 = null!;
-        var paragraph2 = treeMaker.Paragraph(t =>
+        var paragraph2 = treeBuilder.Paragraph(t =>
         {
             text1P2 = t.Text("t1");
             text2P2 = t.Text("t2");
@@ -31,7 +31,7 @@ public class TreeMakerTests
         TextNode textInlineElement = null!;
         ParagraphNode paragraph3 = null!;
         TextNode textP3 = null!;
-        var blockElement = treeMaker.TestBlockElementNode(t =>
+        var blockElement = treeBuilder.TestBlockElementNode(t =>
         {
             inlineElement = t.TestInlineElementNode(t2 =>
             {
@@ -43,15 +43,15 @@ public class TreeMakerTests
             });
         });
 
-        var testNode = treeMaker.TestNode();
+        var testNode = treeBuilder.TestNode();
         
         // Assert
         using (Assert.EnterMultipleScope()) // Root Elements
         {
-            Assert.That(paragraph1.Parent, Is.EqualTo(treeMaker.Root));
-            Assert.That(paragraph2.Parent, Is.EqualTo(treeMaker.Root));
-            Assert.That(blockElement.Parent, Is.EqualTo(treeMaker.Root));
-            Assert.That(testNode.Parent, Is.EqualTo(treeMaker.Root));
+            Assert.That(paragraph1.Parent, Is.EqualTo(treeBuilder.Root));
+            Assert.That(paragraph2.Parent, Is.EqualTo(treeBuilder.Root));
+            Assert.That(blockElement.Parent, Is.EqualTo(treeBuilder.Root));
+            Assert.That(testNode.Parent, Is.EqualTo(treeBuilder.Root));
         }
         
         using (Assert.EnterMultipleScope()) // paragraph1

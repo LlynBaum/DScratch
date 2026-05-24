@@ -3,7 +3,7 @@ using DScratch.Tests.Helpers.TestNodes;
 
 namespace DScratch.Tests.Helpers;
 
-public class TreeMaker : TreeMaker.IParagraphTreeMaker
+public class TreeBuilder : TreeBuilder.IParagraphTreeMaker
 {
     public DNode Root { get; private set; } = new RootNode();
 
@@ -13,14 +13,14 @@ public class TreeMaker : TreeMaker.IParagraphTreeMaker
     private readonly TestNodeIdGenerator idGenerator;
     private readonly DNodeFactory factory;
 
-    public TreeMaker()
+    public TreeBuilder()
     {
         parent = Root;
         idGenerator = new TestNodeIdGenerator();
         factory =  new DNodeFactory(idGenerator);
     }
     
-    private TreeMaker(DNode parent, TestNodeIdGenerator idGenerator)
+    private TreeBuilder(DNode parent, TestNodeIdGenerator idGenerator)
     {
         this.parent = parent;
         this.idGenerator = idGenerator;
@@ -37,31 +37,31 @@ public class TreeMaker : TreeMaker.IParagraphTreeMaker
     public ParagraphNode Paragraph(Action<IParagraphTreeMaker>? configureChildNodes = null)
     {
         var paragraph = factory.Paragraph(null, null);
-        configureChildNodes?.Invoke(new TreeMaker(paragraph, idGenerator));
+        configureChildNodes?.Invoke(new TreeBuilder(paragraph, idGenerator));
         Append(paragraph);
         return paragraph;
     }
 
-    public TestNode TestNode(Action<TreeMaker>? configureChildNodes = null)
+    public TestNode TestNode(Action<TreeBuilder>? configureChildNodes = null)
     {
         var testNode = new TestNode(idGenerator.GetNextId(), null, null);
-        configureChildNodes?.Invoke(new TreeMaker(testNode, idGenerator));
+        configureChildNodes?.Invoke(new TreeBuilder(testNode, idGenerator));
         Append(testNode);
         return testNode;
     }
     
-    public TestInlineElementNode TestInlineElementNode(Action<TreeMaker>? configureChildNodes = null)
+    public TestInlineElementNode TestInlineElementNode(Action<TreeBuilder>? configureChildNodes = null)
     {
         var testNode = new TestInlineElementNode(idGenerator.GetNextId(), null, null);
-        configureChildNodes?.Invoke(new TreeMaker(testNode, idGenerator));
+        configureChildNodes?.Invoke(new TreeBuilder(testNode, idGenerator));
         Append(testNode);
         return testNode;
     }
     
-    public TestBlockElementNode TestBlockElementNode(Action<TreeMaker>? configureChildNodes = null)
+    public TestBlockElementNode TestBlockElementNode(Action<TreeBuilder>? configureChildNodes = null)
     {
         var testNode = new TestBlockElementNode(idGenerator.GetNextId(), null, null);
-        configureChildNodes?.Invoke(new TreeMaker(testNode, idGenerator));
+        configureChildNodes?.Invoke(new TreeBuilder(testNode, idGenerator));
         Append(testNode);
         return testNode;
     }
