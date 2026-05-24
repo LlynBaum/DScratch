@@ -1,4 +1,5 @@
 using DScratch.Nodes;
+using DScratch.Tests.Helpers;
 using DScratch.Tests.Helpers.TestNodes;
 using DScratch.Transactions.Steps;
 
@@ -18,22 +19,20 @@ public class InsertStepTests
     public void GivenNode_IsInsertedAsChildOfNodeFromGivenPath()
     {
         // Arrange
-        var node3 = new CharNode('a', "3", null, null);
-        var node4 = new CharNode('a', "4", node3, null);
-        node3.RightOrigin = node4;
-        var node5 = new TestNode("5", node4, null);
-        node4.RightOrigin = node5;
+        var builder = new TreeBuilder();
+        DNode node1 = builder.TestNode(); // ID "0"
+        DNode node3 = null!;
+        DNode node4 = null!;
+        DNode node2 = builder.TestNode(t => // ID "1"
+        {
+            node3 = t.TestNode(); // ID "2"
+            node4 = t.TestNode(); // ID "3"
+            t.TestNode();         // ID "4"
+        });
         
-        var node1 = new TestNode("1", null, null);
-        var node2 = new TestNode("2", node1, null, [node3, node4, node5]);
-        node1.RightOrigin = node2;
-
-        node3.Parent = node2;
-        node4.Parent = node2;
-        node5.Parent = node2;
         Document.Page.Root = node1;
 
-        var node = new CharNode('a', "-1", node3, node4);
+        var node = new TestNode("-1", node3, node4);
         
         // Act
         var step = new InsertStep(node, node2);
@@ -42,10 +41,10 @@ public class InsertStepTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(node.Parent?.Id, Is.EqualTo("2"));
+            Assert.That(node.Parent?.Id, Is.EqualTo("1"));
             Assert.That(node2.ChildNodes[1].Id, Is.EqualTo("-1"));
             
-            Assert.That(node3.RightOrigin.Id, Is.EqualTo("-1"));
+            Assert.That(node3.RightOrigin!.Id, Is.EqualTo("-1"));
             Assert.That(node4.Origin?.Id, Is.EqualTo("-1"));
         }
     }
@@ -54,19 +53,16 @@ public class InsertStepTests
     public void GivenNode_IsInsertedAsChildOfNodeFromGivenPath_AsFirstChild()
     {
         // Arrange
-        var node3 = new CharNode('a', "3", null, null);
-        var node4 = new CharNode('a', "4", node3, null);
-        node3.RightOrigin = node4;
-        var node5 = new TestInlineElementNode("5", node4, null);
-        node4.RightOrigin = node5;
+        var builder = new TreeBuilder();
+        DNode node1 = builder.TestNode(); // ID "0"
+        TestInlineElementNode node5 = null!;
+        builder.TestNode(t => // ID "1"
+        {
+            t.TestNode(); // ID "2"
+            t.TestNode(); // ID "3"
+            node5 = t.TestInlineElementNode(); // ID "4"
+        });
         
-        var node1 = new TestNode("1", null, null);
-        var node2 = new TestNode("2", node1, null, [node3, node4, node5]);
-        node1.RightOrigin = node2;
-
-        node3.Parent = node2;
-        node4.Parent = node2;
-        node5.Parent = node2;
         Document.Page.Root = node1;
         
         var node = new TestInlineElementNode("-1", null, null);
@@ -78,7 +74,7 @@ public class InsertStepTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(node.Parent?.Id, Is.EqualTo("5"));
+            Assert.That(node.Parent?.Id, Is.EqualTo("4"));
             Assert.That(node5.ChildNodes[0].Id, Is.EqualTo("-1"));
         }
     }
