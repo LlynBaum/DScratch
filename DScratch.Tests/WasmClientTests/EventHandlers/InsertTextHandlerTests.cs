@@ -97,8 +97,9 @@ public class InsertTextHandlerTests
         existingChar1.Parent = child1;
         
         var existingChar2 = new CharNode('a', "3", null, null);
-        var child2 = new TextNode("2", null, null, [existingChar2]);
+        var child2 = new TextNode("2", child1, null, [existingChar2]);
         existingChar1.Parent = child2;
+        child1.RightOrigin = child2;
         
         var parent = new TextNode("1", null, null, [child1, child2]);
         child1.Parent = parent;
@@ -116,8 +117,8 @@ public class InsertTextHandlerTests
         // Assert
         factoryMock.Verify(f => f.String(
             value: It.Is<string>(s => s == "abc"),
-            origin: It.Is<TextNode?>(n => n == null),
-            rightOrigin: It.Is<TextNode>(n => n == child2)));
+            origin: It.Is<TextNode?>(n => n == child2),
+            rightOrigin: It.Is<TextNode?>(n => n == null)));
         transactionMock.Verify(t => t.Insert(
             node: It.Is<TextNode>(n => n == textNode), 
             parent: It.Is<TextNode>(n => n == parent)));

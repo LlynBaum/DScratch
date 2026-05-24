@@ -58,7 +58,6 @@ export function applyTransaction(transaction: Step[]){
     transaction.map(handle);
     
     function handle(step: Step) {
-        console.log(step);
         switch (step.type) {
             case StepType.insertText:
                 handleInsertTextStep(step as InsertTextStep);

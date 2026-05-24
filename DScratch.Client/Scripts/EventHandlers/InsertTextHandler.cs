@@ -63,7 +63,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         while (currentNode is not null)
         {
             var length = currentNode.Length;
-            if (currentOffset + length >= keyPressInfo.Selection.Offset - 1)
+            if (currentOffset + length >= keyPressInfo.Selection.Offset)
             {
                 break;
             }
