@@ -273,9 +273,8 @@ public class DeleteContentForwardHandlerTests
             Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
             
-            Assert.That(result.Diffs, Has.Count.EqualTo(2));
+            Assert.That(result.Diffs, Has.Count.EqualTo(1));
             Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result.Diffs[1], Is.TypeOf<StepDiff.DeleteTextDiff>());
         }
     }
 }

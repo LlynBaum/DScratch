@@ -17,5 +17,5 @@ public interface ITransaction
 
     DNode? FindNode(NodePath path);
 
-    TextNode SplitText(TextNode node, int offset);
+    TextNode? SplitText(TextNode node, int offset);
 }

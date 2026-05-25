@@ -38,7 +38,7 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
 
     public DNode? FindNode(NodePath path) => document.FindNode(path);
 
-    public TextNode SplitText(TextNode node, int offset)
+    public TextNode? SplitText(TextNode node, int offset)
     {
         return node.Split(offset, nodeIdGenerator.GetNextId());
     }

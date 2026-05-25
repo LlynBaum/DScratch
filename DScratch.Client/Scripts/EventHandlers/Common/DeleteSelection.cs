@@ -58,7 +58,7 @@ public static class DeleteSelection
             transaction.SplitText(rightOrigin, relativeRightOriginOffset);
         }
         
-        transaction.DeleteRange(deleteStart, rightOrigin);
+        transaction.DeleteRange(deleteStart ?? origin?.RightOrigin, rightOrigin);
         return (origin, rightOrigin?.RightOrigin);
     }
 }

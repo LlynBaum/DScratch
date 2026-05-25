@@ -295,10 +295,9 @@ public class InsertTextHandlerTests
             Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("xyz"));
             
-            Assert.That(result.Diffs, Has.Count.EqualTo(3));
+            Assert.That(result.Diffs, Has.Count.EqualTo(2));
             Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result.Diffs[1], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result.Diffs[2], Is.TypeOf<StepDiff.InsertTextDiff>());
+            Assert.That(result.Diffs[1], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
     }
 }
