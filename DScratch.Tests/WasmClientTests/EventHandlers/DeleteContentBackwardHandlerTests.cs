@@ -3,6 +3,7 @@ using DScratch.Client.Scripts.EventHandlers;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
 using DScratch.Transactions;
+using DScratch.TreeVisualizers;
 
 namespace DScratch.Tests.WasmClientTests.EventHandlers;
 
@@ -98,30 +99,20 @@ public class DeleteContentBackwardHandlerTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(6));
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
             
             Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
             
-            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("xyz"));
-            
-            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[2]).IsDeleted, Is.True);
-            
             Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[3]).IsDeleted, Is.True);
+            Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("f"));
             
             Assert.That(parent.ChildNodes[4], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("f"));
+            Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("ghi"));
             
-            Assert.That(parent.ChildNodes[5], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[5]).TextContent, Is.EqualTo("ghi"));
-            
-            Assert.That(result.Diffs, Has.Count.EqualTo(3));
+            Assert.That(result.Diffs, Has.Count.EqualTo(2));
             Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
             Assert.That(result.Diffs[1], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result.Diffs[2], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
     }
     
@@ -148,20 +139,16 @@ public class DeleteContentBackwardHandlerTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(6));
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
             
-            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("xyz"));
+            Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("def"));
             
             Assert.That(parent.ChildNodes[4], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("def"));
+            Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("ghi"));
             
-            Assert.That(parent.ChildNodes[5], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[5]).TextContent, Is.EqualTo("ghi"));
-            
-            Assert.That(result.Diffs, Has.Count.EqualTo(2));
+            Assert.That(result.Diffs, Has.Count.EqualTo(1));
             Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result.Diffs[1], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
     }
     
@@ -186,20 +173,16 @@ public class DeleteContentBackwardHandlerTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
             
             Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
             
-            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("xyz"));
+            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ef"));
             
-            Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("ef"));
-            
-            Assert.That(result.Diffs, Has.Count.EqualTo(2));
+            Assert.That(result.Diffs, Has.Count.EqualTo(1));
             Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result.Diffs[1], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
     }
     
@@ -226,7 +209,7 @@ public class DeleteContentBackwardHandlerTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(6));
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
             
             Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("abc"));
@@ -234,13 +217,9 @@ public class DeleteContentBackwardHandlerTests
             Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
             
-            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("xyz"));
-            
-            Assert.That(result.Diffs, Has.Count.EqualTo(3));
+            Assert.That(result.Diffs, Has.Count.EqualTo(2));
             Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
             Assert.That(result.Diffs[1], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result.Diffs[2], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
     }
     
@@ -257,6 +236,24 @@ public class DeleteContentBackwardHandlerTests
                 Offset = offset,
                 End = [],
                 EndOffset = 0
+            }
+        };
+    }
+    
+    private static KeyPressInfo GetKeyPressInfo(int offset, int endOffset)
+    {
+        var direction = offset < endOffset ? SelectionDirection.Forward : SelectionDirection.Backward;
+        return new KeyPressInfo
+        {
+            Data = "xyz",
+            Path = ["0"],
+            InputType = InsertTextHandler.EventName,
+            Selection = new KeyPressInfo.SelectionInfo
+            {
+                Direction = direction,
+                Offset = offset,
+                End = [],
+                EndOffset = endOffset
             }
         };
     }

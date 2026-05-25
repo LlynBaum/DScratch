@@ -1,11 +1,12 @@
 using DScratch.Nodes;
 using DScratch.Tests.Helpers.TestNodes;
+using DScratch.TreeVisualizers;
 
 namespace DScratch.Tests.Helpers;
 
 public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder, TreeBuilder.ITextTreeBuilder
 {
-    public RootNode Root { get; private set; }
+    public RootNode Root { get; }
 
     public DNode FirstChild => Root.FirstChild!;
 
@@ -29,6 +30,11 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder, TreeBuilder.ITextT
         this.parent = parent;
         this.idGenerator = idGenerator;
         factory = new DNodeFactory(idGenerator);
+    }
+
+    public void Print()
+    {
+        new TreeVisualizer(Root).Print();
     }
 
     public CharNode Char(char value)
@@ -103,6 +109,8 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder, TreeBuilder.ITextT
     public interface ITreeMaker
     {
         RootNode Root { get; }
+
+        void Print();
     }
     
     public interface ITextTreeBuilder
