@@ -2,6 +2,7 @@ using DScratch.Client.Scripts.EventHandlers;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
 using DScratch.Tests.WasmClientTests.Helpers;
+using DScratch.TreeVisualizers;
 
 namespace DScratch.Tests.WasmClientTests.EventHandlers;
 
@@ -40,9 +41,9 @@ public class InsertParagraphHandlerTests
         handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(0));
 
         // Assert
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
             Assert.That(((TextNode)parent.FirstChild!).TextContent, Is.EqualTo("abc"));
             
             Assert.That(parent.Origin, Is.Not.Null);

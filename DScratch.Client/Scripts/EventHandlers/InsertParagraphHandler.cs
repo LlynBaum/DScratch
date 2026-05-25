@@ -37,7 +37,10 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorE
         var (origin, rightOrigin) = GetOrigins(keyPressInfo, sibling);
         var paragraph = dScratchService.NodeFactory.Paragraph(origin, rightOrigin);
         transaction.Insert(paragraph, sibling.Parent);
-        transaction.MoveRange(rightOriginTextNode, null, paragraph, null);
+        if (keyPressInfo.Selection.Offset > 0)
+        {
+            transaction.MoveRange(rightOriginTextNode, null, paragraph, null);
+        }
         return dScratchService.Apply(transaction);
     }
 
