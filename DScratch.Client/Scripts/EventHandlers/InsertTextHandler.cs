@@ -31,7 +31,6 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         }
         else
         {
-            // TODO: deleting over two paragraphs will be more complex. Need to merge them together in that case...
             (origin, _) = DeleteSelection.Handle(keyPressInfo, transaction, parent);
             rightOrigin = origin?.RightOrigin;
         }

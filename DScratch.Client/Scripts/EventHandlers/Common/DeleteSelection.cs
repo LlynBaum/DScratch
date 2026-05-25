@@ -10,6 +10,7 @@ public static class DeleteSelection
         ITransaction transaction, 
         DNode parent)
     {
+        // TODO: deleting over two paragraphs will be more complex. Need to merge them together in that case...
         var (originOffset, rightOriginOffset) = keyPressInfo.Selection.GetConvertedOffsets();
         
         var walker = new TreeWalker<TextNode>(parent);

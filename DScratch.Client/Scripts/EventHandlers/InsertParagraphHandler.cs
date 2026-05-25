@@ -30,7 +30,6 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorE
         }
         else
         {
-            // TODO: deleting over two paragraphs will be more complex. Need to merge them together in that case...
             var (originTextNode, _) = DeleteSelection.Handle(keyPressInfo, transaction, sibling.Parent);
             rightOriginTextNode = originTextNode?.RightOrigin;
         }
@@ -65,6 +64,7 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorE
             currentNode = walker.NextSibling();
         }
 
+        // TODO: split node if necessary
         return walker.NextSibling();
     }
 

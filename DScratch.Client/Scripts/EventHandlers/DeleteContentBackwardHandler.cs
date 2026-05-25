@@ -35,7 +35,6 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         }
         else
         {
-            // TODO: deleting over two paragraphs will be more complex. Need to merge them together in that case...
             DeleteSelection.Handle(keyPressInfo, transaction, parent);
         }
         
