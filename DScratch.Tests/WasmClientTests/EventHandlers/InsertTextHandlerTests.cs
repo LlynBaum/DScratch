@@ -15,6 +15,8 @@ public class InsertTextHandlerTests
     private InsertTextHandler handler;
     private TestNodeIdGenerator idGenerator;
 
+    private TreeBuilder builder;
+
     [SetUp]
     public void SetUp()
     {
@@ -22,6 +24,7 @@ public class InsertTextHandlerTests
         idGenerator = new TestNodeIdGenerator();
         service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator);
 
+        builder = new TreeBuilder(idGenerator);
         handler = new InsertTextHandler(service);
     }
     
@@ -29,7 +32,6 @@ public class InsertTextHandlerTests
     public void Handle_CreatesExpectedChanges()
     {
         // Arrange
-        var builder = new TreeBuilder(idGenerator);
         var parent = builder.TestInlineElementNode(t => 
         {
             t.Text(c => 
@@ -58,7 +60,6 @@ public class InsertTextHandlerTests
     public void Handle_CreatesExpectedChanges_WithInsertingAtStart()
     {
         // Arrange
-        var builder = new TreeBuilder(idGenerator);
         var parent = builder.TestInlineElementNode(t => 
         {
             t.Text("a");
@@ -84,8 +85,6 @@ public class InsertTextHandlerTests
     public void Handle_CreatesExpectedChanges_WithInsertingAtEnd()
     {
         // Arrange
-
-        var builder = new TreeBuilder(idGenerator);
         var parent = builder.TestInlineElementNode(t => 
         {
             t.Text("a");
@@ -112,7 +111,6 @@ public class InsertTextHandlerTests
     public void Handle_CreatesExpectedChanges_WithInsertingBetween()
     {
         // Arrange
-        var builder = new TreeBuilder(idGenerator);
         var parent = builder.TestInlineElementNode(t => 
         {
             t.Text("a");
@@ -141,7 +139,6 @@ public class InsertTextHandlerTests
     public void Handle_CreatesExpectedChanges_WhenTextIsSelected(int start, int end)
     {
         // Arrange
-        var builder = new TreeBuilder(idGenerator);
         var parent = builder.TestInlineElementNode(t => 
         {
             t.Text("abc");
@@ -192,7 +189,6 @@ public class InsertTextHandlerTests
     public void Handle_CreatesExpectedChanges_WhenTextIsSelected_AtStart(int start, int end)
     {
         // Arrange
-        var builder = new TreeBuilder(idGenerator);
         var parent = builder.TestInlineElementNode(t => 
         {
             t.Text("abc");
@@ -233,7 +229,6 @@ public class InsertTextHandlerTests
     public void Handle_CreatesExpectedChanges_WhenTextIsSelected_InBetween(int start, int end)
     {
         // Arrange
-        var builder = new TreeBuilder(idGenerator);
         var parent = builder.TestInlineElementNode(t => 
         {
             t.Text("abcdef");
@@ -272,7 +267,6 @@ public class InsertTextHandlerTests
     public void Handle_CreatesExpectedChanges_WhenTextIsSelected_AtEnd(int start, int end)
     {
         // Arrange
-        var builder = new TreeBuilder(idGenerator);
         var parent = builder.TestInlineElementNode(t => 
         {
             t.Text("abc");
