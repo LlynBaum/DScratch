@@ -1,3 +1,4 @@
+using DScratch.Client.Scripts.EventHandlers.Common;
 using DScratch.Nodes;
 using DScratch.Transactions;
 using DScratch.Transactions.Steps;
@@ -33,7 +34,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         else
         {
             // TODO: deleting over two paragraphs will be more complex. Need to merge them together in that case...
-            DeleteSelection(keyPressInfo, transaction, parent);
+            DeleteSelection.Handle(keyPressInfo, transaction, parent);
         }
         
         return dScratchService.Apply(transaction);
@@ -62,58 +63,5 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         {
             transaction.Delete(nodeToDelete);
         }
-    }
-    
-    private static void DeleteSelection(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
-    {
-        var (originOffset, rightOriginOffset) = keyPressInfo.Selection.GetConvertedOffsets();
-        
-        var walker = new TreeWalker<TextNode>(parent);
-        var currentOffset = 0;
-        var currentNode = walker.FirstChild();
-        while (currentNode is not null)
-        {
-            var length = currentNode.Length;
-            if (currentOffset + length >= originOffset)
-            {
-                break;
-            }
-
-            currentOffset += length;
-            currentNode = walker.NextSibling();
-        }
-
-        var relativeOriginOffset = originOffset - currentOffset;
-        var origin = currentNode;
-        
-        while (currentNode is not null)
-        {
-            var length = currentNode.Length;
-            if (currentOffset + length >= rightOriginOffset)
-            {
-                break;
-            }
-
-            currentOffset += length;
-            currentNode = walker.NextSibling();
-        }
-
-        var relativeRightOriginOffset = rightOriginOffset - currentOffset;
-        var rightOrigin = currentNode;
-
-        var deleteStart = origin is not null ? transaction.SplitText(origin, relativeOriginOffset) : null;
-
-        if (origin is not null && rightOrigin is not null && origin.Id == rightOrigin.Id)
-        {
-            rightOrigin = deleteStart;
-            relativeRightOriginOffset -= origin.Length;
-        }
-        
-        if (rightOrigin != null)
-        {
-            transaction.SplitText(rightOrigin, relativeRightOriginOffset);
-        }
-        
-        transaction.DeleteRange(deleteStart, rightOrigin);
     }
 }
