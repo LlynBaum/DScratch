@@ -12,49 +12,73 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
 
         if (end is null)
         {
-            start!.Origin = targetOrigin;
-            
+            var previousOrigin = targetOrigin;
             var current = start;
             while (current is not null)
             {
+                var next = current.RightOrigin;
+                var origin = previousOrigin;
                 steps.AddRange(current.ToMoveStep(node =>
                 {
-                    node.RightOrigin ??= targetOrigin?.RightOrigin;
+                    node.Remove();
+                    node.Origin = origin;
+                    node.RightOrigin = origin?.RightOrigin ?? targetParent.FirstChild;
                     targetParent.InsertChild(node);
                 }));
-                current = current.RightOrigin;
+                
+                previousOrigin = current;
+                current = next;
             }
         }
         else if (start is null)
         {
-            end.RightOrigin = targetOrigin?.RightOrigin;
-            
+            var previousRightOrigin = targetOrigin?.RightOrigin;
             var current = end;
             while (current is not null)
             {
+                var next = current.Origin;
+                var rightOrigin = previousRightOrigin ?? targetParent.FirstChild;
                 steps.AddRange(current.ToMoveStep(node =>
                 {
-                    node.Origin ??= targetOrigin;
+                    node.Remove();
+                    node.RightOrigin = rightOrigin;
+                    node.Origin = rightOrigin?.Origin;
                     targetParent.InsertChild(node);
                 }));
-                current = current.Origin;
+                
+                previousRightOrigin = current;
+                current = next;
             }
         }
         else
         {
-            start.Origin = targetOrigin;
-            end.RightOrigin = targetOrigin?.RightOrigin;
-            
+            var previousOrigin = targetOrigin;
             var current = start;
             while (current is not null && current.Id != end.Id)
             {
-                steps.AddRange(current.ToMoveStep(targetParent.InsertChild));
-                current = current.RightOrigin;
+                var next = current.RightOrigin;
+                var origin = previousOrigin;
+                steps.AddRange(current.ToMoveStep(node =>
+                {
+                    node.Remove();
+                    node.Origin = origin;
+                    node.RightOrigin = origin?.RightOrigin ?? targetParent.FirstChild;
+                    targetParent.InsertChild(node);
+                }));
+                
+                previousOrigin = current;
+                current = next;
             }
 
             if (current is not null)
             {
-                steps.AddRange(current.ToMoveStep(targetParent.InsertChild));
+                steps.AddRange(current.ToMoveStep(node =>
+                {
+                    node.Remove();
+                    node.Origin = previousOrigin;
+                    node.RightOrigin = previousOrigin?.RightOrigin ?? targetParent.FirstChild;
+                    targetParent.InsertChild(node);
+                }));
             }
         }
         

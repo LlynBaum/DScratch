@@ -64,7 +64,7 @@ public class DTransactionTests
     }
     
     [Test]
-    public void DeleteNode_AddsDeleteRangeStep()
+    public void DeleteRange_AddsDeleteRangeStep()
     {
         // Act
         Transaction.DeleteRange(TestNode.Empty(), TestNode.Empty());
@@ -72,6 +72,17 @@ public class DTransactionTests
         // Assert
         Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
         Assert.That(Transaction.Steps.Single(), Is.TypeOf<DeleteRangeStep>());
+    }
+    
+    [Test]
+    public void MoveRange_AddsMoveRangeStep()
+    {
+        // Act
+        Transaction.MoveRange(TestNode.Empty(), TestNode.Empty(), TestNode.Empty(), null);
+        
+        // Assert
+        Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
+        Assert.That(Transaction.Steps.Single(), Is.TypeOf<MoveRangeStep>());
     }
     
     private class TestStep : IStep
