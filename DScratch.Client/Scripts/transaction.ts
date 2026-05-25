@@ -54,10 +54,11 @@ interface MoveBlockStep extends Step {
     previousSibling: string[] | null;
 }
 
-export function applyTransaction(transaction: Step[]){
+export function applyTransaction(transaction: Array<Step | null | undefined>){
     transaction.map(handle);
     
-    function handle(step: Step) {
+    function handle(step?: Step | null) {
+        if(!step) return;
         switch (step.type) {
             case StepType.insertText:
                 handleInsertTextStep(step as InsertTextStep);

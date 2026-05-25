@@ -24,6 +24,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
 
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
+            // TODO: we can detect this, when simpleDelete has nothing found to delete, then we are at the start of the paragraph
             if (parent.IsParagraphNode() && keyPressInfo.Selection.Offset < 1)
             {
                 // so we are at the start of a text element... like a p element... we have to delete it, and move text over to previous element, if possible, else fuck it xD

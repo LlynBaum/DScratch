@@ -1,8 +1,6 @@
 using DScratch.Client.Scripts.EventHandlers.Common;
 using DScratch.Nodes;
-using DScratch.Transactions;
 using DScratch.Transactions.Steps;
-using DScratch.TreeVisualizers;
 
 namespace DScratch.Client.Scripts.EventHandlers;
 

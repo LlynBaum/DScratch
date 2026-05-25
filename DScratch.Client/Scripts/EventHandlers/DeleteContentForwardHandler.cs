@@ -24,7 +24,8 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
 
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
-            if (parent.IsParagraphNode() && keyPressInfo.Selection.Offset >= 10) // TODO when selection is at the end of the paragraph or element
+            // TODO: we can detect this, when simpleDelete has nothing found to delete, then we are at the end of the paragraph
+            if (parent.IsParagraphNode() && keyPressInfo.Selection.Offset >= 10)
             {
                 // so we are at the start of a text element... like a p element... we have to delete it, and move text over to previous element, if possible, else fuck it xD
                 throw new NotImplementedException();

@@ -74,12 +74,6 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
             var index = AllChildNodes.FindIndex(n => n.Id == origin.Id);
             AllChildNodes.Insert(index + 1, node);
         }
-        
-        // TODO: try merge with Origin or RightOrigin
-        /*
-         * When merging new with another. Maybe this can work: just set the id of the new node to the node,
-         * where the content was merged into. I think ToInsertStep actually would handle that, since the op is based on id
-         */
     }
     
     public int IndexOf(IDNode node)

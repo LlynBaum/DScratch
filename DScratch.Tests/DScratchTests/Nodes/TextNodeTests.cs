@@ -69,9 +69,10 @@ public class TextNodeTests
 
         // Assert
         Assert.That(testNode.ChildNodes, Has.Count.EqualTo(4));
+        Assert.That(result, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(result?.Id, Is.EqualTo("-1"));
+            Assert.That(result.Id, Is.EqualTo("-1"));
 
             Assert.That(textNode.ChildNodes, Has.Count.EqualTo(1));
             Assert.That(result.ChildNodes, Has.Count.EqualTo(2));

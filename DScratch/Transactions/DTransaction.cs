@@ -15,7 +15,6 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
     {
         var diffs = steps.SelectMany(s => s.Execute()).ToList();
         return new TransactionResult(diffs);
-        // TODO: auto normalize tree and merge everything together, then we don't have to cheat with overriding ids and so
     }
     
     public ITransaction Insert(DNode node, DNode parent)
@@ -33,6 +32,12 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
     public ITransaction DeleteRange(DNode? start, DNode? end)
     {
         steps.Add(new DeleteRangeStep(start, end));
+        return this;
+    }
+    
+    public ITransaction MoveRange(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin)
+    {
+        steps.Add(new MoveRangeStep(start, end, targetParent, targetOrigin));
         return this;
     }
 

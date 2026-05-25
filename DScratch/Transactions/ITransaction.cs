@@ -14,6 +14,8 @@ public interface ITransaction
     ITransaction Delete(DNode node);
     
     ITransaction DeleteRange(DNode? start, DNode? end);
+    
+    ITransaction MoveRange(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin);
 
     DNode? FindNode(NodePath path);
 

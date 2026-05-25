@@ -41,5 +41,49 @@ internal static class StepHelpers
                 _ => throw new ArgumentException("Node type is not an element, text or char.")
             };
         }
+
+        public StepDiff? ToMovePrepStep()
+        {
+            var path = node.GetElementPath();
+
+            return node switch
+            {
+                CharNode charNode => new StepDiff.DeleteTextDiff(
+                    Parent: path.Path, 
+                    Offset: node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, 
+                    Length: 1),
+                TextNode textNode => new StepDiff.DeleteTextDiff(
+                    Parent: path.Path, 
+                    Offset: node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, 
+                    Length: textNode.Length),
+                _ => null
+            };
+        }
+        
+        public StepDiff ToMoveStep()
+        {
+            var path = node.GetElementPath();
+
+            return node switch
+            {
+                CharNode charNode => new StepDiff.InsertTextDiff(
+                    Parent: path.Path,
+                    Offset: node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, 
+                    Text: charNode.Value.ToString()),
+                TextNode textNode => new StepDiff.InsertTextDiff(
+                    Parent: path.Path, 
+                    Offset: node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, 
+                    Text: textNode.TextContent),
+                IInlineElement => new StepDiff.MoveInlineDiff(
+                    TargetNodePath: path.Path, 
+                    TargetParentPath: node.ParentElement!.GetElementPath().Path,
+                    TargetOffset: node.OriginElement?.FindAbsolutTextOffset<IInlineElement>(node) ?? 0),
+                IBlockElement => new StepDiff.MoveBlockDiff(
+                    TargetNodePath: path.Path, 
+                    TargetParentPath: node.ParentElement!.GetElementPath().Path,
+                    PreviousSibling: node.OriginElement?.GetElementPath().Path),
+                _ => throw new ArgumentException("Node type is not an element.")
+            };
+        }
     }
 }
