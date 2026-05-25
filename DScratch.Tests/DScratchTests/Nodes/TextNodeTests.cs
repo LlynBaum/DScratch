@@ -71,7 +71,7 @@ public class TextNodeTests
         Assert.That(testNode.ChildNodes, Has.Count.EqualTo(4));
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(result.Id, Is.EqualTo("-1"));
+            Assert.That(result?.Id, Is.EqualTo("-1"));
 
             Assert.That(textNode.ChildNodes, Has.Count.EqualTo(1));
             Assert.That(result.ChildNodes, Has.Count.EqualTo(2));
@@ -102,6 +102,68 @@ public class TextNodeTests
             
             Assert.That(testNode.LastChild!.Origin, Is.EqualTo(result));
             Assert.That(testNode.LastChild.RightOrigin, Is.Null);
+        }
+    }
+    
+    [Test]
+    public void Split_CreatesExpectedNode_WhenSplittingAtOffsetZero()
+    {
+        // Arrange
+        var testNode = new TreeBuilder()
+            .Paragraph(t =>
+            {
+                t.Text();
+                t.Text("abc");
+                t.Text();
+            });
+
+        new TreeVisualizer(testNode).Print();
+        
+        var textNode = (TextNode)testNode.ChildNodes[1];
+        
+        // Act
+        var result = textNode.Split(0, "-1");
+        
+        new TreeVisualizer(testNode).Print();
+
+        // Assert
+        Assert.That(testNode.ChildNodes, Has.Count.EqualTo(3));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result?.Id, Is.EqualTo("2"));
+            Assert.That(textNode.ChildNodes, Has.Count.EqualTo(3));
+            Assert.That(textNode.TextContent, Is.EqualTo("abc"));
+        }
+    }
+    
+    [Test]
+    public void Split_CreatesExpectedNode_WhenSplittingAtOffsetEqualToLength()
+    {
+        // Arrange
+        var testNode = new TreeBuilder()
+            .Paragraph(t =>
+            {
+                t.Text();
+                t.Text("abc");
+                t.Text();
+            });
+
+        new TreeVisualizer(testNode).Print();
+        
+        var textNode = (TextNode)testNode.ChildNodes[1];
+        
+        // Act
+        var result = textNode.Split(3, "-1");
+        
+        new TreeVisualizer(testNode).Print();
+
+        // Assert
+        Assert.That(testNode.ChildNodes, Has.Count.EqualTo(3));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.Null);
+            Assert.That(textNode.ChildNodes, Has.Count.EqualTo(3));
+            Assert.That(textNode.TextContent, Is.EqualTo("abc"));
         }
     }
     

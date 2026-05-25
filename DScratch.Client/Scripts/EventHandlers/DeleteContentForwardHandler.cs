@@ -1,5 +1,6 @@
 using DScratch.Client.Scripts.EventHandlers.Common;
 using DScratch.Nodes;
+using DScratch.Nodes.NodeTypes;
 using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 
@@ -23,7 +24,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
 
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
-            if (keyPressInfo.Selection.Offset >= 10) // TODO when selection is at the end of the paragraph or element
+            if (parent.IsParagraphNode() && keyPressInfo.Selection.Offset >= 10) // TODO when selection is at the end of the paragraph or element
             {
                 // so we are at the start of a text element... like a p element... we have to delete it, and move text over to previous element, if possible, else fuck it xD
                 throw new NotImplementedException();

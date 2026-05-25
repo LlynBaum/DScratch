@@ -2,13 +2,13 @@ namespace DScratch.Nodes.NodeTypes;
 
 public static class NodeTypeHelpers
 {
-    public static bool IsElement(this DNode node) => node is IElement;
-    
-    public static bool IsBlockNode(this DNode node) => node is IBlockElement;
-
-    public static bool IsInlineNode(this DNode node) => node is IInlineElement;
-    
-    public static bool IsTextNode(this DNode node) => node is TextNode;
-
-    public static bool IsTextOrInline(this DNode node) => node.IsTextNode() || node.IsInlineNode();
+    extension(DNode node)
+    {
+        public bool IsElement() => node is IElement;
+        public bool IsBlockNode() => node is IBlockElement;
+        public bool IsInlineNode() => node is IInlineElement;
+        public bool IsTextNode() => node is TextNode;
+        public bool IsParagraphNode() => node is ParagraphNode;
+        public bool IsTextOrInline() => node.IsTextNode() || node.IsInlineNode();
+    }
 }

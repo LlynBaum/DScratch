@@ -206,16 +206,16 @@ public class InsertTextHandlerTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(6));
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
             
             Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("xyz"));
             
-            Assert.That(parent.ChildNodes[4], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("def"));
+            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("def"));
             
-            Assert.That(parent.ChildNodes[5], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[5]).TextContent, Is.EqualTo("ghi"));
+            Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("ghi"));
             
             Assert.That(result.Diffs, Has.Count.EqualTo(2));
             Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
@@ -284,7 +284,7 @@ public class InsertTextHandlerTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(6));
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
             
             Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("abc"));

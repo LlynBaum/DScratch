@@ -47,7 +47,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
     {
         IsDeleted = true;
         AllChildNodes.ForEach(n => n.Delete());
-        // TODO: Notify parent, if all child nodes are deleted, we can assume the whole node is deleted
+        // TODO: some elements need to be deleted when no child is active anymore (like strong) but others not (like paragraph) how to handle?
     }
 
     internal void AppendChild(DNode node)

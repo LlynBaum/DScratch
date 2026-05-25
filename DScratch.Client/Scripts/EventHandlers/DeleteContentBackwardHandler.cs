@@ -1,5 +1,6 @@
 using DScratch.Client.Scripts.EventHandlers.Common;
 using DScratch.Nodes;
+using DScratch.Nodes.NodeTypes;
 using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 
@@ -23,7 +24,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
 
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
-            if (keyPressInfo.Selection.Offset < 1)
+            if (parent.IsParagraphNode() && keyPressInfo.Selection.Offset < 1)
             {
                 // so we are at the start of a text element... like a p element... we have to delete it, and move text over to previous element, if possible, else fuck it xD
                 throw new NotImplementedException();

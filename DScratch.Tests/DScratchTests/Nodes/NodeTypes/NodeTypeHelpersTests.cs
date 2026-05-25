@@ -89,6 +89,26 @@ public class NodeTypeHelpersTests
     }
     
     [Test]
+    public void IsParagraphNode_ReturnsTrue_WhenIs_ParagraphNode()
+    {
+        // Arrange
+        var textNode = new ParagraphNode("", null, null);
+        
+        // Act & Assert
+        Assert.That(textNode.IsParagraphNode(), Is.True);
+    }
+    
+    [Test]
+    public void IsParagraphNode_ReturnsTrue_WhenIsNot_ParagraphNode()
+    {
+        // Arrange
+        var testNode = TestNode.Empty();
+        
+        // Act & Assert
+        Assert.That(testNode.IsParagraphNode(), Is.False);
+    }
+    
+    [Test]
     public void IsTextOrInline_ReturnsTrue_WhenInherits_InlineElementOrTextNode()
     {
         // Arrange

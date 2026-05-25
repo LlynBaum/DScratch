@@ -19,8 +19,11 @@ public class TextNode(string id, DNode? origin, DNode? rightOrigin, List<DNode>?
         base.InsertChild(node);
     }
 
-    internal TextNode Split(int offset, string nextId)
+    internal TextNode? Split(int offset, string nextId)
     {
+        if (offset is 0) return this;
+        if (offset == Length) return null;
+        
         var remainingChildNodes = AllChildNodes.Take(offset).ToList();
         var otherChildNodes = AllChildNodes.Skip(offset).ToList();
 
