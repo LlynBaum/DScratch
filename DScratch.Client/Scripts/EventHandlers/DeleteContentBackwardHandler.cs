@@ -1,4 +1,5 @@
 using DScratch.Nodes;
+using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 
 namespace DScratch.Client.Scripts.EventHandlers;
@@ -16,15 +17,30 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         {
             throw new ArgumentException($"Parent with given path not found: {keyPressInfo.GetNodePath()}");
         }
-
-        if (keyPressInfo.Selection.Offset < 1)
-        {
-            // so we are at the start of a text element... like a p element... we have to delete it, and move text over to previous element, if possible, else fuck it xD
-            throw new NotImplementedException();
-        }
         
         // TODO: when selection is not just cursor position, but a selection, then delete everything that is selected.
+
+        if (keyPressInfo.Selection.Direction is SelectionDirection.None)
+        {
+            if (keyPressInfo.Selection.Offset < 1)
+            {
+                // so we are at the start of a text element... like a p element... we have to delete it, and move text over to previous element, if possible, else fuck it xD
+                throw new NotImplementedException();
+            }
+            
+            SimpleDeleteBackwards(keyPressInfo, transaction, parent);
+        }
+        else
+        {
+            // TODO: deleting over two paragraphs will be more complex. Need to merge them together in that case...
+            DeleteSelection(keyPressInfo, transaction, parent);
+        }
         
+        return dScratchService.Apply(transaction);
+    }
+
+    private static void SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
+    {
         var walker = new TreeWalker<TextNode>(parent);
         
         var currentOffset = 0;
@@ -42,9 +58,16 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         }
 
         var nodeToDelete = current?.ChildAt(keyPressInfo.Selection.Offset - currentOffset - 1);
-        if (nodeToDelete is null) return TransactionResult.Empty;
+        if (nodeToDelete is not null)
+        {
+            transaction.Delete(nodeToDelete);
+        }
+    }
+    
+    private static void DeleteSelection(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
+    {
+        var (originOffset, rightOriginOffset) = keyPressInfo.Selection.GetConvertedOffsets();
         
-        transaction.Delete(nodeToDelete);
-        return dScratchService.Apply(transaction);
+        
     }
 }

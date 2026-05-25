@@ -26,6 +26,19 @@ public class KeyPressInfo
         public NodePath GetEnd() => NodePath.FromJs(End);
         
         public int EndOffset { get; init; }
+        
+        public (int originOffset, int rightOriginOffset) GetConvertedOffsets()
+        {
+            var originOffset = Direction is SelectionDirection.Forward
+                ? Offset
+                : EndOffset;
+            
+            var rightOriginOffset = Direction is SelectionDirection.Forward
+                ? EndOffset
+                : Offset;
+
+            return (originOffset, rightOriginOffset);
+        }
     }
 }
 

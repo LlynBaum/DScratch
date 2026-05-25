@@ -32,6 +32,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         }
         else
         {
+            // TODO: deleting over two paragraphs will be more complex. Need to merge them together in that case...
             (origin, rightOrigin) = OverrideInsert(keyPressInfo, transaction, parent);
         }
         
@@ -66,16 +67,12 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         return (currentNode, walker.NextSibling());
     }
 
-    private static (DNode? origin, DNode? rightOrigin) OverrideInsert(KeyPressInfo keyPressInfo,
-        ITransaction transaction, DNode parent)
+    private static (DNode? origin, DNode? rightOrigin) OverrideInsert(
+        KeyPressInfo keyPressInfo,
+        ITransaction transaction, 
+        DNode parent)
     {
-        var originOffset = keyPressInfo.Selection.Direction is SelectionDirection.Forward
-            ? keyPressInfo.Selection.Offset
-            : keyPressInfo.Selection.EndOffset;
-            
-        var rightOriginOffset = keyPressInfo.Selection.Direction is SelectionDirection.Forward
-            ? keyPressInfo.Selection.EndOffset
-            : keyPressInfo.Selection.Offset;
+        var (originOffset, rightOriginOffset) = keyPressInfo.Selection.GetConvertedOffsets();
         
         var walker = new TreeWalker<TextNode>(parent);
         var currentOffset = 0;
