@@ -2,6 +2,7 @@ using DScratch.Client.Scripts;
 using DScratch.Client.Scripts.EventHandlers;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
+using DScratch.Tests.WasmClientTests.Helpers;
 using DScratch.Transactions;
 using DScratch.TreeVisualizers;
 
@@ -39,7 +40,7 @@ public class DeleteContentBackwardHandlerTests
         document.Page.Root = parent;
 
         // Act
-        var result = handler.Handle(GetKeyPressInfo(2));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(2));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -65,12 +66,67 @@ public class DeleteContentBackwardHandlerTests
         document.Page.Root = parent;
 
         // Act
-        var result = handler.Handle(GetKeyPressInfo(3));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(3));
 
         // Assert
         using (Assert.EnterMultipleScope())
         {
             Assert.That(char3.IsDeleted, Is.True);
+            Assert.That(result.Diffs, Has.Count.EqualTo(1));
+        }
+        Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
+    }
+    
+    [Test]
+    public void Handle_CreatesExpectedChanges_LastCharInTextNode()
+    {
+        // Arrange
+        CharNode char2 = null!;
+        var parent = builder.TestInlineElementNode(t => 
+        {
+            t.Text(txt =>
+            {
+                txt.Char('a');
+                char2 = txt.Char('b');
+            });
+            t.Text("c");
+        });
+        document.Page.Root = parent;
+
+        // Act
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(2));
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(char2.IsDeleted, Is.True);
+            Assert.That(result.Diffs, Has.Count.EqualTo(1));
+        }
+        Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
+    }
+    
+    [Test]
+    public void Handle_CreatesExpectedChanges_SingleCharInNode()
+    {
+        // Arrange
+        CharNode char1 = null!;
+        var parent = builder.TestInlineElementNode(t => 
+        {
+            t.Text(txt =>
+            {
+                char1 = txt.Char('a');
+            });
+            t.Text("bc");
+        });
+        document.Page.Root = parent;
+
+        // Act
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(1));
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(char1.IsDeleted, Is.True);
             Assert.That(result.Diffs, Has.Count.EqualTo(1));
         }
         Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
@@ -91,7 +147,7 @@ public class DeleteContentBackwardHandlerTests
         document.Page.Root = parent;
 
         // Act
-        var result = handler.Handle(GetKeyPressInfo(start, end));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -131,7 +187,7 @@ public class DeleteContentBackwardHandlerTests
         document.Page.Root = parent;
 
         // Act
-        var result = handler.Handle(GetKeyPressInfo(start, end));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -165,7 +221,7 @@ public class DeleteContentBackwardHandlerTests
         document.Page.Root = parent;
 
         // Act
-        var result = handler.Handle(GetKeyPressInfo(start, end));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -201,7 +257,7 @@ public class DeleteContentBackwardHandlerTests
         document.Page.Root = parent;
 
         // Act
-        var result = handler.Handle(GetKeyPressInfo(start, end));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -221,40 +277,5 @@ public class DeleteContentBackwardHandlerTests
             Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
             Assert.That(result.Diffs[1], Is.TypeOf<StepDiff.DeleteTextDiff>());
         }
-    }
-    
-    private static KeyPressInfo GetKeyPressInfo(int offset)
-    {
-        return new KeyPressInfo
-        {
-            Data = "abc",
-            Path = ["0"],
-            InputType = InsertTextHandler.EventName,
-            Selection = new KeyPressInfo.SelectionInfo
-            {
-                Direction = SelectionDirection.None,
-                Offset = offset,
-                End = [],
-                EndOffset = 0
-            }
-        };
-    }
-    
-    private static KeyPressInfo GetKeyPressInfo(int offset, int endOffset)
-    {
-        var direction = offset < endOffset ? SelectionDirection.Forward : SelectionDirection.Backward;
-        return new KeyPressInfo
-        {
-            Data = "xyz",
-            Path = ["0"],
-            InputType = InsertTextHandler.EventName,
-            Selection = new KeyPressInfo.SelectionInfo
-            {
-                Direction = direction,
-                Offset = offset,
-                End = [],
-                EndOffset = endOffset
-            }
-        };
     }
 }

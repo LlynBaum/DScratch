@@ -6,5 +6,6 @@ public static class EventHandlerRegistration
     {
         services.AddKeyedScoped<IEditorEventHandler, InsertTextHandler>(InsertTextHandler.EventName);
         services.AddKeyedScoped<IEditorEventHandler, DeleteContentBackwardHandler>(DeleteContentBackwardHandler.EventName);
+        services.AddKeyedScoped<IEditorEventHandler, DeleteContentForwardHandler>(DeleteContentForwardHandler.EventName);
     }
 }

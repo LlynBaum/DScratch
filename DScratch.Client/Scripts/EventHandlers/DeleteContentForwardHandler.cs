@@ -5,9 +5,9 @@ using DScratch.Transactions.Steps;
 
 namespace DScratch.Client.Scripts.EventHandlers;
 
-public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IEditorEventHandler
+public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEditorEventHandler
 {
-    public const string EventName = "deleteContentBackward";
+    public const string EventName = "deleteContentForward";
     
     public TransactionResult Handle(KeyPressInfo keyPressInfo)
     {
@@ -23,13 +23,13 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
 
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
-            if (keyPressInfo.Selection.Offset < 1)
+            if (keyPressInfo.Selection.Offset >= 10) // TODO when selection is at the end of the paragraph or element
             {
                 // so we are at the start of a text element... like a p element... we have to delete it, and move text over to previous element, if possible, else fuck it xD
                 throw new NotImplementedException();
             }
             
-            SimpleDeleteBackwards(keyPressInfo, transaction, parent);
+            SimpleDeleteForward(keyPressInfo, transaction, parent);
         }
         else
         {
@@ -39,8 +39,8 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         
         return dScratchService.Apply(transaction);
     }
-
-    private static void SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
+    
+    private static void SimpleDeleteForward(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
     {
         var walker = new TreeWalker<TextNode>(parent);
         
@@ -49,7 +49,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         while (current is not null)
         {
             var length = current.Length;
-            if (currentOffset + length >= keyPressInfo.Selection.Offset)
+            if (currentOffset + length > keyPressInfo.Selection.Offset)
             {
                 break;
             }
@@ -58,7 +58,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             current = walker.NextNode();
         }
 
-        var nodeToDelete = current?.ChildAt(keyPressInfo.Selection.Offset - currentOffset - 1);
+        var nodeToDelete = current?.ChildAt(keyPressInfo.Selection.Offset - currentOffset);
         if (nodeToDelete is not null)
         {
             transaction.Delete(nodeToDelete);

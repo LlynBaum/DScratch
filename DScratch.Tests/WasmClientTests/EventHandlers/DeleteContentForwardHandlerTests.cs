@@ -1,3 +1,4 @@
+using DScratch.Client.Scripts;
 using DScratch.Client.Scripts.EventHandlers;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
@@ -7,130 +8,128 @@ using DScratch.TreeVisualizers;
 
 namespace DScratch.Tests.WasmClientTests.EventHandlers;
 
-public class InsertTextHandlerTests
+public class DeleteContentForwardHandlerTests
 {
     private DScratchDocument document;
     private IDScratchService service;
 
-    private InsertTextHandler handler;
+    private DeleteContentForwardHandler handler;
     private TestNodeIdGenerator idGenerator;
 
     private TreeBuilder builder;
-
+    
     [SetUp]
     public void SetUp()
     {
         document = new DScratchDocument();
         idGenerator = new TestNodeIdGenerator();
         service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator);
-
+        
         builder = new TreeBuilder(idGenerator);
-        handler = new InsertTextHandler(service);
+        handler = new DeleteContentForwardHandler(service);
+    }
+
+    [Test]
+    public void Handle_DoesNothing_WhenNodesDoesNotExist()
+    {
+        // Arrange
+        var parent = builder.Text(p =>
+        {
+            p.Char('a');
+        });
+        document.Page.Root = parent;
+
+        // Act
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(1));
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.IsDeleted, Is.False);
+            Assert.That(result.IsEmpty, Is.True);
+        }
     }
     
     [Test]
     public void Handle_CreatesExpectedChanges()
     {
         // Arrange
+        CharNode char3 = null!;
         var parent = builder.TestInlineElementNode(t => 
         {
-            t.Text(c => 
+            t.Text("ab");
+            t.Text(txt => 
             {
-                c.Char('a');
+                char3 = txt.Char('a');
             });
         });
         document.Page.Root = parent;
 
         // Act
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(2));
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(char3.IsDeleted, Is.True);
+            Assert.That(result.Diffs, Has.Count.EqualTo(1));
+        }
+        Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
+    }
+    
+    [Test]
+    public void Handle_CreatesExpectedChanges_LastCharInTextNode()
+    {
+        // Arrange
+        CharNode char2 = null!;
+        var parent = builder.TestInlineElementNode(t => 
+        {
+            t.Text(txt =>
+            {
+                txt.Char('a');
+                char2 = txt.Char('b');
+            });
+            t.Text("c");
+        });
+        document.Page.Root = parent;
+
+        // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(1));
 
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
-            Assert.That(parent.LastChild, Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.LastChild).TextContent, Is.EqualTo("abc"));
-            
+            Assert.That(char2.IsDeleted, Is.True);
             Assert.That(result.Diffs, Has.Count.EqualTo(1));
-            Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
+        Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
     }
     
     [Test]
-    public void Handle_CreatesExpectedChanges_WithInsertingAtStart()
+    public void Handle_CreatesExpectedChanges_SingleCharInNode()
     {
         // Arrange
+        CharNode char1 = null!;
         var parent = builder.TestInlineElementNode(t => 
         {
-            t.Text("a");
+            t.Text(txt =>
+            {
+                char1 = txt.Char('a');
+            });
+            t.Text("bc");
         });
         document.Page.Root = parent;
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(0));
-        
-        // Assert
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
-            Assert.That(parent.FirstChild, Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.FirstChild).TextContent, Is.EqualTo("abc"));
-            
-            Assert.That(result.Diffs, Has.Count.EqualTo(1));
-            Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.InsertTextDiff>());
-        }
-    }
-    
-    [Test]
-    public void Handle_CreatesExpectedChanges_WithInsertingAtEnd()
-    {
-        // Arrange
-        var parent = builder.TestInlineElementNode(t => 
-        {
-            t.Text("a");
-            t.Text("a");
-        });
-        document.Page.Root = parent;
 
-        // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(2));
-        
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
-            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("abc"));
-            
+            Assert.That(char1.IsDeleted, Is.True);
             Assert.That(result.Diffs, Has.Count.EqualTo(1));
-            Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
-    }
-    
-    [Test]
-    public void Handle_CreatesExpectedChanges_WithInsertingBetween()
-    {
-        // Arrange
-        var parent = builder.TestInlineElementNode(t => 
-        {
-            t.Text("a");
-            t.Text("a");
-        });
-        document.Page.Root = parent;
-
-        // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(1));
-        
-        // Assert
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
-            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("abc"));
-            
-            Assert.That(result.Diffs, Has.Count.EqualTo(1));
-            Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.InsertTextDiff>());
-        }
+        Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
     }
     
     [Test]
@@ -156,30 +155,20 @@ public class InsertTextHandlerTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(6));
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
             
             Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
             
-            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("xyz"));
-            
-            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[2]).IsDeleted, Is.True);
-            
             Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[3]).IsDeleted, Is.True);
+            Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("f"));
             
             Assert.That(parent.ChildNodes[4], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("f"));
+            Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("ghi"));
             
-            Assert.That(parent.ChildNodes[5], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[5]).TextContent, Is.EqualTo("ghi"));
-            
-            Assert.That(result.Diffs, Has.Count.EqualTo(3));
+            Assert.That(result.Diffs, Has.Count.EqualTo(2));
             Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
             Assert.That(result.Diffs[1], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result.Diffs[2], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
     }
     
@@ -206,20 +195,16 @@ public class InsertTextHandlerTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(6));
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
             
-            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("xyz"));
+            Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("def"));
             
             Assert.That(parent.ChildNodes[4], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("def"));
+            Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("ghi"));
             
-            Assert.That(parent.ChildNodes[5], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[5]).TextContent, Is.EqualTo("ghi"));
-            
-            Assert.That(result.Diffs, Has.Count.EqualTo(2));
+            Assert.That(result.Diffs, Has.Count.EqualTo(1));
             Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result.Diffs[1], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
     }
     
@@ -244,20 +229,16 @@ public class InsertTextHandlerTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
             
             Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
             
-            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("xyz"));
+            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ef"));
             
-            Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("ef"));
-            
-            Assert.That(result.Diffs, Has.Count.EqualTo(2));
+            Assert.That(result.Diffs, Has.Count.EqualTo(1));
             Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result.Diffs[1], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
     }
     
@@ -284,7 +265,7 @@ public class InsertTextHandlerTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(6));
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
             
             Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("abc"));
@@ -292,13 +273,9 @@ public class InsertTextHandlerTests
             Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
             
-            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("xyz"));
-            
-            Assert.That(result.Diffs, Has.Count.EqualTo(3));
+            Assert.That(result.Diffs, Has.Count.EqualTo(2));
             Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
             Assert.That(result.Diffs[1], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result.Diffs[2], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
     }
 }
