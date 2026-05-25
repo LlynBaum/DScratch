@@ -42,7 +42,17 @@ internal static class StepHelpers
             };
         }
 
-        public StepDiff? ToMovePrepStep()
+        public StepDiff?[] ToMoveStep(Action<DNode> move)
+        {
+            var result = new StepDiff?[2];
+            result[0] = node.ToMovePrepStep();
+            var oldPath = node.GetElementPath();
+            move.Invoke(node);
+            result[1] = node.ToFinalizedMoveStep(oldPath);
+            return result;
+        }
+
+        private StepDiff.DeleteTextDiff? ToMovePrepStep()
         {
             var path = node.GetElementPath();
 
@@ -60,7 +70,7 @@ internal static class StepHelpers
             };
         }
         
-        public StepDiff ToMoveStep()
+        private StepDiff ToFinalizedMoveStep(NodePath oldPath)
         {
             var path = node.GetElementPath();
 
@@ -75,11 +85,11 @@ internal static class StepHelpers
                     Offset: node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, 
                     Text: textNode.TextContent),
                 IInlineElement => new StepDiff.MoveInlineDiff(
-                    TargetNodePath: path.Path, 
+                    TargetNodePath: oldPath.Path, 
                     TargetParentPath: node.ParentElement!.GetElementPath().Path,
-                    TargetOffset: node.OriginElement?.FindAbsolutTextOffset<IInlineElement>(node) ?? 0),
+                    TargetOffset: node.ParentElement?.FindAbsolutTextOffset<IInlineElement>(node) ?? 0),
                 IBlockElement => new StepDiff.MoveBlockDiff(
-                    TargetNodePath: path.Path, 
+                    TargetNodePath: oldPath.Path,
                     TargetParentPath: node.ParentElement!.GetElementPath().Path,
                     PreviousSibling: node.OriginElement?.GetElementPath().Path),
                 _ => throw new ArgumentException("Node type is not an element.")

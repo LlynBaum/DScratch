@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
 using DScratch.Tests.Helpers.TestNodes;
@@ -289,6 +290,214 @@ public class StepHelpersTests
 
             // Act
             void Act() => testNode.ToDeleteSteps();
+        }
+    }
+    
+    private class ToMoveStep
+    {
+        [Test]
+        public void CharNode_ReturnsExpectedSteps()
+        {
+            // Arrange
+            var builder = new TreeBuilder();
+            TextNode text2 = null!;
+            TextNode newSibling = null!;
+            
+            // 0: Parent Element
+            builder.TestInlineElementNode(t =>
+            {
+                t.Text("a");
+                text2 = t.Text("b");
+                t.Text("c"); 
+            });
+            builder.TestInlineElementNode(t =>
+            {
+                newSibling = t.Text("1");
+                t.Text("2");
+            });
+
+            var node = text2.ChildNodes[0];
+            
+            // Act
+            var result = node.ToMoveStep(n =>
+            {
+                n.Origin = newSibling.ChildNodes[0];
+                n.RightOrigin = newSibling.ChildNodes[0].RightOrigin;
+                newSibling.InsertChild(n);
+            });
+            
+            // Assert
+            Assert.That(result, Has.Length.EqualTo(2));
+            Assert.That(result[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
+            Assert.That(result[1], Is.TypeOf<StepDiff.InsertTextDiff>());
+            
+            var step1 = (StepDiff.DeleteTextDiff)result[0];
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(step1.Parent, Is.EquivalentTo(["0"]));
+                Assert.That(step1.Offset, Is.EqualTo(1));
+                Assert.That(step1.Length, Is.EqualTo(1));
+            }
+            
+            var step2 = (StepDiff.InsertTextDiff)result[1];
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(step2.Parent, Is.EquivalentTo(["7"]));
+                Assert.That(step2.Offset, Is.EqualTo(1));
+                Assert.That(step2.Text, Is.EqualTo("b"));
+            }
+        }
+        
+        [Test]
+        public void TextNode_ReturnsExpectedSteps()
+        {
+            // Arrange
+            var builder = new TreeBuilder();
+            TextNode text2 = null!;
+            TextNode newSibling = null!;
+            
+            // 0: Parent Element
+            builder.TestInlineElementNode(t =>
+            {
+                t.Text("a");
+                text2 = t.Text("b");
+                t.Text("c"); 
+            });
+            var newParent = builder.TestInlineElementNode(t =>
+            {
+                newSibling = t.Text("1");
+                t.Text("2");
+            });
+            
+            // Act
+            var result = text2.ToMoveStep(node =>
+            {
+                node.Origin = newSibling;
+                node.RightOrigin = newSibling.RightOrigin;
+                newParent.InsertChild(node);
+            });
+            
+            // Assert
+            Assert.That(result, Has.Length.EqualTo(2));
+            Assert.That(result[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
+            Assert.That(result[1], Is.TypeOf<StepDiff.InsertTextDiff>());
+            
+            var step1 = (StepDiff.DeleteTextDiff)result[0];
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(step1.Parent, Is.EquivalentTo(["0"]));
+                Assert.That(step1.Offset, Is.EqualTo(1));
+                Assert.That(step1.Length, Is.EqualTo(1));
+            }
+            
+            var step2 = (StepDiff.InsertTextDiff)result[1];
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(step2.Parent, Is.EquivalentTo(["7"]));
+                Assert.That(step2.Offset, Is.EqualTo(1));
+                Assert.That(step2.Text, Is.EqualTo("b"));
+            }
+        }
+
+        [Test]
+        public void InlineElement_ReturnsExpectedSteps()
+        {
+            // Arrange
+            var builder = new TreeBuilder();
+            TestInlineElementNode testElement = null!;
+            TextNode targetSibling = null!;
+            
+            // 0: Parent Element
+            builder.TestBlockElementNode(t =>
+            {
+                t.TestInlineElementNode();
+                testElement = t.TestInlineElementNode();
+                t.TestInlineElementNode();
+            });
+            var targetParent = builder.TestBlockElementNode(t =>
+            {
+                targetSibling = t.Text("a");
+                t.Text("b");
+            });
+
+            // Act
+            var result = testElement.ToMoveStep(node =>
+            {
+                node.Origin = targetSibling;
+                node.RightOrigin = targetSibling.RightOrigin;
+                targetParent.InsertChild(node);
+            });
+            
+            // Assert
+            Assert.That(result, Has.Length.EqualTo(2));
+            Assert.That(result[0], Is.Null);
+            Assert.That(result[1], Is.TypeOf<StepDiff.MoveInlineDiff>());
+            
+            var step = (StepDiff.MoveInlineDiff)result[1];
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(step.TargetNodePath, Is.EquivalentTo(["0", "2"]));
+                Assert.That(step.TargetParentPath, Is.EquivalentTo(["4"]));
+                Assert.That(step.TargetOffset, Is.EqualTo(1));
+            }
+        }
+        
+        [Test]
+        public void BlockElement_ReturnsExpectedSteps()
+        {
+            // Arrange
+            var builder = new TreeBuilder();
+            TestBlockElementNode testElement = null!;
+            TestBlockElementNode targetSibling = null!;
+            
+            // 0: Parent Element
+            builder.TestBlockElementNode(t =>
+            {
+                t.TestBlockElementNode();
+                testElement = t.TestBlockElementNode();
+                t.TestBlockElementNode();
+            });
+            var targetParent = builder.TestBlockElementNode(t =>
+            {
+                targetSibling = t.TestBlockElementNode();
+                t.TestBlockElementNode();
+            });
+
+            // Act
+            var result = testElement.ToMoveStep(node =>
+            {
+                node.Origin = targetSibling;
+                node.RightOrigin = targetSibling.RightOrigin;
+                targetParent.InsertChild(node);
+            });
+            
+            // Assert
+            Assert.That(result, Has.Length.EqualTo(2));
+            Assert.That(result[0], Is.Null);
+            Assert.That(result[1], Is.TypeOf<StepDiff.MoveBlockDiff>());
+            
+            var step = (StepDiff.MoveBlockDiff)result[1];
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(step.TargetNodePath, Is.EquivalentTo(["0", "2"]));
+                Assert.That(step.TargetParentPath, Is.EquivalentTo(["4"]));
+                Assert.That(step.PreviousSibling, Is.EquivalentTo(["4", "5"]));
+            }
+        }
+        
+        [Test]
+        public void UnknownNodes_ThrowArgumentException()
+        {
+            // Arrange - Single node setup
+            var testNode = TestNode.Empty();
+            testNode.Parent = TestNode.Empty();
+            
+            // Assert
+            Assert.Throws<ArgumentException>(Act);
+            return;
+
+            // Act
+            void Act() => testNode.ToMoveStep(_ => {});
         }
     }
 }

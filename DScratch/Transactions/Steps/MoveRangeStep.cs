@@ -17,11 +17,11 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
             var current = start;
             while (current is not null)
             {
-                current.RightOrigin ??= targetOrigin?.RightOrigin;
-                
-                steps.Add(current.ToMovePrepStep());
-                current.Parent = targetParent;
-                steps.Add(current.ToMoveStep());
+                steps.AddRange(current.ToMoveStep(node =>
+                {
+                    node.RightOrigin ??= targetOrigin?.RightOrigin;
+                    targetParent.InsertChild(node);
+                }));
                 current = current.RightOrigin;
             }
         }
@@ -32,11 +32,11 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
             var current = end;
             while (current is not null)
             {
-                current.Origin ??= targetOrigin;
-                
-                steps.Add(current.ToMovePrepStep());
-                current.Parent = targetParent;
-                steps.Add(current.ToMoveStep());
+                steps.AddRange(current.ToMoveStep(node =>
+                {
+                    node.Origin ??= targetOrigin;
+                    targetParent.InsertChild(node);
+                }));
                 current = current.Origin;
             }
         }
@@ -48,17 +48,13 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
             var current = start;
             while (current is not null && current.Id != end.Id)
             {
-                steps.Add(current.ToMovePrepStep());
-                current.Parent = targetParent;
-                steps.Add(current.ToMoveStep());
+                steps.AddRange(current.ToMoveStep(targetParent.InsertChild));
                 current = current.RightOrigin;
             }
 
             if (current is not null)
             {
-                steps.Add(current.ToMovePrepStep());
-                current.Parent = targetParent;
-                steps.Add(current.ToMoveStep());
+                steps.AddRange(current.ToMoveStep(targetParent.InsertChild));
             }
         }
         
