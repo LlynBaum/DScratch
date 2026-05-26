@@ -69,7 +69,9 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorE
         }
 
         var relativeOffset = keyPressInfo.Selection.Offset - currentOffset;
-        return currentNode is null || relativeOffset <= 0 ? currentNode : transaction.SplitText(currentNode, relativeOffset);
+        return currentNode is null || relativeOffset <= 0 
+            ? currentNode 
+            : transaction.SplitText(currentNode, relativeOffset) ?? currentNode.RightOrigin;
     }
 
     private static (DNode? origin, DNode? rightOrigin) GetOrigins(KeyPressInfo keyPressInfo, DNode sibling)

@@ -120,8 +120,9 @@ public class InsertParagraphHandlerTests
             
             Assert.That(parent.RightOrigin, Is.Not.Null);
             Assert.That(parent.RightOrigin.Origin, Is.EqualTo(parent));
-            Assert.That(parent.RightOrigin.ChildNodes, Has.Count.EqualTo(1));
-            Assert.That(((TextNode)parent.RightOrigin.FirstChild!).TextContent, Is.EqualTo("bc"));
+            Assert.That(parent.RightOrigin.ChildNodes, Has.Count.EqualTo(2));
+            Assert.That(((TextNode)parent.RightOrigin.ChildNodes[0]).TextContent, Is.EqualTo("b"));
+            Assert.That(((TextNode)parent.RightOrigin.ChildNodes[1]).TextContent, Is.EqualTo("c"));
         }
     }
     
