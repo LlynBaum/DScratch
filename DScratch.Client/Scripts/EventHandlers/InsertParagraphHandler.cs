@@ -2,6 +2,7 @@ using DScratch.Client.Scripts.EventHandlers.Common;
 using DScratch.Nodes;
 using DScratch.Transactions;
 using DScratch.Transactions.Steps;
+using DScratch.TreeVisualizers;
 
 namespace DScratch.Client.Scripts.EventHandlers;
 
@@ -31,13 +32,13 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorE
         }
         else
         {
-            var (originTextNode, _) = DeleteSelection.Handle(keyPressInfo, transaction, sibling.Parent);
-            firstNodeToMove = originTextNode?.RightOrigin;
+            (_, firstNodeToMove) = DeleteSelection.Handle(keyPressInfo, transaction, sibling);
         }
 
         var (origin, rightOrigin) = GetOrigins(keyPressInfo, sibling);
         var paragraph = dScratchService.NodeFactory.Paragraph(origin, rightOrigin);
         transaction.Insert(paragraph, sibling.Parent);
+        
         if (keyPressInfo.Selection.Offset > 0)
         {
             transaction.MoveRange(firstNodeToMove, null, paragraph, null);

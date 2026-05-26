@@ -114,13 +114,16 @@ public class InsertParagraphHandlerTests
         document.Page.Root = parent;
         
         // Act
-        handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(2, 4));
+        handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(1, 4));
 
+        builder.Print();
+        
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
-            Assert.That(((TextNode)parent.FirstChild!).TextContent, Is.EqualTo("a"));
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+            Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("a"));
+            Assert.That(parent.ChildNodes[1].IsDeleted, Is.True);
             
             Assert.That(parent.RightOrigin, Is.Not.Null);
             Assert.That(parent.RightOrigin.Origin, Is.EqualTo(parent));
