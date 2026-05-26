@@ -19,9 +19,9 @@ public class InsertParagraphHandlerTests
     public void SetUp()
     {
         idGenerator = new TestNodeIdGenerator();
-        service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator);
-
         builder = new TreeBuilder(idGenerator);
+        document = new DScratchDocument(builder.Root);
+        service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator);
         handler = new InsertParagraphHandler(service);
     }
 
@@ -33,10 +33,9 @@ public class InsertParagraphHandlerTests
         {
             t.Text("abc");
         });
-        document = new DScratchDocument(parent);
         
         // Act
-        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(0));
+        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path, 0));
 
         // Assert
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
@@ -58,10 +57,9 @@ public class InsertParagraphHandlerTests
         {
             t.Text("abc");
         });
-        document = new DScratchDocument(parent);
         
         // Act
-        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(3));
+        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path, 3));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -83,10 +81,36 @@ public class InsertParagraphHandlerTests
         {
             t.Text("abc");
         });
-        document = new DScratchDocument(parent);
         
         // Act
-        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(1));
+        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path,1));
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
+            Assert.That(((TextNode)parent.FirstChild!).TextContent, Is.EqualTo("a"));
+            
+            Assert.That(parent.RightOrigin, Is.Not.Null);
+            Assert.That(parent.RightOrigin.Origin, Is.EqualTo(parent));
+            Assert.That(parent.RightOrigin.ChildNodes, Has.Count.EqualTo(1));
+            Assert.That(((TextNode)parent.RightOrigin.FirstChild!).TextContent, Is.EqualTo("bc"));
+        }
+    }
+    
+    [Test]
+    public void CreatesExpectedChanges_WithOffsetInBetweenText_WithTextNodeForEachChar()
+    {
+        // Arrange
+        var parent = builder.Paragraph(t =>
+        {
+            t.Text("a");
+            t.Text("b");
+            t.Text("c");
+        });
+        
+        // Act
+        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path, 1));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -109,10 +133,9 @@ public class InsertParagraphHandlerTests
         {
             t.Text("abcde");
         });
-        document = new DScratchDocument(parent);
         
         // Act
-        handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(1, 4));
+        handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath().Path, 1, 4));
 
         builder.Print();
         

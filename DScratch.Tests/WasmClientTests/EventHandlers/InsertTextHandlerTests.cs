@@ -21,9 +21,9 @@ public class InsertTextHandlerTests
     public void SetUp()
     {
         idGenerator = new TestNodeIdGenerator();
-        service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator);
-
         builder = new TreeBuilder(idGenerator);
+        document = new DScratchDocument(builder.Root);
+        service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator);
         handler = new InsertTextHandler(service);
     }
     
@@ -38,10 +38,9 @@ public class InsertTextHandlerTests
                 c.Char('a');
             });
         });
-        document = new DScratchDocument(parent);
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(1));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path, 1));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -63,10 +62,9 @@ public class InsertTextHandlerTests
         {
             t.Text("a");
         });
-        document = new DScratchDocument(parent);
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(0));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path, 0));
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -89,10 +87,9 @@ public class InsertTextHandlerTests
             t.Text("a");
             t.Text("a");
         });
-        document = new DScratchDocument(parent);
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(2));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path, 2));
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -115,10 +112,9 @@ public class InsertTextHandlerTests
             t.Text("a");
             t.Text("a");
         });
-        document = new DScratchDocument(parent);
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(1));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path,1));
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -144,10 +140,9 @@ public class InsertTextHandlerTests
             t.Text("def");
             t.Text("ghi");
         });
-        document = new DScratchDocument(parent);
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath().Path,start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -194,10 +189,9 @@ public class InsertTextHandlerTests
             t.Text("def");
             t.Text("ghi");
         });
-        document = new DScratchDocument(parent);
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath().Path, start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -232,10 +226,9 @@ public class InsertTextHandlerTests
         {
             t.Text("abcdef");
         });
-        document = new DScratchDocument(parent);
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath().Path, start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -272,10 +265,9 @@ public class InsertTextHandlerTests
             t.Text("def");
             t.Text("ghi");
         });
-        document = new DScratchDocument(parent);
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath().Path, start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();

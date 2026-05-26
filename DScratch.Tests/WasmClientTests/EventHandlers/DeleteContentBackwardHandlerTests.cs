@@ -21,9 +21,9 @@ public class DeleteContentBackwardHandlerTests
     public void SetUp()
     {
         idGenerator = new TestNodeIdGenerator();
-        service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator);
-        
         builder = new TreeBuilder(idGenerator);
+        document = new DScratchDocument(builder.Root);
+        service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator);
         handler = new DeleteContentBackwardHandler(service);
     }
 
@@ -35,10 +35,9 @@ public class DeleteContentBackwardHandlerTests
         {
             p.Char('a');
         });
-        document = new DScratchDocument(parent);
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(2));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path, 2));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -61,10 +60,9 @@ public class DeleteContentBackwardHandlerTests
                 char3 = txt.Char('a');
             });
         });
-        document = new DScratchDocument(parent);
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(3));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path, 3));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -89,10 +87,9 @@ public class DeleteContentBackwardHandlerTests
             });
             t.Text("c");
         });
-        document = new DScratchDocument(parent);
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(2));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path, 2));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -116,10 +113,9 @@ public class DeleteContentBackwardHandlerTests
             });
             t.Text("bc");
         });
-        document = new DScratchDocument(parent);
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(1));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path, 1));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -142,10 +138,9 @@ public class DeleteContentBackwardHandlerTests
             t.Text("def");
             t.Text("ghi");
         });
-        document = new DScratchDocument(parent);
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath().Path, start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -182,10 +177,9 @@ public class DeleteContentBackwardHandlerTests
             t.Text("def");
             t.Text("ghi");
         });
-        document = new DScratchDocument(parent);
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath().Path, start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -216,10 +210,9 @@ public class DeleteContentBackwardHandlerTests
         {
             t.Text("abcdef");
         });
-        document = new DScratchDocument(parent);
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath().Path, start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -252,10 +245,9 @@ public class DeleteContentBackwardHandlerTests
             t.Text("def");
             t.Text("ghi");
         });
-        document = new DScratchDocument(parent);
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath().Path, start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();

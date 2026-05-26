@@ -5,12 +5,12 @@ namespace DScratch.Tests.WasmClientTests.Helpers;
 
 public class KeyPressInfoHelper
 {
-    public static KeyPressInfo GetKeyPressInfoDirectionNone(int offset)
+    public static KeyPressInfo GetKeyPressInfoDirectionNone(string[] path, int offset)
     {
         return new KeyPressInfo
         {
             Data = "abc",
-            Path = ["0"],
+            Path = path.Reverse().ToArray(),
             InputType = InsertTextHandler.EventName,
             Selection = new KeyPressInfo.SelectionInfo
             {
@@ -22,13 +22,13 @@ public class KeyPressInfoHelper
         };
     }
     
-    public static KeyPressInfo GetKeyPressInfo(int offset, int endOffset)
+    public static KeyPressInfo GetKeyPressInfo(string[] path, int offset, int endOffset)
     {
         var direction = offset < endOffset ? SelectionDirection.Forward : SelectionDirection.Backward;
         return new KeyPressInfo
         {
             Data = "xyz",
-            Path = ["0"],
+            Path = path.Reverse().ToArray(),
             InputType = InsertTextHandler.EventName,
             Selection = new KeyPressInfo.SelectionInfo
             {
