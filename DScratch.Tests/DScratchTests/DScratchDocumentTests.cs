@@ -9,7 +9,7 @@ public class DScratchDocumentTests
     [SetUp]
     public void SetUp()
     {
-        Document = new DScratchDocument();
+        Document = new DScratchDocument("-1");
         DefaultNodes();
     }
     
@@ -104,6 +104,6 @@ public class DScratchDocumentTests
         node4.Parent = node2;
         node5.Parent = node2;
         
-        Document.Page.Root = node1;
+        Document = new DScratchDocument(node1);
     }
 }

@@ -103,8 +103,6 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder, TreeBuilder.ITextT
     {
         return new TreeBuilder(parentNode, idGenerator, Root);
     }
-
-    public class RootNode() : DNode("root", null, null);
     
     public interface ITreeMaker
     {

@@ -2,13 +2,12 @@ using DScratch.Client.Scripts.EventHandlers;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
 using DScratch.Tests.WasmClientTests.Helpers;
-using DScratch.TreeVisualizers;
 
 namespace DScratch.Tests.WasmClientTests.EventHandlers;
 
 public class InsertParagraphHandlerTests
 {
-    private DScratchDocument document;
+    private DScratchDocument document = null!;
     private IDScratchService service;
 
     private InsertParagraphHandler handler;
@@ -19,7 +18,6 @@ public class InsertParagraphHandlerTests
     [SetUp]
     public void SetUp()
     {
-        document = new DScratchDocument();
         idGenerator = new TestNodeIdGenerator();
         service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator);
 
@@ -35,7 +33,7 @@ public class InsertParagraphHandlerTests
         {
             t.Text("abc");
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
         
         // Act
         handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(0));
@@ -60,7 +58,7 @@ public class InsertParagraphHandlerTests
         {
             t.Text("abc");
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
         
         // Act
         handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(3));
@@ -85,7 +83,7 @@ public class InsertParagraphHandlerTests
         {
             t.Text("abc");
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
         
         // Act
         handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(1));
@@ -111,7 +109,7 @@ public class InsertParagraphHandlerTests
         {
             t.Text("abcde");
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
         
         // Act
         handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(1, 4));

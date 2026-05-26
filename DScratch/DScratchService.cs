@@ -5,7 +5,7 @@ namespace DScratch;
 
 public class DScratchService(INodeFactory nodeFactory, INodeIdGenerator nodeIdGenerator) : IDScratchService
 {
-    private readonly DScratchDocument document = new DScratchDocument();
+    private readonly DScratchDocument document = new DScratchDocument(nodeIdGenerator.GetNextId());
 
     internal DScratchService(DScratchDocument document, INodeFactory nodeFactory, INodeIdGenerator nodeIdGenerator) 
         : this(nodeFactory, nodeIdGenerator)
@@ -31,6 +31,6 @@ public class DScratchService(INodeFactory nodeFactory, INodeIdGenerator nodeIdGe
 
     public TransactionResult InitialTransaction()
     { 
-        return new TransactionResult(document.Page.Root.ToInsertSteps());
+        return new TransactionResult(document.Root.ToInsertSteps());
     }
 }

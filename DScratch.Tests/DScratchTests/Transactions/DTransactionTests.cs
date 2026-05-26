@@ -13,7 +13,7 @@ public class DTransactionTests
     [SetUp]
     public void SetUp()
     {
-        Document = new DScratchDocument();
+        Document = new DScratchDocument("-1");
         Transaction = new DTransaction(Document, new TestNodeIdGenerator());
     }
 

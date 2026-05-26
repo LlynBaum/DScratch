@@ -1,4 +1,3 @@
-using DScratch.Client.Scripts;
 using DScratch.Client.Scripts.EventHandlers;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
@@ -10,7 +9,7 @@ namespace DScratch.Tests.WasmClientTests.EventHandlers;
 
 public class DeleteContentForwardHandlerTests
 {
-    private DScratchDocument document;
+    private DScratchDocument document = null!;
     private IDScratchService service;
 
     private DeleteContentForwardHandler handler;
@@ -21,7 +20,6 @@ public class DeleteContentForwardHandlerTests
     [SetUp]
     public void SetUp()
     {
-        document = new DScratchDocument();
         idGenerator = new TestNodeIdGenerator();
         service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator);
         
@@ -37,7 +35,7 @@ public class DeleteContentForwardHandlerTests
         {
             p.Char('a');
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(1));
@@ -63,7 +61,7 @@ public class DeleteContentForwardHandlerTests
                 char3 = txt.Char('a');
             });
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(2));
@@ -91,7 +89,7 @@ public class DeleteContentForwardHandlerTests
             });
             t.Text("c");
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(1));
@@ -118,7 +116,7 @@ public class DeleteContentForwardHandlerTests
             });
             t.Text("bc");
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(0));
@@ -144,7 +142,7 @@ public class DeleteContentForwardHandlerTests
             t.Text("def");
             t.Text("ghi");
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
@@ -184,7 +182,7 @@ public class DeleteContentForwardHandlerTests
             t.Text("def");
             t.Text("ghi");
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
@@ -218,7 +216,7 @@ public class DeleteContentForwardHandlerTests
         {
             t.Text("abcdef");
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
@@ -254,7 +252,7 @@ public class DeleteContentForwardHandlerTests
             t.Text("def");
             t.Text("ghi");
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));

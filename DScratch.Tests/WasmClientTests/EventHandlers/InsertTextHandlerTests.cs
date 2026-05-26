@@ -9,7 +9,7 @@ namespace DScratch.Tests.WasmClientTests.EventHandlers;
 
 public class InsertTextHandlerTests
 {
-    private DScratchDocument document;
+    private DScratchDocument document = null!;
     private IDScratchService service;
 
     private InsertTextHandler handler;
@@ -20,7 +20,6 @@ public class InsertTextHandlerTests
     [SetUp]
     public void SetUp()
     {
-        document = new DScratchDocument();
         idGenerator = new TestNodeIdGenerator();
         service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator);
 
@@ -39,7 +38,7 @@ public class InsertTextHandlerTests
                 c.Char('a');
             });
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(1));
@@ -64,7 +63,7 @@ public class InsertTextHandlerTests
         {
             t.Text("a");
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(0));
@@ -90,7 +89,7 @@ public class InsertTextHandlerTests
             t.Text("a");
             t.Text("a");
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(2));
@@ -116,7 +115,7 @@ public class InsertTextHandlerTests
             t.Text("a");
             t.Text("a");
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(1));
@@ -145,7 +144,7 @@ public class InsertTextHandlerTests
             t.Text("def");
             t.Text("ghi");
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
@@ -195,7 +194,7 @@ public class InsertTextHandlerTests
             t.Text("def");
             t.Text("ghi");
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
@@ -233,7 +232,7 @@ public class InsertTextHandlerTests
         {
             t.Text("abcdef");
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));
@@ -273,7 +272,7 @@ public class InsertTextHandlerTests
             t.Text("def");
             t.Text("ghi");
         });
-        document.Page.Root = parent;
+        document = new DScratchDocument(parent);
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(start, end));

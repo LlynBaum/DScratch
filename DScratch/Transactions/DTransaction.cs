@@ -9,7 +9,7 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
 
     public IReadOnlyList<IStep> Steps => steps;
 
-    public DNode Root => document.Page.Root;
+    public DNode Root => document.Root;
 
     public TransactionResult Commit()
     {

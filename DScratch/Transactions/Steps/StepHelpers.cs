@@ -14,6 +14,7 @@ internal static class StepHelpers
             
             return node switch
             {
+                RootNode => [..node.ChildNodes.SelectMany(c => c.ToInsertSteps())],
                 CharNode charNode => [new StepDiff.InsertTextDiff(path.Path, node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, charNode.Value.ToString())],
                 TextNode textNode => [new StepDiff.InsertTextDiff(path.Path, node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, textNode.TextContent)],
                 IInlineElement element => 
@@ -30,11 +31,12 @@ internal static class StepHelpers
             };
         }
         
-        public StepDiff ToDeleteSteps()
+        public StepDiff? ToDeleteSteps()
         {
             var path = node.GetElementPath();
             return node switch
             {
+                RootNode => null,
                 CharNode charNode => new StepDiff.DeleteTextDiff(path.Path, node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, 1),
                 TextNode textNode => new StepDiff.DeleteTextDiff(path.Path, node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, textNode.Length),
                 IElement => new StepDiff.DeleteElementDiff(path.Path),
@@ -58,6 +60,7 @@ internal static class StepHelpers
 
             return node switch
             {
+                RootNode => null,
                 CharNode charNode => new StepDiff.DeleteTextDiff(
                     Parent: path.Path, 
                     Offset: node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, 
@@ -70,12 +73,13 @@ internal static class StepHelpers
             };
         }
         
-        private StepDiff ToFinalizedMoveStep(NodePath oldPath)
+        private StepDiff? ToFinalizedMoveStep(NodePath oldPath)
         {
             var path = node.GetElementPath();
 
             return node switch
             {
+                RootNode => null,
                 CharNode charNode => new StepDiff.InsertTextDiff(
                     Parent: path.Path,
                     Offset: node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, 

@@ -4,7 +4,7 @@ public class DocumentVisualizer(DScratchDocument document)
 {
     public void Print()
     {
-        var visualizer = new TreeVisualizer(document.Page.Root);
+        var visualizer = new TreeVisualizer(document.Root);
         visualizer.Print();
     }
 }

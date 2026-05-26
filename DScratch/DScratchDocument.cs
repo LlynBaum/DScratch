@@ -4,19 +4,25 @@ namespace DScratch;
 
 public class DScratchDocument
 {
-    public DPage Page { get; }
+    public DNode Root { get; }
 
-    public DScratchDocument(DPage? page = null)
+    internal DScratchDocument(string initId)
     {
-        Page = page ?? DPage.Create(1);
+        Root = new RootNode();
+        Root.InsertChild(new ParagraphNode(initId, null, null));
+    }
+    
+    internal DScratchDocument(DNode root)
+    {
+        Root = root;
     }
     
     internal DNode? FindNode(NodePath path)
     {
         var pathPartIndex = 0;
-        var node = Page.Root;
+        var node = Root;
 
-        if (path.IsRoot) return Page.Root;
+        if (path.IsRoot) return Root;
         
         while (true)
         {

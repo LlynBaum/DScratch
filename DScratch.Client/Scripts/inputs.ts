@@ -41,7 +41,7 @@ function getPath(element: Element): string[] {
     const result: string[] = [];
     let current: Element | null = element;
 
-    while (current && !current.hasAttribute("contenteditable")) {
+    while (current && current.hasAttribute("data-path-id")) {
         result.push(current.getAttribute("data-path-id")!);
         current = current.parentElement;
     }
