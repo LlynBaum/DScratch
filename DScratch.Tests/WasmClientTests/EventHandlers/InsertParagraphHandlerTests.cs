@@ -127,6 +127,35 @@ public class InsertParagraphHandlerTests
     }
     
     [Test]
+    public void CreatesExpectedChanges_WithOffsetInBetweenText_WithTextNodeForEachChar_TwoInsertParagraph()
+    {
+        // Arrange
+        var parent = builder.Paragraph(t =>
+        {
+            t.Text("a");
+            t.Text("b");
+            t.Text("c");
+        });
+        
+        // Act
+        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 1));
+        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.RightOrigin!.GetElementPath(), 1)); // TODO: for some reason this get's stuck in a inf. loop
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
+            Assert.That(((TextNode)parent.FirstChild!).TextContent, Is.EqualTo("a"));
+            
+            Assert.That(parent.RightOrigin, Is.Not.Null);
+            Assert.That(parent.RightOrigin.Origin, Is.EqualTo(parent));
+            Assert.That(parent.RightOrigin.ChildNodes, Has.Count.EqualTo(2));
+            Assert.That(((TextNode)parent.RightOrigin.ChildNodes[0]).TextContent, Is.EqualTo("b"));
+            Assert.That(((TextNode)parent.RightOrigin.ChildNodes[1]).TextContent, Is.EqualTo("c"));
+        }
+    }
+    
+    [Test]
     public void CreatesExpectedChanges_WithSelection()
     {
         // Arrange
