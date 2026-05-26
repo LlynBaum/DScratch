@@ -35,7 +35,7 @@ public class InsertParagraphHandlerTests
         });
         
         // Act
-        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path, 0));
+        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 0));
 
         // Assert
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
@@ -59,7 +59,7 @@ public class InsertParagraphHandlerTests
         });
         
         // Act
-        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path, 3));
+        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 3));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -83,7 +83,7 @@ public class InsertParagraphHandlerTests
         });
         
         // Act
-        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path,1));
+        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(),1));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -110,7 +110,7 @@ public class InsertParagraphHandlerTests
         });
         
         // Act
-        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path, 1));
+        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 1));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -135,7 +135,7 @@ public class InsertParagraphHandlerTests
         });
         
         // Act
-        handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath().Path, 1, 4));
+        handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), 1, 4));
 
         builder.Print();
         

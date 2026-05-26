@@ -37,7 +37,7 @@ public class DeleteContentForwardHandlerTests
         });
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path, 1));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 1));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -62,7 +62,7 @@ public class DeleteContentForwardHandlerTests
         });
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path, 2));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 2));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -89,7 +89,7 @@ public class DeleteContentForwardHandlerTests
         });
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path, 1));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 1));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -115,7 +115,7 @@ public class DeleteContentForwardHandlerTests
         });
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath().Path, 0));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 0));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -140,7 +140,7 @@ public class DeleteContentForwardHandlerTests
         });
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath().Path, start, end));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -179,7 +179,7 @@ public class DeleteContentForwardHandlerTests
         });
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath().Path, start, end));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -211,8 +211,8 @@ public class DeleteContentForwardHandlerTests
             t.Text("abcdef");
         });
 
-        // Actparent.GetElementPath().Path,
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath().Path, start, end));
+        // Actparent.GetElementPath(),
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -247,7 +247,7 @@ public class DeleteContentForwardHandlerTests
         });
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath().Path, start, end));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, end));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();

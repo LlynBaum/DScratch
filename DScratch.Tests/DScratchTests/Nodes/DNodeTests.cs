@@ -426,7 +426,6 @@ public class DNodeTests
         var path = node.GetElementPath();
         
         // Assert
-        Assert.That(path, Has.Length.EqualTo(2));
-        Assert.That(path.Path, Is.EquivalentTo(["0", "2"]));
+        Assert.That(path.Path, Is.EquivalentTo(["root", "0", "2"]));
     }
 }
