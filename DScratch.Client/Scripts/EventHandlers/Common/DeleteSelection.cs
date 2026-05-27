@@ -1,3 +1,4 @@
+using DScratch.Client.Scripts.EventHandlers.Models;
 using DScratch.Nodes;
 using DScratch.Transactions;
 
@@ -5,7 +6,7 @@ namespace DScratch.Client.Scripts.EventHandlers.Common;
 
 public static class DeleteSelection
 {
-    public static (DNode? startNode, DNode? endNode) Handle(
+    public static NodeSearchResult Handle(
         KeyPressInfo keyPressInfo,
         ITransaction transaction, 
         DNode parent)
@@ -60,6 +61,8 @@ public static class DeleteSelection
         }
         
         transaction.DeleteRange(deleteStart ?? origin?.RightOrigin, rightOrigin);
-        return (origin, rightOrigin?.RightOrigin);
+        return new NodeSearchResult(
+            Origin: NodeInfo.Create(origin, originOffset, relativeOriginOffset), 
+            RightOrigin: NodeInfo.Create(rightOrigin?.RightOrigin, rightOriginOffset, relativeRightOriginOffset));
     }
 }

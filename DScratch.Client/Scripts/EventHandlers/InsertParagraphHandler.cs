@@ -1,7 +1,6 @@
 using DScratch.Client.Scripts.EventHandlers.Common;
 using DScratch.Nodes;
 using DScratch.Transactions;
-using DScratch.Transactions.Steps;
 
 namespace DScratch.Client.Scripts.EventHandlers;
 
@@ -31,7 +30,8 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorE
         }
         else
         {
-            (_, firstNodeToMove) = DeleteSelection.Handle(keyPressInfo, transaction, sibling);
+            var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, sibling);
+            firstNodeToMove = nodeSearchResult.RightOrigin?.Node;
         }
 
         var (origin, rightOrigin) = GetOrigins(keyPressInfo, sibling);

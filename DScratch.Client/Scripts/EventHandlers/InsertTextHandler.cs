@@ -1,4 +1,5 @@
 using DScratch.Client.Scripts.EventHandlers.Common;
+using DScratch.Client.Scripts.EventHandlers.Models;
 using DScratch.Nodes;
 using DScratch.Transactions;
 
@@ -23,29 +24,37 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
             throw new ArgumentException($"Parent with given path not found: {keyPressInfo.GetNodePath()}");
         }
 
+        NodeSearchResult nodeSearchResult;
         DNode? rightOrigin;
         DNode? origin;
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
-            (origin, rightOrigin) = SimpleInsert(keyPressInfo, parent);
+            nodeSearchResult = SimpleInsert(keyPressInfo, parent);
+            origin = nodeSearchResult.Origin?.Node;
+            rightOrigin = nodeSearchResult.RightOrigin?.Node;
         }
         else
         {
-            (origin, _) = DeleteSelection.Handle(keyPressInfo, transaction, parent);
+            nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, parent);
+            origin = nodeSearchResult.Origin?.Node;
             rightOrigin = origin?.RightOrigin;
         }
         
         var textNode = dScratchService.NodeFactory.String(keyPressInfo.Data, origin, rightOrigin);
         transaction.Insert(textNode, parent);
-        transaction.AddCursorPosition(parent.Id, 0); // TODO: get absolut position. Maybe add a record with all infos like absolut and relative offsets. And SimpleInsert and DeleteSelection and so on will return all those infos always.
+
+        var cursorPosition = nodeSearchResult.Origin?.AbsolutOffset ?? 0 + textNode.Length;
+        transaction.AddCursorPosition(parent.Id, cursorPosition);
         return dScratchService.Apply(transaction);
     }
 
-    private static (DNode? origin, DNode? rightOrigin) SimpleInsert(KeyPressInfo keyPressInfo, DNode parent)
+    private static NodeSearchResult SimpleInsert(KeyPressInfo keyPressInfo, DNode parent)
     {
         if (keyPressInfo.Selection.Offset <= 0)
         {
-            return (null, parent.FirstChild);
+            return new NodeSearchResult(
+                Origin: null, 
+                RightOrigin: NodeInfo.Create(parent.FirstChild, 0, 0));
         }
 
         var walker = new TreeWalker<TextNode>(parent);
@@ -64,6 +73,9 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
             currentNode = walker.NextSibling();
         }
 
-        return (currentNode, walker.NextSibling());
+        var relativeOffset = keyPressInfo.Selection.Offset - currentOffset;
+        return new NodeSearchResult(
+            Origin: NodeInfo.Create(currentNode, keyPressInfo.Selection.Offset, relativeOffset), 
+            RightOrigin: NodeInfo.Create(walker.NextSibling(), currentOffset + currentNode?.Length ?? 0, 0));
     }
 }

@@ -2,7 +2,6 @@ using DScratch.Client.Scripts.EventHandlers.Common;
 using DScratch.Nodes;
 using DScratch.Nodes.NodeTypes;
 using DScratch.Transactions;
-using DScratch.Transactions.Steps;
 
 namespace DScratch.Client.Scripts.EventHandlers;
 
@@ -22,6 +21,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
         
         // TODO: when selection is not just cursor position, but a selection, then delete everything that is selected.
 
+        int cursorPosition;
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
             // TODO: we can detect this, when simpleDelete has nothing found to delete, then we are at the end of the paragraph
@@ -32,13 +32,15 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
             }
             
             SimpleDeleteForward(keyPressInfo, transaction, parent);
+            cursorPosition = keyPressInfo.Selection.Offset - 1;
         }
         else
         {
-            DeleteSelection.Handle(keyPressInfo, transaction, parent);
+            var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, parent);
+            cursorPosition = nodeSearchResult.Origin?.AbsolutOffset ?? 0;
         }
         
-        transaction.AddCursorPosition(parent.Id, 0); // TODO: get absolut position. Maybe add a record with all infos like absolut and relative offsets. And SimpleInsert and DeleteSelection and so on will return all those infos always.
+        transaction.AddCursorPosition(parent.Id, cursorPosition);
         return dScratchService.Apply(transaction);
     }
     
