@@ -10,6 +10,8 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
         
         var steps = new List<StepDiff?>();
 
+        var existingFirstChild = targetParent.FirstChild;
+        
         if (end is null)
         {
             var previousOrigin = targetOrigin;
@@ -22,7 +24,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                 {
                     node.Remove();
                     node.Origin = origin;
-                    node.RightOrigin = origin?.RightOrigin ?? targetParent.FirstChild;
+                    node.RightOrigin = origin?.RightOrigin ?? existingFirstChild;
                     targetParent.InsertChild(node);
                 }));
                 
@@ -37,7 +39,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
             while (current is not null)
             {
                 var next = current.Origin;
-                var rightOrigin = previousRightOrigin ?? targetParent.FirstChild;
+                var rightOrigin = previousRightOrigin ?? existingFirstChild;
                 steps.AddRange(current.ToMoveStep(node =>
                 {
                     node.Remove();
@@ -62,7 +64,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                 {
                     node.Remove();
                     node.Origin = origin;
-                    node.RightOrigin = origin?.RightOrigin ?? targetParent.FirstChild;
+                    node.RightOrigin = origin?.RightOrigin ?? existingFirstChild;
                     targetParent.InsertChild(node);
                 }));
                 
@@ -76,7 +78,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                 {
                     node.Remove();
                     node.Origin = previousOrigin;
-                    node.RightOrigin = previousOrigin?.RightOrigin ?? targetParent.FirstChild;
+                    node.RightOrigin = previousOrigin?.RightOrigin ?? existingFirstChild;
                     targetParent.InsertChild(node);
                 }));
             }

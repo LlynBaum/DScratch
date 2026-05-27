@@ -139,6 +139,7 @@ public class InsertParagraphHandlerTests
         
         // Act
         handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 1));
+        builder.Print();
         handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.RightOrigin!.GetElementPath(), 1)); // TODO: for some reason this get's stuck in a inf. loop
 
         // Assert
@@ -149,9 +150,13 @@ public class InsertParagraphHandlerTests
             
             Assert.That(parent.RightOrigin, Is.Not.Null);
             Assert.That(parent.RightOrigin.Origin, Is.EqualTo(parent));
-            Assert.That(parent.RightOrigin.ChildNodes, Has.Count.EqualTo(2));
+            
+            Assert.That(parent.RightOrigin.ChildNodes, Has.Count.EqualTo(1));
             Assert.That(((TextNode)parent.RightOrigin.ChildNodes[0]).TextContent, Is.EqualTo("b"));
-            Assert.That(((TextNode)parent.RightOrigin.ChildNodes[1]).TextContent, Is.EqualTo("c"));
+            
+            Assert.That(parent.RightOrigin.RightOrigin, Is.Not.Null);
+            Assert.That(parent.RightOrigin.RightOrigin.ChildNodes, Has.Count.EqualTo(1));
+            Assert.That(((TextNode)parent.RightOrigin.RightOrigin.ChildNodes[0]).TextContent, Is.EqualTo("c"));
         }
     }
     
