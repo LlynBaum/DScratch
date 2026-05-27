@@ -4,11 +4,11 @@ namespace DScratch.Transactions.Steps;
 
 public class DeleteRangeStep(DNode? start, DNode? end) : IStep
 {
-    public IReadOnlyList<StepDiff> Execute()
+    public IReadOnlyList<StepDiff?> Execute()
     {
         if (start is null && end is null) return [];
 
-        var steps = new List<StepDiff>();
+        var steps = new List<StepDiff?>();
         
         if (end is null)
         {
