@@ -1,6 +1,4 @@
-using DScratch.Transactions;
-
-namespace DScratch.Client.Scripts;
+namespace DScratch.Transactions;
 
 public sealed record CursorPosition(string[] Parent, int Offset);
 

@@ -37,7 +37,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             DeleteSelection.Handle(keyPressInfo, transaction, parent);
         }
         
-        return new TransactionResult(dScratchService.Apply(transaction));
+        return dScratchService.Apply(transaction);
     }
 
     private static void SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)

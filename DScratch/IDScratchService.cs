@@ -8,7 +8,7 @@ public interface IDScratchService
     
     ITransaction StartTransaction();
     
-    IReadOnlyList<StepDiff?> Apply(ITransaction transaction);
+    TransactionResult Apply(ITransaction transaction);
     
-    IReadOnlyList<StepDiff?> InitialTransaction();
+    TransactionResult InitialTransaction();
 }

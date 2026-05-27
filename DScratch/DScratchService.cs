@@ -23,14 +23,14 @@ public class DScratchService(INodeFactory nodeFactory, INodeIdGenerator nodeIdGe
         return new DTransaction(document, nodeIdGenerator);
     }
     
-    public IReadOnlyList<StepDiff?> Apply(ITransaction transaction)
+    public TransactionResult Apply(ITransaction transaction)
     {
         transactions.Push(transaction);
         return transaction.Commit();
     }
 
-    public IReadOnlyList<StepDiff?> InitialTransaction()
+    public TransactionResult InitialTransaction()
     { 
-        return document.Root.ToInsertSteps();
+        return new TransactionResult(document.Root.ToInsertSteps());
     }
 }

@@ -42,7 +42,8 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorE
         {
             transaction.MoveRange(firstNodeToMove, null, paragraph, null);
         }
-        return new TransactionResult(dScratchService.Apply(transaction)); // TODO
+
+        return dScratchService.Apply(transaction);
     }
 
     private static DNode? SimpleInsert(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)

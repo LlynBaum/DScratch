@@ -38,7 +38,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
             DeleteSelection.Handle(keyPressInfo, transaction, parent);
         }
         
-        return new TransactionResult(dScratchService.Apply(transaction));
+        return dScratchService.Apply(transaction);
     }
     
     private static void SimpleDeleteForward(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)

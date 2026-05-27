@@ -38,7 +38,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         
         var textNode = dScratchService.NodeFactory.String(keyPressInfo.Data, origin, rightOrigin);
         transaction.Insert(textNode, parent);
-        return new TransactionResult(dScratchService.Apply(transaction));
+        return dScratchService.Apply(transaction);
     }
 
     private static (DNode? origin, DNode? rightOrigin) SimpleInsert(KeyPressInfo keyPressInfo, DNode parent)
