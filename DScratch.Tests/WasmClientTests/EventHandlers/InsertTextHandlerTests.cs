@@ -27,6 +27,8 @@ public class InsertTextHandlerTests
         handler = new InsertTextHandler(service);
     }
     
+    // TODO: test cursor position and switch to AssertHelper
+    
     [Test]
     public void Handle_CreatesExpectedChanges()
     {

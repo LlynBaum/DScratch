@@ -35,7 +35,7 @@ public class InsertParagraphHandlerTests
         });
         
         // Act
-        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 0));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 0));
 
         // Assert
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
@@ -47,6 +47,7 @@ public class InsertParagraphHandlerTests
             Assert.That(parent.Origin.RightOrigin, Is.EqualTo(parent));
             Assert.That(parent.Origin.ChildNodes, Has.Count.Zero);
         }
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Origin.Id, 0);
     }
     
     [Test]
@@ -59,7 +60,7 @@ public class InsertParagraphHandlerTests
         });
         
         // Act
-        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 3));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 3));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -71,6 +72,7 @@ public class InsertParagraphHandlerTests
             Assert.That(parent.RightOrigin.Origin, Is.EqualTo(parent));
             Assert.That(parent.RightOrigin.ChildNodes, Has.Count.Zero);
         }
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin.Id, 0);
     }
     
     [Test]
@@ -83,7 +85,7 @@ public class InsertParagraphHandlerTests
         });
         
         // Act
-        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(),1));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(),1));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -96,6 +98,7 @@ public class InsertParagraphHandlerTests
             Assert.That(parent.RightOrigin.ChildNodes, Has.Count.EqualTo(1));
             Assert.That(((TextNode)parent.RightOrigin.FirstChild!).TextContent, Is.EqualTo("bc"));
         }
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin.Id, 0);
     }
     
     [Test]
@@ -110,7 +113,7 @@ public class InsertParagraphHandlerTests
         });
         
         // Act
-        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 1));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 1));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -124,6 +127,7 @@ public class InsertParagraphHandlerTests
             Assert.That(((TextNode)parent.RightOrigin.ChildNodes[0]).TextContent, Is.EqualTo("b"));
             Assert.That(((TextNode)parent.RightOrigin.ChildNodes[1]).TextContent, Is.EqualTo("c"));
         }
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin.Id, 0);
     }
     
     [Test]
@@ -138,9 +142,8 @@ public class InsertParagraphHandlerTests
         });
         
         // Act
-        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 1));
-        builder.Print();
-        handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.RightOrigin!.GetElementPath(), 1)); // TODO: for some reason this get's stuck in a inf. loop
+        var result1 = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 1));
+        var result2 = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.RightOrigin!.GetElementPath(), 1));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -158,6 +161,8 @@ public class InsertParagraphHandlerTests
             Assert.That(parent.RightOrigin.RightOrigin.ChildNodes, Has.Count.EqualTo(1));
             Assert.That(((TextNode)parent.RightOrigin.RightOrigin.ChildNodes[0]).TextContent, Is.EqualTo("c"));
         }
+        AssertHelper.ThatCursorPositionEqualTo(result1.CursorPosition, parent.RightOrigin.Id, 0);
+        AssertHelper.ThatCursorPositionEqualTo(result2.CursorPosition, parent.RightOrigin.RightOrigin.Id, 0);
     }
     
     [Test]
@@ -170,9 +175,7 @@ public class InsertParagraphHandlerTests
         });
         
         // Act
-        handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), 1, 4));
-
-        builder.Print();
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), 1, 4));
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -186,5 +189,6 @@ public class InsertParagraphHandlerTests
             Assert.That(parent.RightOrigin.ChildNodes, Has.Count.EqualTo(1));
             Assert.That(((TextNode)parent.RightOrigin.FirstChild!).TextContent, Is.EqualTo("e"));
         }
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin.Id, 0);
     }
 }
