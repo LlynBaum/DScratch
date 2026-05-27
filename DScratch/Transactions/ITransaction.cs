@@ -7,7 +7,7 @@ public interface ITransaction
 {
     DNode Root { get; }
     
-    internal TransactionResult Commit();
+    internal IReadOnlyList<StepDiff?> Commit();
 
     ITransaction Insert(DNode node, DNode parent);
 

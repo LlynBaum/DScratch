@@ -36,8 +36,8 @@ public class DTransactionTests
             Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
         }
         
-        Assert.That(result.Diffs, Has.Count.EqualTo(1));
-        Assert.That(result.Diffs.Single(), Is.TypeOf<TestStepDiff>());
+        Assert.That(result, Has.Count.EqualTo(1));
+        Assert.That(result.Single(), Is.TypeOf<TestStepDiff>());
     }
     
     [Test]

@@ -1,5 +1,4 @@
 using DScratch.Transactions;
-using DScratch.Transactions.Steps;
 
 namespace DScratch;
 
@@ -9,7 +8,7 @@ public interface IDScratchService
     
     ITransaction StartTransaction();
     
-    TransactionResult Apply(ITransaction transaction);
+    IReadOnlyList<StepDiff?> Apply(ITransaction transaction);
     
-    TransactionResult InitialTransaction();
+    IReadOnlyList<StepDiff?> InitialTransaction();
 }

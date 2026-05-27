@@ -1,3 +1,4 @@
+using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 
 namespace DScratch.Client.Scripts.EventHandlers;

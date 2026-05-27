@@ -1,5 +1,6 @@
 using DScratch.Client.Scripts.EventHandlers.Common;
 using DScratch.Nodes;
+using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 
 namespace DScratch.Client.Scripts.EventHandlers;
@@ -37,7 +38,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         
         var textNode = dScratchService.NodeFactory.String(keyPressInfo.Data, origin, rightOrigin);
         transaction.Insert(textNode, parent);
-        return dScratchService.Apply(transaction);
+        return new TransactionResult(dScratchService.Apply(transaction));
     }
 
     private static (DNode? origin, DNode? rightOrigin) SimpleInsert(KeyPressInfo keyPressInfo, DNode parent)

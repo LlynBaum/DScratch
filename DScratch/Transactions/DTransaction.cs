@@ -11,10 +11,9 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
 
     public DNode Root => document.Root;
 
-    public TransactionResult Commit()
+    public IReadOnlyList<StepDiff?> Commit()
     {
-        var diffs = steps.SelectMany(s => s.Execute()).ToList();
-        return new TransactionResult(diffs);
+        return steps.SelectMany(s => s.Execute()).ToList();
     }
     
     public ITransaction Insert(DNode node, DNode parent)

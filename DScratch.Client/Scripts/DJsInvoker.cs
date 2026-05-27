@@ -1,3 +1,4 @@
+using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 using Microsoft.JSInterop;
 
@@ -12,6 +13,6 @@ public sealed class DJsInvoker(IJSRuntime jsRuntime)
 
     public async Task ApplyTransaction(TransactionResult transactionResult)
     {
-        await jsRuntime.InvokeVoidAsync(ScriptConstants.ApplyTransactionJs, transactionResult.Diffs);
+        await jsRuntime.InvokeVoidAsync(ScriptConstants.ApplyTransactionJs, transactionResult.Steps);
     }
 }

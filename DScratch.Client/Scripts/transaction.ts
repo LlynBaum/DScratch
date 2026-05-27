@@ -8,6 +8,16 @@ enum StepType {
     moveBlock = "moveBlock",
 }
 
+interface CursorPosition {
+    parent: string[];
+    offset: number;
+}
+
+interface TransactionResult {
+    steps: Array<Step | null | undefined>;
+    finalCursor: CursorPosition | null;
+}
+
 interface Step {
     type: StepType;
 }
@@ -54,8 +64,11 @@ interface MoveBlockStep extends Step {
     previousSibling: string[] | null;
 }
 
-export function applyTransaction(transaction: Array<Step | null | undefined>){
-    transaction.map(handle);
+export function applyTransaction(transaction: TransactionResult){
+    transaction.steps.map(handle);
+    if (transaction.finalCursor) {
+        setSelection(transaction.finalCursor);
+    }
     
     function handle(step?: Step | null) {
         if(!step) return;
@@ -93,11 +106,9 @@ function handleInsertTextStep(step: InsertTextStep) {
     if(node) {
         const text = node.textContent;
         node.textContent = text.slice(0, relativeOffset) + step.text + text.slice(relativeOffset);
-        setSelection(node, relativeOffset + 1);
     } else {
         const createdNode = document.createTextNode(step.text);
         element.appendChild(createdNode);
-        setSelection(createdNode, step.text.length);
     }
 }
 
@@ -109,7 +120,6 @@ function handleDeleteTextStep(step: DeleteTextStep) {
     if(node) {
         const text = node.textContent;
         node.textContent = text.slice(0, relativeOffset) + text.slice(relativeOffset + step.length);
-        setSelection(node, relativeOffset);
     }
 }
 
@@ -119,7 +129,6 @@ function handleInsertElementInlineStep(step: InsertElementInlineStep) {
 
     const element = createElement(step.tagName, step.newNodeId);
     insertElementInline(element, parent, step.offset);
-    setSelection(element, 0);
 }
 
 function handleInsertElementBlockStep(step: InsertElementBlockStep) {
@@ -137,7 +146,7 @@ function handleDeleteElementStep(step: DeleteElementStep) {
     if (!element) return;
     
     element.remove();
-   // TODO: this might work out of the box of the browser, but check. Else seek for the a previous text node and set selection there. 
+   // TODO: this might work out of the box of the browser, but check. Else seek for the a previous text node and set selection there.
 }
 
 function handleMoveInlineStep(step: MoveInlineStep) {
@@ -214,12 +223,14 @@ function findTextNodeAtOffset(parent: Element, offset: number){
     return { node: null, relativeOffset: 0 };
 }
 
-function setSelection(node: Node, offset: number) {
+function setSelection(cursorPosition: CursorPosition) {
+    const node = findNode(cursorPosition.parent) as Node;
+    
     const selection = window.getSelection();
     selection?.removeAllRanges();
 
     const range = document.createRange();
-    range.setStart(node, offset);
+    range.setStart(node, cursorPosition.offset);
     range.collapse(true);
     selection?.addRange(range)
 }

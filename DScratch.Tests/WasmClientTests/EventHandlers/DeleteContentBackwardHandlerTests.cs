@@ -68,9 +68,9 @@ public class DeleteContentBackwardHandlerTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(char3.IsDeleted, Is.True);
-            Assert.That(result.Diffs, Has.Count.EqualTo(1));
+            Assert.That(result.Steps, Has.Count.EqualTo(1));
         }
-        Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
+        Assert.That(result.Steps[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
     }
     
     [Test]
@@ -95,9 +95,9 @@ public class DeleteContentBackwardHandlerTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(char2.IsDeleted, Is.True);
-            Assert.That(result.Diffs, Has.Count.EqualTo(1));
+            Assert.That(result.Steps, Has.Count.EqualTo(1));
         }
-        Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
+        Assert.That(result.Steps[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
     }
     
     [Test]
@@ -121,9 +121,9 @@ public class DeleteContentBackwardHandlerTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(char1.IsDeleted, Is.True);
-            Assert.That(result.Diffs, Has.Count.EqualTo(1));
+            Assert.That(result.Steps, Has.Count.EqualTo(1));
         }
-        Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
+        Assert.That(result.Steps[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
     }
     
     [Test]
@@ -159,9 +159,9 @@ public class DeleteContentBackwardHandlerTests
             Assert.That(parent.ChildNodes[4], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("ghi"));
             
-            Assert.That(result.Diffs, Has.Count.EqualTo(2));
-            Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result.Diffs[1], Is.TypeOf<StepDiff.DeleteTextDiff>());
+            Assert.That(result.Steps, Has.Count.EqualTo(2));
+            Assert.That(result.Steps[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
+            Assert.That(result.Steps[1], Is.TypeOf<StepDiff.DeleteTextDiff>());
         }
     }
     
@@ -195,8 +195,8 @@ public class DeleteContentBackwardHandlerTests
             Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ghi"));
             
-            Assert.That(result.Diffs, Has.Count.EqualTo(1));
-            Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
+            Assert.That(result.Steps, Has.Count.EqualTo(1));
+            Assert.That(result.Steps[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
         }
     }
     
@@ -228,8 +228,8 @@ public class DeleteContentBackwardHandlerTests
             Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ef"));
             
-            Assert.That(result.Diffs, Has.Count.EqualTo(1));
-            Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
+            Assert.That(result.Steps, Has.Count.EqualTo(1));
+            Assert.That(result.Steps[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
         }
     }
     
@@ -263,8 +263,8 @@ public class DeleteContentBackwardHandlerTests
             Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
             
-            Assert.That(result.Diffs, Has.Count.EqualTo(1));
-            Assert.That(result.Diffs[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
+            Assert.That(result.Steps, Has.Count.EqualTo(1));
+            Assert.That(result.Steps[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
         }
     }
 }

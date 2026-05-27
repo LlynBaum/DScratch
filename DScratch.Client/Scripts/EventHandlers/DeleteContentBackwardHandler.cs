@@ -2,7 +2,6 @@ using DScratch.Client.Scripts.EventHandlers.Common;
 using DScratch.Nodes;
 using DScratch.Nodes.NodeTypes;
 using DScratch.Transactions;
-using DScratch.Transactions.Steps;
 
 namespace DScratch.Client.Scripts.EventHandlers;
 
@@ -38,7 +37,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             DeleteSelection.Handle(keyPressInfo, transaction, parent);
         }
         
-        return dScratchService.Apply(transaction);
+        return new TransactionResult(dScratchService.Apply(transaction));
     }
 
     private static void SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
