@@ -43,6 +43,7 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorE
             transaction.MoveRange(firstNodeToMove, null, paragraph, null);
         }
 
+        transaction.AddCursorPosition(paragraph.Id, 0);
         return dScratchService.Apply(transaction);
     }
 

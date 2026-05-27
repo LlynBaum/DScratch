@@ -37,6 +37,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             DeleteSelection.Handle(keyPressInfo, transaction, parent);
         }
         
+        transaction.AddCursorPosition(parent.Id, 0); // TODO: get absolut position. Maybe add a record with all infos like absolut and relative offsets. And SimpleInsert and DeleteSelection and so on will return all those infos always.
         return dScratchService.Apply(transaction);
     }
 

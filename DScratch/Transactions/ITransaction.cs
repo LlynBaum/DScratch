@@ -15,6 +15,8 @@ public interface ITransaction
     ITransaction DeleteRange(DNode? start, DNode? end);
     
     ITransaction MoveRange(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin);
+    
+    ITransaction AddCursorPosition(string nodeId, int offset);
 
     DNode? FindNode(NodePath path);
 

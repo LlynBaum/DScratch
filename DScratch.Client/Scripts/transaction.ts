@@ -9,7 +9,7 @@ enum StepType {
 }
 
 interface CursorPosition {
-    parent: string[];
+    parentId: string;
     offset: number;
 }
 
@@ -224,7 +224,7 @@ function findTextNodeAtOffset(parent: Element, offset: number){
 }
 
 function setSelection(cursorPosition: CursorPosition) {
-    const node = findNode(cursorPosition.parent) as Node;
+    const node = findNode([cursorPosition.parentId]) as Node;
     
     const selection = window.getSelection();
     selection?.removeAllRanges();

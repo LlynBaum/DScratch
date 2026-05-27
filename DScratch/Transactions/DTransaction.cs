@@ -11,9 +11,11 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
 
     public DNode Root => document.Root;
 
+    private CursorPosition? cursorPosition;
+
     public TransactionResult Commit()
     {
-        return new TransactionResult(steps.SelectMany(s => s.Execute()).ToList());
+        return new TransactionResult(steps.SelectMany(s => s.Execute()).ToList(), cursorPosition);
     }
     
     public ITransaction Insert(DNode node, DNode parent)
@@ -37,6 +39,12 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
     public ITransaction MoveRange(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin)
     {
         steps.Add(new MoveRangeStep(start, end, targetParent, targetOrigin));
+        return this;
+    }
+
+    public ITransaction AddCursorPosition(string nodeId, int offset)
+    {
+        cursorPosition = new CursorPosition(nodeId, offset);
         return this;
     }
 
