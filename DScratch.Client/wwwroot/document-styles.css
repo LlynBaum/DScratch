@@ -14,5 +14,6 @@
     p {
         color: currentColor;
         margin: var(--paragraph-gap) 0;
+        min-height: 1lh;
     }
 }
