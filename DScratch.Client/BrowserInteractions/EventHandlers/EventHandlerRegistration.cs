@@ -1,4 +1,4 @@
-namespace DScratch.Client.Scripts.EventHandlers;
+namespace DScratch.Client.BrowserInteractions.EventHandlers;
 
 public static class EventHandlerRegistration
 {

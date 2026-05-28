@@ -1,8 +1,7 @@
 using DScratch.Transactions;
-using DScratch.Transactions.Steps;
 using Microsoft.JSInterop;
 
-namespace DScratch.Client.Scripts;
+namespace DScratch.Client.BrowserInteractions;
 
 public sealed class DJsInvoker(IJSRuntime jsRuntime)
 {

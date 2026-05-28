@@ -1,8 +1,8 @@
-using DScratch.Client.Scripts.EventHandlers.Common;
+using DScratch.Client.BrowserInteractions.EventHandlers.Common;
 using DScratch.Nodes;
 using DScratch.Transactions;
 
-namespace DScratch.Client.Scripts.EventHandlers;
+namespace DScratch.Client.BrowserInteractions.EventHandlers;
 
 public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorEventHandler
 {

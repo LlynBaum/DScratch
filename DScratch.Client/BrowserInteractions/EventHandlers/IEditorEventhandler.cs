@@ -1,7 +1,6 @@
 using DScratch.Transactions;
-using DScratch.Transactions.Steps;
 
-namespace DScratch.Client.Scripts.EventHandlers;
+namespace DScratch.Client.BrowserInteractions.EventHandlers;
 
 public interface IEditorEventHandler
 {

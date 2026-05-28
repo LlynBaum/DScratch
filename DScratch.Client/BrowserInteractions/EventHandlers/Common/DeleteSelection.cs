@@ -1,8 +1,8 @@
-using DScratch.Client.Scripts.EventHandlers.Models;
+using DScratch.Client.BrowserInteractions.EventHandlers.Models;
 using DScratch.Nodes;
 using DScratch.Transactions;
 
-namespace DScratch.Client.Scripts.EventHandlers.Common;
+namespace DScratch.Client.BrowserInteractions.EventHandlers.Common;
 
 public static class DeleteSelection
 {

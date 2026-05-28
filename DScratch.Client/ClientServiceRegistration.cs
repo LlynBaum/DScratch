@@ -1,5 +1,5 @@
-using DScratch.Client.Scripts;
-using DScratch.Client.Scripts.EventHandlers;
+using DScratch.Client.BrowserInteractions;
+using DScratch.Client.BrowserInteractions.EventHandlers;
 
 namespace DScratch.Client;
 

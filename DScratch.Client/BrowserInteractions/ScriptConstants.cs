@@ -1,4 +1,4 @@
-namespace DScratch.Client.Scripts;
+namespace DScratch.Client.BrowserInteractions;
 
 public static class ScriptConstants
 {

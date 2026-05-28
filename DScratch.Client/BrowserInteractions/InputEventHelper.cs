@@ -1,7 +1,7 @@
-using DScratch.Client.Scripts.EventHandlers;
+using DScratch.Client.BrowserInteractions.EventHandlers;
 using Microsoft.JSInterop;
 
-namespace DScratch.Client.Scripts;
+namespace DScratch.Client.BrowserInteractions;
 
 public class InputEventHelper(DJsInvoker jsInvoker, IServiceProvider serviceProvider, ILogger<InputEventHelper> logger)
 {

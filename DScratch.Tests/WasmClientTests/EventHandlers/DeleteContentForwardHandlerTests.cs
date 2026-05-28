@@ -1,4 +1,4 @@
-using DScratch.Client.Scripts.EventHandlers;
+using DScratch.Client.BrowserInteractions.EventHandlers;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
 using DScratch.Tests.WasmClientTests.Helpers;

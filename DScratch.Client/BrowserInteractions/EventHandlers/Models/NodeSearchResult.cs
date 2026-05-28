@@ -1,6 +1,6 @@
 using DScratch.Nodes;
 
-namespace DScratch.Client.Scripts.EventHandlers.Models;
+namespace DScratch.Client.BrowserInteractions.EventHandlers.Models;
 
 public record NodeSearchResult(NodeInfo? Origin, NodeInfo? RightOrigin);
 
