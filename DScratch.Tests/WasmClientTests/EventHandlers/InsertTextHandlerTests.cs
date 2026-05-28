@@ -246,7 +246,7 @@ public class InsertTextHandlerTests
         AssertHelper.ThatStepsEqualTo(result.Steps, 
             Is.TypeOf<StepDiff.DeleteTextDiff>(),
             Is.TypeOf<StepDiff.InsertTextDiff>());
-        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 4);
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 5);
     }
     
     [Test]

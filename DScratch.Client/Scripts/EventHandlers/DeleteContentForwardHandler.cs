@@ -1,4 +1,5 @@
 using DScratch.Client.Scripts.EventHandlers.Common;
+using DScratch.Client.Scripts.EventHandlers.Models;
 using DScratch.Nodes;
 using DScratch.Nodes.NodeTypes;
 using DScratch.Transactions;
@@ -18,10 +19,8 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
         {
             throw new ArgumentException($"Parent with given path not found: {keyPressInfo.GetNodePath()}");
         }
-        
-        // TODO: when selection is not just cursor position, but a selection, then delete everything that is selected.
 
-        int cursorPosition;
+        int? cursorPosition;
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
             // TODO: we can detect this, when simpleDelete has nothing found to delete, then we are at the end of the paragraph
@@ -31,20 +30,20 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
                 throw new NotImplementedException();
             }
             
-            SimpleDeleteForward(keyPressInfo, transaction, parent);
-            cursorPosition = keyPressInfo.Selection.Offset - 1;
+            var deletedNodeInfo = SimpleDeleteForward(keyPressInfo, transaction, parent);
+            cursorPosition = deletedNodeInfo?.AbsolutOffset;
         }
         else
         {
             var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, parent);
-            cursorPosition = nodeSearchResult.Origin?.AbsolutOffset ?? 0;
+            cursorPosition = nodeSearchResult.Origin?.AbsolutOffset;
         }
         
-        transaction.AddCursorPosition(parent.Id, cursorPosition);
+        if (cursorPosition is not null) transaction.AddCursorPosition(parent.Id, cursorPosition.Value);
         return dScratchService.Apply(transaction);
     }
     
-    private static void SimpleDeleteForward(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
+    private static NodeInfo? SimpleDeleteForward(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
     {
         var walker = new TreeWalker<TextNode>(parent);
         
@@ -62,10 +61,13 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
             current = walker.NextNode();
         }
 
-        var nodeToDelete = current?.ChildAt(keyPressInfo.Selection.Offset - currentOffset);
+        var relativeOffset = keyPressInfo.Selection.Offset - currentOffset;
+        var nodeToDelete = current?.ChildAt(relativeOffset);
         if (nodeToDelete is not null)
         {
             transaction.Delete(nodeToDelete);
         }
+
+        return NodeInfo.Create(nodeToDelete, keyPressInfo.Selection.Offset, relativeOffset);
     }
 }

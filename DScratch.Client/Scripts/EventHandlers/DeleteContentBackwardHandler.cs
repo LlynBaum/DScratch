@@ -1,4 +1,5 @@
 using DScratch.Client.Scripts.EventHandlers.Common;
+using DScratch.Client.Scripts.EventHandlers.Models;
 using DScratch.Nodes;
 using DScratch.Nodes.NodeTypes;
 using DScratch.Transactions;
@@ -18,9 +19,8 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         {
             throw new ArgumentException($"Parent with given path not found: {keyPressInfo.GetNodePath()}");
         }
-        
-        // TODO: when selection is not just cursor position, but a selection, then delete everything that is selected.
 
+        int? cursorPosition;
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
             // TODO: we can detect this, when simpleDelete has nothing found to delete, then we are at the start of the paragraph
@@ -30,18 +30,20 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
                 throw new NotImplementedException();
             }
             
-            SimpleDeleteBackwards(keyPressInfo, transaction, parent);
+            var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, parent);
+            cursorPosition = deletedNodeInfo?.AbsolutOffset;
         }
         else
         {
-            DeleteSelection.Handle(keyPressInfo, transaction, parent);
+            var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, parent);
+            cursorPosition = nodeSearchResult.Origin?.AbsolutOffset;
         }
         
-        transaction.AddCursorPosition(parent.Id, 0); // TODO: get absolut position. Maybe add a record with all infos like absolut and relative offsets. And SimpleInsert and DeleteSelection and so on will return all those infos always.
+        if (cursorPosition is not null) transaction.AddCursorPosition(parent.Id, cursorPosition.Value);
         return dScratchService.Apply(transaction);
     }
 
-    private static void SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
+    private static NodeInfo? SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
     {
         var walker = new TreeWalker<TextNode>(parent);
         
@@ -59,10 +61,13 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             current = walker.NextNode();
         }
 
-        var nodeToDelete = current?.ChildAt(keyPressInfo.Selection.Offset - currentOffset - 1);
+        var relativeOffset = keyPressInfo.Selection.Offset - currentOffset - 1;
+        var nodeToDelete = current?.ChildAt(relativeOffset);
         if (nodeToDelete is not null)
         {
             transaction.Delete(nodeToDelete);
         }
+        
+        return NodeInfo.Create(nodeToDelete, keyPressInfo.Selection.Offset - 1, relativeOffset);
     }
 }

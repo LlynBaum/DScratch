@@ -43,7 +43,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         var textNode = dScratchService.NodeFactory.String(keyPressInfo.Data, origin, rightOrigin);
         transaction.Insert(textNode, parent);
 
-        var cursorPosition = nodeSearchResult.Origin?.AbsolutOffset ?? 0 + textNode.Length;
+        var cursorPosition = (nodeSearchResult.Origin?.AbsolutOffset ?? 0) + textNode.Length;
         transaction.AddCursorPosition(parent.Id, cursorPosition);
         return dScratchService.Apply(transaction);
     }

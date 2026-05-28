@@ -154,7 +154,7 @@ public class DeleteContentBackwardHandlerTests
             AssertHelper.ThatStepsEqualTo(actual: result.Steps, expected: [
                 Is.TypeOf<StepDiff.DeleteTextDiff>(), 
                 Is.TypeOf<StepDiff.DeleteTextDiff>()]);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 2);
         }
     }
     
