@@ -26,3 +26,22 @@ export function getElementFromNode(node: Node): Element {
         ? node as Element
         : node.parentElement?.closest("[data-dnode-id]")!;
 }
+
+export function findTextNodeAtOffset(parent: Element, offset: number){
+    const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
+
+    let currentOffset = 0;
+    let currentNode = walker.nextNode() as Text | null;
+
+    while (currentNode) {
+        const nodeLength = currentNode.textContent?.length || 0;
+
+        if (currentOffset + nodeLength >= offset) {
+            return { node: currentNode, relativeOffset: offset - currentOffset };
+        }
+
+        currentOffset += nodeLength;
+        currentNode = walker.nextNode() as Text | null;
+    }
+    return { node: null, relativeOffset: 0 };
+}

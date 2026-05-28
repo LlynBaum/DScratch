@@ -12,6 +12,6 @@ public sealed class DJsInvoker(IJSRuntime jsRuntime)
 
     public async Task ApplyTransaction(TransactionResult transactionResult)
     {
-        await jsRuntime.InvokeVoidAsync(ScriptConstants.ApplyTransactionJs, transactionResult.Steps);
+        await jsRuntime.InvokeVoidAsync(ScriptConstants.ApplyTransactionJs, transactionResult);
     }
 }

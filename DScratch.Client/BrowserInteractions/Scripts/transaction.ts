@@ -1,4 +1,5 @@
-import {setSelection} from "./selection";
+import {saveSelection, setSelection} from "./selection";
+import {findTextNodeAtOffset} from "./nodeHelper";
 
 enum StepType {
     insertText = "insertText",
@@ -17,7 +18,7 @@ interface CursorPosition {
 
 interface TransactionResult {
     steps: Array<Step | null | undefined>;
-    finalCursor: CursorPosition | null;
+    cursorPosition: CursorPosition | null;
 }
 
 interface Step {
@@ -67,10 +68,10 @@ interface MoveBlockStep extends Step {
 }
 
 export function applyTransaction(transaction: TransactionResult){
-    const selection = window.getSelection();
+    saveSelection();
     transaction.steps.map(handle);
-    if (transaction.finalCursor) {
-        setSelection(transaction.finalCursor.parentId, transaction.finalCursor.offset, selection);
+    if (transaction.cursorPosition) {
+        setSelection(transaction.cursorPosition.parentId, transaction.cursorPosition.offset);
     }
     
     function handle(step?: Step | null) {
@@ -205,23 +206,4 @@ function findNode(path: string[]) : HTMLElement | null {
         console.error(`Could not find node at path '${query}'.`);
     }
     return element;
-}
-
-function findTextNodeAtOffset(parent: Element, offset: number){
-    const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
-    
-    let currentOffset = 0;
-    let currentNode = walker.nextNode() as Text | null;
-    
-    while (currentNode) {
-        const nodeLength = currentNode.textContent?.length || 0;
-
-        if (currentOffset + nodeLength >= offset) {
-            return { node: currentNode, relativeOffset: offset - currentOffset };
-        }
-
-        currentOffset += nodeLength;
-        currentNode = walker.nextNode() as Text | null;
-    }
-    return { node: null, relativeOffset: 0 };
 }

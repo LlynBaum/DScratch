@@ -1,4 +1,4 @@
-import {getAbsolutOffset, getElementFromNode} from "./nodeHelper";
+import {findTextNodeAtOffset, getAbsolutOffset, getElementFromNode} from "./nodeHelper";
 
 interface SelectionSnapshot {
     selection: Selection | null;
@@ -8,7 +8,13 @@ interface SelectionSnapshot {
     endPath: string[] | null;
 }
 
+interface SelectionInfo {
+    anchorOffset: number;
+    anchorNode: Node | null;
+}
+
 let snapshot: SelectionSnapshot | null = null;
+let currentSelection: SelectionInfo | null = null;
 
 export function snapshotSelection(offset: number, path: string[], endOffset: number, endPath: string[]) {
     snapshot = {
@@ -24,7 +30,20 @@ export function resetSnapshot() {
     snapshot = null;
 }
 
-export function setSelection(parentId: string, offset: number, currentSelection: Selection | null) {
+export function saveSelection() {
+    const selection = window.getSelection();
+    if (!selection) {
+        currentSelection = null;
+        return;
+    }
+    
+    currentSelection = {
+        anchorOffset: selection.anchorOffset,
+        anchorNode: selection.anchorNode
+    };
+}
+
+export function setSelection(parentId: string, offset: number) {
     if (!currentSelection) {
         resetSnapshot();
         return;
@@ -61,13 +80,22 @@ export function setSelection(parentId: string, offset: number, currentSelection:
 }
 
 function setSelectionFrom(parentId: string, offset: number) {
-    const node = document.querySelector<HTMLElement>(`[data-dnode-id="${parentId}"]`) as Node;
+    const element = document.querySelector<HTMLElement>(`[data-dnode-id="${parentId}"]`);
+    if (!element) return;
+    
+    const { node, relativeOffset } = findTextNodeAtOffset(element, offset);
 
     const selection = window.getSelection();
     selection?.removeAllRanges();
-
+    
     const range = document.createRange();
-    range.setStart(node, offset);
+    
+    if (node) {
+        range.setStart(node, relativeOffset);
+    } else {
+        range.setStart(element, 0);
+    }
+    
     range.collapse(true);
     selection?.addRange(range)
 }
