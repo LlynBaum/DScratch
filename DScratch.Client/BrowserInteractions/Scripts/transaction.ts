@@ -1,3 +1,5 @@
+import {setSelection} from "./selection";
+
 enum StepType {
     insertText = "insertText",
     deleteText = "deleteText",
@@ -65,9 +67,10 @@ interface MoveBlockStep extends Step {
 }
 
 export function applyTransaction(transaction: TransactionResult){
+    const selection = window.getSelection();
     transaction.steps.map(handle);
     if (transaction.finalCursor) {
-        setSelection(transaction.finalCursor);
+        setSelection(transaction.finalCursor.parentId, transaction.finalCursor.offset, selection);
     }
     
     function handle(step?: Step | null) {
@@ -170,7 +173,7 @@ function handleMoveBlockStep(step: MoveBlockStep) {
 
 function createElement(tagName: string, id: string) {
     const element = document.createElement(tagName);
-    element.setAttribute("data-path-id", id);
+    element.setAttribute("data-dnode-id", id);
     return element;
 }
 
@@ -196,7 +199,7 @@ function insertElementBlock(element: Element, parent: Element, previousSibling: 
 }
 
 function findNode(path: string[]) : HTMLElement | null {
-    const query = path.map(p => `[data-path-id='${p}']`).join(" ");
+    const query = path.map(p => `[data-dnode-id='${p}']`).join(" ");
     const element = document.querySelector<HTMLElement>(query);
     if(!element) {
         console.error(`Could not find node at path '${query}'.`);
@@ -221,16 +224,4 @@ function findTextNodeAtOffset(parent: Element, offset: number){
         currentNode = walker.nextNode() as Text | null;
     }
     return { node: null, relativeOffset: 0 };
-}
-
-function setSelection(cursorPosition: CursorPosition) {
-    const node = findNode([cursorPosition.parentId]) as Node;
-    
-    const selection = window.getSelection();
-    selection?.removeAllRanges();
-
-    const range = document.createRange();
-    range.setStart(node, cursorPosition.offset);
-    range.collapse(true);
-    selection?.addRange(range)
 }
