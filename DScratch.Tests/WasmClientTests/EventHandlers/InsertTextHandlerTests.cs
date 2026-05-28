@@ -27,8 +27,6 @@ public class InsertTextHandlerTests
         handler = new InsertTextHandler(service);
     }
     
-    // TODO: test cursor position and switch to AssertHelper
-    
     [Test]
     public void Handle_CreatesExpectedChanges()
     {
@@ -50,10 +48,9 @@ public class InsertTextHandlerTests
             Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
             Assert.That(parent.LastChild, Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.LastChild!).TextContent, Is.EqualTo("abc"));
-            
-            Assert.That(result.Steps, Has.Count.EqualTo(1));
-            Assert.That(result.Steps[0], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
+        AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.InsertTextDiff>());
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 4);
     }
     
     [Test]
@@ -74,10 +71,9 @@ public class InsertTextHandlerTests
             Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
             Assert.That(parent.FirstChild, Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.FirstChild!).TextContent, Is.EqualTo("abc"));
-            
-            Assert.That(result.Steps, Has.Count.EqualTo(1));
-            Assert.That(result.Steps[0], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
+        AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.InsertTextDiff>());
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 3);
     }
     
     [Test]
@@ -99,10 +95,9 @@ public class InsertTextHandlerTests
             Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
             Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("abc"));
-            
-            Assert.That(result.Steps, Has.Count.EqualTo(1));
-            Assert.That(result.Steps[0], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
+        AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.InsertTextDiff>());
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 5);
     }
     
     [Test]
@@ -124,10 +119,9 @@ public class InsertTextHandlerTests
             Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
             Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("abc"));
-            
-            Assert.That(result.Steps, Has.Count.EqualTo(1));
-            Assert.That(result.Steps[0], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
+        AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.InsertTextDiff>());
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 4);
     }
     
     [Test]
@@ -171,12 +165,12 @@ public class InsertTextHandlerTests
             
             Assert.That(parent.ChildNodes[5], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[5]).TextContent, Is.EqualTo("ghi"));
-            
-            Assert.That(result.Steps, Has.Count.EqualTo(3));
-            Assert.That(result.Steps[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result.Steps[1], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result.Steps[2], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
+        AssertHelper.ThatStepsEqualTo(result.Steps, 
+            Is.TypeOf<StepDiff.DeleteTextDiff>(),
+            Is.TypeOf<StepDiff.DeleteTextDiff>(),
+            Is.TypeOf<StepDiff.InsertTextDiff>());
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 5);
     }
     
     [Test]
@@ -211,11 +205,11 @@ public class InsertTextHandlerTests
             
             Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("ghi"));
-            
-            Assert.That(result.Steps, Has.Count.EqualTo(2));
-            Assert.That(result.Steps[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result.Steps[1], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
+        AssertHelper.ThatStepsEqualTo(result.Steps, 
+            Is.TypeOf<StepDiff.DeleteTextDiff>(),
+            Is.TypeOf<StepDiff.InsertTextDiff>());
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 3);
     }
     
     [Test]
@@ -248,11 +242,11 @@ public class InsertTextHandlerTests
             
             Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("ef"));
-            
-            Assert.That(result.Steps, Has.Count.EqualTo(2));
-            Assert.That(result.Steps[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result.Steps[1], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
+        AssertHelper.ThatStepsEqualTo(result.Steps, 
+            Is.TypeOf<StepDiff.DeleteTextDiff>(),
+            Is.TypeOf<StepDiff.InsertTextDiff>());
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 4);
     }
     
     [Test]
@@ -287,10 +281,10 @@ public class InsertTextHandlerTests
             
             Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("xyz"));
-            
-            Assert.That(result.Steps, Has.Count.EqualTo(2));
-            Assert.That(result.Steps[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result.Steps[1], Is.TypeOf<StepDiff.InsertTextDiff>());
         }
+        AssertHelper.ThatStepsEqualTo(result.Steps, 
+            Is.TypeOf<StepDiff.DeleteTextDiff>(),
+            Is.TypeOf<StepDiff.InsertTextDiff>());
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 9);
     }
 }
