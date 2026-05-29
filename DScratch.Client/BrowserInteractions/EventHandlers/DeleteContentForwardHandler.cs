@@ -68,6 +68,6 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
             transaction.Delete(nodeToDelete);
         }
 
-        return NodeInfo.Create(nodeToDelete, keyPressInfo.Selection.Offset, relativeOffset);
+        return NodeInfo.TryCreate(nodeToDelete, keyPressInfo.Selection.Offset, relativeOffset);
     }
 }

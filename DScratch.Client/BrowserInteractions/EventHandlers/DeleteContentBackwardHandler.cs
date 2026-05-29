@@ -23,15 +23,16 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         int? cursorPosition;
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
-            // TODO: we can detect this, when simpleDelete has nothing found to delete, then we are at the start of the paragraph
-            if (parent.IsParagraphNode() && keyPressInfo.Selection.Offset < 1)
-            {
-                // so we are at the start of a text element... like a p element... we have to delete it, and move text over to previous element, if possible, else fuck it xD
-                throw new NotImplementedException();
-            }
-            
             var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, parent);
-            cursorPosition = deletedNodeInfo?.AbsolutOffset;
+
+            if (parent.IsParagraphNode() && deletedNodeInfo is null)
+            {
+                cursorPosition = 0;
+            }
+            else
+            {
+                cursorPosition = deletedNodeInfo?.AbsolutOffset;
+            }
         }
         else
         {
@@ -68,6 +69,6 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             transaction.Delete(nodeToDelete);
         }
         
-        return NodeInfo.Create(nodeToDelete, keyPressInfo.Selection.Offset - 1, relativeOffset);
+        return NodeInfo.TryCreate(nodeToDelete, keyPressInfo.Selection.Offset - 1, relativeOffset);
     }
 }
