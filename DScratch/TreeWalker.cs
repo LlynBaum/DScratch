@@ -119,10 +119,11 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
     
     protected DNode? Next(DNode? current)
     {
-        if (current?.FirstChild is not null)
+        var firstChild = FirstChildIfDeleted(current);
+        if (firstChild is not null)
         {
             if (EnableDebug) TreeWalkerVisualizer.TraceNextStep(current, current.FirstChild);
-            return NextIfDeleted(current.FirstChild);
+            return NextIfDeleted(firstChild);
         }
 
         var node = current;
@@ -148,6 +149,16 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
             return node;
         }
         return node?.IsDeleted ?? false ? Next(node) : node;
+    }
+
+    private DNode? FirstChildIfDeleted(DNode? node)
+    {
+        if (includeDeleted)
+        {
+            return node?.ChildNodes.Count > 0 ? node.ChildNodes[0] : null;
+        }
+
+        return node?.FirstChild;
     }
 }
 
