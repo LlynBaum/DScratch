@@ -47,7 +47,7 @@ public class InsertParagraphHandlerTests
             Assert.That(parent.Origin.RightOrigin, Is.EqualTo(parent));
             Assert.That(parent.Origin.ChildNodes, Has.Count.Zero);
         }
-        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Origin.Id, 0);
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
     }
     
     [Test]
