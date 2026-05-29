@@ -31,19 +31,20 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
             }
             
             var deletedNodeInfo = SimpleDeleteForward(keyPressInfo, transaction, parent);
-            cursorPosition = deletedNodeInfo?.AbsolutOffset;
+            cursorPosition = deletedNodeInfo.AbsoluteOffsetIfPresent;
+
         }
         else
         {
             var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, parent);
-            cursorPosition = nodeSearchResult.Origin?.AbsolutOffset;
+            cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent;
         }
         
         if (cursorPosition is not null) transaction.AddCursorPosition(parent.Id, cursorPosition.Value);
         return dScratchService.Apply(transaction);
     }
     
-    private static NodeInfo? SimpleDeleteForward(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
+    private static NodeInfo SimpleDeleteForward(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
     {
         var walker = new TreeWalker<TextNode>(parent);
         
@@ -68,6 +69,6 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
             transaction.Delete(nodeToDelete);
         }
 
-        return NodeInfo.TryCreate(nodeToDelete, keyPressInfo.Selection.Offset, relativeOffset);
+        return new NodeInfo(nodeToDelete, keyPressInfo.Selection.Offset, relativeOffset);
     }
 }

@@ -30,20 +30,20 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
             nodeSearchResult = SimpleInsert(keyPressInfo, parent);
-            origin = nodeSearchResult.Origin?.Node;
+            origin = nodeSearchResult.Origin.Node;
             rightOrigin = nodeSearchResult.RightOrigin?.Node;
         }
         else
         {
             nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, parent);
-            origin = nodeSearchResult.Origin?.Node;
+            origin = nodeSearchResult.Origin.Node;
             rightOrigin = origin?.RightOrigin;
         }
         
         var textNode = dScratchService.NodeFactory.String(keyPressInfo.Data, origin, rightOrigin);
         transaction.Insert(textNode, parent);
 
-        var cursorPosition = (nodeSearchResult.Origin?.AbsolutOffset ?? 0) + textNode.Length;
+        var cursorPosition = (nodeSearchResult.Origin.AbsolutOffset) + textNode.Length;
         transaction.AddCursorPosition(parent.Id, cursorPosition);
         return dScratchService.Apply(transaction);
     }
@@ -53,8 +53,8 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         if (keyPressInfo.Selection.Offset <= 0)
         {
             return new NodeSearchResult(
-                Origin: null, 
-                RightOrigin: NodeInfo.TryCreate(parent.FirstChild, 0, 0));
+                Origin: new NodeInfo(null, 0, 0),
+                RightOrigin: new NodeInfo(parent.FirstChild, 0, 0));
         }
 
         var walker = new TreeWalker<TextNode>(parent);
@@ -75,7 +75,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
 
         var relativeOffset = keyPressInfo.Selection.Offset - currentOffset;
         return new NodeSearchResult(
-            Origin: NodeInfo.TryCreate(currentNode, keyPressInfo.Selection.Offset, relativeOffset), 
-            RightOrigin: NodeInfo.TryCreate(walker.NextSibling(), currentOffset + currentNode?.Length ?? 0, 0));
+            Origin: new NodeInfo(currentNode, keyPressInfo.Selection.Offset, relativeOffset), 
+            RightOrigin: new NodeInfo(walker.NextSibling(), currentOffset + currentNode?.Length ?? 0, 0));
     }
 }

@@ -62,7 +62,7 @@ public static class DeleteSelection
         
         transaction.DeleteRange(deleteStart ?? origin?.RightOrigin, rightOrigin);
         return new NodeSearchResult(
-            Origin: NodeInfo.TryCreate(origin, originOffset, relativeOriginOffset), 
-            RightOrigin: NodeInfo.TryCreate(rightOrigin?.RightOrigin, rightOriginOffset, relativeRightOriginOffset));
+            Origin: new NodeInfo(origin, originOffset, relativeOriginOffset), 
+            RightOrigin: new NodeInfo(rightOrigin?.RightOrigin, rightOriginOffset, relativeRightOriginOffset));
     }
 }

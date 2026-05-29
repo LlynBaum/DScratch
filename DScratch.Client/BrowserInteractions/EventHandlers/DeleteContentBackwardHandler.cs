@@ -37,13 +37,13 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             }
             else
             {
-                cursorPosition = deletedNodeInfo?.AbsolutOffset;
+                cursorPosition = deletedNodeInfo?.AbsoluteOffsetIfPresent;
             }
         }
         else
         {
             var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, parent);
-            cursorPosition = nodeSearchResult.Origin?.AbsolutOffset;
+            cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent;
         }
         
         if (cursorPosition is not null) transaction.AddCursorPosition(cursorTarget.Id, cursorPosition.Value);
@@ -75,6 +75,6 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             transaction.Delete(nodeToDelete);
         }
         
-        return NodeInfo.TryCreate(nodeToDelete, keyPressInfo.Selection.Offset - 1, relativeOffset);
+        return new NodeInfo(nodeToDelete, keyPressInfo.Selection.Offset - 1, relativeOffset);
     }
 }
