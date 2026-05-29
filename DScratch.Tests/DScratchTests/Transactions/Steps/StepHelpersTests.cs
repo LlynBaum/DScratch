@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
 using DScratch.Tests.Helpers.TestNodes;
@@ -290,6 +289,38 @@ public class StepHelpersTests
 
             // Act
             void Act() => testNode.ToDeleteSteps();
+        }
+        
+        [Test]
+        public void FindsDeletedNode_AndReturnsExpectedStep()
+        {
+            // Arrange
+            var builder = new TreeBuilder();
+            TextNode text2 = null!;
+            
+            // 0: Parent Element
+            builder.TestInlineElementNode(t =>
+            {
+                t.Text("a");
+                t.Text("a").Delete();
+                text2 = t.Text("a"); // 3: TextNode, 4: CharNode ('a')
+            });
+            
+            var node2 = text2.ChildNodes.First(); // Target second CharNode (ID: "4")
+            node2.Delete();
+            
+            // Act
+            var result = node2.ToDeleteSteps();
+            
+            // Assert
+            Assert.That(result, Is.TypeOf<StepDiff.DeleteTextDiff>());
+            var step = (StepDiff.DeleteTextDiff)result;
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(step.ParentId, Is.EqualTo("0"));
+                Assert.That(step.Offset, Is.EqualTo(1));
+                Assert.That(step.Length, Is.EqualTo(1));
+            }
         }
     }
     

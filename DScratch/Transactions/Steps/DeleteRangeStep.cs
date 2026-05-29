@@ -15,8 +15,8 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
             var current = start;
             while (current is not null)
             {
-                steps.Add(current.ToDeleteSteps());
                 current.Delete();
+                steps.Add(current.ToDeleteSteps());
                 current = current.RightOrigin;
             }
         }
@@ -25,8 +25,8 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
             var current = end;
             while (current is not null)
             {
-                steps.Add(current.ToDeleteSteps());
                 current.Delete();
+                steps.Add(current.ToDeleteSteps());
                 current = current.Origin;
             }
         }
@@ -35,15 +35,15 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
             var current = start;
             while (current is not null && current.Id != end.Id)
             {
-                steps.Add(current.ToDeleteSteps());
                 current.Delete();
+                steps.Add(current.ToDeleteSteps());
                 current = current.RightOrigin;
             }
 
             if (current is not null)
             {
-                steps.Add(current.ToDeleteSteps());
                 current.Delete();
+                steps.Add(current.ToDeleteSteps());
             }
         }
 

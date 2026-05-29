@@ -6,28 +6,13 @@ public static class DNodeExtension
 {
     extension(DNode node)
     {
-        public int FindAbsolutTextOffset(CharNode child)
+        internal int FindAbsolutTextOffset(CharNode child)
         {
-            var walker = new TreeWalker<TextNode>(node, child.IsDeleted);
-
-            var offset = 0;
-            var current = walker.NextNode();
-            while (current is not null)
-            {
-                if (current.Id == child.Parent!.Id)
-                {
-                    break;
-                }
-                
-                if (!current.IsDeleted)
-                {
-                    offset += current.Length;
-                }
-
-                current = walker.NextNode();
-            }
-
-            var relativeOffset = current?.IndexOf(child);
+            var (result, offset) = FindAbsolutTextOffsetCore(node, child.Parent!.Id, child.IsDeleted);
+            var relativeOffset = !child.IsDeleted 
+                ? result?.IndexOf(child) 
+                : result?.ChildNodes.ToList().FindIndex(n => n.Id == child.Id);
+            
             if (relativeOffset is null or -1)
             {
                 throw new InvalidOperationException("Can not find absolut offset of node. Probably the node is node a child of given parent.");
@@ -36,28 +21,10 @@ public static class DNodeExtension
             return offset + relativeOffset.Value;
         }
         
-        public int FindAbsolutTextOffset(TextNode child)
+        internal int FindAbsolutTextOffset(TextNode child)
         {
-            var walker = new TreeWalker<TextNode>(node, child.IsDeleted);
-
-            var offset = 0;
-            var current = walker.NextNode();
-            while (current is not null)
-            {
-                if (current.Id == child.Id)
-                {
-                    break;
-                }
-                
-                if (!current.IsDeleted)
-                {
-                    offset += current.Length;
-                }
-                
-                current = walker.NextNode();
-            }
-
-            if (current is null)
+            var (result, offset) = FindAbsolutTextOffsetCore(node, child.Id, child.IsDeleted);
+            if (result is null)
             {
                 throw new InvalidOperationException("Can not find absolut offset of node. Probably the node is node a child of given parent.");
             }
@@ -65,7 +32,7 @@ public static class DNodeExtension
             return offset;
         }
         
-        public int FindAbsolutTextOffset<TNode>(DNode child) where TNode : IDNode
+        internal int FindAbsolutTextOffset<TNode>(DNode child) where TNode : IDNode
         {
             var walker = new TreeWalker<TextNode, TNode>(node, child.IsDeleted);
 
@@ -93,5 +60,29 @@ public static class DNodeExtension
             
             return offset;
         }
+    }
+    
+    private static (DNode? node, int offset) FindAbsolutTextOffsetCore(DNode parent, string id, bool includeDeleted)
+    {
+        var walker = new TreeWalker<TextNode>(parent, includeDeleted);
+            
+        var offset = 0;
+        var current = walker.NextNode();
+        while (current is not null)
+        {
+            if (current.Id == id)
+            {
+                break;
+            }
+                
+            if (!current.IsDeleted)
+            {
+                offset += current.Length;
+            }
+                
+            current = walker.NextNode();
+        }
+
+        return (current, offset);
     }
 }

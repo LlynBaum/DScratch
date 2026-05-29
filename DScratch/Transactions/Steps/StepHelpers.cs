@@ -37,7 +37,7 @@ internal static class StepHelpers
             {
                 RootNode => null,
                 CharNode charNode => new StepDiff.DeleteTextDiff(node.ParentElement!.Id, node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, 1),
-                TextNode textNode => new StepDiff.DeleteTextDiff(node.ParentElement!.Id, node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, textNode.Length),
+                TextNode textNode => new StepDiff.DeleteTextDiff(node.ParentElement!.Id, node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, textNode.ChildNodes.Count),
                 IElement => new StepDiff.DeleteElementDiff(node.Id),
                 _ => throw new ArgumentException("Node type is not an element, text or char.")
             };
