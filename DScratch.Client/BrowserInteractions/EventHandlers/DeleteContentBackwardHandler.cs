@@ -1,3 +1,4 @@
+using System.Security.AccessControl;
 using DScratch.Client.BrowserInteractions.EventHandlers.Common;
 using DScratch.Client.BrowserInteractions.EventHandlers.Models;
 using DScratch.Nodes;
@@ -21,12 +22,17 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         }
 
         int? cursorPosition;
+        var cursorTarget = parent;
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
             var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, parent);
 
-            if (parent.IsParagraphNode() && deletedNodeInfo is null)
+            if (deletedNodeInfo is null && parent.IsParagraphNode() && parent.OriginElement is not null && parent.OriginElement.IsParagraphNode())
             {
+                transaction.MoveRange(parent.FirstChild, null, parent.OriginElement, parent.OriginElement.LastChild);
+                transaction.Delete(parent);
+                
+                cursorTarget = parent.OriginElement;
                 cursorPosition = 0;
             }
             else
@@ -40,7 +46,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             cursorPosition = nodeSearchResult.Origin?.AbsolutOffset;
         }
         
-        if (cursorPosition is not null) transaction.AddCursorPosition(parent.Id, cursorPosition.Value);
+        if (cursorPosition is not null) transaction.AddCursorPosition(cursorTarget.Id, cursorPosition.Value);
         return dScratchService.Apply(transaction);
     }
 

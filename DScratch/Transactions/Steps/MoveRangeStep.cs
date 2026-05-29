@@ -10,7 +10,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
         
         var steps = new List<StepDiff?>();
 
-        var existingFirstChild = targetParent.FirstChild;
+        var existingFirstChild = targetOrigin is null ? targetParent.FirstChild : null;
         
         if (end is null)
         {
