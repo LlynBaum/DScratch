@@ -26,45 +26,45 @@ interface Step {
 }
 
 interface InsertTextStep extends Step {
-    parent: string[];
+    parentId: string;
     offset: number;
     text: string;
 }
 
 interface DeleteTextStep extends Step {
-    parent: string[]; 
+    parentId: string; 
     offset: number; 
     length: number;
 }
 
 interface InsertElementInlineStep extends Step {
-    parent: string[];
+    parentId: string;
     offset: number;
     tagName: string;
     newNodeId: string;
 }
 
 interface InsertElementBlockStep extends Step {
-    parent: string[];
-    previousSibling: string[] | null;
+    parentId: string;
+    previousSiblingId: string | null;
     tagName: string;
     newNodeId: string;
 }
 
 interface DeleteElementStep extends Step {
-    path: string[];
+    targetId: string;
 }
 
 interface MoveInlineStep extends Step {
-    targetNodePath: string[];
-    targetParentPath: string[];
+    targetNodeId: string;
+    targetParentId: string;
     targetOffset: number;
 }
 
 interface MoveBlockStep extends Step {
-    targetNodePath: string[];
-    targetParentPath: string[];
-    previousSibling: string[] | null;
+    targetNodeId: string;
+    targetParentId: string;
+    previousSiblingId: string | null;
 }
 
 export function applyTransaction(transaction: TransactionResult){
@@ -103,7 +103,7 @@ export function applyTransaction(transaction: TransactionResult){
 }
 
 function handleInsertTextStep(step: InsertTextStep) {
-    const element = findNode(step.parent);
+    const element = findNode(step.parentId);
     if (!element) return;
 
     const { node, relativeOffset } = findTextNodeAtOffset(element, step.offset);
@@ -117,7 +117,7 @@ function handleInsertTextStep(step: InsertTextStep) {
 }
 
 function handleDeleteTextStep(step: DeleteTextStep) {
-    const element = findNode(step.parent);
+    const element = findNode(step.parentId);
     if (!element) return;
 
     const { node, relativeOffset } = findTextNodeAtOffset(element, step.offset);
@@ -128,7 +128,7 @@ function handleDeleteTextStep(step: DeleteTextStep) {
 }
 
 function handleInsertElementInlineStep(step: InsertElementInlineStep) {
-    const parent = findNode(step.parent);
+    const parent = findNode(step.parentId);
     if (!parent) return;
 
     const element = createElement(step.tagName, step.newNodeId);
@@ -136,17 +136,17 @@ function handleInsertElementInlineStep(step: InsertElementInlineStep) {
 }
 
 function handleInsertElementBlockStep(step: InsertElementBlockStep) {
-    const parent = findNode(step.parent);
+    const parent = findNode(step.parentId);
     if (!parent) return;
 
-    const previousSibling = step.previousSibling && findNode(step.previousSibling);
+    const previousSibling = step.previousSiblingId ? findNode(step.previousSiblingId) : null;
 
     const element = createElement(step.tagName, step.newNodeId);
     insertElementBlock(element, parent, previousSibling);
 }
 
 function handleDeleteElementStep(step: DeleteElementStep) {
-    const element = findNode(step.path);
+    const element = findNode(step.targetId);
     if (!element) return;
     
     element.remove();
@@ -154,8 +154,8 @@ function handleDeleteElementStep(step: DeleteElementStep) {
 }
 
 function handleMoveInlineStep(step: MoveInlineStep) {
-    const element = findNode(step.targetNodePath);
-    const newParent = findNode(step.targetParentPath);
+    const element = findNode(step.targetNodeId);
+    const newParent = findNode(step.targetParentId);
     if (element && newParent) {
         insertElementInline(element, newParent, step.targetOffset);
     }
@@ -163,10 +163,10 @@ function handleMoveInlineStep(step: MoveInlineStep) {
 }
 
 function handleMoveBlockStep(step: MoveBlockStep) {
-    const element = findNode(step.targetNodePath);
-    const newParent = findNode(step.targetParentPath);
+    const element = findNode(step.targetNodeId);
+    const newParent = findNode(step.targetParentId);
     if (element && newParent) {
-        const previousSibling = step.previousSibling && findNode(step.previousSibling);
+        const previousSibling = step.previousSiblingId ? findNode(step.previousSiblingId) : null;
         insertElementBlock(element, newParent, previousSibling);
     }
     // TODO: this might work out of the box of the browser, but check. Else seek for the a previous text node and set selection there.
@@ -199,11 +199,10 @@ function insertElementBlock(element: Element, parent: Element, previousSibling: 
     parent.insertBefore(element, referenceNode);
 }
 
-function findNode(path: string[]) : HTMLElement | null {
-    const query = path.map(p => `[data-dnode-id='${p}']`).join(" ");
-    const element = document.querySelector<HTMLElement>(query);
+function findNode(nodeId: string) : HTMLElement | null {
+    const element = document.querySelector<HTMLElement>(`[data-dnode-id='${nodeId}']`);
     if(!element) {
-        console.error(`Could not find node at path '${query}'.`);
+        console.error(`Could not find node '${nodeId}'.`);
     }
     return element;
 }

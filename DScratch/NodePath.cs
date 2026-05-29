@@ -2,13 +2,15 @@ namespace DScratch;
 
 public readonly struct NodePath(List<string> path)
 {
+    public const string RootId = "root";
+    
     public int Length => path.Count;
 
     public string[] Path => path.ToArray();
 
-    public bool IsRoot => Length == 0 || (Length == 1 && Path[0] == "root");
-
-    public static NodePath Root => new NodePath(["root"]);
+    public bool IsRoot => Length == 0 || (Length == 1 && Path[0] == RootId);
+    
+    public static NodePath Root => new NodePath([RootId]);
 
     public string this[int index] => path[index];
     
