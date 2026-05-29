@@ -4,6 +4,24 @@ namespace DScratch.Nodes;
 
 public static class DNodeExtension
 {
+    extension(ParagraphNode paragraphNode)
+    {
+        public int GetTextLength()
+        {
+            var walker = new TreeWalker<TextNode>(paragraphNode);
+            var length = 0;
+            
+            var current = walker.NextNode();
+            while (current is not null)
+            {
+                length += current.Length;
+                current = walker.NextNode();
+            }
+
+            return length;
+        }
+    }
+    
     extension(DNode node)
     {
         internal int FindAbsolutTextOffset(CharNode child)

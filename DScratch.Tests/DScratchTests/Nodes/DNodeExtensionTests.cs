@@ -10,6 +10,34 @@ public class DNodeExtensionTests
     private readonly TreeBuilder treeBuilder = new TreeBuilder();
     
     [Test]
+    public void GetTextLength_ReturnsExpectedLength()
+    {
+        // Arrange
+        var testNode = treeBuilder.Paragraph(p =>
+        {
+            p.Text(t =>
+            {
+                t.Char('a');
+                t.Char('b').Delete();
+                t.Char('c');
+            });
+            p.Text("abc").Delete();
+            p.Text(t =>
+            {
+                t.Char('a').Delete();
+                t.Char('b');
+                t.Char('c').Delete();
+            });
+        });
+        
+        // Act
+        var result = testNode.GetTextLength();
+
+        // Assert
+        Assert.That(result, Is.EqualTo(3));
+    }
+    
+    [Test]
     public void CharNode_GivenTree_ReturnsExpectedOffset()
     {
         // Arrange

@@ -9,7 +9,7 @@ public class ParagraphNode(string id, DNode? origin, DNode? rightOrigin, List<DN
 
     internal override void InsertChild(DNode node)
     {
-        if (!(node.IsTextOrInline() || node.IsInlineNode()))
+        if (!node.IsTextOrInline())
         {
             throw new InvalidOperationException("Can only insert text or inline elements into block node.");
         }

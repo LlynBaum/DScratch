@@ -10,7 +10,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
     
     public DNode? Origin { get; internal set; } = origin;
 
-    public DNode? OriginElement => Origin?.IsElement() ?? true ? Origin : Origin.OriginElement;
+    public DNode? OriginElement => Origin is IElement or null ? Origin : Origin.OriginElement;
 
     public DNode? RightOrigin { get; internal set; } = rightOrigin;
 
@@ -18,7 +18,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
 
     public DNode? Parent { get; internal set; }
 
-    public DNode? ParentElement => Parent?.IsElement() ?? true ? Parent : Parent.ParentElement;
+    public DNode? ParentElement => Parent is IElement or null ? Parent : Parent.ParentElement;
     
     public IReadOnlyList<DNode> ChildNodes => AllChildNodes;
     

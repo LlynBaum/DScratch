@@ -1,8 +1,6 @@
-using System.Security.AccessControl;
 using DScratch.Client.BrowserInteractions.EventHandlers.Common;
 using DScratch.Client.BrowserInteractions.EventHandlers.Models;
 using DScratch.Nodes;
-using DScratch.Nodes.NodeTypes;
 using DScratch.Transactions;
 
 namespace DScratch.Client.BrowserInteractions.EventHandlers;
@@ -27,17 +25,17 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         {
             var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, parent);
 
-            if (deletedNodeInfo is null && parent.IsParagraphNode() && parent.OriginElement is not null && parent.OriginElement.IsParagraphNode())
+            if (!deletedNodeInfo.HasFoundNode && parent is ParagraphNode && parent.OriginElement is ParagraphNode paragraphNode)
             {
+                cursorTarget = parent.OriginElement;
+                cursorPosition = paragraphNode.GetTextLength();
+                
                 transaction.MoveRange(parent.FirstChild, null, parent.OriginElement, parent.OriginElement.LastChild);
                 transaction.Delete(parent);
-                
-                cursorTarget = parent.OriginElement;
-                cursorPosition = 0;
             }
             else
             {
-                cursorPosition = deletedNodeInfo?.AbsoluteOffsetIfPresent;
+                cursorPosition = deletedNodeInfo.AbsoluteOffsetIfPresent;
             }
         }
         else
@@ -50,7 +48,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         return dScratchService.Apply(transaction);
     }
 
-    private static NodeInfo? SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
+    private static NodeInfo SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
     {
         var walker = new TreeWalker<TextNode>(parent);
         

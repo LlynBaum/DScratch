@@ -1,7 +1,6 @@
 using DScratch.Client.BrowserInteractions.EventHandlers.Common;
 using DScratch.Client.BrowserInteractions.EventHandlers.Models;
 using DScratch.Nodes;
-using DScratch.Nodes.NodeTypes;
 using DScratch.Transactions;
 
 namespace DScratch.Client.BrowserInteractions.EventHandlers;
@@ -24,7 +23,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
             // TODO: we can detect this, when simpleDelete has nothing found to delete, then we are at the end of the paragraph
-            if (parent.IsParagraphNode() && keyPressInfo.Selection.Offset >= 10)
+            if (parent is ParagraphNode && keyPressInfo.Selection.Offset >= 10)
             {
                 // so we are at the start of a text element... like a p element... we have to delete it, and move text over to previous element, if possible, else fuck it xD
                 throw new NotImplementedException();

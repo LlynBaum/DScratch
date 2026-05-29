@@ -136,6 +136,11 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
             }
 
             node = node.Parent;
+
+            if (node == parent)
+            {
+                return null;
+            }
         }
 
         if (EnableDebug) TreeWalkerVisualizer.TraceNextStep(current, node);
