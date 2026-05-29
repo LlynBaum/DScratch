@@ -11,7 +11,7 @@ public static class DeleteSelection
         ITransaction transaction, 
         DNode parent)
     {
-        // TODO: deleting over two paragraphs will be more complex. Need to merge them together in that case...
+        // TODO: focusOffset works different when AnchorNode and FocusNode are not the same node...
         var (originOffset, rightOriginOffset) = keyPressInfo.Selection.GetConvertedOffsets();
         
         var walker = new TreeWalker<TextNode>(parent);
@@ -47,22 +47,33 @@ public static class DeleteSelection
         var relativeRightOriginOffset = rightOriginOffset - currentOffset;
         var rightOrigin = currentNode;
 
-        var deleteStart = origin is not null ? transaction.SplitText(origin, relativeOriginOffset) : null;
+        return origin is null || origin.ParentElement == rightOrigin?.ParentElement ? DeleteContentInParent() : DeleteAndMerge();
+        
+        NodeSearchResult DeleteContentInParent()
+        {
+            var deleteStart = origin is not null ? transaction.SplitText(origin, relativeOriginOffset) : null;
 
-        if (origin is not null && rightOrigin is not null && origin.Id == rightOrigin.Id)
-        {
-            rightOrigin = deleteStart;
-            relativeRightOriginOffset -= origin.Length;
-        }
+            if (origin is not null && rightOrigin is not null && origin.Id == rightOrigin.Id)
+            {
+                rightOrigin = deleteStart;
+                relativeRightOriginOffset -= origin.Length;
+            }
         
-        if (rightOrigin != null)
-        {
-            transaction.SplitText(rightOrigin, relativeRightOriginOffset);
-        }
+            if (rightOrigin != null)
+            {
+                transaction.SplitText(rightOrigin, relativeRightOriginOffset);
+            }
         
-        transaction.DeleteRange(deleteStart ?? origin?.RightOrigin, rightOrigin);
-        return new NodeSearchResult(
-            Origin: new NodeInfo(origin, originOffset, relativeOriginOffset), 
-            RightOrigin: new NodeInfo(rightOrigin?.RightOrigin, rightOriginOffset, relativeRightOriginOffset));
+            transaction.DeleteRange(deleteStart ?? origin?.RightOrigin, rightOrigin);
+            return new NodeSearchResult(
+                Origin: new NodeInfo(origin, originOffset, relativeOriginOffset), 
+                RightOrigin: new NodeInfo(rightOrigin?.RightOrigin, rightOriginOffset, relativeRightOriginOffset));
+        }
+
+        NodeSearchResult DeleteAndMerge()
+        {
+            // TODO: end and start nodes delete. Move everything from second para to first.
+            return null!;
+        }
     }
 }
