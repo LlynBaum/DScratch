@@ -14,6 +14,8 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
 
     public DNode? RightOrigin { get; internal set; } = rightOrigin;
 
+    public DNode? RightOriginElement => RightOrigin is IElement or null ? RightOrigin : RightOrigin.RightOriginElement;
+
     public bool IsDeleted { get; private set; }
 
     public DNode? Parent { get; internal set; }

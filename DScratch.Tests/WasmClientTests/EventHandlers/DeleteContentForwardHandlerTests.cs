@@ -258,4 +258,50 @@ public class DeleteContentForwardHandlerTests
         AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
         AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 6);
     }
+    
+    [Test]
+    public void Handle_MergesParagraph_WhenAtEndOfParagraph()
+    {
+        // Arrange
+        var oldParent = builder.Paragraph(t => 
+        {
+            t.Text("abc");
+        });
+        var parent = builder.Paragraph(t =>
+        {
+            t.Text("def");
+            t.Text("ghi");
+        });
+
+        // Act
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(oldParent.GetElementPath(), 3));
+        
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(oldParent.IsDeleted, Is.True);
+            
+            Assert.That(oldParent.ChildNodes, Has.Count.Zero);
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+        }
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("abc"));
+            
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
+            
+            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ghi"));
+        }
+        
+        AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
+            Is.TypeOf<StepDiff.DeleteTextDiff>(),
+            Is.TypeOf<StepDiff.InsertTextDiff>(),
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+        ]);
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 3);
+    }
 }

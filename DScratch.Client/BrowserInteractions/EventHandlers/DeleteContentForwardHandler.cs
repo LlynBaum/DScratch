@@ -20,18 +20,23 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
         }
 
         int? cursorPosition;
+        var cursorTarget = parent;
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
-            // TODO: we can detect this, when simpleDelete has nothing found to delete, then we are at the end of the paragraph
-            if (parent is ParagraphNode && keyPressInfo.Selection.Offset >= 10)
-            {
-                // so we are at the start of a text element... like a p element... we have to delete it, and move text over to previous element, if possible, else fuck it xD
-                throw new NotImplementedException();
-            }
-            
             var deletedNodeInfo = SimpleDeleteForward(keyPressInfo, transaction, parent);
-            cursorPosition = deletedNodeInfo.AbsoluteOffsetIfPresent;
-
+            
+            if (!deletedNodeInfo.HasFoundNode && parent is ParagraphNode paragraphNode && parent.RightOriginElement is ParagraphNode)
+            {
+                cursorTarget = parent.RightOriginElement;
+                cursorPosition = paragraphNode.GetTextLength();
+                
+                transaction.MoveRange(parent.FirstChild, null, parent.RightOriginElement, null);
+                transaction.Delete(parent);
+            }
+            else
+            {
+                cursorPosition = deletedNodeInfo.AbsoluteOffsetIfPresent;
+            }
         }
         else
         {
@@ -39,7 +44,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
             cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent;
         }
         
-        if (cursorPosition is not null) transaction.AddCursorPosition(parent.Id, cursorPosition.Value);
+        if (cursorPosition is not null) transaction.AddCursorPosition(cursorTarget.Id, cursorPosition.Value);
         return dScratchService.Apply(transaction);
     }
     
