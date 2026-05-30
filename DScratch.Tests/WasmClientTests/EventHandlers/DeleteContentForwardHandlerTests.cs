@@ -28,320 +28,317 @@ public class DeleteContentForwardHandlerTests
         handler = new DeleteContentForwardHandler(service);
     }
 
-    [Test]
-    public void Handle_DoesNothing_WhenNodesDoesNotExist()
+    [TestFixture]
+    private class SimpleDelete : DeleteContentForwardHandlerTests
     {
-        // Arrange
-        var parent = builder.Text(p =>
+        [Test]
+        public void Handle_DoesNothing_WhenNodesDoesNotExist()
         {
-            p.Char('a');
-        });
+            // Arrange
+            var parent = builder.Text(p => { p.Char('a'); });
 
-        // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 1));
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 1));
 
-        // Assert
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(parent.IsDeleted, Is.False);
-            Assert.That(result.IsEmpty, Is.True);
-            Assert.That(result.CursorPosition, Is.Null);
-        }
-    }
-    
-    [Test]
-    public void Handle_CreatesExpectedChanges()
-    {
-        // Arrange
-        CharNode char3 = null!;
-        var parent = builder.TestInlineElementNode(t => 
-        {
-            t.Text("ab");
-            t.Text(txt => 
+            // Assert
+            using (Assert.EnterMultipleScope())
             {
-                char3 = txt.Char('a');
-            });
-        });
+                Assert.That(parent.IsDeleted, Is.False);
+                Assert.That(result.IsEmpty, Is.True);
+                Assert.That(result.CursorPosition, Is.Null);
+            }
+        }
 
-        // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 2));
-
-        // Assert
-        Assert.That(char3.IsDeleted, Is.True);
-        AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
-        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 2);
-    }
-    
-    [Test]
-    public void Handle_CreatesExpectedChanges_LastCharInTextNode()
-    {
-        // Arrange
-        CharNode char2 = null!;
-        var parent = builder.TestInlineElementNode(t => 
+        [Test]
+        public void Handle_CreatesExpectedChanges()
         {
-            t.Text(txt =>
+            // Arrange
+            CharNode char3 = null!;
+            var parent = builder.TestInlineElementNode(t =>
             {
-                txt.Char('a');
-                char2 = txt.Char('b');
+                t.Text("ab");
+                t.Text(txt => { char3 = txt.Char('a'); });
             });
-            t.Text("c");
-        });
 
-        // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 1));
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 2));
 
-        // Assert
-        Assert.That(char2.IsDeleted, Is.True);
-        AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
-        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 1);
-    }
-    
-    [Test]
-    public void Handle_CreatesExpectedChanges_SingleCharInNode()
-    {
-        // Arrange
-        CharNode char1 = null!;
-        var parent = builder.TestInlineElementNode(t => 
+            // Assert
+            Assert.That(char3.IsDeleted, Is.True);
+            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 2);
+        }
+
+        [Test]
+        public void Handle_CreatesExpectedChanges_LastCharInTextNode()
         {
-            t.Text(txt =>
+            // Arrange
+            CharNode char2 = null!;
+            var parent = builder.TestInlineElementNode(t =>
             {
-                char1 = txt.Char('a');
+                t.Text(txt =>
+                {
+                    txt.Char('a');
+                    char2 = txt.Char('b');
+                });
+                t.Text("c");
             });
-            t.Text("bc");
-        });
 
-        // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 0));
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 1));
 
-        // Assert
-        Assert.That(char1.IsDeleted, Is.True);
-        AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
-        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
+            // Assert
+            Assert.That(char2.IsDeleted, Is.True);
+            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 1);
+        }
+
+        [Test]
+        public void Handle_CreatesExpectedChanges_SingleCharInNode()
+        {
+            // Arrange
+            CharNode char1 = null!;
+            var parent = builder.TestInlineElementNode(t =>
+            {
+                t.Text(txt => { char1 = txt.Char('a'); });
+                t.Text("bc");
+            });
+
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 0));
+
+            // Assert
+            Assert.That(char1.IsDeleted, Is.True);
+            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
+        }
+
+        [Test]
+        public void Handle_DoesNothing_WhenWhereIsNoPreviousParagraph()
+        {
+            // Arrange
+            var parent = builder.Paragraph(t =>
+            {
+                t.Text("abc");
+                t.Text("def");
+            });
+
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 6));
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.IsDeleted, Is.False);
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+
+                Assert.That(result.Steps, Has.Count.Zero);
+                Assert.That(result.CursorPosition, Is.Null);
+            }
+
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("abc"));
+
+                Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
+            }
+        }
     }
     
-    [Test]
-    [TestCase(2, 5)]
-    [TestCase(5, 2)]
-    public void Handle_CreatesExpectedChanges_WhenTextIsSelected(int start, int end)
+    [TestFixture]
+    private class SelectionDelete : DeleteContentForwardHandlerTests
     {
-        // Arrange
-        var parent = builder.TestInlineElementNode(t => 
+        [Test]
+        [TestCase(2, 5)]
+        [TestCase(5, 2)]
+        public void Handle_CreatesExpectedChanges_WhenTextIsSelected(int start, int end)
         {
-            t.Text("abc");
-            t.Text("def");
-            t.Text("ghi");
-        });
+            // Arrange
+            var parent = builder.TestInlineElementNode(t =>
+            {
+                t.Text("abc");
+                t.Text("def");
+                t.Text("ghi");
+            });
 
-        // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, end));
-        
-        var visualizer = new DocumentVisualizer(document);
-        visualizer.Print();
-        
-        // Assert
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
-            
-            Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
-            
-            Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("f"));
-            
-            Assert.That(parent.ChildNodes[4], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("ghi"));
-        }
-        
-        AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>(), Is.TypeOf<StepDiff.DeleteTextDiff>());
-        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 2);
-    }
-    
-    [Test]
-    [TestCase(0, 3)]
-    [TestCase(3, 0)]
-    public void Handle_CreatesExpectedChanges_WhenTextIsSelected_AtStart(int start, int end)
-    {
-        // Arrange
-        var parent = builder.TestInlineElementNode(t => 
-        {
-            t.Text("abc");
-            t.Text("def");
-            t.Text("ghi");
-        });
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, end));
 
-        // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, end));
-        
-        var visualizer = new DocumentVisualizer(document);
-        visualizer.Print();
-        
-        // Assert
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
-            
-            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
-            
-            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ghi"));
-        }
-        
-        AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
-        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
-    }
-    
-    [Test]
-    [TestCase(2, 4)]
-    [TestCase(4, 2)]
-    public void Handle_CreatesExpectedChanges_WhenTextIsSelected_InBetween(int start, int end)
-    {
-        // Arrange
-        var parent = builder.TestInlineElementNode(t => 
-        {
-            t.Text("abcdef");
-        });
+            var visualizer = new DocumentVisualizer(document);
+            visualizer.Print();
 
-        // Actparent.GetElementPath(),
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, end));
-        
-        var visualizer = new DocumentVisualizer(document);
-        visualizer.Print();
-        
-        // Assert
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
-            
-            Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
-            
-            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ef"));
-        }
-        
-        AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
-        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 2);
-    }
-    
-    [Test]
-    [TestCase(6, 9)]
-    [TestCase(9, 6)]
-    public void Handle_CreatesExpectedChanges_WhenTextIsSelected_AtEnd(int start, int end)
-    {
-        // Arrange
-        var parent = builder.TestInlineElementNode(t => 
-        {
-            t.Text("abc");
-            t.Text("def");
-            t.Text("ghi");
-        });
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
 
-        // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, end));
-        
-        var visualizer = new DocumentVisualizer(document);
-        visualizer.Print();
-        
-        // Assert
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
-            
-            Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("abc"));
-            
-            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
-        }
-        
-        AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
-        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 6);
-    }
-    
-    [Test]
-    public void Handle_MergesParagraph_WhenAtEndOfParagraph()
-    {
-        // Arrange
-        var oldParent = builder.Paragraph(t => 
-        {
-            t.Text("abc");
-        });
-        var parent = builder.Paragraph(t =>
-        {
-            t.Text("def");
-            t.Text("ghi");
-        });
+                Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
 
-        // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(oldParent.GetElementPath(), 3));
-        
-        // Assert
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(oldParent.IsDeleted, Is.True);
-            
-            Assert.That(oldParent.ChildNodes, Has.Count.Zero);
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+                Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("f"));
+
+                Assert.That(parent.ChildNodes[4], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("ghi"));
+            }
+
+            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>(),
+                Is.TypeOf<StepDiff.DeleteTextDiff>());
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 2);
         }
 
-        using (Assert.EnterMultipleScope())
+        [Test]
+        [TestCase(0, 3)]
+        [TestCase(3, 0)]
+        public void Handle_CreatesExpectedChanges_WhenTextIsSelected_AtStart(int start, int end)
         {
-            Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("abc"));
-            
-            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
-            
-            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ghi"));
-        }
-        
-        AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-            Is.TypeOf<StepDiff.DeleteTextDiff>(),
-            Is.TypeOf<StepDiff.InsertTextDiff>(),
-            Is.TypeOf<StepDiff.DeleteElementDiff>(),
-        ]);
-        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 3);
-    }
-    
-    [Test]
-    public void Handle_DoesNothing_WhenWhereIsNoPreviousParagraph()
-    {
-        // Arrange
-        var parent = builder.Paragraph(t => 
-        {
-            t.Text("abc");
-            t.Text("def");
-        });
+            // Arrange
+            var parent = builder.TestInlineElementNode(t =>
+            {
+                t.Text("abc");
+                t.Text("def");
+                t.Text("ghi");
+            });
 
-        // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 6));
-        
-        // Assert
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(parent.IsDeleted, Is.False);
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
-            
-            Assert.That(result.Steps, Has.Count.Zero);
-            Assert.That(result.CursorPosition, Is.Null);
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, end));
+
+            var visualizer = new DocumentVisualizer(document);
+            visualizer.Print();
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+
+                Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
+
+                Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ghi"));
+            }
+
+            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
 
-        using (Assert.EnterMultipleScope())
+        [Test]
+        [TestCase(2, 4)]
+        [TestCase(4, 2)]
+        public void Handle_CreatesExpectedChanges_WhenTextIsSelected_InBetween(int start, int end)
         {
-            Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("abc"));
-            
-            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
+            // Arrange
+            var parent = builder.TestInlineElementNode(t => { t.Text("abcdef"); });
+
+            // Actparent.GetElementPath(),
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, end));
+
+            var visualizer = new DocumentVisualizer(document);
+            visualizer.Print();
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+
+                Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
+
+                Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ef"));
+            }
+
+            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 2);
+        }
+
+        [Test]
+        [TestCase(6, 9)]
+        [TestCase(9, 6)]
+        public void Handle_CreatesExpectedChanges_WhenTextIsSelected_AtEnd(int start, int end)
+        {
+            // Arrange
+            var parent = builder.TestInlineElementNode(t =>
+            {
+                t.Text("abc");
+                t.Text("def");
+                t.Text("ghi");
+            });
+
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, end));
+
+            var visualizer = new DocumentVisualizer(document);
+            visualizer.Print();
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+
+                Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("abc"));
+
+                Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
+            }
+
+            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 6);
         }
     }
     
     [TestFixture]
     private class MergeParagraphs : DeleteContentForwardHandlerTests
     {
+        [Test]
+        public void Handle_MergesParagraph_WhenAtEndOfParagraph()
+        {
+            // Arrange
+            var oldParent = builder.Paragraph(t => 
+            {
+                t.Text("abc");
+            });
+            var parent = builder.Paragraph(t =>
+            {
+                t.Text("def");
+                t.Text("ghi");
+            });
+
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(oldParent.GetElementPath(), 3));
+        
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(oldParent.IsDeleted, Is.True);
+            
+                Assert.That(oldParent.ChildNodes, Has.Count.Zero);
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+            }
+
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("abc"));
+            
+                Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
+            
+                Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ghi"));
+            }
+        
+            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
+                Is.TypeOf<StepDiff.DeleteTextDiff>(),
+                Is.TypeOf<StepDiff.InsertTextDiff>(),
+                Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            ]);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 3);
+        }
+        
         [Test]
         public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverTwoParagraphs()
         {
