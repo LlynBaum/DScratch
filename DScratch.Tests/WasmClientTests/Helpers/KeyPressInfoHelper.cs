@@ -25,16 +25,40 @@ public class KeyPressInfoHelper
     public static KeyPressInfo GetKeyPressInfo(NodePath path, int offset, int endOffset)
     {
         var direction = offset < endOffset ? SelectionDirection.Forward : SelectionDirection.Backward;
+        var nodePath = path.Path.Reverse().ToArray();
+        
         return new KeyPressInfo
         {
             Data = "xyz",
-            Path = path.Path.Reverse().ToArray(),
+            Path = nodePath,
             InputType = InsertTextHandler.EventName,
             Selection = new KeyPressInfo.SelectionInfo
             {
                 Direction = direction,
                 Offset = offset,
-                End = [],
+                End = nodePath,
+                EndOffset = endOffset
+            }
+        };
+    }
+    
+    public static KeyPressInfo GetKeyPressInfo(NodePath path, int offset, NodePath endPath, int endOffset)
+    {
+        var direction = offset < endOffset ? SelectionDirection.Forward : SelectionDirection.Backward;
+
+        var start = direction is SelectionDirection.Forward ? path.Path.Reverse().ToArray() : endPath.Path.Reverse().ToArray();
+        var end = direction is SelectionDirection.Forward ? endPath.Path.Reverse().ToArray() : path.Path.Reverse().ToArray();
+        
+        return new KeyPressInfo
+        {
+            Data = "xyz",
+            Path = start,
+            InputType = InsertTextHandler.EventName,
+            Selection = new KeyPressInfo.SelectionInfo
+            {
+                Direction = direction,
+                Offset = offset,
+                End = end,
                 EndOffset = endOffset
             }
         };
