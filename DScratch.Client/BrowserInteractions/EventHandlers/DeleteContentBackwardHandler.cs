@@ -20,7 +20,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         }
 
         int? cursorPosition;
-        var cursorTarget = parent;
+        DNode cursorTarget;
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
             var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, parent);
@@ -36,12 +36,14 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             else // TODO: add a case for inline elements, that will have the same without the merging
             {
                 cursorPosition = deletedNodeInfo.AbsoluteOffsetIfPresent;
+                cursorTarget = parent;
             }
         }
         else
         {
             var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, parent);
             cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent;
+            cursorTarget = nodeSearchResult.Origin.Node?.ParentElement ?? parent;
         }
         
         if (cursorPosition is not null) transaction.AddCursorPosition(cursorTarget.Id, cursorPosition.Value);
