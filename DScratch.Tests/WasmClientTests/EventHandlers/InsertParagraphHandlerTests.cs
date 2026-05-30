@@ -276,6 +276,14 @@ public class InsertParagraphHandlerTests
             // Assert
             using (Assert.EnterMultipleScope())
             {
+                Assert.That(parent.Origin, Is.Null);
+                Assert.That(parent.RightOrigin, Is.EqualTo(parent2));
+                Assert.That(parent2.Origin, Is.EqualTo(parent));
+                Assert.That(parent2.RightOrigin, Is.Not.Null);
+            }
+            
+            using (Assert.EnterMultipleScope())
+            {
                 Assert.That(parent2.IsDeleted, Is.True);
                 Assert.That(parent2.ChildNodes, Has.Count.EqualTo(1));
                 
@@ -283,10 +291,8 @@ public class InsertParagraphHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
                 Assert.That(parent.ChildNodes[1].IsDeleted, Is.True);
                 
-                Assert.That(parent.RightOrigin, Is.Not.Null);
-                Assert.That(parent.RightOrigin.Origin, Is.EqualTo(parent));
-                Assert.That(parent.RightOrigin.ChildNodes, Has.Count.EqualTo(1));
-                Assert.That(((TextNode)parent.RightOrigin.FirstChild!).TextContent, Is.EqualTo("ef"));
+                Assert.That(parent2.RightOrigin!.ChildNodes, Has.Count.EqualTo(1));
+                Assert.That(((TextNode)parent2.RightOrigin!.FirstChild!).TextContent, Is.EqualTo("ef"));
             }
             
             AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
@@ -299,7 +305,7 @@ public class InsertParagraphHandlerTests
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.InsertTextDiff>()
             ]);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent2.RightOrigin.Id, 0);
         }
         
         [Test]
@@ -390,6 +396,16 @@ public class InsertParagraphHandlerTests
             builder.Print();
             
             // Assert
+            using (Assert.EnterMultipleScope()) 
+            {
+                Assert.That(parent.Origin, Is.Null);
+                Assert.That(parent.RightOrigin, Is.EqualTo(parent2));
+                Assert.That(parent2.Origin, Is.EqualTo(parent));
+                Assert.That(parent2.RightOrigin, Is.EqualTo(parent3));
+                Assert.That(parent3.Origin, Is.EqualTo(parent2));
+                Assert.That(parent3.RightOrigin, Is.Not.Null);
+            }
+            
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(parent2.IsDeleted, Is.True);
@@ -401,10 +417,8 @@ public class InsertParagraphHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
                 Assert.That(parent.ChildNodes[1].IsDeleted, Is.True);
                 
-                Assert.That(parent.RightOrigin, Is.Not.Null);
-                Assert.That(parent.RightOrigin.Origin, Is.EqualTo(parent));
-                Assert.That(parent.RightOrigin.ChildNodes, Has.Count.EqualTo(1));
-                Assert.That(((TextNode)parent.RightOrigin.FirstChild!).TextContent, Is.EqualTo("hi"));
+                Assert.That(parent3.RightOrigin!.ChildNodes, Has.Count.EqualTo(1));
+                Assert.That(((TextNode)parent3.RightOrigin.FirstChild!).TextContent, Is.EqualTo("hi"));
             }
             
             AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
@@ -418,7 +432,7 @@ public class InsertParagraphHandlerTests
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.InsertTextDiff>()
             ]);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent3.RightOrigin.Id, 0);
         }
     }
 }

@@ -31,7 +31,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         {
             nodeSearchResult = SimpleInsert(keyPressInfo, parent);
             origin = nodeSearchResult.Origin.Node;
-            rightOrigin = nodeSearchResult.RightOrigin?.Node;
+            rightOrigin = nodeSearchResult.RightOrigin.Node;
         }
         else
         {
@@ -41,10 +41,11 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         }
         
         var textNode = dScratchService.NodeFactory.String(keyPressInfo.Data, origin, rightOrigin);
-        transaction.Insert(textNode, parent);
-
-        var cursorPosition = (nodeSearchResult.Origin.AbsolutOffset) + textNode.Length;
-        transaction.AddCursorPosition(parent.Id, cursorPosition);
+        var targetParent = origin?.Parent ?? rightOrigin?.Parent ?? parent;
+        transaction.Insert(textNode, targetParent);
+        
+        var cursorPosition = nodeSearchResult.Origin.AbsolutOffset + textNode.Length;
+        transaction.AddCursorPosition(targetParent.Id, cursorPosition);
         return dScratchService.Apply(transaction);
     }
 
