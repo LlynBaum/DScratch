@@ -94,8 +94,8 @@ public static class DeleteSelection
         transaction.DeleteRange(firstParent.RightOrigin, secondParent);
         
         return new NodeSearchResult(
-            Origin: new NodeInfo(deleteStart.Origin.Node?.Origin, firstParentOffset, deleteStart.Origin.RelativeOffset), 
-            RightOrigin: new NodeInfo(deleteEnd.Origin.Node?.Origin, secondParentOffset, deleteEnd.Origin.RelativeOffset));
+            Origin: new NodeInfo(deleteStart.Origin.Node, firstParentOffset, deleteStart.Origin.RelativeOffset), 
+            RightOrigin: new NodeInfo(deleteEnd.RightOrigin.Node, secondParentOffset, deleteEnd.RightOrigin.RelativeOffset));
     }
 
     private static NodeSearchResult GetNode(DNode parent, int offset, ITransaction transaction)

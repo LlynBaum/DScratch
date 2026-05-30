@@ -7,7 +7,7 @@ public static class AssertHelper
 {
     public static void ThatStepsEqualTo(IReadOnlyList<StepDiff?> actual, params IResolveConstraint[] expected)
     {
-        Assert.That(actual, Has.Count.EqualTo(expected.Length));
+        Assert.That(actual, Has.Count.EqualTo(expected.Length), $"Expected actual to contain {expected.Length} steps, but got {actual.Count}");
         using (Assert.EnterMultipleScope())
         {
             foreach (var (first, second) in actual.Zip(expected))
