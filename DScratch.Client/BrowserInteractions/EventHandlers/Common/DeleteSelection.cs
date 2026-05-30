@@ -90,6 +90,11 @@ public static class DeleteSelection
         transaction.DeleteRange(deleteStart.Origin.Node, null);
         transaction.DeleteRange(null, deleteEnd.RightOrigin.Node);
         transaction.MoveRange(secondParent.FirstChild, null, firstParent, firstParent.FirstChild);
+
+        if (firstParent.RightOrigin != secondParent)
+        {
+            transaction.DeleteRange(firstParent.RightOrigin, secondParent.Origin);
+        }
         
         return new NodeSearchResult(
             Origin: new NodeInfo(deleteStart.Origin.Node?.Origin, firstParentOffset, deleteStart.Origin.RelativeOffset), 
