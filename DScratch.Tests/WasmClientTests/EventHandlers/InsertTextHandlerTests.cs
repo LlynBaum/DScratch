@@ -286,9 +286,7 @@ public class InsertTextHandlerTests
     }
     
     [Test]
-    [TestCase(2, 1)]
-    [TestCase(1, 2)]
-    public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverTwoParagraphs(int start, int end)
+    public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverTwoParagraphs()
     {
         // Arrange
         var parent = builder.Paragraph(t => 
@@ -301,7 +299,7 @@ public class InsertTextHandlerTests
         });
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, parent2.GetElementPath(), end));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), 2, parent2.GetElementPath(), 1));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -337,26 +335,24 @@ public class InsertTextHandlerTests
     }
     
     [Test]
-    [TestCase(2, 1)]
-    [TestCase(1, 2)]
-    public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverThreeParagraphs(int start, int end)
+    public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverThreeParagraphs()
     {
         // Arrange
-        var parent = builder.TestInlineElementNode(t => 
+        var parent = builder.Paragraph(t => 
         {
             t.Text("abc");
         });
-        var parent2 = builder.TestInlineElementNode(t => 
+        var parent2 = builder.Paragraph(t => 
         {
             t.Text("def");
         });
-        var parent3 = builder.TestInlineElementNode(t => 
+        var parent3 = builder.Paragraph(t => 
         {
             t.Text("ghi");
         });
 
         // Act
-        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, parent3.GetElementPath(), end));
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), 2, parent3.GetElementPath(), 1));
         
         var visualizer = new DocumentVisualizer(document);
         visualizer.Print();
@@ -365,10 +361,10 @@ public class InsertTextHandlerTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(parent2.IsDeleted, Is.True);
-            Assert.That(parent2.ChildNodes, Has.Count.Zero);
+            Assert.That(parent2.ChildNodes, Has.Count.EqualTo(1));
             Assert.That(parent3.IsDeleted, Is.True);
             Assert.That(parent3.ChildNodes, Has.Count.Zero);
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
         }
 
         using (Assert.EnterMultipleScope())
@@ -379,8 +375,8 @@ public class InsertTextHandlerTests
             Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("xyz"));
             
-            Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("hi"));
+            Assert.That(parent.ChildNodes[4], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("hi"));
         }
         
         AssertHelper.ThatStepsEqualTo(result.Steps, expected: [

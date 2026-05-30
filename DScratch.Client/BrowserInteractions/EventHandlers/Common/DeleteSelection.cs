@@ -72,7 +72,6 @@ public static class DeleteSelection
         var (firstParentOffset, secondParentOffset) = keyPressInfo.Selection.GetConvertedOffsets();
         var (firstParentPath, secondParentPath) = keyPressInfo.GetConvertedPaths();
         
-        
         var firstParent = transaction.FindNode(firstParentPath);
         if (firstParent is null)
         {
@@ -89,7 +88,7 @@ public static class DeleteSelection
 
         transaction.DeleteRange(deleteStart.Origin.Node, null);
         transaction.DeleteRange(null, deleteEnd.RightOrigin.Node);
-        transaction.MoveRange(secondParent.FirstChild, null, firstParent, firstParent.FirstChild);
+        transaction.MoveRange(secondParent.FirstChild, null, firstParent, firstParent.LastChild);
         transaction.DeleteRange(firstParent.RightOrigin, secondParent);
         
         return new NodeSearchResult(

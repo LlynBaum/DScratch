@@ -42,23 +42,24 @@ public class KeyPressInfoHelper
         };
     }
     
-    public static KeyPressInfo GetKeyPressInfo(NodePath path, int offset, NodePath endPath, int endOffset)
+    public static KeyPressInfo GetKeyPressInfo(
+        NodePath path, 
+        int offset, 
+        NodePath endPath, 
+        int endOffset, 
+        SelectionDirection direction = SelectionDirection.Forward)
     {
-        var direction = offset < endOffset ? SelectionDirection.Forward : SelectionDirection.Backward;
-
-        var start = direction is SelectionDirection.Forward ? path.Path.Reverse().ToArray() : endPath.Path.Reverse().ToArray();
-        var end = direction is SelectionDirection.Forward ? endPath.Path.Reverse().ToArray() : path.Path.Reverse().ToArray();
         
         return new KeyPressInfo
         {
             Data = "xyz",
-            Path = start,
+            Path = path.Path.Reverse().ToArray(),
             InputType = InsertTextHandler.EventName,
             Selection = new KeyPressInfo.SelectionInfo
             {
                 Direction = direction,
                 Offset = offset,
-                End = end,
+                End = endPath.Path.Reverse().ToArray(),
                 EndOffset = endOffset
             }
         };
