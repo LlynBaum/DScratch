@@ -88,6 +88,8 @@ public static class DeleteSelection
 
         transaction.DeleteRange(deleteStart.Origin.Node, null);
         transaction.DeleteRange(null, deleteEnd.RightOrigin.Node);
+        
+        // TODO: this is only the case of a block elements... Inline elements will not merge
         transaction.MoveRange(secondParent.FirstChild, null, firstParent, firstParent.LastChild);
         transaction.DeleteRange(firstParent.RightOrigin, secondParent);
         
