@@ -300,9 +300,6 @@ public class InsertTextHandlerTests
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), 2, parent2.GetElementPath(), 1));
-        
-        var visualizer = new DocumentVisualizer(document);
-        visualizer.Print();
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -354,9 +351,6 @@ public class InsertTextHandlerTests
 
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), 2, parent3.GetElementPath(), 1));
-        
-        var visualizer = new DocumentVisualizer(document);
-        visualizer.Print();
 
         // Assert
         using (Assert.EnterMultipleScope())

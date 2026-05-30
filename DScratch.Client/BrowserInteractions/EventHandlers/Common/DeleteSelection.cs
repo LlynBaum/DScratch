@@ -90,6 +90,7 @@ public static class DeleteSelection
         transaction.DeleteRange(null, deleteEnd.Origin.Node);
         
         // TODO: this is only the case of a block elements... Inline elements will not merge
+        // In case of inline elements, search for nearest block element. If they are not the same, merge them. Else it should only delete but not the second parent and also not merging
         transaction.MoveRange(secondParent.FirstChild, null, firstParent, firstParent.LastChild);
         transaction.DeleteRange(firstParent.RightOrigin, secondParent);
         

@@ -2,6 +2,7 @@ using DScratch.Client.BrowserInteractions.EventHandlers;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
 using DScratch.Tests.WasmClientTests.Helpers;
+using DScratch.Transactions;
 
 namespace DScratch.Tests.WasmClientTests.EventHandlers;
 
@@ -190,5 +191,106 @@ public class InsertParagraphHandlerTests
             Assert.That(((TextNode)parent.RightOrigin.FirstChild!).TextContent, Is.EqualTo("e"));
         }
         AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin.Id, 0);
+    }
+    
+    [Test]
+    public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverTwoParagraphs()
+    {
+        // Arrange
+        var parent = builder.Paragraph(t => 
+        {
+            t.Text("abc");
+        });
+        var parent2 = builder.Paragraph(t => 
+        {
+            t.Text("def");
+        });
+
+        // Act
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), 2, parent2.GetElementPath(), 1));
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent2.IsDeleted, Is.True);
+            Assert.That(parent2.ChildNodes, Has.Count.Zero);
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
+        }
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
+            
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("xyz"));
+            
+            Assert.That(parent.ChildNodes[4], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("ef"));
+        }
+        
+        AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
+            Is.TypeOf<StepDiff.DeleteTextDiff>(),
+            Is.TypeOf<StepDiff.DeleteTextDiff>(),
+            Is.TypeOf<StepDiff.DeleteTextDiff>(),
+            Is.TypeOf<StepDiff.InsertTextDiff>(),
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertTextDiff>()
+        ]);
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 5);
+    }
+    
+    [Test]
+    public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverThreeParagraphs()
+    {
+        // Arrange
+        var parent = builder.Paragraph(t => 
+        {
+            t.Text("abc");
+        });
+        var parent2 = builder.Paragraph(t => 
+        {
+            t.Text("def");
+        });
+        var parent3 = builder.Paragraph(t => 
+        {
+            t.Text("ghi");
+        });
+
+        // Act
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), 2, parent3.GetElementPath(), 1));
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent2.IsDeleted, Is.True);
+            Assert.That(parent2.ChildNodes, Has.Count.EqualTo(1));
+            Assert.That(parent3.IsDeleted, Is.True);
+            Assert.That(parent3.ChildNodes, Has.Count.Zero);
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
+        }
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
+            
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("xyz"));
+            
+            Assert.That(parent.ChildNodes[4], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("hi"));
+        }
+        
+        AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
+            Is.TypeOf<StepDiff.DeleteTextDiff>(),
+            Is.TypeOf<StepDiff.DeleteTextDiff>(),
+            Is.TypeOf<StepDiff.DeleteTextDiff>(),
+            Is.TypeOf<StepDiff.InsertTextDiff>(),
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertTextDiff>()
+        ]);
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 5);
     }
 }
