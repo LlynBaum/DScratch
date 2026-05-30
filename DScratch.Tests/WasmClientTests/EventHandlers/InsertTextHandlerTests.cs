@@ -317,8 +317,8 @@ public class InsertTextHandlerTests
             Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("xyz"));
             
-            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ef"));
+            Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("ef"));
         }
         
         AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
@@ -370,8 +370,8 @@ public class InsertTextHandlerTests
             Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("xyz"));
             
-            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("hi"));
+            Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("hi"));
         }
         
         AssertHelper.ThatStepsEqualTo(result.Steps, expected: [

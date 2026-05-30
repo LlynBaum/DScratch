@@ -366,8 +366,8 @@ public class DeleteContentBackwardHandlerTests
             Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
             
-            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("ef"));
+            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ef"));
         }
         
         AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
@@ -400,6 +400,8 @@ public class DeleteContentBackwardHandlerTests
         // Act
         var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), 2, parent3.GetElementPath(), 1));
 
+        builder.Print();
+        
         // Assert
         using (Assert.EnterMultipleScope())
         {
@@ -415,8 +417,8 @@ public class DeleteContentBackwardHandlerTests
             Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
             
-            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("hi"));
+            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("hi"));
         }
         
         AssertHelper.ThatStepsEqualTo(result.Steps, expected: [

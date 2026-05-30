@@ -367,8 +367,8 @@ public class DeleteContentForwardHandlerTests
             Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
             
-            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("ef"));
+            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ef"));
         }
         
         AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
@@ -416,8 +416,8 @@ public class DeleteContentForwardHandlerTests
             Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
             
-            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("hi"));
+            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("hi"));
         }
         
         AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
