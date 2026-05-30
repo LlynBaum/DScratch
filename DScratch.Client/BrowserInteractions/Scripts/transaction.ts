@@ -105,7 +105,9 @@ export function applyTransaction(transaction: TransactionResult){
 function handleInsertTextStep(step: InsertTextStep) {
     const element = findNode(step.parentId);
     if (!element) return;
-
+    
+    // TODO: browser combines multiple spaces into one, can I force it to render all of them?
+    
     const { node, relativeOffset } = findTextNodeAtOffset(element, step.offset);
     if(node) {
         const text = node.textContent;

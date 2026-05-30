@@ -5,7 +5,9 @@ const handledTypes = [
     "insertText",
     "insertParagraph",
     "deleteContentBackward",
-    "deleteContentForward"
+    "deleteContentForward",
+    "deleteWordBackward",
+    "deleteWordForward"
 ];
 
 export async function handleInput(event: InputEvent, bridgeReference: any) {

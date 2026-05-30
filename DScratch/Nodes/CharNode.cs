@@ -9,4 +9,6 @@ public class CharNode(char value, string id, CharNode? origin, CharNode? rightOr
     {
         throw new InvalidOperationException("DCharNode has no child nodes.");
     }
+
+    public bool IsWhiteSpace() => char.IsWhiteSpace(Value);
 }

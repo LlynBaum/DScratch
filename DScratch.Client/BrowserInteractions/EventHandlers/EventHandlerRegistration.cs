@@ -8,5 +8,7 @@ public static class EventHandlerRegistration
         services.AddKeyedScoped<IEditorEventHandler, InsertParagraphHandler>(InsertParagraphHandler.EventName);
         services.AddKeyedScoped<IEditorEventHandler, DeleteContentBackwardHandler>(DeleteContentBackwardHandler.EventName);
         services.AddKeyedScoped<IEditorEventHandler, DeleteContentForwardHandler>(DeleteContentForwardHandler.EventName);
+        services.AddKeyedScoped<IEditorEventHandler, DeleteWordBackwardHandler>(DeleteWordBackwardHandler.EventName);
+        services.AddKeyedScoped<IEditorEventHandler, DeleteWordForwardHandler>(DeleteWordForwardHandler.EventName);
     }
 }
