@@ -31,7 +31,7 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorE
         else
         {
             var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, sibling);
-            firstNodeToMove = nodeSearchResult.RightOrigin?.Node;
+            firstNodeToMove = nodeSearchResult.RightOrigin.Node;
         }
 
         var (origin, rightOrigin) = GetOrigins(keyPressInfo, sibling);

@@ -14,6 +14,19 @@ public class KeyPressInfo
     public required SelectionInfo Selection { get; init; }
 
     public NodePath GetNodePath() => NodePath.FromJs(Path);
+
+    public (NodePath origin, NodePath rightOrigin) GetConvertedPaths()
+    {
+        var originOffset = Selection.Direction is SelectionDirection.Forward
+            ? GetNodePath()
+            : Selection.GetEnd();
+            
+        var rightOriginOffset = Selection.Direction is SelectionDirection.Forward
+            ? Selection.GetEnd()
+            : GetNodePath();
+
+        return (originOffset, rightOriginOffset);
+    }
     
     public class SelectionInfo
     {

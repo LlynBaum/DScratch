@@ -303,4 +303,37 @@ public class DeleteContentBackwardHandlerTests
         ]);
         AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 6);
     }
+    
+    [Test]
+    public void Handle_DoesNothing_WhenWhereIsNoPreviousParagraph()
+    {
+        // Arrange
+        var parent = builder.Paragraph(t => 
+        {
+            t.Text("abc");
+            t.Text("def");
+        });
+
+        // Act
+        var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 0));
+        
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.IsDeleted, Is.False);
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+            
+            Assert.That(result.Steps, Has.Count.Zero);
+            Assert.That(result.CursorPosition, Is.Null);
+        }
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("abc"));
+            
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
+        }
+    }
 }
