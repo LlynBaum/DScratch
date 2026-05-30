@@ -358,8 +358,8 @@ public class DeleteContentForwardHandlerTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(parent2.IsDeleted, Is.True);
-            Assert.That(parent2.ChildNodes, Has.Count.Zero);
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            Assert.That(parent2.ChildNodes, Has.Count.EqualTo(1));
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
         }
 
         using (Assert.EnterMultipleScope())
@@ -367,8 +367,8 @@ public class DeleteContentForwardHandlerTests
             Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
             
-            Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("ef"));
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("ef"));
         }
         
         AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
@@ -407,8 +407,8 @@ public class DeleteContentForwardHandlerTests
             Assert.That(parent2.IsDeleted, Is.True);
             Assert.That(parent2.ChildNodes, Has.Count.EqualTo(1));
             Assert.That(parent3.IsDeleted, Is.True);
-            Assert.That(parent3.ChildNodes, Has.Count.Zero);
-            Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            Assert.That(parent3.ChildNodes, Has.Count.EqualTo(1));
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
         }
 
         using (Assert.EnterMultipleScope())
@@ -416,8 +416,8 @@ public class DeleteContentForwardHandlerTests
             Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
             
-            Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("hi"));
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("hi"));
         }
         
         AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
