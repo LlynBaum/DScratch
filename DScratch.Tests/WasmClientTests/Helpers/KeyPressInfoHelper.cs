@@ -7,16 +7,17 @@ public class KeyPressInfoHelper
 {
     public static KeyPressInfo GetKeyPressInfoDirectionNone(NodePath path, int offset)
     {
+        var nodePath = path.Path.Reverse().ToArray();
         return new KeyPressInfo
         {
             Data = "abc",
-            Path = path.Path.Reverse().ToArray(),
+            Path = nodePath,
             InputType = InsertTextHandler.EventName,
             Selection = new KeyPressInfo.SelectionInfo
             {
                 Direction = SelectionDirection.None,
                 Offset = offset,
-                End = [],
+                End = nodePath,
                 EndOffset = 0
             }
         };

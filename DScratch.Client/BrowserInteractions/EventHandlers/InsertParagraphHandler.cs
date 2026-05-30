@@ -12,7 +12,8 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorE
     {
         var transaction = dScratchService.StartTransaction();
         
-        var sibling = transaction.FindNode(keyPressInfo.GetNodePath());
+        var (siblingPath, _) = keyPressInfo.GetConvertedPaths();
+        var sibling = transaction.FindNode(siblingPath);
         if (sibling is null)
         {
             throw new ArgumentException($"Sibling node with given path not found: {keyPressInfo.GetNodePath()}");
