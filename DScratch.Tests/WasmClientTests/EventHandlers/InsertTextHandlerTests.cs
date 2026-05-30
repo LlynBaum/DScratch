@@ -286,6 +286,7 @@ public class InsertTextHandlerTests
         AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 9);
     }
     
+    [TestFixture]
     private class MergeParagraphs : InsertTextHandlerTests
     {
         [Test]

@@ -338,6 +338,7 @@ public class DeleteContentBackwardHandlerTests
         }
     }
     
+    [TestFixture]
     private class MergeParagraphs : DeleteContentBackwardHandlerTests
     {
         [Test]

@@ -20,7 +20,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
         }
 
         int? cursorPosition;
-        var cursorTarget = parent;
+        DNode cursorTarget;
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
             var deletedNodeInfo = SimpleDeleteForward(keyPressInfo, transaction, parent);
@@ -37,12 +37,14 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
             else
             {
                 cursorPosition = deletedNodeInfo.AbsoluteOffsetIfPresent;
+                cursorTarget = parent;
             }
         }
         else
         {
             var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, parent);
             cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent;
+            cursorTarget = nodeSearchResult.Origin.Node?.ParentElement ?? parent;
         }
         
         if (cursorPosition is not null) transaction.AddCursorPosition(cursorTarget.Id, cursorPosition.Value);

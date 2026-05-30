@@ -194,6 +194,7 @@ public class InsertParagraphHandlerTests
         AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin.Id, 0);
     }
 
+    [TestFixture]
     private class MergeParagraphs : InsertParagraphHandlerTests
     {
         [Test]
@@ -384,6 +385,8 @@ public class InsertParagraphHandlerTests
             // Act
             var result = handler.Handle(keyPressInfo);
 
+            builder.Print();
+            
             // Assert
             using (Assert.EnterMultipleScope())
             {

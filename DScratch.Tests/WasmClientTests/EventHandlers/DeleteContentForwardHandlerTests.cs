@@ -338,7 +338,8 @@ public class DeleteContentForwardHandlerTests
             Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
         }
     }
-
+    
+    [TestFixture]
     private class MergeParagraphs : DeleteContentForwardHandlerTests
     {
         [Test]
