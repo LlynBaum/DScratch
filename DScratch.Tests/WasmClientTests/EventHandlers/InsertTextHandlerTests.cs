@@ -8,6 +8,7 @@ using DScratch.TreeVisualizers;
 
 namespace DScratch.Tests.WasmClientTests.EventHandlers;
 
+[TestFixture]
 public class InsertTextHandlerTests
 {
     private DScratchDocument document = null!;
@@ -28,7 +29,6 @@ public class InsertTextHandlerTests
         handler = new InsertTextHandler(service);
     }
 
-    [TestFixture]
     private class SimpleInsert : InsertTextHandlerTests
     {
         [Test]
@@ -124,7 +124,6 @@ public class InsertTextHandlerTests
         }
     }
 
-    [TestFixture]
     private class SelectionInsert : InsertTextHandlerTests
     {
         [Test]
@@ -290,7 +289,6 @@ public class InsertTextHandlerTests
         }
     }
     
-    [TestFixture]
     private class MergeParagraphs : InsertTextHandlerTests
     {
         [Test]

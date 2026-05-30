@@ -7,6 +7,7 @@ using DScratch.Transactions;
 
 namespace DScratch.Tests.WasmClientTests.EventHandlers;
 
+[TestFixture]
 public class InsertParagraphHandlerTests
 {
     private DScratchDocument document = null!;
@@ -27,7 +28,6 @@ public class InsertParagraphHandlerTests
         handler = new InsertParagraphHandler(service);
     }
 
-    [TestFixture]
     private class SimpleInsert : InsertParagraphHandlerTests
     {
         [Test]
@@ -131,7 +131,6 @@ public class InsertParagraphHandlerTests
         }
     }
     
-    [TestFixture]
     private class SelectionInsert : InsertParagraphHandlerTests
     {
         [Test]
@@ -198,7 +197,6 @@ public class InsertParagraphHandlerTests
         }
     }
 
-    [TestFixture]
     private class MergeParagraphs : InsertParagraphHandlerTests
     {
         [Test]

@@ -8,6 +8,7 @@ using DScratch.TreeVisualizers;
 
 namespace DScratch.Tests.WasmClientTests.EventHandlers;
 
+[TestFixture]
 public class DeleteContentBackwardHandlerTests
 {
     private DScratchDocument document = null!;
@@ -28,7 +29,6 @@ public class DeleteContentBackwardHandlerTests
         handler = new DeleteContentBackwardHandler(service);
     }
     
-    [TestFixture]
     private class SimpleDelete : DeleteContentBackwardHandlerTests
     {
             [Test]
@@ -156,7 +156,6 @@ public class DeleteContentBackwardHandlerTests
         }
     }
     
-    [TestFixture]
     private class SelectionDelete : DeleteContentBackwardHandlerTests
     {
         [Test]
@@ -299,7 +298,6 @@ public class DeleteContentBackwardHandlerTests
         }
     }
     
-    [TestFixture]
     private class MergeParagraphs : DeleteContentBackwardHandlerTests
     {
         [Test]
