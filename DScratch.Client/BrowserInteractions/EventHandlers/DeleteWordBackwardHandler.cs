@@ -22,7 +22,18 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : IEdit
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
             var nodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, parent);
-            if(nodeInfo.HasFoundNode) transaction.AddCursorPosition(nodeInfo.Node!.Id, nodeInfo.AbsolutOffset);
+            
+            if (!nodeInfo.HasFoundNode && parent is ParagraphNode && parent.OriginElement is ParagraphNode paragraphNode) // TODO: probably just BLockElements in general
+            {
+                transaction.AddCursorPosition(parent.OriginElement.Id, paragraphNode.GetTextLength());
+
+                transaction.MoveRange(parent.FirstChild, null, parent.OriginElement, parent.OriginElement.LastChild);
+                transaction.Delete(parent);
+            }
+            else if(nodeInfo.HasFoundNode) // TODO: add a case for inline elements, that will have the same without the merging
+            {
+                transaction.AddCursorPosition(nodeInfo.Node!.Id, nodeInfo.AbsolutOffset);
+            }
         }
         else
         {
@@ -37,16 +48,14 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : IEdit
 
     private static NodeInfo SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
     {
-        // TODO: search for the given node at the offset. Then go back and start delete everything until hitting a white space character.
-
         var walker = new TreeWalker<CharNode>(parent);
 
-        var current = walker.NextNode();
         var offset = 0;
-
-        while (current is not null && offset < keyPressInfo.Selection.Offset)
+        CharNode? current = null;
+        while (offset < keyPressInfo.Selection.Offset)
         {
-            
+            offset++;
+            current = walker.NextNode();
         }
         
         while (current is not null && current.IsWhiteSpace())
