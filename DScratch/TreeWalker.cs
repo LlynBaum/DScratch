@@ -175,10 +175,10 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
         var node = current.Origin;
         while (node is not null)
         {
-            var firstChild = FirstChildOrDefault(node.Origin);
-            if (firstChild is not null)
+            var lastChild = LastChildOrDefault(node);
+            if (lastChild is not null)
             {
-                node = firstChild;
+                node = lastChild;
             }
             else
             {
@@ -210,12 +210,12 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
 
     private DNode? FirstChildOrDefault(DNode? node)
     {
-        if (includeDeleted)
-        {
-            return node?.ChildNodes.Count > 0 ? node.ChildNodes[0] : null;
-        }
-
-        return node?.FirstChild;
+        return includeDeleted ? node?.ChildNodes.FirstOrDefault() : node?.FirstChild;
+    }
+    
+    private DNode? LastChildOrDefault(DNode? node)
+    {
+        return includeDeleted ? node?.ChildNodes.LastOrDefault() : node?.LastChild;
     }
 }
 

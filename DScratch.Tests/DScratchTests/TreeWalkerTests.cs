@@ -210,6 +210,40 @@ public class TreeWalkerTests
             Assert.That(walker.MovePrevious(), Is.EqualTo(testNode1));
             Assert.That(walker.Current, Is.EqualTo(testNode1));
         }
+
+        [Test]
+        public void MovePrevious_ReturnsExpectedNodes()
+        {
+            CharNode char1 = null!;
+            CharNode char2 = null!;
+            CharNode char3 = null!;
+            var parent = treeBuilder.TestInlineElementNode(t => 
+            {
+                t.Text(txt =>
+                {
+                    char1 = txt.Char('a');
+                    char2 = txt.Char('b');
+                });
+                t.Text(txt => 
+                {
+                    char3 = txt.Char('c');
+                });
+            });
+        
+            // Act & Assert
+            var walker = new TreeWalker<CharNode>(parent);
+            walker.NextNode();
+            walker.NextNode();
+            walker.NextNode();
+            
+            Assert.That(walker.Current, Is.EqualTo(char3));
+            
+            Assert.That(walker.MovePrevious(), Is.EqualTo(char2));
+            Assert.That(walker.Current, Is.EqualTo(char2));
+            
+            Assert.That(walker.MovePrevious(), Is.EqualTo(char1));
+            Assert.That(walker.Current, Is.EqualTo(char1));
+        }
         
         [Test]
         public void DoesOnlySeekWithinParent()

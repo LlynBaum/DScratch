@@ -12,18 +12,18 @@ public static class AssertHelper
         {
             foreach (var (first, second) in actual.Zip(expected))
             {
-                Assert.That(first, second);
+                Assert.That(first, second, $"Expected {first?.Type ?? "null"} to be of expected type.");
             }
         }
     }
     
     public static void ThatCursorPositionEqualTo(CursorPosition? actual, string expectedId, int expectedOffset)
     {
-        Assert.That(actual, Is.Not.Null);
+        Assert.That(actual, Is.Not.Null, "Expected to have a cursor position, but got null.");
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(actual.ParentId, Is.EqualTo(expectedId));
-            Assert.That(actual.Offset, Is.EqualTo(expectedOffset));
+            Assert.That(actual.ParentId, Is.EqualTo(expectedId), $"Expected {expectedId} as target parent for selection.");
+            Assert.That(actual.Offset, Is.EqualTo(expectedOffset), $"Expected an offset of{expectedOffset} for selection.");
         }
     }
 }
