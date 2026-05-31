@@ -236,8 +236,8 @@ public class DeleteWordBackwardHandlerTests
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
             
                 Assert.That(result.Steps, Has.Count.Zero);
-                Assert.That(result.CursorPosition, Is.Null);
             }
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
 
             using (Assert.EnterMultipleScope())
             {
