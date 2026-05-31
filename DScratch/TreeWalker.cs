@@ -23,6 +23,24 @@ public class TreeWalker<TFilter>(DNode parent, bool includeDeleted = false)
         Current = null;
         return default;
     }
+
+    public TFilter? MovePrevious()
+    {
+        var next = Previous(Current);
+        while (next is not null)
+        {
+            if (next is TFilter filteredNode)
+            {
+                Current = next;
+                return filteredNode;
+            }
+
+            next = Previous(next);
+        }
+
+        Current = null;
+        return default;
+    }
     
     public TFilter? NextSibling()
     {
@@ -119,10 +137,10 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
     
     protected DNode? Next(DNode? current)
     {
-        var firstChild = FirstChildIfDeleted(current);
+        var firstChild = FirstChildOrDefault(current);
         if (firstChild is not null)
         {
-            if (EnableDebug) TreeWalkerVisualizer.TraceNextStep(current, current.FirstChild);
+            if (EnableDebug) TreeWalkerVisualizer.TraceNextStep(current, firstChild);
             return NextIfDeleted(firstChild);
         }
 
@@ -146,6 +164,31 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
         if (EnableDebug) TreeWalkerVisualizer.TraceNextStep(current, node);
         return NextIfDeleted(node);
     }
+    
+    protected DNode? Previous(DNode? current)
+    {
+        if (current?.Origin is null)
+        {
+            return current?.Parent == parent ? null : current?.Parent;
+        }
+        
+        var node = current.Origin;
+        while (node is not null)
+        {
+            var firstChild = FirstChildOrDefault(node.Origin);
+            if (firstChild is not null)
+            {
+                node = firstChild;
+            }
+            else
+            {
+                break;
+            }
+        }
+        
+        if (EnableDebug) TreeWalkerVisualizer.TraceNextStep(current, node);
+        return PreviousIfDeleted(node);
+    }
 
     private DNode? NextIfDeleted(DNode? node)
     {
@@ -155,8 +198,17 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
         }
         return node?.IsDeleted ?? false ? Next(node) : node;
     }
+    
+    private DNode? PreviousIfDeleted(DNode? node)
+    {
+        if (includeDeleted)
+        {
+            return node;
+        }
+        return node?.IsDeleted ?? false ? Previous(node) : node;
+    }
 
-    private DNode? FirstChildIfDeleted(DNode? node)
+    private DNode? FirstChildOrDefault(DNode? node)
     {
         if (includeDeleted)
         {
@@ -186,6 +238,7 @@ internal static class TreeWalkerVisualizer
         {
             if (next == current.FirstChild) action = "⬇️ DOWN ";
             else if (next == current.RightOrigin) action = "➡️ RIGHT";
+            else if (next == current.Origin) action = "➡️ LEFT";
             else action = "⬆️ UP   "; // Backtracked to a parent's sibling
         }
 
