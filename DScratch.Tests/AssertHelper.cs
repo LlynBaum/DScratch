@@ -23,7 +23,7 @@ public static class AssertHelper
         using (Assert.EnterMultipleScope())
         {
             Assert.That(actual.ParentId, Is.EqualTo(expectedId), $"Expected {expectedId} as target parent for selection.");
-            Assert.That(actual.Offset, Is.EqualTo(expectedOffset), $"Expected an offset of{expectedOffset} for selection.");
+            Assert.That(actual.Offset, Is.EqualTo(expectedOffset), $"Expected an offset of {expectedOffset} for selection.");
         }
     }
 }

@@ -117,11 +117,10 @@ public class DeleteWordBackwardHandlerTests
                 Assert.That(char1.IsDeleted, Is.True);
                 Assert.That(char2.IsDeleted, Is.True);
                 Assert.That(char3.IsDeleted, Is.True);
-                Assert.That(char4.IsDeleted, Is.True);
+                Assert.That(char4.IsDeleted, Is.False);
             }
             AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
                 Is.TypeOf<StepDiff.DeleteTextDiff>(), 
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteTextDiff>()]);
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
@@ -147,7 +146,7 @@ public class DeleteWordBackwardHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 3));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 4));
 
             // Assert
             using (Assert.EnterMultipleScope())
