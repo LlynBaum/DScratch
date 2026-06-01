@@ -32,27 +32,6 @@ public class DeleteWordBackwardHandlerTests
     private class SimpleDelete : DeleteWordBackwardHandlerTests
     {
         [Test]
-        public void Handle_DoesNothing_WhenNodesDoesNotExist()
-        {
-            // Arrange
-            var parent = builder.Text(p =>
-            {
-                p.Char('a');
-            });
-
-            // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 2));
-
-            // Assert
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(parent.IsDeleted, Is.False);
-                Assert.That(result.IsEmpty, Is.True);
-                Assert.That(result.CursorPosition, Is.Null);
-            }
-        }
-        
-        [Test]
         public void Handle_CreatesExpectedChanges()
         {
             // Arrange

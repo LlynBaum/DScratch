@@ -60,16 +60,18 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : IEdit
         
         while (current is not null && current.IsWhiteSpace())
         {
+            offset--;
             transaction.Delete(current);
             current = walker.MovePrevious();
         }
         
         while (current is not null && !current.IsWhiteSpace())
         {
+            offset--;
             transaction.Delete(current);
             current = walker.MovePrevious();
         }
 
-        return new NodeInfo(current, keyPressInfo.Selection.Offset, current?.Parent?.IndexOf(current) ?? -1);
+        return new NodeInfo(current, offset, current?.Parent?.IndexOf(current) ?? -1);
     }
 }
