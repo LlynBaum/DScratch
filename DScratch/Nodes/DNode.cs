@@ -2,11 +2,11 @@ using DScratch.Nodes.NodeTypes;
 
 namespace DScratch.Nodes;
 
-public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null) : IDNode
+public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null) : IDNode
 {
     protected List<DNode> AllChildNodes = childNodes ?? [];
     
-    public string Id { get; } = id;
+    public NodeId Id { get; } = id;
     
     public DNode? Origin { get; internal set; } = origin;
 
@@ -90,6 +90,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
             : ActiveChildNodes.Skip(index).FirstOrDefault();
     }
     
+    // TODO: remove
     public NodePath GetPath()
     {
         List<string> result = [];
@@ -97,7 +98,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
         var current = this;
         while (current is not null)
         {
-            result.Add(current.Id);
+            result.Add(current.Id.Value);
             current = current.Parent;
         }
 
@@ -105,6 +106,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
         return new NodePath(result);
     }
 
+    // TODO: remove
     public NodePath GetElementPath()
     {
         List<string> result = [];
@@ -114,7 +116,7 @@ public abstract class DNode(string id, DNode? origin, DNode? rightOrigin, List<D
         {
             if (current is IElement)
             {
-                result.Add(current.Id);
+                result.Add(current.Id.Value);
             }
             current = current.Parent;
         }
