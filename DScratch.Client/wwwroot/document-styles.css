@@ -13,7 +13,9 @@
 
     p {
         color: currentColor;
-        margin: var(--paragraph-gap) 0;
+        white-space: pre-wrap;
+        
         min-height: 1lh;
+        margin: var(--paragraph-gap) 0;
     }
 }
