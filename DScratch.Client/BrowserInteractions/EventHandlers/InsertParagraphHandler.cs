@@ -12,16 +12,16 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorE
     {
         var transaction = dScratchService.StartTransaction();
         
-        var (siblingPath, _) = keyPressInfo.GetConvertedPaths();
+        var (siblingPath, _) = keyPressInfo.Selection.GetConvertedNodeIds();
         var sibling = transaction.FindNode(siblingPath);
         if (sibling is null)
         {
-            throw new ArgumentException($"Sibling node with given path not found: {keyPressInfo.GetNodePath()}");
+            throw new ArgumentException($"Sibling node with given path not found: {keyPressInfo.Selection.AnchorId}");
         }
 
         if (sibling.Parent is null)
         {
-            throw new ArgumentException($"Sibling node with given path has no parent: {keyPressInfo.GetNodePath()}");
+            throw new ArgumentException($"Sibling node with given path has no parent: {keyPressInfo.Selection.AnchorId}");
         }
 
         DNode? firstNodeToMove;

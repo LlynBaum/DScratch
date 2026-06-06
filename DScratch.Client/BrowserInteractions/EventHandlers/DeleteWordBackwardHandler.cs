@@ -13,10 +13,10 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : IEdit
     {
         var transaction = dScratchService.StartTransaction();
         
-        var parent = transaction.FindNode(keyPressInfo.GetNodePath());
+        var parent = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId);
         if (parent is null)
         {
-            throw new ArgumentException($"Parent with given path not found: {keyPressInfo.GetNodePath()}");
+            throw new ArgumentException($"Parent with given path not found: {keyPressInfo.Selection.AnchorId}");
         }
 
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)

@@ -8,7 +8,9 @@ public static class DeleteSelection
 {
     public static NodeSearchResult Handle(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
     {
-        return keyPressInfo.Path[0] == keyPressInfo.Selection.End[0] ? DeleteContentInParent(keyPressInfo, transaction, parent) : DeleteAndMerge(keyPressInfo, transaction);
+        return keyPressInfo.Selection.AnchorId == keyPressInfo.Selection.FocusId 
+            ? DeleteContentInParent(keyPressInfo, transaction, parent) 
+            : DeleteAndMerge(keyPressInfo, transaction);
     }
 
     private static NodeSearchResult DeleteContentInParent(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
@@ -70,7 +72,7 @@ public static class DeleteSelection
     private static NodeSearchResult DeleteAndMerge(KeyPressInfo keyPressInfo, ITransaction transaction)
     {
         var (firstParentOffset, secondParentOffset) = keyPressInfo.Selection.GetConvertedOffsets();
-        var (firstParentPath, secondParentPath) = keyPressInfo.GetConvertedPaths();
+        var (firstParentPath, secondParentPath) = keyPressInfo.Selection.GetConvertedNodeIds();
         
         var firstParent = transaction.FindNode(firstParentPath);
         if (firstParent is null)
