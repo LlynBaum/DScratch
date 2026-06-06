@@ -89,44 +89,9 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
             ? null 
             : ActiveChildNodes.Skip(index).FirstOrDefault();
     }
-    
-    // TODO: remove
-    public NodePath GetPath()
-    {
-        List<string> result = [];
-
-        var current = this;
-        while (current is not null)
-        {
-            result.Add(current.Id.Value);
-            current = current.Parent;
-        }
-
-        result.Reverse();
-        return new NodePath(result);
-    }
-
-    // TODO: remove
-    public NodePath GetElementPath()
-    {
-        List<string> result = [];
-
-        var current = this;
-        while (current is not null)
-        {
-            if (current is IElement)
-            {
-                result.Add(current.Id.Value);
-            }
-            current = current.Parent;
-        }
-        
-        result.Reverse();
-        return new NodePath(result);
-    }
 
     public override string ToString()
     {
-        return $"[{GetPath()}] - {GetType().Name}(ID: {Id})";
+        return $"[{Id}] - {GetType().Name}";
     }
 }
