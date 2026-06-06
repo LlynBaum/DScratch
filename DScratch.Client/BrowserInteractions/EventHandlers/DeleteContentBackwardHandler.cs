@@ -18,35 +18,32 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         {
             throw new ArgumentException($"Parent with given path not found: {keyPressInfo.Selection.AnchorId}");
         }
-
-        int? cursorPosition;
-        DNode cursorTarget;
+        
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
             var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, parent);
 
             if (!deletedNodeInfo.HasFound && parent is ParagraphNode && parent.OriginElement is ParagraphNode paragraphNode) // TODO: probably just BLockElements in general
             {
-                cursorTarget = parent.OriginElement;
-                cursorPosition = paragraphNode.GetTextLength();
+                transaction.AddCursorPosition(parent.OriginElement.Id, paragraphNode.GetTextLength());
                 
                 transaction.MoveRange(parent.FirstChild, null, parent.OriginElement, parent.OriginElement.LastChild);
                 transaction.Delete(parent);
             }
-            else // TODO: add a case for inline elements, that will have the same without the merging
+            else if (deletedNodeInfo.HasFound) // TODO: add a case for inline elements, that will have the same without the merging
             {
-                cursorPosition = deletedNodeInfo.OffsetOrDefault;
-                cursorTarget = parent;
+                transaction.AddCursorPosition(parent.Id, deletedNodeInfo.Offset);
             }
         }
         else
         {
             var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, parent);
-            cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent;
-            cursorTarget = nodeSearchResult.Origin.Node?.ParentElement ?? parent;
+            
+            var cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent;
+            var cursorTarget = nodeSearchResult.Origin.Node?.ParentElement ?? parent;
+            if (cursorPosition is not null) transaction.AddCursorPosition(cursorTarget.Id, cursorPosition.Value);
         }
         
-        if (cursorPosition is not null) transaction.AddCursorPosition(cursorTarget.Id, cursorPosition.Value);
         return dScratchService.Apply(transaction);
     }
 
