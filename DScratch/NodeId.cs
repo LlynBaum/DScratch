@@ -2,9 +2,9 @@ namespace DScratch;
 
 public readonly record struct NodeId
 {
-    private readonly int? id;
+    private readonly long? id;
     
-    public NodeId(string client, int id)
+    public NodeId(string client, long id)
     {
         Client = client;
         this.id = id;
@@ -18,11 +18,11 @@ public readonly record struct NodeId
     
     public static NodeId Root => new NodeId("root");
     
-    public int Id => id!.Value;
+    public long Id => id!.Value;
     
     public string Client { get; }
     
-    public string Value => Client + id;
+    public string Value => id.HasValue ? $"{Client}-{id}" : Client;
 
     public override string ToString()
     {

@@ -10,21 +10,21 @@ internal static class StepHelpers
         public StepDiff[] ToInsertSteps()
         {
             // We can not start the path at this node, since it is not in the DOM. So we take the parent node as first possible element
-            var parentId = node.ParentElement?.Id ?? NodePath.RootId;
+            var parentId = node.ParentElement?.Id ?? NodeId.Root;
             
             return node switch
             {
                 RootNode => [..node.ChildNodes.SelectMany(c => c.ToInsertSteps())],
-                CharNode charNode => [new StepDiff.InsertTextDiff(parentId, node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, charNode.Value.ToString())],
-                TextNode textNode => [new StepDiff.InsertTextDiff(parentId, node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, textNode.TextContent)],
+                CharNode charNode => [new StepDiff.InsertTextDiff(parentId.Value, node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, charNode.Value.ToString())],
+                TextNode textNode => [new StepDiff.InsertTextDiff(parentId.Value, node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, textNode.TextContent)],
                 IInlineElement element => 
                 [
-                    new StepDiff.InsertElementInlineDiff(parentId, node.ParentElement?.FindAbsolutTextOffset<IInlineElement>(node) ?? 0, element.TagName, node.Id),
+                    new StepDiff.InsertElementInlineDiff(parentId.Value, node.ParentElement?.FindAbsolutTextOffset<IInlineElement>(node) ?? 0, element.TagName, node.Id.Value),
                     ..node.ChildNodes.SelectMany(c => c.ToInsertSteps())
                 ],
                 IBlockElement element => 
                 [
-                    new StepDiff.InsertElementBlockDiff(parentId, node.OriginElement?.Id, element.TagName, node.Id),
+                    new StepDiff.InsertElementBlockDiff(parentId.Value, node.OriginElement?.Id.Value, element.TagName, node.Id.Value),
                     ..node.ChildNodes.SelectMany(c => c.ToInsertSteps())
                 ],
                 _ => throw new ArgumentException("Node type is not an element, text or char node.")
@@ -36,9 +36,9 @@ internal static class StepHelpers
             return node switch
             {
                 RootNode => null,
-                CharNode charNode => new StepDiff.DeleteTextDiff(node.ParentElement!.Id, node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, 1),
-                TextNode textNode => new StepDiff.DeleteTextDiff(node.ParentElement!.Id, node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, textNode.ChildNodes.Count),
-                IElement => new StepDiff.DeleteElementDiff(node.Id),
+                CharNode charNode => new StepDiff.DeleteTextDiff(node.ParentElement!.Id.Value, node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, 1),
+                TextNode textNode => new StepDiff.DeleteTextDiff(node.ParentElement!.Id.Value, node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, textNode.ChildNodes.Count),
+                IElement => new StepDiff.DeleteElementDiff(node.Id.Value),
                 _ => throw new ArgumentException("Node type is not an element, text or char.")
             };
         }
@@ -58,11 +58,11 @@ internal static class StepHelpers
             {
                 RootNode => null,
                 CharNode charNode => new StepDiff.DeleteTextDiff(
-                    ParentId: node.ParentElement!.Id, 
+                    ParentId: node.ParentElement!.Id.Value, 
                     Offset: node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, 
                     Length: 1),
                 TextNode textNode => new StepDiff.DeleteTextDiff(
-                    ParentId: node.ParentElement!.Id, 
+                    ParentId: node.ParentElement!.Id.Value, 
                     Offset: node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, 
                     Length: textNode.Length),
                 _ => null
@@ -75,21 +75,21 @@ internal static class StepHelpers
             {
                 RootNode => null,
                 CharNode charNode => new StepDiff.InsertTextDiff(
-                    ParentId: node.ParentElement!.Id,
+                    ParentId: node.ParentElement!.Id.Value,
                     Offset: node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, 
                     Text: charNode.Value.ToString()),
                 TextNode textNode => new StepDiff.InsertTextDiff(
-                    ParentId: node.ParentElement!.Id, 
+                    ParentId: node.ParentElement!.Id.Value, 
                     Offset: node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, 
                     Text: textNode.TextContent),
                 IInlineElement => new StepDiff.MoveInlineDiff(
-                    TargetNodeId: node.Id, 
-                    TargetParentId: node.ParentElement!.Id,
+                    TargetNodeId: node.Id.Value,
+                    TargetParentId: node.ParentElement!.Id.Value,
                     TargetOffset: node.ParentElement?.FindAbsolutTextOffset<IInlineElement>(node) ?? 0),
                 IBlockElement => new StepDiff.MoveBlockDiff(
-                    TargetNodeId: node.Id,
-                    TargetParentId: node.ParentElement!.Id,
-                    PreviousSiblingId: node.OriginElement?.Id),
+                    TargetNodeId: node.Id.Value,
+                    TargetParentId: node.ParentElement!.Id.Value,
+                    PreviousSiblingId: node.OriginElement?.Id.Value),
                 _ => throw new ArgumentException("Node type is not an element.")
             };
         }

@@ -4,19 +4,19 @@ namespace DScratch;
 
 public class DScratchDocument
 {
-    private Dictionary<NodeId, DNode> nodes { get; set; } = new Dictionary<NodeId, DNode>();
+    private readonly Dictionary<NodeId, DNode> nodes = new Dictionary<NodeId, DNode>();
     
     public DNode Root { get; }
 
-    internal DScratchDocument(string initId)
+    internal DScratchDocument(NodeId initId)
     {
         var paragraph = new ParagraphNode(initId, null, null);
         
         Root = new RootNode();
         Root.InsertChild(paragraph);
         
-        nodes.Add(Root.Id, Root);
-        nodes.Add(paragraph.Id, paragraph);
+        AddNode(Root);
+        AddNode(paragraph);
     }
     
     internal DScratchDocument(DNode root)
@@ -24,25 +24,10 @@ public class DScratchDocument
         Root = root;
     }
     
-    internal DNode? FindNode(NodePath path) // TODO: use look up
+    internal DNode? FindNode(NodeId nodeId) => nodes.GetValueOrDefault(nodeId);
+
+    public void AddNode(DNode node)
     {
-        var pathPartIndex = 0;
-        var node = Root;
-
-        if (path.IsRoot) return Root;
-        
-        while (true)
-        {
-            var id = path[pathPartIndex++];
-            var current = node;
-
-            while (current is not null && current.Id.Value != id)
-            {
-                current = current.RightOrigin;
-            }
-
-            if (pathPartIndex >= path.Length) return current;
-            node = current?.FirstChild;
-        }
+        nodes[node.Id] = node;
     }
 }

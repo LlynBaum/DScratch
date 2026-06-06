@@ -11,16 +11,21 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
 
     public DNode Root => document.Root;
 
+    private readonly List<DNode> addedNodes = [];
+
     private CursorPosition? cursorPosition;
 
     public TransactionResult Commit()
     {
+        addedNodes.ForEach(document.AddNode);
+        addedNodes.Clear();
         return new TransactionResult(steps.SelectMany(s => s.Execute()).ToList(), cursorPosition);
     }
     
     public ITransaction Insert(DNode node, DNode parent)
     {
         steps.Add(new InsertStep(node, parent));
+        addedNodes.Add(node);
         return this;
     }
     
@@ -48,10 +53,15 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
         return this;
     }
 
-    public DNode? FindNode(NodePath path) => document.FindNode(path);
+    public DNode? FindNode(NodeId nodeId) => document.FindNode(nodeId);
 
     public TextNode? SplitText(TextNode node, int offset)
     {
-        return node.Split(offset, nodeIdGenerator.GetNextId());
+        var splitNode = node.Split(offset, nodeIdGenerator.GetNextId());
+        if (splitNode is not null)
+        {
+            addedNodes.Add(splitNode);
+        }
+        return splitNode;
     }
 }

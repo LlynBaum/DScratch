@@ -18,7 +18,7 @@ public interface ITransaction
     
     ITransaction AddCursorPosition(string nodeId, int offset);
 
-    DNode? FindNode(NodePath path);
+    DNode? FindNode(NodeId nodeId);
 
     TextNode? SplitText(TextNode node, int offset);
 }

@@ -7,8 +7,8 @@ public class NodeIdGenerator : INodeIdGenerator
     [PersistentState] 
     private long CurrentId { get; set; } = 1;
     
-    public string GetNextId()
+    public NodeId GetNextId()
     {
-        return $"Darki-{CurrentId++}";
+        return new NodeId("Darki", CurrentId++);
     }
 }
