@@ -53,7 +53,7 @@ public class DeleteWordForwardHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 3));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 0));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -81,29 +81,29 @@ public class DeleteWordForwardHandlerTests
             {
                 t.Text(txt =>
                 {
-                    char1 = txt.Char('a');
-                    char2 = txt.Char('b');
-                    char3 = txt.Char(' ');
-                    char4 = txt.Char(' ');
+                    char1 = txt.Char(' ');
+                    char2 = txt.Char(' ');
+                    char3 = txt.Char('a');
+                    char4 = txt.Char('b');
                 });
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 3));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 1));
 
             // Assert
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(char1.IsDeleted, Is.True);
+                Assert.That(char1.IsDeleted, Is.False);
                 Assert.That(char2.IsDeleted, Is.True);
                 Assert.That(char3.IsDeleted, Is.True);
-                Assert.That(char4.IsDeleted, Is.False);
+                Assert.That(char4.IsDeleted, Is.True);
             }
             AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-                Is.TypeOf<StepDiff.DeleteTextDiff>(), 
+                Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteTextDiff>()]);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 1);
         }
         
         [Test]
@@ -126,21 +126,21 @@ public class DeleteWordForwardHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 4));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 0));
 
             // Assert
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(char1.IsDeleted, Is.False);
+                Assert.That(char1.IsDeleted, Is.True);
                 Assert.That(char2.IsDeleted, Is.True);
                 Assert.That(char3.IsDeleted, Is.True);
-                Assert.That(char4.IsDeleted, Is.True);
+                Assert.That(char4.IsDeleted, Is.False);
             }
             AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteTextDiff>()]);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 1);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
         
         [Test]
@@ -149,27 +149,29 @@ public class DeleteWordForwardHandlerTests
             // Arrange
             CharNode char1 = null!;
             CharNode char2 = null!;
+            CharNode char3 = null!;
             var parent = builder.TestInlineElementNode(t => 
             {
                 t.Text(txt =>
                 {
                     char1 = txt.Char('a');
                     char2 = txt.Char('b');
+                    char3 = txt.Char('c');
                 });
-                t.Text("c");
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 2));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 1));
 
             // Assert
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(char1.IsDeleted, Is.True);
+                Assert.That(char1.IsDeleted, Is.False);
                 Assert.That(char2.IsDeleted, Is.True);
+                Assert.That(char3.IsDeleted, Is.True);
             }
             AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>(), Is.TypeOf<StepDiff.DeleteTextDiff>());
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 1);
         }
         
         [Test]
@@ -179,20 +181,20 @@ public class DeleteWordForwardHandlerTests
             CharNode char1 = null!;
             var parent = builder.TestInlineElementNode(t => 
             {
+                t.Text("bc");
                 t.Text(txt =>
                 {
                     char1 = txt.Char('a');
                 });
-                t.Text("bc");
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 1));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 2));
 
             // Assert
             Assert.That(char1.IsDeleted, Is.True);
             AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 2);
         }
         
         [Test]
@@ -206,7 +208,7 @@ public class DeleteWordForwardHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 0));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 6));
         
             // Assert
             using (Assert.EnterMultipleScope())
@@ -386,7 +388,7 @@ public class DeleteWordForwardHandlerTests
                 t.Text("def");
                 t.Text("ghi");
             });
-
+            
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(oldParent.Id, 3));
         

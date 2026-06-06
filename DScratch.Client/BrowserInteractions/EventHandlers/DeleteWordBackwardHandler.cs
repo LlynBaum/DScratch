@@ -40,7 +40,7 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : IEdit
             var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, parent);
             var cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent;
             var cursorTarget = nodeSearchResult.Origin.Node?.ParentElement ?? parent;
-            if(cursorPosition is not null) transaction.AddCursorPosition(cursorTarget.Id, cursorPosition.Value);
+            if (cursorPosition is not null) transaction.AddCursorPosition(cursorTarget.Id, cursorPosition.Value);
         }
 
         return dScratchService.Apply(transaction);
