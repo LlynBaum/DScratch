@@ -65,8 +65,8 @@ public static class DeleteSelection
         
         transaction.DeleteRange(deleteStart ?? origin?.RightOrigin, rightOrigin);
         return new NodeSearchResult(
-            Origin: new NodeInfo(origin, originOffset, relativeOriginOffset), 
-            RightOrigin: new NodeInfo(rightOrigin?.RightOrigin, rightOriginOffset, relativeRightOriginOffset));
+            Origin: new NodeInfo(origin, originOffset), 
+            RightOrigin: new NodeInfo(rightOrigin?.RightOrigin, rightOriginOffset));
     }
 
     private static NodeSearchResult DeleteAndMerge(KeyPressInfo keyPressInfo, ITransaction transaction)
@@ -97,8 +97,8 @@ public static class DeleteSelection
         transaction.DeleteRange(firstParent.RightOrigin, secondParent);
         
         return new NodeSearchResult(
-            Origin: new NodeInfo(deleteStart.Origin.Node, firstParentOffset, deleteStart.Origin.RelativeOffset), 
-            RightOrigin: new NodeInfo(deleteEnd.RightOrigin.Node, secondParentOffset, deleteEnd.RightOrigin.RelativeOffset));
+            Origin: new NodeInfo(deleteStart.Origin.Node, firstParentOffset), 
+            RightOrigin: new NodeInfo(deleteEnd.RightOrigin.Node, secondParentOffset));
     }
 
     private static NodeSearchResult GetNode(DNode parent, int offset, ITransaction transaction)
@@ -122,8 +122,8 @@ public static class DeleteSelection
         var relativeOffset = offset - currentOffset;
         var origin = currentNode is not null ? transaction.SplitText(currentNode, relativeOffset) : null;
         
-        var originInfo = new NodeInfo(currentNode, offset, relativeOffset);
-        var rightOriginInfo = new NodeInfo(origin ?? currentNode?.RightOrigin, offset, relativeOffset);
+        var originInfo = new NodeInfo(currentNode, offset);
+        var rightOriginInfo = new NodeInfo(origin ?? currentNode?.RightOrigin, offset);
         return new NodeSearchResult(originInfo, rightOriginInfo);
     }
 }

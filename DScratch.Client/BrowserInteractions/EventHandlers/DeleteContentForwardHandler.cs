@@ -18,40 +18,37 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
         {
             throw new ArgumentException($"Parent with given path not found: {keyPressInfo.Selection.AnchorId}");
         }
-
-        int? cursorPosition;
-        DNode cursorTarget;
+        
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
             var deletedNodeInfo = SimpleDeleteForward(keyPressInfo, transaction, parent);
             
             // TODO: for some reason, it deletes the first char in the next para first
-            if (!deletedNodeInfo.HasFoundNode && parent is ParagraphNode paragraphNode && parent.RightOriginElement is ParagraphNode)
+            if (!deletedNodeInfo.HasFound && parent is ParagraphNode paragraphNode && parent.RightOriginElement is ParagraphNode)
             {
-                cursorTarget = parent.RightOriginElement;
-                cursorPosition = paragraphNode.GetTextLength();
+                transaction.AddCursorPosition(parent.RightOriginElement.Id, paragraphNode.GetTextLength());
                 
                 transaction.MoveRange(parent.FirstChild, null, parent.RightOriginElement, null);
                 transaction.Delete(parent);
             }
-            else
+            else if(deletedNodeInfo.HasFound)
             {
-                cursorPosition = deletedNodeInfo.AbsoluteOffsetIfPresent;
-                cursorTarget = parent;
+                transaction.AddCursorPosition(parent.Id, deletedNodeInfo.Offset);
             }
         }
         else
         {
             var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, parent);
-            cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent;
-            cursorTarget = nodeSearchResult.Origin.Node?.ParentElement ?? parent;
+            
+            var cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent;
+            var cursorTarget = nodeSearchResult.Origin.Node?.ParentElement ?? parent;
+            if (cursorPosition is not null) transaction.AddCursorPosition(cursorTarget.Id, cursorPosition.Value);
         }
         
-        if (cursorPosition is not null) transaction.AddCursorPosition(cursorTarget.Id, cursorPosition.Value);
         return dScratchService.Apply(transaction);
     }
     
-    private static NodeInfo SimpleDeleteForward(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
+    private static NodeOffset SimpleDeleteForward(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
     {
         var walker = new TreeWalker<TextNode>(parent);
         
@@ -76,6 +73,6 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
             transaction.Delete(nodeToDelete);
         }
 
-        return new NodeInfo(nodeToDelete, keyPressInfo.Selection.AnchorOffset, relativeOffset);
+        return NodeOffset.From(nodeToDelete, keyPressInfo.Selection.AnchorOffset);
     }
 }

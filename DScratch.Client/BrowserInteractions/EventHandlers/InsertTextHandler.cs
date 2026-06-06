@@ -54,8 +54,8 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         if (keyPressInfo.Selection.AnchorOffset <= 0)
         {
             return new NodeSearchResult(
-                Origin: new NodeInfo(null, 0, 0),
-                RightOrigin: new NodeInfo(parent.FirstChild, 0, 0));
+                Origin: new NodeInfo(null, 0),
+                RightOrigin: new NodeInfo(parent.FirstChild, 0));
         }
 
         var walker = new TreeWalker<TextNode>(parent);
@@ -76,7 +76,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
 
         var relativeOffset = keyPressInfo.Selection.AnchorOffset - currentOffset;
         return new NodeSearchResult(
-            Origin: new NodeInfo(currentNode, keyPressInfo.Selection.AnchorOffset, relativeOffset), 
-            RightOrigin: new NodeInfo(walker.NextSibling(), currentOffset + currentNode?.Length ?? 0, 0));
+            Origin: new NodeInfo(currentNode, keyPressInfo.Selection.AnchorOffset), 
+            RightOrigin: new NodeInfo(walker.NextSibling(), currentOffset + currentNode?.Length ?? 0));
     }
 }

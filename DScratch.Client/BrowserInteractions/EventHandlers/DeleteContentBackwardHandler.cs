@@ -25,7 +25,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         {
             var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, parent);
 
-            if (!deletedNodeInfo.HasFoundNode && parent is ParagraphNode && parent.OriginElement is ParagraphNode paragraphNode) // TODO: probably just BLockElements in general
+            if (!deletedNodeInfo.HasFound && parent is ParagraphNode && parent.OriginElement is ParagraphNode paragraphNode) // TODO: probably just BLockElements in general
             {
                 cursorTarget = parent.OriginElement;
                 cursorPosition = paragraphNode.GetTextLength();
@@ -35,7 +35,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             }
             else // TODO: add a case for inline elements, that will have the same without the merging
             {
-                cursorPosition = deletedNodeInfo.AbsoluteOffsetIfPresent;
+                cursorPosition = deletedNodeInfo.OffsetOrDefault;
                 cursorTarget = parent;
             }
         }
@@ -50,7 +50,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         return dScratchService.Apply(transaction);
     }
 
-    private static NodeInfo SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
+    private static NodeOffset SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
     {
         var walker = new TreeWalker<TextNode>(parent);
         
@@ -75,6 +75,6 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             transaction.Delete(nodeToDelete);
         }
         
-        return new NodeInfo(nodeToDelete, keyPressInfo.Selection.AnchorOffset - 1, relativeOffset);
+        return NodeOffset.From(nodeToDelete, keyPressInfo.Selection.AnchorOffset - 1);
     }
 }

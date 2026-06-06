@@ -23,7 +23,7 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : IEdit
         {
             var nodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, parent);
             
-            if (!nodeInfo.HasFoundNode && parent is ParagraphNode && parent.OriginElement is ParagraphNode paragraphNode) // TODO: probably just BLockElements in general
+            if (!nodeInfo.HasFound && parent is ParagraphNode && parent.OriginElement is ParagraphNode paragraphNode) // TODO: probably just BLockElements in general
             {
                 transaction.AddCursorPosition(parent.OriginElement.Id, paragraphNode.GetTextLength());
 
@@ -32,7 +32,7 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : IEdit
             }
             else // TODO: add a case for inline elements, that will have the same without the merging
             {
-                transaction.AddCursorPosition(parent.Id, nodeInfo.AbsoluteOffsetIfPresent ?? 0);
+                transaction.AddCursorPosition(parent.Id, nodeInfo.OffsetOrDefault);
             }
         }
         else
@@ -46,7 +46,7 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : IEdit
         return dScratchService.Apply(transaction);
     }
 
-    private static NodeInfo SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
+    private static NodeOffset SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
     {
         var walker = new TreeWalker<CharNode>(parent);
 
@@ -72,6 +72,6 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : IEdit
             current = walker.MovePrevious();
         }
 
-        return new NodeInfo(current, offset, current?.Parent?.IndexOf(current) ?? -1);
+        return NodeOffset.From(current, offset);
     }
 }
