@@ -10,6 +10,8 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder, TreeBuilder.ITextT
 
     public DNode FirstChild => Root.FirstChild!;
 
+    public event Action<DNode>? NodeAdded; 
+
     private readonly DNode parent;
     private DNode? previousChild;
 
@@ -97,6 +99,8 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder, TreeBuilder.ITextT
         node.Origin = previousChild;
         previousChild?.RightOrigin = node;
         previousChild = node;
+        
+        NodeAdded?.Invoke(node);
     }
 
     private TreeBuilder GetChildTreeBuilder(DNode parentNode)

@@ -11,7 +11,7 @@ public class NodeTypeHelpersTests
     {
         // Arrange
         var inlineElement = TestInlineElementNode.Empty();
-        var textNode = new TextNode("", null, null);
+        var textNode = new TextNode(new NodeId(), null, null);
         
         // Act & Assert
         Assert.That(inlineElement.IsTextOrInline(), Is.True);

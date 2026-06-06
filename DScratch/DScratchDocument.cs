@@ -22,6 +22,7 @@ public class DScratchDocument
     internal DScratchDocument(DNode root)
     {
         Root = root;
+        AddNode(Root);
     }
     
     internal DNode? FindNode(NodeId nodeId) => nodes.GetValueOrDefault(nodeId);

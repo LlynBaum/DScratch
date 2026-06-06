@@ -17,12 +17,12 @@ public static class AssertHelper
         }
     }
     
-    public static void ThatCursorPositionEqualTo(CursorPosition? actual, string expectedId, int expectedOffset)
+    public static void ThatCursorPositionEqualTo(CursorPosition? actual, NodeId expectedId, int expectedOffset)
     {
         Assert.That(actual, Is.Not.Null, "Expected to have a cursor position, but got null.");
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(actual.ParentId, Is.EqualTo(expectedId), $"Expected {expectedId} as target parent for selection.");
+            Assert.That(actual.ParentId, Is.EqualTo(expectedId.Value), $"Expected {expectedId} as target parent for selection.");
             Assert.That(actual.Offset, Is.EqualTo(expectedOffset), $"Expected an offset of {expectedOffset} for selection.");
         }
     }

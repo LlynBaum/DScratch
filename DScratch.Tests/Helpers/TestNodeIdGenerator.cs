@@ -4,8 +4,8 @@ public class TestNodeIdGenerator : INodeIdGenerator
 {
     private int currentId;
     
-    public string GetNextId()
+    public NodeId GetNextId()
     {
-        return (currentId++).ToString();
+        return new NodeId("Test", currentId++);
     }
 }

@@ -9,11 +9,14 @@ public class DTransactionTests
 {
     private DScratchDocument Document { get; set; }
     private DTransaction Transaction { get; set; }
+    private TreeBuilder TreeBuilder { get; set; }
 
     [SetUp]
     public void SetUp()
     {
-        Document = new DScratchDocument("-1");
+        TreeBuilder = new TreeBuilder();
+        Document = new DScratchDocument(TreeBuilder.Root);
+        TreeBuilder.NodeAdded += Document.AddNode;
         Transaction = new DTransaction(Document, new TestNodeIdGenerator());
     }
 
@@ -44,34 +47,53 @@ public class DTransactionTests
     public void Insert_AddsInsertStep()
     {
         // Act
-        Transaction.Insert(TestNode.Empty(), TestNode.Empty());
+        var nodeId = new NodeId("Test", 1);
+        var node = new TestInlineElementNode(nodeId, null, null);
+        
+        // Act
+        Transaction.Insert(node, TreeBuilder.Root);
         
         // Assert
         Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
         var step = Transaction.Steps.Single();
         Assert.That(step, Is.TypeOf<InsertStep>());
+        
+        Transaction.Commit();
+        Assert.That(Document.FindNode(nodeId), Is.EqualTo(node));
     }
     
     [Test]
     public void DeleteNode_AddsDeleteStep()
     {
         // Act
-        Transaction.Delete(TestNode.Empty());
+        var node = TreeBuilder.TestInlineElementNode();
+        Transaction.Delete(node);
         
         // Assert
         Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
         Assert.That(Transaction.Steps.Single(), Is.TypeOf<DeleteStep>());
+        
+        Transaction.Commit();
+        Assert.That(Document.FindNode(node.Id), Is.EqualTo(node));
     }
     
     [Test]
     public void DeleteRange_AddsDeleteRangeStep()
     {
         // Act
-        Transaction.DeleteRange(TestNode.Empty(), TestNode.Empty());
+        var node = TreeBuilder.TestInlineElementNode();
+        var node2 = TreeBuilder.TestInlineElementNode();
+        
+        
+        Transaction.DeleteRange(node, node2);
         
         // Assert
         Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
         Assert.That(Transaction.Steps.Single(), Is.TypeOf<DeleteRangeStep>());
+        
+        Transaction.Commit();
+        Assert.That(Document.FindNode(node.Id), Is.EqualTo(node));
+        Assert.That(Document.FindNode(node2.Id), Is.EqualTo(node2));
     }
     
     [Test]

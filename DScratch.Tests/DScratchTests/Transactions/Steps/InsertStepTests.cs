@@ -22,7 +22,7 @@ public class InsertStepTests
             t.Char('a');         // ID "4"
         });
 
-        var node = new CharNode('a', "-1", node3, node4);     
+        var node = new CharNode('a', new NodeId("Test", -1), node3, node4);     
         
         // Act
         var step = new InsertStep(node, node2);
@@ -31,11 +31,11 @@ public class InsertStepTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(node.Parent?.Id, Is.EqualTo("1"));
-            Assert.That(node2.ChildNodes[1].Id, Is.EqualTo("-1"));
+            Assert.That(node.Parent?.Id.IdValue, Is.EqualTo(1));
+            Assert.That(node2.ChildNodes[1].Id.IdValue, Is.EqualTo(-1));
             
-            Assert.That(node3.RightOrigin!.Id, Is.EqualTo("-1"));
-            Assert.That(node4.Origin?.Id, Is.EqualTo("-1"));
+            Assert.That(node3.RightOrigin!.Id.IdValue, Is.EqualTo(-1));
+            Assert.That(node4.Origin?.Id.IdValue, Is.EqualTo(-1));
         }
     }
     
@@ -52,7 +52,7 @@ public class InsertStepTests
             node4 = t.Char('b'); // ID "3"
         });
 
-        var node = new CharNode('c', "-1", node4, null);     
+        var node = new CharNode('c', new NodeId("Test", -1), node4, null);     
         
         // Act
         var step = new InsertStep(node, node2);
@@ -61,10 +61,9 @@ public class InsertStepTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(node.Parent?.Id, Is.EqualTo("1"));
-            Assert.That(node2.ChildNodes[2].Id, Is.EqualTo("-1"));
-            
-            Assert.That(node4.RightOrigin!.Id, Is.EqualTo("-1"));
+            Assert.That(node.Parent?.Id.IdValue, Is.EqualTo(1));
+            Assert.That(node2.ChildNodes[2].Id.IdValue, Is.EqualTo(-1));
+            Assert.That(node4.RightOrigin!.Id.IdValue, Is.EqualTo(-1));
         }
     }
 
@@ -82,7 +81,7 @@ public class InsertStepTests
             node5 = t.TestInlineElementNode(); // ID "4"
         });
         
-        var node = new TestInlineElementNode("-1", null, null);
+        var node = new TestInlineElementNode(new NodeId("Test", -1), null, null);
         
         // Act
         var step = new InsertStep(node, node5);
@@ -91,8 +90,8 @@ public class InsertStepTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(node.Parent?.Id, Is.EqualTo("4"));
-            Assert.That(node5.ChildNodes[0].Id, Is.EqualTo("-1"));
+            Assert.That(node.Parent?.Id.IdValue, Is.EqualTo(4));
+            Assert.That(node5.ChildNodes[0].Id.IdValue, Is.EqualTo(-1));
         }
     }
 }

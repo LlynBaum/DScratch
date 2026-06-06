@@ -8,7 +8,7 @@ public class ParagraphNodeTests
     [Test]
     public void TagName_ReturnsExpectedDomElementName()
     {
-        var paragraph = new ParagraphNode("1", null, null);
+        var paragraph = new ParagraphNode(new NodeId(), null, null);
         Assert.That(paragraph.TagName, Is.EqualTo("p"));
     }
     
@@ -16,8 +16,8 @@ public class ParagraphNodeTests
     public void InsertChild_ThrowsInvalidOperationException_WhenNodeIsNotText()
     {
         // Arrange
-        var paragraph = new ParagraphNode("1", null, null);
-        var node = new TestNode("2", null, null)
+        var paragraph = new ParagraphNode(new NodeId(), null, null);
+        var node = new TestNode(new NodeId(), null, null)
         {
             Parent = paragraph
         };

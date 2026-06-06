@@ -8,17 +8,17 @@ public class CharNodeTests
     [Test]
     public void InsertChild_ThrowsException()
     {
-        var node = new CharNode('a', "1", null, null);
+        var node = new CharNode('a', new NodeId(), null, null);
         Assert.Throws<InvalidOperationException>(Act);
         return;
         
-        void Act() => node.InsertChild(new TestNode("2", null, null));
+        void Act() => node.InsertChild(new TestNode(new NodeId(), null, null));
     }
 
     [Test]
     public void Value_ReturnsExpectedCharacter()
     {
-        var node = new CharNode('a', "1", null, null);
+        var node = new CharNode('a', new NodeId(), null, null);
         Assert.That(node.Value, Is.EqualTo('a'));
     }
 }

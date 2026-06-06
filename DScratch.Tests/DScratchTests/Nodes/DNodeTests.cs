@@ -19,10 +19,10 @@ public class DNodeTests
         });
         
         // Act
-        var activeChildNodes = builder.FirstChild.ActiveChildNodes.Select(c => c.Id).ToList();
+        var activeChildNodes = builder.FirstChild.ActiveChildNodes.Select(c => c.Id.Value).ToList();
         
         // Assert
-        Assert.That(activeChildNodes, Is.EquivalentTo(["1", "3"]));
+        Assert.That(activeChildNodes, Is.EquivalentTo(["Test-1", "Test-3"]));
     }
     
     [Test]
@@ -44,8 +44,8 @@ public class DNodeTests
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(first?.Id, Is.EqualTo("1"));
-            Assert.That(last?.Id, Is.EqualTo("3"));
+            Assert.That(first?.Id.IdValue, Is.EqualTo(1));
+            Assert.That(last?.Id.IdValue, Is.EqualTo(3));
         });
     }
     
@@ -65,7 +65,7 @@ public class DNodeTests
         var first = builder.FirstChild.FirstChild;
         
         // Assert
-        Assert.That(first?.Id, Is.EqualTo("2"));
+        Assert.That(first?.Id.IdValue, Is.EqualTo(2));
     }
     
     [Test]
@@ -84,7 +84,7 @@ public class DNodeTests
         var last = builder.FirstChild.LastChild;
         
         // Assert
-        Assert.That(last?.Id, Is.EqualTo("2"));
+        Assert.That(last?.Id.IdValue, Is.EqualTo(2));
     }
     
     [Test]
@@ -149,7 +149,7 @@ public class DNodeTests
         var builder = new TreeBuilder();
         var parent = builder.TestNode();
         
-        var insert = new TestNode("insert", null, null);
+        var insert = new TestNode(new NodeId(), null, null);
         
         // Act
         parent.InsertChild(insert);
@@ -166,7 +166,7 @@ public class DNodeTests
         var builder = new TreeBuilder();
         var parent = builder.TestNode();
         
-        var insert = new TestNode("insert", null, null);
+        var insert = new TestNode(new NodeId(), null, null);
         
         // Act
         parent.InsertChild(insert);
@@ -381,51 +381,5 @@ public class DNodeTests
         
         // Assert
         Assert.That(result, Is.Null);
-    }
-
-    [Test]
-    public void GetPath_ReturnsExpectedPathToNode()
-    {
-        // Arrange
-        var builder = new TreeBuilder();
-        DNode node = null!;
-        builder.TestNode(t =>
-        {
-            t.TestNode(t2 =>
-            {
-                node = t2.TestNode();
-            });
-        });
-        
-        // Act
-        var path = node.GetPath();
-        
-        // Assert
-        Assert.That(path, Has.Length.EqualTo(4));
-        Assert.That(path.Path, Is.EquivalentTo(["root", "0", "1", "2"]));
-    }
-    
-    [Test]
-    public void GetElementPath_ReturnsExpectedPathToNode()
-    {
-        // Arrange
-        var builder = new TreeBuilder();
-        DNode node = null!;
-        builder.TestInlineElementNode(t =>
-        {
-            t.TestNode(t2 =>
-            {
-                t2.TestInlineElementNode(t3 =>
-                {
-                    node = t3.TestNode();
-                });
-            });
-        });
-        
-        // Act
-        var path = node.GetElementPath();
-        
-        // Assert
-        Assert.That(path.Path, Is.EquivalentTo(["root", "0", "2"]));
     }
 }

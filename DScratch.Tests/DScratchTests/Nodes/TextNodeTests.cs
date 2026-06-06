@@ -63,7 +63,7 @@ public class TextNodeTests
         var textNode = (TextNode)testNode.ChildNodes[1];
         
         // Act
-        var result = textNode.Split(1, "-1");
+        var result = textNode.Split(1, new NodeId("Test", -1));
         
         new TreeVisualizer(testNode).Print();
 
@@ -72,7 +72,7 @@ public class TextNodeTests
         Assert.That(result, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(result.Id, Is.EqualTo("-1"));
+            Assert.That(result.Id.IdValue, Is.EqualTo(-1));
 
             Assert.That(textNode.ChildNodes, Has.Count.EqualTo(1));
             Assert.That(result.ChildNodes, Has.Count.EqualTo(2));
@@ -123,7 +123,7 @@ public class TextNodeTests
         var textNode = (TextNode)testNode.ChildNodes[1];
         
         // Act
-        var result = textNode.Split(0, "-1");
+        var result = textNode.Split(0, new NodeId("Test", -1));
         
         new TreeVisualizer(testNode).Print();
 
@@ -131,7 +131,7 @@ public class TextNodeTests
         Assert.That(testNode.ChildNodes, Has.Count.EqualTo(3));
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(result?.Id, Is.EqualTo("2"));
+            Assert.That(result?.Id.IdValue, Is.EqualTo(2));
             Assert.That(textNode.ChildNodes, Has.Count.EqualTo(3));
             Assert.That(textNode.TextContent, Is.EqualTo("abc"));
         }
@@ -154,7 +154,7 @@ public class TextNodeTests
         var textNode = (TextNode)testNode.ChildNodes[1];
         
         // Act
-        var result = textNode.Split(3, "-1");
+        var result = textNode.Split(3, new NodeId("Test", -1));
         
         new TreeVisualizer(testNode).Print();
 
@@ -172,8 +172,8 @@ public class TextNodeTests
     public void InsertChild_ThrowsInvalidOperationException_WhenNodeIsNotCharNode()
     {
         // Arrange
-        var testNode = new TextNode("1", null, null);
-        var node = new TestNode("2", null, null)
+        var testNode = new TextNode(new NodeId("Test", 1), null, null);
+        var node = new TestNode(new NodeId("Test", 2), null, null)
         {
             Parent = testNode
         };

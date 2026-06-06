@@ -4,85 +4,32 @@ namespace DScratch.Tests.DScratchTests;
 
 public class DScratchDocumentTests
 {
+    private const string ClientName = "Test";
     private DScratchDocument Document { get; set; }
 
     [SetUp]
     public void SetUp()
     {
-        Document = new DScratchDocument("-1");
+        Document = new DScratchDocument(new NodeId(ClientName, -1));
         DefaultNodes();
     }
     
     [Test]
-    public void FindNode_FindFirstNodePath()
+    public void FindNode_FindExpectedNode()
     {
         // Act
-        var result = Document.FindNode(new NodePath(["1"]));
+        var result = Document.FindNode(new NodeId(ClientName, 1));
         
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.Id, Is.EqualTo("1"));
-    }
-    
-    [Test]
-    public void FindNode_FindSecondNode()
-    {
-        // Act
-        var result = Document.FindNode(new NodePath(["2"]));
-        
-        // Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Id, Is.EqualTo("2"));
-    }
-    
-    [Test]
-    public void FindNode_FindFirstChild()
-    {
-        // Act
-        var result = Document.FindNode(new NodePath(["2", "3"]));
-        
-        // Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Id, Is.EqualTo("3"));
-    }
-    
-    [Test]
-    public void FindNode_FindSecondChild()
-    {
-        // Act
-        var result = Document.FindNode(new NodePath(["2", "4"]));
-        
-        // Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Id, Is.EqualTo("4"));
-    }
-    
-    [Test]
-    public void FindNode_FindLastChild()
-    {
-        // Act
-        var result = Document.FindNode(new NodePath(["2", "5"]));
-        
-        // Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Id, Is.EqualTo("5"));
+        Assert.That(result.Id.IdValue, Is.EqualTo(1));
     }
     
     [Test]
     public void FindNode_ReturnsNullWhenNodeDoesNotExist()
     {
         // Act
-        var result = Document.FindNode(new NodePath(["abc"]));
-        
-        // Assert
-        Assert.That(result, Is.Null);
-    }
-    
-    [Test]
-    public void FindNode_ReturnsNullWhenChildNodeDoesNotExist()
-    {
-        // Act
-        var result = Document.FindNode(new NodePath(["1", "abc"]));
+        var result = Document.FindNode(new NodeId("abc", -2));
         
         // Assert
         Assert.That(result, Is.Null);
@@ -90,20 +37,7 @@ public class DScratchDocumentTests
     
     private void DefaultNodes()
     {
-        var node3 = new TestNode("3", null, null);
-        var node4 = new TestNode("4", node3, null);
-        node3.RightOrigin = node4;
-        var node5 = new TestNode("5", node4, null);
-        node4.RightOrigin = node5;
-        
-        var node1 = new TestNode("1", null, null);
-        var node2 = new TestNode("2", node1, null, [node3, node4, node5]);
-        node1.RightOrigin = node2;
-
-        node3.Parent = node2;
-        node4.Parent = node2;
-        node5.Parent = node2;
-        
+        var node1 = new TestNode(new NodeId(ClientName, 1), null, null);
         Document = new DScratchDocument(node1);
     }
 }

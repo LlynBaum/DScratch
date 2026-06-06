@@ -16,9 +16,9 @@ public readonly record struct NodeId
         id = null;
     }
     
-    public static NodeId Root => new NodeId("root");
+    public static NodeId Root => new NodeId("Root");
     
-    public long Id => id!.Value;
+    public long IdValue => id!.Value;
     
     public string Client { get; }
     

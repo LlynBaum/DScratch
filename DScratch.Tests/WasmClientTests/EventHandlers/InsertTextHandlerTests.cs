@@ -25,6 +25,7 @@ public class InsertTextHandlerTests
         idGenerator = new TestNodeIdGenerator();
         builder = new TreeBuilder(idGenerator);
         document = new DScratchDocument(builder.Root);
+        builder.NodeAdded += document.AddNode;
         service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator);
         handler = new InsertTextHandler(service);
     }
@@ -38,7 +39,7 @@ public class InsertTextHandlerTests
             var parent = builder.TestInlineElementNode(t => { t.Text(c => { c.Char('a'); }); });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 1));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 1));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -59,7 +60,7 @@ public class InsertTextHandlerTests
             var parent = builder.TestInlineElementNode(t => { t.Text("a"); });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 0));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 0));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -84,7 +85,7 @@ public class InsertTextHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 2));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 2));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -109,7 +110,7 @@ public class InsertTextHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.GetElementPath(), 1));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 1));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -140,7 +141,7 @@ public class InsertTextHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, end));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.Id, start, end));
 
             var visualizer = new DocumentVisualizer(document);
             visualizer.Print();
@@ -190,7 +191,7 @@ public class InsertTextHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, end));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.Id, start, end));
 
             var visualizer = new DocumentVisualizer(document);
             visualizer.Print();
@@ -225,7 +226,7 @@ public class InsertTextHandlerTests
             var parent = builder.TestInlineElementNode(t => { t.Text("abcdef"); });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, end));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.Id, start, end));
 
             var visualizer = new DocumentVisualizer(document);
             visualizer.Print();
@@ -265,7 +266,7 @@ public class InsertTextHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.GetElementPath(), start, end));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.Id, start, end));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -299,10 +300,10 @@ public class InsertTextHandlerTests
             var parent2 = builder.Paragraph(t => { t.Text("def"); });
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(
-                path: parent.GetElementPath(),
-                offset: 2,
-                endPath: parent2.GetElementPath(),
-                endOffset: 1);
+                anchorId: parent.Id,
+                anchorOffset: 2,
+                focusId: parent2.Id,
+                focusOffset: 1);
             
             // Act
             var result = handler.Handle(keyPressInfo);
@@ -347,10 +348,10 @@ public class InsertTextHandlerTests
             var parent2 = builder.Paragraph(t => { t.Text("def"); });
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(
-                path: parent2.GetElementPath(), 
-                offset: 1, 
-                endPath: parent.GetElementPath(),
-                endOffset: 2, 
+                anchorId: parent2.Id, 
+                anchorOffset: 1, 
+                focusId: parent.Id,
+                focusOffset: 2, 
                 direction: SelectionDirection.Backward);
             
             // Act
@@ -397,10 +398,10 @@ public class InsertTextHandlerTests
             var parent3 = builder.Paragraph(t => { t.Text("ghi"); });
             
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(
-                path: parent.GetElementPath(),
-                offset: 2,
-                endPath: parent3.GetElementPath(),
-                endOffset: 1);
+                anchorId: parent.Id,
+                anchorOffset: 2,
+                focusId: parent3.Id,
+                focusOffset: 1);
             
             // Act
             var result = handler.Handle(keyPressInfo);
@@ -449,10 +450,10 @@ public class InsertTextHandlerTests
             var parent3 = builder.Paragraph(t => { t.Text("ghi"); });
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(
-                path: parent3.GetElementPath(), 
-                offset: 1, 
-                endPath: parent.GetElementPath(),
-                endOffset: 2, 
+                anchorId: parent3.Id, 
+                anchorOffset: 1, 
+                focusId: parent.Id,
+                focusOffset: 2, 
                 direction: SelectionDirection.Backward);
             
             // Act
