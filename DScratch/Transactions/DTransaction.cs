@@ -47,9 +47,9 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
         return this;
     }
 
-    public ITransaction AddCursorPosition(string nodeId, int offset)
+    public ITransaction AddCursorPosition(NodeId nodeId, int offset)
     {
-        cursorPosition = new CursorPosition(nodeId, offset);
+        cursorPosition = new CursorPosition(nodeId.Value, offset);
         return this;
     }
 

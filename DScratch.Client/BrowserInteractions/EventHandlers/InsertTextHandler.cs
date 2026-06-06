@@ -18,10 +18,10 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         
         var transaction = dScratchService.StartTransaction();
 
-        var parent = transaction.FindNode(keyPressInfo.GetNodePath());
+        var parent = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId);
         if (parent is null)
         {
-            throw new ArgumentException($"Parent with given path not found: {keyPressInfo.GetNodePath()}");
+            throw new ArgumentException($"Parent with given path not found: {keyPressInfo.Selection.AnchorId}");
         }
 
         NodeSearchResult nodeSearchResult;
@@ -51,7 +51,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
 
     private static NodeSearchResult SimpleInsert(KeyPressInfo keyPressInfo, DNode parent)
     {
-        if (keyPressInfo.Selection.Offset <= 0)
+        if (keyPressInfo.Selection.AnchorOffset <= 0)
         {
             return new NodeSearchResult(
                 Origin: new NodeInfo(null, 0, 0),
@@ -65,7 +65,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         while (currentNode is not null)
         {
             var length = currentNode.Length;
-            if (currentOffset + length >= keyPressInfo.Selection.Offset)
+            if (currentOffset + length >= keyPressInfo.Selection.AnchorOffset)
             {
                 break;
             }
@@ -74,9 +74,9 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
             currentNode = walker.NextSibling();
         }
 
-        var relativeOffset = keyPressInfo.Selection.Offset - currentOffset;
+        var relativeOffset = keyPressInfo.Selection.AnchorOffset - currentOffset;
         return new NodeSearchResult(
-            Origin: new NodeInfo(currentNode, keyPressInfo.Selection.Offset, relativeOffset), 
+            Origin: new NodeInfo(currentNode, keyPressInfo.Selection.AnchorOffset, relativeOffset), 
             RightOrigin: new NodeInfo(walker.NextSibling(), currentOffset + currentNode?.Length ?? 0, 0));
     }
 }

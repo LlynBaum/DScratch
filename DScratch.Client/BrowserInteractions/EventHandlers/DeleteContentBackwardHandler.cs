@@ -59,7 +59,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         while (current is not null)
         {
             var length = current.Length;
-            if (currentOffset + length >= keyPressInfo.Selection.Offset)
+            if (currentOffset + length >= keyPressInfo.Selection.AnchorOffset)
             {
                 break;
             }
@@ -68,13 +68,13 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             current = walker.NextNode();
         }
 
-        var relativeOffset = keyPressInfo.Selection.Offset - currentOffset - 1;
+        var relativeOffset = keyPressInfo.Selection.AnchorOffset - currentOffset - 1;
         var nodeToDelete = current?.ChildAt(relativeOffset);
         if (nodeToDelete is not null)
         {
             transaction.Delete(nodeToDelete);
         }
         
-        return new NodeInfo(nodeToDelete, keyPressInfo.Selection.Offset - 1, relativeOffset);
+        return new NodeInfo(nodeToDelete, keyPressInfo.Selection.AnchorOffset - 1, relativeOffset);
     }
 }

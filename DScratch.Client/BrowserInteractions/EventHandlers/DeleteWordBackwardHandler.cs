@@ -52,7 +52,7 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : IEdit
 
         var offset = 0;
         CharNode? current = null;
-        while (offset < keyPressInfo.Selection.Offset)
+        while (offset < keyPressInfo.Selection.AnchorOffset)
         {
             offset++;
             current = walker.NextNode();

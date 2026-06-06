@@ -40,19 +40,19 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorE
 
         transaction.Insert(paragraph, sibling.Parent);
         
-        if (keyPressInfo.Selection.Offset > 0)
+        if (keyPressInfo.Selection.AnchorOffset > 0)
         {
             transaction.MoveRange(firstNodeToMove, null, paragraph, null);
         }
 
-        var cursorTarget = keyPressInfo.Selection.Offset > 0 ? paragraph : rightOrigin!;
+        var cursorTarget = keyPressInfo.Selection.AnchorOffset > 0 ? paragraph : rightOrigin!;
         transaction.AddCursorPosition(cursorTarget.Id, 0);
         return dScratchService.Apply(transaction);
     }
 
     private static DNode? SimpleInsert(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
     {
-        if (keyPressInfo.Selection.Offset <= 0)
+        if (keyPressInfo.Selection.AnchorOffset <= 0)
         {
             return parent.FirstChild;
         }
@@ -64,7 +64,7 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorE
         while (currentNode is not null)
         {
             var length = currentNode.Length;
-            if (currentOffset + length >= keyPressInfo.Selection.Offset)
+            if (currentOffset + length >= keyPressInfo.Selection.AnchorOffset)
             {
                 break;
             }
@@ -73,7 +73,7 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorE
             currentNode = walker.NextSibling();
         }
 
-        var relativeOffset = keyPressInfo.Selection.Offset - currentOffset;
+        var relativeOffset = keyPressInfo.Selection.AnchorOffset - currentOffset;
         return currentNode is null || relativeOffset <= 0 
             ? currentNode 
             : transaction.SplitText(currentNode, relativeOffset) ?? currentNode.RightOrigin;
@@ -81,6 +81,6 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorE
 
     private static (DNode? origin, DNode? rightOrigin) GetOrigins(KeyPressInfo keyPressInfo, DNode sibling)
     {
-        return keyPressInfo.Selection.Offset <= 0 ? (sibling.Origin, sibling) : (sibling, sibling.RightOrigin);
+        return keyPressInfo.Selection.AnchorOffset <= 0 ? (sibling.Origin, sibling) : (sibling, sibling.RightOrigin);
     }
 }
