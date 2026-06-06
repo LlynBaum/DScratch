@@ -9,46 +9,46 @@ public class KeyPressInfo
     
     public required string? Data { get; set; }
     
-    public required string[] Path { get; init; }
-    
     public required SelectionInfo Selection { get; init; }
-
-    public NodePath GetNodePath() => NodePath.FromJs(Path);
-
-    public (NodePath origin, NodePath rightOrigin) GetConvertedPaths()
-    {
-        var originOffset = Selection.Direction is SelectionDirection.Forward
-            ? GetNodePath()
-            : Selection.GetEnd();
-            
-        var rightOriginOffset = Selection.Direction is SelectionDirection.Forward
-            ? Selection.GetEnd()
-            : GetNodePath();
-
-        return (originOffset, rightOriginOffset);
-    }
     
     public class SelectionInfo
     {
-        public int Offset { get; init; }
-        
         public SelectionDirection Direction { get; init; }
         
-        public required string[] End { get; init; }
+        public required string AnchorId { get; set; }
+
+        public NodeId AnchorNodeId => NodeId.FromString(AnchorId);
         
-        public NodePath GetEnd() => NodePath.FromJs(End);
+        public int AnchorOffset { get; init; }
         
-        public int EndOffset { get; init; }
+        public required string FocusId { get; set; }
+
+        public NodeId FocusNodeId => NodeId.FromString(FocusId);
+        
+        public int FocusOffset { get; init; }
+        
+        public (NodeId origin, NodeId rightOrigin) GetConvertedNodeIds()
+        {
+            var originOffset = Direction is SelectionDirection.Forward
+                ? AnchorNodeId
+                : FocusNodeId;
+            
+            var rightOriginOffset = Direction is SelectionDirection.Forward
+                ? FocusNodeId
+                : AnchorNodeId;
+
+            return (originOffset, rightOriginOffset);
+        }
         
         public (int originOffset, int rightOriginOffset) GetConvertedOffsets()
         {
             var originOffset = Direction is SelectionDirection.Forward
-                ? Offset
-                : EndOffset;
+                ? AnchorOffset
+                : FocusOffset;
             
             var rightOriginOffset = Direction is SelectionDirection.Forward
-                ? EndOffset
-                : Offset;
+                ? FocusOffset
+                : AnchorOffset;
 
             return (originOffset, rightOriginOffset);
         }

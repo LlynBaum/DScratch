@@ -1,11 +1,11 @@
-import {findTextNodeAtOffset, getAbsolutOffset, getElementFromNode} from "./nodeHelper";
+import {findTextNodeAtOffset, getAbsolutOffset, getElementFromNode, getNodeId} from "./nodeHelper";
 
 interface SelectionSnapshot {
     selection: Selection | null;
-    absolutOffset: number;
-    path: string[];
-    absolutEndOffset: number | null;
-    endPath: string[] | null;
+    absolutAnchorOffset: number;
+    anchorId: string;
+    absolutFocusOffset: number | null;
+    focusId: string | null;
 }
 
 interface SelectionInfo {
@@ -16,13 +16,13 @@ interface SelectionInfo {
 let snapshot: SelectionSnapshot | null = null;
 let currentSelection: SelectionInfo | null = null;
 
-export function snapshotSelection(offset: number, path: string[], endOffset: number, endPath: string[]) {
+export function snapshotSelection(offset: number, anchorId: string, endOffset: number, focusId: string | null) {
     snapshot = {
         selection: window.getSelection(),
-        absolutOffset: offset,
-        path: path,
-        absolutEndOffset: endOffset,
-        endPath: endPath
+        absolutAnchorOffset: offset,
+        anchorId: anchorId,
+        absolutFocusOffset: endOffset,
+        focusId: focusId
     }
 }
 
@@ -50,7 +50,7 @@ export function setSelection(parentId: string, offset: number) {
     }
     
     const currentParent = getElementFromNode(currentSelection.anchorNode!);
-    const currentParentId = currentParent.getAttribute("data-dnode-id");
+    const currentParentId = getNodeId(currentParent);
     const currentOffset = getAbsolutOffset(currentParent, currentSelection.anchorNode!, currentSelection.anchorOffset);
 
     /*const currentFocusParent = currentSelection.focusNode && getElementFromNode(currentSelection.focusNode!);
@@ -62,8 +62,8 @@ export function setSelection(parentId: string, offset: number) {
     }
     
     const userMovedNatively =
-        currentParentId !== snapshot.path[0] ||
-        currentOffset !== snapshot.absolutOffset;
+        currentParentId !== snapshot.anchorId ||
+        currentOffset !== snapshot.absolutAnchorOffset;
     
     /*
     currentFocusParentId !== (snapshot.endPath && snapshot.endPath[0]) ||

@@ -28,4 +28,11 @@ public readonly record struct NodeId
     {
         return Value;
     }
+
+    public static NodeId FromString(string anchorId)
+    {
+        var parts = anchorId.Split('-');
+        var id = Convert.ToInt64(parts[1]);
+        return new NodeId(parts[0], id);
+    }
 }

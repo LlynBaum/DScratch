@@ -1,3 +1,5 @@
+const NODE_ID_ATTRIBUTE = "data-dnode-id";
+
 export function getAbsolutOffset(parent: Element, targetNode: Node, relativeOffset?: number) {
     if(!relativeOffset) {
         return 0;
@@ -44,4 +46,8 @@ export function findTextNodeAtOffset(parent: Element, offset: number){
         currentNode = walker.nextNode() as Text | null;
     }
     return { node: null, relativeOffset: 0 };
+}
+
+export function getNodeId(element: Element) {
+    return element.getAttribute(NODE_ID_ATTRIBUTE);
 }

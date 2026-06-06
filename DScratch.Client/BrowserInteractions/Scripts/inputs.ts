@@ -1,5 +1,5 @@
 import { snapshotSelection } from "./selection";
-import { getAbsolutOffset, getElementFromNode } from "./nodeHelper";
+import {getAbsolutOffset, getElementFromNode, getNodeId} from "./nodeHelper";
 
 const handledTypes = [
     "insertText",
@@ -22,35 +22,23 @@ export async function handleInput(event: InputEvent, bridgeReference: any) {
     const anchorElement = getElementFromNode(selection?.anchorNode!);
     const focusElement = getElementFromNode(selection?.focusNode!);
 
-    const path = getPath(anchorElement);
-    const offset = getAbsolutOffset(anchorElement, selection?.anchorNode!, selection?.anchorOffset);
-    const endPath = getPath(focusElement);
-    const endOffset = getAbsolutOffset(focusElement, selection?.focusNode!, selection?.focusOffset);
+    const anchorId = getNodeId(anchorElement)!;
+    const anchorOffset = getAbsolutOffset(anchorElement, selection?.anchorNode!, selection?.anchorOffset);
+    const focusId = getNodeId(focusElement);
+    const focusOffset = getAbsolutOffset(focusElement, selection?.focusNode!, selection?.focusOffset);
 
     const payload = {
         InputType: event.inputType,
         Data: event.data,
-        Path: path,
         Selection: {
-            Offset: offset,
             Direction: selection?.direction,
-            End: endPath,
-            EndOffset: endOffset
+            AnchorId: anchorId,
+            AnchorOffset: anchorOffset,
+            FocusId: focusId,
+            FocusOffset: focusOffset
         }
     }
 
-    snapshotSelection(offset, path, endOffset, endPath);
+    snapshotSelection(anchorOffset, anchorId, focusOffset, focusId);
     await bridgeReference?.invokeMethodAsync("OnKeyPressCallbackAsync", payload);
-}
-
-function getPath(element: Element): string[] {
-    const result: string[] = [];
-    let current: Element | null = element;
-
-    while (current && current.hasAttribute("data-dnode-id")) {
-        result.push(current.getAttribute("data-dnode-id")!);
-        current = current.parentElement;
-    }
-
-    return result;
 }
