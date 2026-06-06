@@ -35,4 +35,9 @@ public readonly record struct NodeId
         var id = Convert.ToInt64(parts[1]);
         return new NodeId(parts[0], id);
     }
+
+    public bool IsContinuesTo(NodeId nodeId)
+    {
+        return nodeId.Client == Client && IdValue + 1 == nodeId.IdValue;
+    }
 }

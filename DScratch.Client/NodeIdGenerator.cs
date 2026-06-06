@@ -11,4 +11,9 @@ public class NodeIdGenerator : INodeIdGenerator
     {
         return new NodeId("Darki", CurrentId++);
     }
+
+    public void TakeIds(int count)
+    {
+        CurrentId += count;
+    }
 }

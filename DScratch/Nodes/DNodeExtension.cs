@@ -24,21 +24,6 @@ public static class DNodeExtension
     
     extension(DNode node)
     {
-        internal int FindAbsolutTextOffset(CharNode child)
-        {
-            var (result, offset) = FindAbsolutTextOffsetCore(node, child.Parent!.Id, child.IsDeleted);
-            var relativeOffset = !child.IsDeleted 
-                ? result?.IndexOf(child) 
-                : result?.ChildNodes.ToList().FindIndex(n => n.Id == child.Id);
-            
-            if (relativeOffset is null or -1)
-            {
-                throw new InvalidOperationException("Can not find absolut offset of node. Probably the node is node a child of given parent.");
-            }
-            
-            return offset + relativeOffset.Value;
-        }
-        
         internal int FindAbsolutTextOffset(TextNode child)
         {
             var (result, offset) = FindAbsolutTextOffsetCore(node, child.Id, child.IsDeleted);

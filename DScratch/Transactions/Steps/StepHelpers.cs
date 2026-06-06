@@ -15,7 +15,6 @@ internal static class StepHelpers
             return node switch
             {
                 RootNode => [..node.ChildNodes.SelectMany(c => c.ToInsertSteps())],
-                CharNode charNode => [new StepDiff.InsertTextDiff(parentId.Value, node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, charNode.Value.ToString())],
                 TextNode textNode => [new StepDiff.InsertTextDiff(parentId.Value, node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, textNode.TextContent)],
                 IInlineElement element => 
                 [
@@ -36,7 +35,6 @@ internal static class StepHelpers
             return node switch
             {
                 RootNode => null,
-                CharNode charNode => new StepDiff.DeleteTextDiff(node.ParentElement!.Id.Value, node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, 1),
                 TextNode textNode => new StepDiff.DeleteTextDiff(node.ParentElement!.Id.Value, node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, textNode.ChildNodes.Count),
                 IElement => new StepDiff.DeleteElementDiff(node.Id.Value),
                 _ => throw new ArgumentException("Node type is not an element, text or char.")
@@ -57,10 +55,6 @@ internal static class StepHelpers
             return node switch
             {
                 RootNode => null,
-                CharNode charNode => new StepDiff.DeleteTextDiff(
-                    ParentId: node.ParentElement!.Id.Value, 
-                    Offset: node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, 
-                    Length: 1),
                 TextNode textNode => new StepDiff.DeleteTextDiff(
                     ParentId: node.ParentElement!.Id.Value, 
                     Offset: node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, 
@@ -74,10 +68,6 @@ internal static class StepHelpers
             return node switch
             {
                 RootNode => null,
-                CharNode charNode => new StepDiff.InsertTextDiff(
-                    ParentId: node.ParentElement!.Id.Value,
-                    Offset: node.ParentElement?.FindAbsolutTextOffset(charNode) ?? 0, 
-                    Text: charNode.Value.ToString()),
                 TextNode textNode => new StepDiff.InsertTextDiff(
                     ParentId: node.ParentElement!.Id.Value, 
                     Offset: node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, 

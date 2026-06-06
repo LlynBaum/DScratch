@@ -1,22 +1,20 @@
 namespace DScratch.Nodes;
 
-public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null) 
-    : DNode(id, origin, rightOrigin, childNodes)
+public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin) 
+    : DNode(id, origin, rightOrigin)
 {
-    public int Length => ActiveChildNodes.Count();
+    public int Length => TextContent.Length;
 
-    public string TextContent => ActiveChildNodes
-        .Cast<CharNode>()
-        .Aggregate(string.Empty, (text, node) => text + node.Value);
+    public string TextContent { get; private set; } = string.Empty;
 
     internal override void InsertChild(DNode node)
     {
-        if (node is not CharNode)
-        {
-            throw new InvalidOperationException("Can only insert DCharNode into TextNode.");
-        }
-        
-        base.InsertChild(node);
+        throw new InvalidOperationException("TextNodes do not have child nodes.");
+    }
+
+    internal void AddText(string value)
+    {
+        TextContent += value;
     }
 
     internal TextNode? Split(int offset, NodeId nextId)
@@ -32,7 +30,7 @@ public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, List<DNode>?
         
         AllChildNodes = remainingChildNodes;
         
-        var newNode = new TextNode(nextId, this, RightOrigin, otherChildNodes);
+        var newNode = new TextNode(nextId, this, RightOrigin);
         Parent?.InsertChild(newNode);
         otherChildNodes.ForEach(n => n.Parent = newNode);
         
