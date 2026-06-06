@@ -2,7 +2,7 @@ using DScratch.Nodes.NodeTypes;
 
 namespace DScratch.Nodes;
 
-public class ParagraphNode(string id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null)
+public class ParagraphNode(NodeId id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null)
     : DNode(id, origin, rightOrigin, childNodes), IBlockElement
 {
     public string TagName => "p";

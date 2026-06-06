@@ -1,7 +1,7 @@
 namespace DScratch.Nodes;
 
 // TODO: remove this and replace with "Continuous Runs" within the text node. Might as well rework the ID generation and add a lookup table for nodes. Transaction must add the nodes to the lookup table.
-public class CharNode(char value, string id, CharNode? origin, CharNode? rightOrigin) 
+public class CharNode(char value, NodeId id, CharNode? origin, CharNode? rightOrigin) 
     : DNode(id, origin, rightOrigin)
 {
     public char Value { get; } = value;

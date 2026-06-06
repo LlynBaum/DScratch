@@ -80,7 +80,7 @@ public static class DNodeExtension
         }
     }
     
-    private static (DNode? node, int offset) FindAbsolutTextOffsetCore(DNode parent, string id, bool includeDeleted)
+    private static (DNode? node, int offset) FindAbsolutTextOffsetCore(DNode parent, NodeId id, bool includeDeleted)
     {
         var walker = new TreeWalker<TextNode>(parent, includeDeleted);
             

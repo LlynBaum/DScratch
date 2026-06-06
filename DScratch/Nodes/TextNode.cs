@@ -1,6 +1,6 @@
 namespace DScratch.Nodes;
 
-public class TextNode(string id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null) 
+public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null) 
     : DNode(id, origin, rightOrigin, childNodes)
 {
     public int Length => ActiveChildNodes.Count();
@@ -19,7 +19,7 @@ public class TextNode(string id, DNode? origin, DNode? rightOrigin, List<DNode>?
         base.InsertChild(node);
     }
 
-    internal TextNode? Split(int offset, string nextId)
+    internal TextNode? Split(int offset, NodeId nextId)
     {
         if (offset is 0) return this;
         if (offset == Length) return null;
