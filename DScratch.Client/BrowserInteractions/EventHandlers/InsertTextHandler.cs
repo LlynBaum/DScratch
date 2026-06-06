@@ -74,7 +74,6 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
             currentNode = walker.NextSibling();
         }
 
-        var relativeOffset = keyPressInfo.Selection.AnchorOffset - currentOffset;
         return new NodeSearchResult(
             Origin: new NodeInfo(currentNode, keyPressInfo.Selection.AnchorOffset), 
             RightOrigin: new NodeInfo(walker.NextSibling(), currentOffset + currentNode?.Length ?? 0));
