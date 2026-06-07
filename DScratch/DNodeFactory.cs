@@ -11,8 +11,13 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
     
     public TextNode String(string value, DNode? origin, DNode? rightOrigin)
     {
+        if (value.Length == 0)
+        {
+            throw new InvalidOperationException("A TextNode must have at least 1 character.");
+        }
+        
         var textNode = new TextNode(nodeIdGenerator.GetNextId(), origin, rightOrigin);
-        nodeIdGenerator.TakeIds(value.Length);
+        nodeIdGenerator.TakeIds(value.Length - 1);
         textNode.AddText(value);
         return textNode;
     }

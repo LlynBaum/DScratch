@@ -7,7 +7,7 @@ namespace DScratch.Tests.DScratchTests;
 public class DNodeFactoryTests
 {
     [Test]
-    public void ReturnsParagraphNode_WithNewId()
+    public void Paragraph_ReturnsParagraphNode_WithNewId()
     {
         var factory = new DNodeFactory(new TestNodeIdGenerator());
 
@@ -24,7 +24,7 @@ public class DNodeFactoryTests
     }
     
     [Test]
-    public void ReturnsTextNode_WithNewId()
+    public void String_ReturnsTextNode_WithNewId()
     {
         var testNode = new TestNode(new NodeId(), null, null);
         var testNode2 = new TestNode(new NodeId(), null, null);
@@ -41,7 +41,22 @@ public class DNodeFactoryTests
             Assert.That(result.Origin, Is.EqualTo(testNode));
             Assert.That(result.RightOrigin, Is.EqualTo(testNode2));
             
-            Assert.That(nodeIdGen.GetNextId().IdValue, Is.EqualTo(4));
+            Assert.That(nodeIdGen.GetNextId().IdValue, Is.EqualTo(3));
         }
+    }
+    
+    [Test]
+    public void String_ThrowsInvalidOperationException_WhenEmptyString()
+    {
+        var testNode = new TestNode(new NodeId(), null, null);
+        var testNode2 = new TestNode(new NodeId(), null, null);
+
+        var nodeIdGen = new TestNodeIdGenerator();
+        var factory = new DNodeFactory(nodeIdGen);
+
+        Assert.Throws<InvalidOperationException>(Act);
+        return;
+        
+        void Act() => factory.String("", testNode, testNode2);
     }
 }
