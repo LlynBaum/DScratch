@@ -1,11 +1,13 @@
 namespace DScratch.Nodes;
 
-public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin) 
+public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string content = "") 
     : DNode(id, origin, rightOrigin)
 {
     public int Length => TextContent.Length;
 
-    public string TextContent { get; private set; } = string.Empty;
+    public string TextContent { get; private set; } = content;
+
+    public NodeId LastId => Length > 0 ? new NodeId(Id.Client, Id.IdValue + Length) : Id;
 
     internal override void InsertChild(DNode node)
     {

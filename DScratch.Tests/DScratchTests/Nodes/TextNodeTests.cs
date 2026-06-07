@@ -21,51 +21,45 @@ public class TextNodeTests
     }
     
     [Test]
-    public void TextContent_ReturnsTextContentCombines_FromNotDeletedChildNodes()
+    public void LastId_ReturnsIdOfLastImplicitChild()
     {
         // Arrange
-        var testNode = new TreeBuilder().Text(t =>
-        {
-            t.Char('a');
-            t.Char('b').Delete();
-            t.Char('c');
-        });
-        
-        // Act
-        var result = testNode.TextContent;
+        var testNode = new TreeBuilder().Text("abc");
 
-        // Assert
-        Assert.That(result, Is.EqualTo("ac"));
+        // Act & Assert
+        Assert.That(testNode.Id.IdValue, Is.EqualTo(0));
+        Assert.That(testNode.LastId.IdValue, Is.EqualTo(2));
+        Assert.That(testNode.LastId.Client, Is.EqualTo(testNode.Id.Client));
+    }
+    
+    [Test]
+    public void LastId_ReturnsId_WhenLengthIsZero()
+    {
+        // Arrange
+        var testNode = new TreeBuilder().Text("");
+
+        // Act & Assert
+        Assert.That(testNode.Id.IdValue, Is.EqualTo(0));
+        Assert.That(testNode.LastId.IdValue, Is.EqualTo(0));
+        Assert.That(testNode.LastId.Client, Is.EqualTo(testNode.Id.Client));
     }
     
     [Test]
     public void Split_CreatesExpectedNode()
     {
         // Arrange
-        CharNode char1 = null!;
-        CharNode char2 = null!;
-        CharNode char3 = null!;
         var testNode = new TreeBuilder()
             .Paragraph(t =>
             {
-                t.Text();
-                t.Text(txt =>
-                {
-                    char1 = txt.Char('a');
-                    char2 = txt.Char('b');
-                    char3 = txt.Char('c');
-                });
-                t.Text();
+                t.Text("");
+                t.Text("abc");
+                t.Text("");
             });
-
-        new TreeVisualizer(testNode).Print();
         
         var textNode = (TextNode)testNode.ChildNodes[1];
         
         // Act
         var result = textNode.Split(1, new NodeId("Test", -1));
-        
-        new TreeVisualizer(testNode).Print();
 
         // Assert
         Assert.That(testNode.ChildNodes, Has.Count.EqualTo(4));
@@ -74,24 +68,14 @@ public class TextNodeTests
         {
             Assert.That(result.Id.IdValue, Is.EqualTo(-1));
 
-            Assert.That(textNode.ChildNodes, Has.Count.EqualTo(1));
-            Assert.That(result.ChildNodes, Has.Count.EqualTo(2));
+            Assert.That(textNode.Length, Is.EqualTo(1));
+            Assert.That(result.Length, Is.EqualTo(2));
 
             Assert.That(textNode.TextContent, Is.EqualTo("a"));
             Assert.That(result.TextContent, Is.EqualTo("bc"));
 
             Assert.That(textNode.Parent, Is.EqualTo(testNode));
             Assert.That(result.Parent, Is.EqualTo(testNode));
-            
-            Assert.That(char1.Parent, Is.EqualTo(textNode));
-            Assert.That(char1.Origin, Is.Null);
-            Assert.That(char1.RightOrigin, Is.Null);
-            Assert.That(char2.Parent, Is.EqualTo(result));
-            Assert.That(char2.Origin, Is.Null);
-            Assert.That(char2.RightOrigin, Is.EqualTo(char3));
-            Assert.That(char3.Parent, Is.EqualTo(result));
-            Assert.That(char3.Origin, Is.EqualTo(char2));
-            Assert.That(char3.RightOrigin, Is.Null);
 
             Assert.That(testNode.FirstChild!.Origin, Is.Null);
             Assert.That(testNode.FirstChild.RightOrigin, Is.EqualTo(textNode));
@@ -113,9 +97,9 @@ public class TextNodeTests
         var testNode = new TreeBuilder()
             .Paragraph(t =>
             {
-                t.Text();
+                t.Text("");
                 t.Text("abc");
-                t.Text();
+                t.Text("");
             });
 
         new TreeVisualizer(testNode).Print();
@@ -144,9 +128,9 @@ public class TextNodeTests
         var testNode = new TreeBuilder()
             .Paragraph(t =>
             {
-                t.Text();
+                t.Text("");
                 t.Text("abc");
-                t.Text();
+                t.Text("");
             });
 
         new TreeVisualizer(testNode).Print();

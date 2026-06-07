@@ -28,7 +28,9 @@ public class DNodeFactoryTests
     {
         var testNode = new TestNode(new NodeId(), null, null);
         var testNode2 = new TestNode(new NodeId(), null, null);
-        var factory = new DNodeFactory(new TestNodeIdGenerator());
+
+        var nodeIdGen = new TestNodeIdGenerator();
+        var factory = new DNodeFactory(nodeIdGen);
 
         var result = factory.String("abc", testNode, testNode2);
         
@@ -39,36 +41,8 @@ public class DNodeFactoryTests
             Assert.That(result.ChildNodes, Has.Count.EqualTo(3));
             Assert.That(result.Origin, Is.EqualTo(testNode));
             Assert.That(result.RightOrigin, Is.EqualTo(testNode2));
-
-            var child1 = result.ChildNodes[0];
-            Assert.That(child1, Is.TypeOf<CharNode>());
-            Assert.That((child1 as CharNode)!.Value, Is.EqualTo('a'));
             
-            var child2 = result.ChildNodes[1];
-            Assert.That(child2, Is.TypeOf<CharNode>());
-            Assert.That((child2 as CharNode)!.Value, Is.EqualTo('b'));
-            
-            var child3 = result.ChildNodes[2];
-            Assert.That(child3, Is.TypeOf<CharNode>());
-            Assert.That((child3 as CharNode)!.Value, Is.EqualTo('c'));
-        }
-    }
-    
-    [Test]
-    public void ReturnsCharNode_WithNewId()
-    {
-        var factory = new DNodeFactory(new TestNodeIdGenerator());
-
-        var testNode = new CharNode('a', new NodeId(), null, null);
-        var testNode2 = new CharNode('a', new NodeId(), null, null);
-        var result = factory.Char('a', testNode, testNode2);
-        
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(result.Value, Is.EqualTo('a'));
-            Assert.That(result.Id.IdValue, Is.EqualTo(0));
-            Assert.That(result.Origin, Is.EqualTo(testNode));
-            Assert.That(result.RightOrigin, Is.EqualTo(testNode2));
+            Assert.That(nodeIdGen.GetNextId().IdValue, Is.EqualTo(5));
         }
     }
 }

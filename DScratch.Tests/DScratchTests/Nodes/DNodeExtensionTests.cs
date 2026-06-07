@@ -15,76 +15,16 @@ public class DNodeExtensionTests
         // Arrange
         var testNode = treeBuilder.Paragraph(p =>
         {
-            p.Text(t =>
-            {
-                t.Char('a');
-                t.Char('b').Delete();
-                t.Char('c');
-            });
+            p.Text("abc");
             p.Text("abc").Delete();
-            p.Text(t =>
-            {
-                t.Char('a').Delete();
-                t.Char('b');
-                t.Char('c').Delete();
-            });
+            p.Text("abc");
         });
         
         // Act
         var result = testNode.GetTextLength();
 
         // Assert
-        Assert.That(result, Is.EqualTo(3));
-    }
-    
-    [Test]
-    public void CharNode_GivenTree_ReturnsExpectedOffset()
-    {
-        // Arrange
-        CharNode charNode = null!;
-        var parent = treeBuilder.TestInlineElementNode(t =>
-        {
-            t.Text("abc");
-            t.Text(txt =>
-            {
-                charNode = txt.Char('x');
-            });
-            t.Text("def");
-        });
-        
-        // Act
-        var result = parent.FindAbsolutTextOffset(charNode);
-        
-        // Assert
-        Assert.That(result, Is.EqualTo(3));
-    }
-    
-    [Test]
-    public void CharNode_GivenTree_ReturnsExpectedOffset_Deleted()
-    {
-        // Arrange
-        CharNode charNode = null!;
-        var parent = treeBuilder.TestInlineElementNode(t =>
-        {
-            t.Text(txt =>
-            {
-                txt.Char('a');
-                txt.Char('b').Delete();
-                txt.Char('c');
-            });
-            t.Text(txt =>
-            {
-                charNode = txt.Char('x');
-                charNode.Delete();
-            });
-            t.Text("def");
-        });
-        
-        // Act
-        var result = parent.FindAbsolutTextOffset(charNode);
-        
-        // Assert
-        Assert.That(result, Is.EqualTo(2));
+        Assert.That(result, Is.EqualTo(6));
     }
     
     [Test]
@@ -113,12 +53,8 @@ public class DNodeExtensionTests
         TextNode textNode = null!;
         var parent = treeBuilder.TestInlineElementNode(t =>
         {
-            t.Text(txt =>
-            {
-                txt.Char('a');
-                txt.Char('b').Delete();
-                txt.Char('c');
-            });
+            t.Text("abc");
+            t.Text("abc").Delete();
             textNode = t.Text("x");
             textNode.Delete();
             t.Text("def");
@@ -128,7 +64,7 @@ public class DNodeExtensionTests
         var result = parent.FindAbsolutTextOffset(textNode);
         
         // Assert
-        Assert.That(result, Is.EqualTo(2));
+        Assert.That(result, Is.EqualTo(3));
     }
     
     [Test]
@@ -157,12 +93,8 @@ public class DNodeExtensionTests
         TestInlineElementNode inlineElement = null!;
         var parent = treeBuilder.TestInlineElementNode(t =>
         {
-            t.Text(txt =>
-            {
-                txt.Char('a');
-                txt.Char('b').Delete();
-                txt.Char('c');
-            });
+            t.Text("abc");
+            t.Text("abc").Delete();
             inlineElement = t.TestInlineElementNode();
             inlineElement.Delete();
             t.Text("def");
@@ -172,6 +104,6 @@ public class DNodeExtensionTests
         var result = parent.FindAbsolutTextOffset<IInlineElement>(inlineElement);
         
         // Assert
-        Assert.That(result, Is.EqualTo(2));
+        Assert.That(result, Is.EqualTo(3));
     }
 }

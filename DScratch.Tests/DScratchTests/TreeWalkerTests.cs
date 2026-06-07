@@ -1,5 +1,6 @@
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
+using DScratch.Tests.Helpers.TestNodes;
 
 namespace DScratch.Tests.DScratchTests;
 
@@ -14,23 +15,23 @@ public class TreeWalkerTests
         public void MoveNext_FiltersExpectedNodes()
         {
             // Arrange
-            TextNode testNode1 = null!;
-            TextNode child = null!;
-            TextNode testNode3 = null!;
+            TestInlineElementNode testNode1 = null!;
+            TestInlineElementNode child = null!;
+            TestInlineElementNode testNode3 = null!;
 
             var paragraph = treeBuilder.Paragraph(p =>
             {
-                testNode1 = p.Text(t =>
+                testNode1 = p.TestInlineElementNode(t =>
                 {
-                    child = ((TreeBuilder)t).Text(t2 => t2.Char('a'));
+                    child = t.TestInlineElementNode(t2 => t2.Text(""));
                 });
-                p.TestInlineElementNode();
-                testNode3 = p.Text("a"); 
-                p.Text("a").Delete();
+                testNode3 = p.TestInlineElementNode();
+                p.Text(""); 
+                p.TestInlineElementNode().Delete();
             });
             
             // Act & Assert
-            var walker = new TreeWalker<TextNode>(paragraph);
+            var walker = new TreeWalker<TestInlineElementNode>(paragraph);
             
             Assert.That(walker.NextNode(), Is.EqualTo(testNode1));
             Assert.That(walker.Current, Is.Not.Null);
@@ -52,25 +53,25 @@ public class TreeWalkerTests
         public void MoveNext_FiltersExpectedNodes_IncludesDeleted()
         {
             // Arrange
-            TextNode testNode1 = null!;
-            TextNode child = null!;
-            TextNode testNode3 = null!;
-            TextNode testNode4 = null!;
+            TestInlineElementNode testNode1 = null!;
+            TestInlineElementNode child = null!;
+            TestInlineElementNode testNode3 = null!;
+            TestInlineElementNode testNode4 = null!;
 
             var paragraph = treeBuilder.Paragraph(p =>
             {
-                testNode1 = p.Text(t =>
+                testNode1 = p.TestInlineElementNode(t =>
                 {
-                    child = ((TreeBuilder)t).Text(t2 => t2.Char('a'));
+                    child = t.TestInlineElementNode(t2 => t2.Text(""));
                 });
-                p.TestInlineElementNode();
-                testNode3 = p.Text("");
-                testNode4 = p.Text("");
+                p.Text("");
+                testNode3 = p.TestInlineElementNode();
+                testNode4 = p.TestInlineElementNode();
                 testNode4.Delete();
             });
             
             // Act & Assert
-            var walker = new TreeWalker<TextNode>(paragraph, true);
+            var walker = new TreeWalker<TestInlineElementNode>(paragraph, true);
             
             Assert.That(walker.NextNode(), Is.EqualTo(testNode1));
             Assert.That(walker.Current, Is.EqualTo(testNode1));
@@ -117,24 +118,24 @@ public class TreeWalkerTests
         public void MovePrevious_FiltersExpectedNodes()
         {
             // Arrange
-            TextNode testNode1 = null!;
-            TextNode child = null!;
-            TextNode testNode3 = null!;
-            TextNode testNode4 = null!;
+            TestInlineElementNode testNode1 = null!;
+            TestInlineElementNode child = null!;
+            TestInlineElementNode testNode3 = null!;
+            TestInlineElementNode testNode4 = null!;
 
             var paragraph = treeBuilder.Paragraph(p =>
             {
-                testNode1 = p.Text(t =>
+                testNode1 = p.TestInlineElementNode(t =>
                 {
-                    child = ((TreeBuilder)t).Text(t2 => t2.Char('a'));
+                    child = t.TestInlineElementNode(t2 => t2.Text(""));
                 });
-                p.TestInlineElementNode();
-                testNode3 = p.Text("a");
-                testNode4 = p.Text("a");
+                p.Text("");
+                testNode3 = p.TestInlineElementNode();
+                testNode4 = p.TestInlineElementNode();
             });
             
             // Act & Assert
-            var walker = new TreeWalker<TextNode>(paragraph);
+            var walker = new TreeWalker<TestInlineElementNode>(paragraph);
             
             Assert.That(walker.NextNode(), Is.EqualTo(testNode1));
             Assert.That(walker.Current, Is.Not.Null);
@@ -169,25 +170,25 @@ public class TreeWalkerTests
         public void MovePrevious_FiltersExpectedNodes_IncludesDeleted()
         {
             // Arrange
-            TextNode testNode1 = null!;
-            TextNode child = null!;
-            TextNode testNode3 = null!;
-            TextNode testNode4 = null!;
+            TestInlineElementNode testNode1 = null!;
+            TestInlineElementNode child = null!;
+            TestInlineElementNode testNode3 = null!;
+            TestInlineElementNode testNode4 = null!;
 
             var paragraph = treeBuilder.Paragraph(p =>
             {
-                testNode1 = p.Text(t =>
+                testNode1 = p.TestInlineElementNode(t =>
                 {
-                    child = ((TreeBuilder)t).Text(t2 => t2.Char('a'));
+                    child = t.TestInlineElementNode(t2 => t2.Text(""));
                 });
-                p.TestInlineElementNode();
-                testNode3 = p.Text("");
-                testNode4 = p.Text("");
+                p.Text("");
+                testNode3 = p.TestInlineElementNode();
+                testNode4 = p.TestInlineElementNode();
                 testNode4.Delete();
             });
             
             // Act & Assert
-            var walker = new TreeWalker<TextNode>(paragraph, true);
+            var walker = new TreeWalker<TestInlineElementNode>(paragraph, true);
             
             Assert.That(walker.NextNode(), Is.EqualTo(testNode1));
             Assert.That(walker.Current, Is.EqualTo(testNode1));
@@ -214,35 +215,35 @@ public class TreeWalkerTests
         [Test]
         public void MovePrevious_ReturnsExpectedNodes()
         {
-            CharNode char1 = null!;
-            CharNode char2 = null!;
-            CharNode char3 = null!;
+            TextNode textNode1 = null!;
+            TextNode textNode2 = null!;
+            TextNode textNode3 = null!;
             var parent = treeBuilder.TestInlineElementNode(t => 
             {
-                t.Text(txt =>
+                t.Paragraph(txt =>
                 {
-                    char1 = txt.Char('a');
-                    char2 = txt.Char('b');
+                    textNode1 = txt.Text("a");
+                    textNode2 = txt.Text("b");
                 });
-                t.Text(txt => 
+                t.Paragraph(txt => 
                 {
-                    char3 = txt.Char('c');
+                    textNode3 = txt.Text("c");
                 });
             });
         
             // Act & Assert
-            var walker = new TreeWalker<CharNode>(parent);
+            var walker = new TreeWalker<TextNode>(parent);
             walker.NextNode();
             walker.NextNode();
             walker.NextNode();
             
-            Assert.That(walker.Current, Is.EqualTo(char3));
+            Assert.That(walker.Current, Is.EqualTo(textNode3));
             
-            Assert.That(walker.MovePrevious(), Is.EqualTo(char2));
-            Assert.That(walker.Current, Is.EqualTo(char2));
+            Assert.That(walker.MovePrevious(), Is.EqualTo(textNode2));
+            Assert.That(walker.Current, Is.EqualTo(textNode2));
             
-            Assert.That(walker.MovePrevious(), Is.EqualTo(char1));
-            Assert.That(walker.Current, Is.EqualTo(char1));
+            Assert.That(walker.MovePrevious(), Is.EqualTo(textNode1));
+            Assert.That(walker.Current, Is.EqualTo(textNode1));
         }
         
         [Test]

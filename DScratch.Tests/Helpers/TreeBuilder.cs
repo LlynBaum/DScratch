@@ -4,7 +4,7 @@ using DScratch.TreeVisualizers;
 
 namespace DScratch.Tests.Helpers;
 
-public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder, TreeBuilder.ITextTreeBuilder
+public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder
 {
     public RootNode Root { get; }
 
@@ -37,21 +37,6 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder, TreeBuilder.ITextT
     public void Print()
     {
         new TreeVisualizer(Root).Print();
-    }
-
-    public CharNode Char(char value)
-    {
-        var charNode = factory.Char(value, null, null);
-        Append(charNode);
-        return charNode;
-    }
-
-    public TextNode Text(Action<ITextTreeBuilder>? configureChildNodes = null)
-    {
-        var text = factory.String(string.Empty, null, null);
-        configureChildNodes?.Invoke(GetChildTreeBuilder(text));
-        Append(text);
-        return text;
     }
     
     public TextNode Text(string value)
@@ -115,15 +100,8 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder, TreeBuilder.ITextT
         void Print();
     }
     
-    public interface ITextTreeBuilder
-    {
-        CharNode Char(char value);
-    }
-    
     public interface IParagraphTreeBuilder : ITreeMaker
     {
-        TextNode Text(Action<ITextTreeBuilder>? configureChildNodes = null);
-        
         TextNode Text(string value);
 
         TestInlineElementNode TestInlineElementNode(Action<TreeBuilder>? configureChildNodes = null);

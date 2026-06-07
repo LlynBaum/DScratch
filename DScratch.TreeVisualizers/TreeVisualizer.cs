@@ -5,7 +5,7 @@ namespace DScratch.TreeVisualizers;
 public class TreeVisualizer(DNode root)
 {
     private const int IndentationIncrease = 4;
-    private int indentation = 0;
+    private int indentation;
 
     private string IndentationChars => string.Join("", Enumerable.Repeat(' ', indentation));
 
@@ -31,9 +31,6 @@ public class TreeVisualizer(DNode root)
         var rightOriginId = node.RightOrigin is not null ? node.RightOrigin.Id.Value : "null";
         switch (node)
         {
-            case CharNode charNode:
-                Console.WriteLine($"{IndentationChars}{node.GetType().Name}(ID: {node.Id}{deletedChar}) [{originId} - {rightOriginId}] --- '{charNode.Value}'");
-                break;
             case TextNode textNode:
                 Console.WriteLine($"{IndentationChars}{node.GetType().Name}(ID: {node.Id}{deletedChar}) [{originId} - {rightOriginId}] --- \"{textNode.TextContent}\"");
                 break;

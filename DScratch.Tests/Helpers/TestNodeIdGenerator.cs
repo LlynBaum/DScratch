@@ -8,4 +8,9 @@ public class TestNodeIdGenerator : INodeIdGenerator
     {
         return new NodeId("Test", currentId++);
     }
+
+    public void TakeIds(int count)
+    {
+        currentId += count;
+    }
 }
