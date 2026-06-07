@@ -34,6 +34,13 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder
         factory = new DNodeFactory(idGenerator);
     }
 
+    public DScratchDocument CreateDocument()
+    {
+        var document = new DScratchDocument(Root);
+        NodeAdded += document.AddNode;
+        return document;
+    }
+
     public void Print()
     {
         new TreeVisualizer(Root).Print();

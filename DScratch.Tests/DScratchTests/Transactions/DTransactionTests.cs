@@ -15,8 +15,7 @@ public class DTransactionTests
     public void SetUp()
     {
         TreeBuilder = new TreeBuilder();
-        Document = new DScratchDocument(TreeBuilder.Root);
-        TreeBuilder.NodeAdded += Document.AddNode;
+        Document = TreeBuilder.CreateDocument();
         Transaction = new DTransaction(Document, new TestNodeIdGenerator());
     }
 
