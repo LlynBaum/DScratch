@@ -6,6 +6,7 @@ public class DeleteStep(DNode node) : IStep
 {
     public IReadOnlyList<StepDiff?> Execute()
     {
+        // TODO: when deleting text, we can combine continues tombstones
         node.Delete();
         return [node.ToDeleteSteps()];
     }

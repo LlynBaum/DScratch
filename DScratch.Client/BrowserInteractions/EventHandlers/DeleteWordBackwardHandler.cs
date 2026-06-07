@@ -48,30 +48,31 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : IEdit
 
     private static NodeOffset SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
     {
-        var walker = new TreeWalker<CharNode>(parent);
+        var walker = new TreeWalker<TextNode>(parent);
 
         var offset = 0;
-        CharNode? current = null;
-        while (offset < keyPressInfo.Selection.AnchorOffset)
+        var current = walker.NextNode();
+        while (current?.Length < keyPressInfo.Selection.AnchorOffset)
         {
-            offset++;
+            offset += current.Length;
             current = walker.NextNode();
         }
         
-        while (current is not null && current.IsWhiteSpace())
+        if (current is null)
         {
-            offset--;
-            transaction.Delete(current);
-            current = walker.MovePrevious();
+            return NodeOffset.NotFound();
         }
         
-        while (current is not null && !current.IsWhiteSpace())
-        {
-            offset--;
-            transaction.Delete(current);
-            current = walker.MovePrevious();
-        }
+        var relativeOffset = keyPressInfo.Selection.AnchorOffset - offset;
+        transaction.SplitText(current, relativeOffset);
+        
+        var index = current.Length;
+        while (index > 0 && char.IsWhiteSpace(current.TextContent[index--])) { }
+        while (index > 0 && !char.IsWhiteSpace(current.TextContent[index--])) { }
 
-        return NodeOffset.From(current, offset);
+        var word = transaction.SplitText(current, index);
+        if (word is not null) transaction.Delete(word);
+
+        return NodeOffset.From(current, current.Length);
     }
 }

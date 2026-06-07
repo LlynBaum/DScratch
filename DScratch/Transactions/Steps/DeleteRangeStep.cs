@@ -6,6 +6,7 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
 {
     public IReadOnlyList<StepDiff?> Execute()
     {
+        // TODO: when deleting text, we can combine continues tombstones
         if (start is null && end is null) return [];
 
         var steps = new List<StepDiff?>();

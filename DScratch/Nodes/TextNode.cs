@@ -21,19 +21,18 @@ public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin)
     {
         if (offset is 0) return this;
         if (offset == Length) return null;
-        
-        var remainingChildNodes = AllChildNodes.Take(offset).ToList();
-        var otherChildNodes = AllChildNodes.Skip(offset).ToList();
 
-        remainingChildNodes.LastOrDefault()?.RightOrigin = null;
-        otherChildNodes.FirstOrDefault()?.Origin = null;
+        var remainingText = TextContent[..offset];
+        var otherText = TextContent[offset..];
+
+        TextContent = remainingText;
         
-        AllChildNodes = remainingChildNodes;
+        var newNode = new TextNode(nextId, this, RightOrigin)
+        {
+            TextContent = otherText
+        };
         
-        var newNode = new TextNode(nextId, this, RightOrigin);
         Parent?.InsertChild(newNode);
-        otherChildNodes.ForEach(n => n.Parent = newNode);
-        
         return newNode;
     }
 }

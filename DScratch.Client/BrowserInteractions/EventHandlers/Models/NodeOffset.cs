@@ -19,7 +19,7 @@ public readonly struct NodeOffset
         };
     }
     
-    public static NodeOffset Empty()
+    public static NodeOffset NotFound()
     {
         return new NodeOffset
         {
@@ -30,6 +30,6 @@ public readonly struct NodeOffset
     
     public static NodeOffset From(DNode? node, int offset)
     {
-        return node is not null ? NodeOffset.Found(offset) : NodeOffset.Empty();
+        return node is not null ? NodeOffset.Found(offset) : NodeOffset.NotFound();
     }
 }
