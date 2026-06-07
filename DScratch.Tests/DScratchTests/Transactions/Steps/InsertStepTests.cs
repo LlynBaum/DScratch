@@ -17,9 +17,9 @@ public class InsertStepTests
         TextNode node4 = null!;
         var node2 = builder.TestInlineElementNode(t => // ID "1"
         {
-            node3 = t.Text(""); // ID "2"
-            node4 = t.Text(""); // ID "3"
-            t.Text("");         // ID "4"
+            node3 = t.Text("a"); // ID "2"
+            node4 = t.Text("a"); // ID "3"
+            t.Text("a");         // ID "4"
         });
 
         var node = new TextNode(new NodeId("Test", -1), node3, node4);     
@@ -48,8 +48,8 @@ public class InsertStepTests
         TextNode node4 = null!;
         var node2 = builder.TestInlineElementNode(t => // ID "1"
         {
-            t.Text(""); // ID "2"
-            node4 = t.Text(""); // ID "3"
+            t.Text("a"); // ID "2"
+            node4 = t.Text("a"); // ID "3"
         });
 
         var node = new TextNode(new NodeId("Test", -1), node4, null);        

@@ -36,7 +36,7 @@ public class TextNodeTests
     public void LastId_ReturnsId_WhenLengthIsZero()
     {
         // Arrange
-        var testNode = new TreeBuilder().Text("");
+        var testNode = new TreeBuilder().Text("a");
 
         // Act & Assert
         Assert.That(testNode.Id.IdValue, Is.EqualTo(0));
@@ -51,9 +51,9 @@ public class TextNodeTests
         var testNode = new TreeBuilder()
             .Paragraph(t =>
             {
-                t.Text("");
+                t.Text("a");
                 t.Text("abc");
-                t.Text("");
+                t.Text("a");
             });
         
         var textNode = (TextNode)testNode.ChildNodes[1];
@@ -97,9 +97,9 @@ public class TextNodeTests
         var testNode = new TreeBuilder()
             .Paragraph(t =>
             {
-                t.Text("");
+                t.Text("a");
                 t.Text("abc");
-                t.Text("");
+                t.Text("a");
             });
 
         new TreeVisualizer(testNode).Print();
@@ -128,9 +128,9 @@ public class TextNodeTests
         var testNode = new TreeBuilder()
             .Paragraph(t =>
             {
-                t.Text("");
+                t.Text("a");
                 textNode = t.Text("abc");
-                t.Text("");
+                t.Text("a");
             });
         
         // Act

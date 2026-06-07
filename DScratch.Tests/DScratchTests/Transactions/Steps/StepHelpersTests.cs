@@ -133,10 +133,10 @@ public class StepHelpersTests
                 var insertTestElement = (StepDiff.InsertElementInlineDiff)result[2];
                 Assert.That(insertTestElement.ParentId, Is.EqualTo("Test-2"));
                 Assert.That(insertTestElement.Offset, Is.EqualTo(1));
-                Assert.That(insertTestElement.NewNodeId, Is.EqualTo("Test-5"));
+                Assert.That(insertTestElement.NewNodeId, Is.EqualTo("Test-4"));
                 
                 var insertText = (StepDiff.InsertTextDiff)result[3];
-                Assert.That(insertText.ParentId, Is.EqualTo("Test-5"));
+                Assert.That(insertText.ParentId, Is.EqualTo("Test-4"));
                 Assert.That(insertText.Offset, Is.EqualTo(0));
                 Assert.That(insertText.Text, Is.EqualTo("b"));
                 
@@ -309,7 +309,7 @@ public class StepHelpersTests
             var step2 = (StepDiff.InsertTextDiff)result[1];
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(step2.ParentId, Is.EqualTo("Test-7"));
+                Assert.That(step2.ParentId, Is.EqualTo("Test-4"));
                 Assert.That(step2.Offset, Is.EqualTo(1));
                 Assert.That(step2.Text, Is.EqualTo("b"));
             }

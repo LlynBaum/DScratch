@@ -42,8 +42,8 @@ public class DeleteStepTests
         var parent = builder.TestInlineElementNode(t =>
         {
             textNode = t.Text("abc");
-            t.Text("");
-            t.Text("");
+            t.Text("a");
+            t.Text("a");
         }); 
         
         // Act

@@ -23,10 +23,10 @@ public class TreeWalkerTests
             {
                 testNode1 = p.TestInlineElementNode(t =>
                 {
-                    child = t.TestInlineElementNode(t2 => t2.Text(""));
+                    child = t.TestInlineElementNode(t2 => t2.Text("a"));
                 });
                 testNode3 = p.TestInlineElementNode();
-                p.Text(""); 
+                p.Text("a"); 
                 p.TestInlineElementNode().Delete();
             });
             
@@ -62,9 +62,9 @@ public class TreeWalkerTests
             {
                 testNode1 = p.TestInlineElementNode(t =>
                 {
-                    child = t.TestInlineElementNode(t2 => t2.Text(""));
+                    child = t.TestInlineElementNode(t2 => t2.Text("a"));
                 });
-                p.Text("");
+                p.Text("a");
                 testNode3 = p.TestInlineElementNode();
                 testNode4 = p.TestInlineElementNode();
                 testNode4.Delete();
@@ -95,8 +95,8 @@ public class TreeWalkerTests
             // Arrange
             var paragraph = treeBuilder.Paragraph(p =>
             {
-                p.Text("");
-                p.Text("");
+                p.Text("a");
+                p.Text("a");
             });
         
             // Act & Assert
@@ -127,9 +127,9 @@ public class TreeWalkerTests
             {
                 testNode1 = p.TestInlineElementNode(t =>
                 {
-                    child = t.TestInlineElementNode(t2 => t2.Text(""));
+                    child = t.TestInlineElementNode(t2 => t2.Text("a"));
                 });
-                p.Text("");
+                p.Text("a");
                 testNode3 = p.TestInlineElementNode();
                 testNode4 = p.TestInlineElementNode();
             });
@@ -179,9 +179,9 @@ public class TreeWalkerTests
             {
                 testNode1 = p.TestInlineElementNode(t =>
                 {
-                    child = t.TestInlineElementNode(t2 => t2.Text(""));
+                    child = t.TestInlineElementNode(t2 => t2.Text("a"));
                 });
-                p.Text("");
+                p.Text("a");
                 testNode3 = p.TestInlineElementNode();
                 testNode4 = p.TestInlineElementNode();
                 testNode4.Delete();
@@ -252,8 +252,8 @@ public class TreeWalkerTests
             // Arrange
             var paragraph = treeBuilder.Paragraph(p =>
             {
-                p.Text("");
-                p.Text("");
+                p.Text("a");
+                p.Text("a");
             });
         
             // Act & Assert
@@ -280,9 +280,9 @@ public class TreeWalkerTests
 
             treeBuilder.Paragraph(p =>
             {
-                testNode1 = p.Text("");
+                testNode1 = p.Text("a");
                 p.TestInlineElementNode();
-                testNode3 = p.Text("");
+                testNode3 = p.Text("a");
             });
 
             // Act & Assert
@@ -310,8 +310,8 @@ public class TreeWalkerTests
             var paragraph = treeBuilder.Paragraph(p =>
             {
                 p.TestInlineElementNode();
-                testNode2 = p.Text("");
-                p.Text("");
+                testNode2 = p.Text("a");
+                p.Text("a");
             });
 
             // Act & Assert
