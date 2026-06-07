@@ -53,45 +53,77 @@ public class DeleteContentBackwardHandlerTests
         public void Handle_CreatesExpectedChanges()
         {
             // Arrange
-            CharNode char3 = null!;
+            TextNode textNode = null!;
             var parent = builder.TestInlineElementNode(t => 
             {
                 t.Text("ab");
-                t.Text(txt => 
-                {
-                    char3 = txt.Char('a');
-                });
+                textNode = t.Text("a");
             });
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 3));
 
             // Assert
-            Assert.That(char3.IsDeleted, Is.True);
+            Assert.That(textNode.IsDeleted, Is.True);
             AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 2);
         }
         
         [Test]
-        public void Handle_CreatesExpectedChanges_LastCharInTextNode()
+        public void Handle_CreatesExpectedChanges_MiddleOfTextNode()
         {
             // Arrange
-            CharNode char2 = null!;
-            var parent = builder.TestInlineElementNode(t => 
+            TextNode textNode = null!;
+            var parent = builder.TestInlineElementNode(t =>
             {
-                t.Text(txt =>
-                {
-                    txt.Char('a');
-                    char2 = txt.Char('b');
-                });
-                t.Text("c");
+                textNode = t.Text("abc");
             });
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 2));
 
             // Assert
-            Assert.That(char2.IsDeleted, Is.True);
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(textNode.IsDeleted, Is.False);
+                Assert.That(textNode.TextContent, Is.EqualTo("a"));
+                
+                Assert.That(parent.ChildNodes[1].IsDeleted, Is.True);
+                Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("b"));
+                
+                Assert.That(parent.ChildNodes[2].IsDeleted, Is.False);
+                Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("c"));
+            }
+
+            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 1);
+        }
+        
+        [Test]
+        public void Handle_CreatesExpectedChanges_LastCharInTextNode()
+        {
+            // Arrange
+            TextNode textNode = null!;
+            TextNode textNode2 = null!;
+            var parent = builder.TestInlineElementNode(t =>
+            {
+                textNode = t.Text("ab");
+                textNode2 = t.Text("c");
+            });
+
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 2));
+
+            // Assert
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(textNode.IsDeleted, Is.False);
+                Assert.That(textNode.RightOrigin!.IsDeleted, Is.True);
+                Assert.That(textNode2.IsDeleted, Is.False);
+            }
+            
             AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 1);
         }
@@ -100,13 +132,10 @@ public class DeleteContentBackwardHandlerTests
         public void Handle_CreatesExpectedChanges_SingleCharInNode()
         {
             // Arrange
-            CharNode char1 = null!;
-            var parent = builder.TestInlineElementNode(t => 
+            TextNode textNode = null!;
+            var parent = builder.TestInlineElementNode(t =>
             {
-                t.Text(txt =>
-                {
-                    char1 = txt.Char('a');
-                });
+                textNode = t.Text("a");
                 t.Text("bc");
             });
 
@@ -114,7 +143,7 @@ public class DeleteContentBackwardHandlerTests
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 1));
 
             // Assert
-            Assert.That(char1.IsDeleted, Is.True);
+            Assert.That(textNode.IsDeleted, Is.True);
             AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
