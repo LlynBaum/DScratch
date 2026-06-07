@@ -13,16 +13,16 @@ public class InsertStepTests
         // Arrange
         var builder = new TreeBuilder();
         builder.TestNode(); // ID "0"
-        TestNode node3 = null!;
-        TestNode node4 = null!;
+        TextNode node3 = null!;
+        TextNode node4 = null!;
         var node2 = builder.TestInlineElementNode(t => // ID "1"
         {
-            node3 = t.TestNode(); // ID "2"
-            node4 = t.TestNode(); // ID "3"
-            t.TestNode();         // ID "4"
+            node3 = t.Text(""); // ID "2"
+            node4 = t.Text(""); // ID "3"
+            t.Text("");         // ID "4"
         });
 
-        var node = new TestNode(new NodeId("Test", -1), node3, node4);     
+        var node = new TextNode(new NodeId("Test", -1), node3, node4);     
         
         // Act
         var step = new InsertStep(node, node2);
@@ -45,14 +45,14 @@ public class InsertStepTests
         // Arrange
         var builder = new TreeBuilder();
         builder.TestNode(); // ID "0"
-        TestNode node4 = null!;
+        TextNode node4 = null!;
         var node2 = builder.TestInlineElementNode(t => // ID "1"
         {
-            t.TestNode(); // ID "2"
-            node4 = t.TestNode(); // ID "3"
+            t.Text(""); // ID "2"
+            node4 = t.Text(""); // ID "3"
         });
 
-        var node = new TestNode(new NodeId("Test", -1), node4, null);        
+        var node = new TextNode(new NodeId("Test", -1), node4, null);        
         
         // Act
         var step = new InsertStep(node, node2);
@@ -100,14 +100,13 @@ public class InsertStepTests
     {
         // Arrange
         var builder = new TreeBuilder();
-        builder.TestNode(); // ID "0"
         TextNode node4 = null!;
-        var node2 = builder.TestInlineElementNode(t => // ID "1"
+        var node2 = builder.TestInlineElementNode(t => // ID "0"
         {
-            node4 = t.Text("ab"); // ID "2"
+            node4 = t.Text("ab"); // ID "1"
         });
 
-        var node = new TextNode(new NodeId(node4.Id.Client, node4.Id.IdValue + 1), node4, null, "c");
+        var node = new TextNode(new NodeId(node4.LastId.Client, node4.LastId.IdValue + 1), node4, null, "c");
         
         // Act
         var step = new InsertStep(node, node2);
@@ -126,14 +125,13 @@ public class InsertStepTests
     {
         // Arrange
         var builder = new TreeBuilder();
-        builder.TestNode(); // ID "0"
         TextNode node4 = null!;
-        var node2 = builder.TestInlineElementNode(t => // ID "1"
+        var node2 = builder.TestInlineElementNode(t => // ID "0"
         {
-            node4 = t.Text("ab"); // ID "2"
+            node4 = t.Text("ab"); // ID "1"
         });
 
-        var node = new TextNode(new NodeId(node4.Id.Client, node4.Id.IdValue + 2), node4, null, "c");
+        var node = new TextNode(new NodeId(node4.LastId.Client, node4.LastId.IdValue + 2), node4, null, "c");
         
         // Act
         var step = new InsertStep(node, node2);
@@ -153,14 +151,13 @@ public class InsertStepTests
     {
         // Arrange
         var builder = new TreeBuilder();
-        builder.TestNode(); // ID "0"
         TextNode node4 = null!;
-        var node2 = builder.TestInlineElementNode(t => // ID "1"
+        var node2 = builder.TestInlineElementNode(t => // ID "0"
         {
-            node4 = t.Text("ab"); // ID "2"
+            node4 = t.Text("ab"); // ID "1"
         });
 
-        var node = new TextNode(new NodeId("whatever", node4.Id.IdValue + 1), node4, null, "c");
+        var node = new TextNode(new NodeId("whatever", node4.LastId.IdValue + 1), node4, null, "c");
         
         // Act
         var step = new InsertStep(node, node2);
@@ -170,7 +167,7 @@ public class InsertStepTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(node2.ChildNodes, Has.Count.EqualTo(2));
-            Assert.That(node4.TextContent, Is.EqualTo("abc"));
+            Assert.That(node4.TextContent, Is.EqualTo("ab"));
             Assert.That(node4.RightOrigin!.Id.IdValue, Is.EqualTo(3));
         }
     }
@@ -180,14 +177,13 @@ public class InsertStepTests
     {
         // Arrange
         var builder = new TreeBuilder();
-        builder.TestNode(); // ID "0"
         TextNode node4 = null!;
-        var node2 = builder.TestInlineElementNode(t => // ID "1"
+        var node2 = builder.TestInlineElementNode(t => // ID "0"
         {
-            node4 = t.Text("ab"); // ID "2"
+            node4 = t.Text("ab"); // ID "1"
         });
 
-        var node = new TextNode(new NodeId(node4.Id.Client, node4.Id.IdValue + 1), null, node4, "c");
+        var node = new TextNode(new NodeId(node4.LastId.Client, node4.LastId.IdValue + 1), null, node4, "c");
         
         // Act
         var step = new InsertStep(node, node2);
@@ -197,7 +193,7 @@ public class InsertStepTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(node2.ChildNodes, Has.Count.EqualTo(2));
-            Assert.That(node4.TextContent, Is.EqualTo("abc"));
+            Assert.That(node4.TextContent, Is.EqualTo("ab"));
             Assert.That(node4.Origin!.Id.IdValue, Is.EqualTo(3));
         }
     }
