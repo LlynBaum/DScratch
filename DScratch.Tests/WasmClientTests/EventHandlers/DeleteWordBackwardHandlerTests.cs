@@ -35,20 +35,12 @@ public class DeleteWordBackwardHandlerTests
         public void Handle_CreatesExpectedChanges()
         {
             // Arrange
-            CharNode char1 = null!;
-            CharNode char2 = null!;
-            CharNode char3 = null!;
+            TextNode text1 = null!;
+            TextNode text2 = null!;
             var parent = builder.TestInlineElementNode(t => 
             {
-                t.Text(txt =>
-                {
-                    char1 = txt.Char('a');
-                    char2 = txt.Char('b');
-                });
-                t.Text(txt => 
-                {
-                    char3 = txt.Char('c');
-                });
+                text1 = t.Text("ab");
+                text2 = t.Text("c");
             });
 
             // Act
@@ -57,13 +49,11 @@ public class DeleteWordBackwardHandlerTests
             // Assert
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(char1.IsDeleted, Is.True);
-                Assert.That(char2.IsDeleted, Is.True);
-                Assert.That(char3.IsDeleted, Is.True);
+                Assert.That(text1.IsDeleted, Is.True);
+                Assert.That(text2.IsDeleted, Is.True);
             }
             AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
                 Is.TypeOf<StepDiff.DeleteTextDiff>(), 
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteTextDiff>()]);
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
@@ -72,19 +62,10 @@ public class DeleteWordBackwardHandlerTests
         public void Handle_CreatesExpectedChanges_DeletesStartingWhiteSpaces()
         {
             // Arrange
-            CharNode char1 = null!;
-            CharNode char2 = null!;
-            CharNode char3 = null!;
-            CharNode char4 = null!;
+            TextNode text = null!;
             var parent = builder.TestInlineElementNode(t => 
             {
-                t.Text(txt =>
-                {
-                    char1 = txt.Char('a');
-                    char2 = txt.Char('b');
-                    char3 = txt.Char(' ');
-                    char4 = txt.Char(' ');
-                });
+                text = t.Text("ab  ");
             });
 
             // Act
@@ -93,11 +74,19 @@ public class DeleteWordBackwardHandlerTests
             // Assert
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(char1.IsDeleted, Is.True);
-                Assert.That(char2.IsDeleted, Is.True);
-                Assert.That(char3.IsDeleted, Is.True);
-                Assert.That(char4.IsDeleted, Is.False);
+                Assert.That(text.IsDeleted, Is.True);
+                Assert.That(text.TextContent, Is.EqualTo("ab "));
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
             }
+            
+            Assert.That(text.Origin, Is.TypeOf<TextNode>());
+            var remainingText = (TextNode)text.Origin!;
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(remainingText.IsDeleted, Is.False);
+                Assert.That(remainingText.TextContent, Is.EqualTo(" "));
+            }
+            
             AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
                 Is.TypeOf<StepDiff.DeleteTextDiff>(), 
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
@@ -109,19 +98,10 @@ public class DeleteWordBackwardHandlerTests
         public void Handle_CreatesExpectedChanges_StopsAtWhiteSpace()
         {
             // Arrange
-            CharNode char1 = null!;
-            CharNode char2 = null!;
-            CharNode char3 = null!;
-            CharNode char4 = null!;
+            TextNode text = null!;
             var parent = builder.TestInlineElementNode(t => 
             {
-                t.Text(txt =>
-                {
-                    char1 = txt.Char(' ');
-                    char2 = txt.Char('a');
-                    char3 = txt.Char('b');
-                    char4 = txt.Char(' ');
-                });
+                text = t.Text(" ab ");
             });
 
             // Act
@@ -130,15 +110,20 @@ public class DeleteWordBackwardHandlerTests
             // Assert
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(char1.IsDeleted, Is.False);
-                Assert.That(char2.IsDeleted, Is.True);
-                Assert.That(char3.IsDeleted, Is.True);
-                Assert.That(char4.IsDeleted, Is.True);
+                Assert.That(text.IsDeleted, Is.True);
+                Assert.That(text.TextContent, Is.EqualTo(" "));
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
             }
-            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>()]);
+            
+            Assert.That(text.RightOrigin, Is.TypeOf<TextNode>());
+            var tombstone = (TextNode)text.RightOrigin!;
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(tombstone.IsDeleted, Is.True);
+                Assert.That(tombstone.TextContent, Is.EqualTo("ab "));
+            }
+            
+            AssertHelper.ThatStepsEqualTo(result.Steps,Is.TypeOf<StepDiff.DeleteTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 1);
         }
         
@@ -146,27 +131,18 @@ public class DeleteWordBackwardHandlerTests
         public void Handle_CreatesExpectedChanges_LastCharInTextNode()
         {
             // Arrange
-            CharNode char1 = null!;
-            CharNode char2 = null!;
+            TextNode text = null!;
             var parent = builder.TestInlineElementNode(t => 
             {
-                t.Text(txt =>
-                {
-                    char1 = txt.Char('a');
-                    char2 = txt.Char('b');
-                });
-                t.Text("c");
+                text = t.Text("bc");
+                t.Text("a");
             });
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 2));
 
             // Assert
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(char1.IsDeleted, Is.True);
-                Assert.That(char2.IsDeleted, Is.True);
-            }
+            Assert.That(text.IsDeleted, Is.True);
             AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>(), Is.TypeOf<StepDiff.DeleteTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
@@ -175,13 +151,10 @@ public class DeleteWordBackwardHandlerTests
         public void Handle_CreatesExpectedChanges_SingleCharInNode()
         {
             // Arrange
-            CharNode char1 = null!;
+            TextNode text = null!;
             var parent = builder.TestInlineElementNode(t => 
             {
-                t.Text(txt =>
-                {
-                    char1 = txt.Char('a');
-                });
+                text = t.Text("a");
                 t.Text("bc");
             });
 
@@ -189,7 +162,7 @@ public class DeleteWordBackwardHandlerTests
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 1));
 
             // Assert
-            Assert.That(char1.IsDeleted, Is.True);
+            Assert.That(text.IsDeleted, Is.True);
             AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }

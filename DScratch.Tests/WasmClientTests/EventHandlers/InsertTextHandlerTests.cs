@@ -35,7 +35,7 @@ public class InsertTextHandlerTests
         public void Handle_CreatesExpectedChanges()
         {
             // Arrange
-            var parent = builder.TestInlineElementNode(t => { t.Text(c => { c.Char('a'); }); });
+            var parent = builder.TestInlineElementNode(t => { t.Text("a"); });
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 1));

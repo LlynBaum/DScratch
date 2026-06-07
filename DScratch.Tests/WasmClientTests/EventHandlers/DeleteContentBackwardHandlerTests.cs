@@ -35,10 +35,7 @@ public class DeleteContentBackwardHandlerTests
         public void Handle_DoesNothing_WhenNodesDoesNotExist()
         {
             // Arrange
-            var parent = builder.Text(p =>
-            {
-                p.Char('a');
-            });
+            var parent = builder.Text("a");
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 2));
