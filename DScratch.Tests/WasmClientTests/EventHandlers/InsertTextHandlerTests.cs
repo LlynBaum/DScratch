@@ -35,8 +35,36 @@ public class InsertTextHandlerTests
         public void Handle_CreatesExpectedChanges()
         {
             // Arrange
-            var parent = builder.TestInlineElementNode(t => { t.Text("a"); });
+            var parent = builder.TestInlineElementNode(t =>
+            {
+                t.Text("x");
+            });
 
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 1));
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
+                Assert.That(parent.FirstChild, Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.FirstChild!).TextContent, Is.EqualTo("xabc"));
+            }
+
+            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.InsertTextDiff>());
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 4);
+        }
+        
+        [Test]
+        public void Handle_CreatesExpectedChanges_NotContinues()
+        {
+            // Arrange
+            var parent = builder.TestInlineElementNode(t =>
+            {
+                t.Text("x");
+            });
+            idGenerator.TakeIds(1);
+            
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 1));
 
@@ -56,7 +84,10 @@ public class InsertTextHandlerTests
         public void Handle_CreatesExpectedChanges_WithInsertingAtStart()
         {
             // Arrange
-            var parent = builder.TestInlineElementNode(t => { t.Text("a"); });
+            var parent = builder.TestInlineElementNode(t =>
+            {
+                t.Text("a");
+            });
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 0));
@@ -80,8 +111,34 @@ public class InsertTextHandlerTests
             var parent = builder.TestInlineElementNode(t =>
             {
                 t.Text("a");
-                t.Text("a");
+                t.Text("x");
             });
+
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 2));
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+                Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("xabc"));
+            }
+
+            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.InsertTextDiff>());
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 5);
+        }
+        
+        [Test]
+        public void Handle_CreatesExpectedChanges_WithInsertingAtEnd_NotContinues()
+        {
+            // Arrange
+            var parent = builder.TestInlineElementNode(t =>
+            {
+                t.Text("a");
+                t.Text("x");
+            });
+            idGenerator.TakeIds(1);
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 2));
