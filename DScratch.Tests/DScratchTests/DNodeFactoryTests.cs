@@ -38,11 +38,10 @@ public class DNodeFactoryTests
         {
             Assert.That(result.Id.IdValue, Is.EqualTo(0));
             Assert.That(result.TextContent, Is.EqualTo("abc"));
-            Assert.That(result.ChildNodes, Has.Count.EqualTo(3));
             Assert.That(result.Origin, Is.EqualTo(testNode));
             Assert.That(result.RightOrigin, Is.EqualTo(testNode2));
             
-            Assert.That(nodeIdGen.GetNextId().IdValue, Is.EqualTo(5));
+            Assert.That(nodeIdGen.GetNextId().IdValue, Is.EqualTo(4));
         }
     }
 }

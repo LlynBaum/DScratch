@@ -116,7 +116,6 @@ public class TextNodeTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result?.Id.IdValue, Is.EqualTo(2));
-            Assert.That(textNode.ChildNodes, Has.Count.EqualTo(3));
             Assert.That(textNode.TextContent, Is.EqualTo("abc"));
         }
     }
@@ -125,29 +124,23 @@ public class TextNodeTests
     public void Split_CreatesExpectedNode_WhenSplittingAtOffsetEqualToLength()
     {
         // Arrange
+        TextNode textNode = null!;
         var testNode = new TreeBuilder()
             .Paragraph(t =>
             {
                 t.Text("");
-                t.Text("abc");
+                textNode = t.Text("abc");
                 t.Text("");
             });
-
-        new TreeVisualizer(testNode).Print();
-        
-        var textNode = (TextNode)testNode.ChildNodes[1];
         
         // Act
         var result = textNode.Split(3, new NodeId("Test", -1));
-        
-        new TreeVisualizer(testNode).Print();
 
         // Assert
         Assert.That(testNode.ChildNodes, Has.Count.EqualTo(3));
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result, Is.Null);
-            Assert.That(textNode.ChildNodes, Has.Count.EqualTo(3));
             Assert.That(textNode.TextContent, Is.EqualTo("abc"));
         }
     }

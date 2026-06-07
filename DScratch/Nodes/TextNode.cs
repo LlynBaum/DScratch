@@ -7,7 +7,7 @@ public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string conte
 
     public string TextContent { get; private set; } = content;
 
-    public NodeId LastId => Length > 0 ? new NodeId(Id.Client, Id.IdValue + Length) : Id;
+    public NodeId LastId => Length > 0 ? new NodeId(Id.Client, Id.IdValue + Length - 1) : Id;
 
     internal override void InsertChild(DNode node)
     {

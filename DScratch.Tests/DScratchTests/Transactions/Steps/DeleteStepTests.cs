@@ -38,16 +38,21 @@ public class DeleteStepTests
         builder.TestNode(); // ID "0"
         
         // ID "1": TextNode, IDs "2", "3", "4": CharNodes
-        var node2 = builder.Text("aaa"); 
-        
-        var node3 = node2.ChildNodes.First(); // Targets first CharNode (ID "2")
+        TextNode textNode = null!;
+        var parent = builder.TestInlineElementNode(t =>
+        {
+            textNode = t.Text("abc");
+            t.Text("");
+            t.Text("");
+        }); 
         
         // Act
-        var steps = new DeleteStep(node2);
+        var steps = new DeleteStep(textNode);
         var diffs = steps.Execute();
         
         // Assert
-        Assert.That(node3.IsDeleted, Is.True);
+        Assert.That(parent.ActiveChildNodes.Count(), Is.EqualTo(2));
+        Assert.That(textNode.IsDeleted, Is.True);
         Assert.That(diffs, Has.Count.EqualTo(1));
         Assert.That(diffs.Single(), Is.TypeOf<StepDiff.DeleteTextDiff>());
         

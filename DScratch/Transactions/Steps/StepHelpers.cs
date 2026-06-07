@@ -35,7 +35,7 @@ internal static class StepHelpers
             return node switch
             {
                 RootNode => null,
-                TextNode textNode => new StepDiff.DeleteTextDiff(node.ParentElement!.Id.Value, node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, textNode.ChildNodes.Count),
+                TextNode textNode => new StepDiff.DeleteTextDiff(node.ParentElement!.Id.Value, node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, textNode.Length),
                 IElement => new StepDiff.DeleteElementDiff(node.Id.Value),
                 _ => throw new ArgumentException("Node type is not an element, text or char.")
             };

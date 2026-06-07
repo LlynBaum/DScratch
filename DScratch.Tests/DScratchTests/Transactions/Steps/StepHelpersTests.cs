@@ -6,6 +6,7 @@ using DScratch.Transactions.Steps;
 
 namespace DScratch.Tests.DScratchTests.Transactions.Steps;
 
+[TestFixture]
 public class StepHelpersTests
 {
     private class ToInsert
@@ -28,38 +29,6 @@ public class StepHelpersTests
             {
                 Assert.That(step.ParentId, Is.EqualTo("Root"));
                 Assert.That(step.Offset, Is.EqualTo(0));
-            }
-        }
-        
-        [Test]
-        public void CharNode_ReturnsInsertTextDiff()
-        {
-            // Arrange
-            var builder = new TreeBuilder();
-            TextNode textNode = null!;
-            
-            // 0: Parent Element
-            builder.TestInlineElementNode(t =>
-            {
-                // 1: TextNode, 2: CharNode ('a'), 3: CharNode ('a')
-                textNode = t.Text("aa"); 
-            });
-
-            var node = textNode.ChildNodes[1]; // Target the second CharNode (ID: "3")
-
-            // Act
-            var result = node.ToInsertSteps();
-            
-            // Assert
-            Assert.That(result, Has.Length.EqualTo(1));
-            Assert.That(result.Single(), Is.TypeOf<StepDiff.InsertTextDiff>());
-            
-            var step = (StepDiff.InsertTextDiff)result.Single();
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(step.ParentId, Is.EqualTo("Test-0"));
-                Assert.That(step.Offset, Is.EqualTo(1));
-                Assert.That(step.Text, Is.EqualTo("a"));
             }
         }
         
@@ -197,36 +166,6 @@ public class StepHelpersTests
     private class ToDelete
     {
         [Test]
-        public void CharNode_ReturnsDeleteTextDiff()
-        {
-            // Arrange
-            var builder = new TreeBuilder();
-            TextNode text2 = null!;
-            
-            // 0: Parent Element
-            builder.TestInlineElementNode(t =>
-            {
-                t.Text("a");     // 1: TextNode, 2: CharNode ('a')
-                text2 = t.Text("a"); // 3: TextNode, 4: CharNode ('a')
-            });
-            
-            var node2 = text2.ChildNodes.First(); // Target second CharNode (ID: "4")
-            
-            // Act
-            var result = node2.ToDeleteSteps();
-            
-            // Assert
-            Assert.That(result, Is.TypeOf<StepDiff.DeleteTextDiff>());
-            var step = (StepDiff.DeleteTextDiff)result;
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(step.ParentId, Is.EqualTo("Test-0"));
-                Assert.That(step.Offset, Is.EqualTo(1));
-                Assert.That(step.Length, Is.EqualTo(1));
-            }
-        }
-
-        [Test]
         public void TextNode_ReturnDeleteTextDiff()
         {
             // Arrange
@@ -306,11 +245,10 @@ public class StepHelpersTests
                 text2 = t.Text("a"); // 3: TextNode, 4: CharNode ('a')
             });
             
-            var node2 = text2.ChildNodes.First(); // Target second CharNode (ID: "4")
-            node2.Delete();
+            text2.Delete();
             
             // Act
-            var result = node2.ToDeleteSteps();
+            var result = text2.ToDeleteSteps();
             
             // Assert
             Assert.That(result, Is.TypeOf<StepDiff.DeleteTextDiff>());
@@ -326,59 +264,6 @@ public class StepHelpersTests
     
     private class ToMoveStep
     {
-        [Test]
-        public void CharNode_ReturnsExpectedSteps()
-        {
-            // Arrange
-            var builder = new TreeBuilder();
-            TextNode text2 = null!;
-            TextNode newSibling = null!;
-            
-            // 0: Parent Element
-            builder.TestInlineElementNode(t =>
-            {
-                t.Text("a");
-                text2 = t.Text("b");
-                t.Text("c"); 
-            });
-            builder.TestInlineElementNode(t =>
-            {
-                newSibling = t.Text("1");
-                t.Text("2");
-            });
-
-            var node = text2.ChildNodes[0];
-            
-            // Act
-            var result = node.ToMoveStep(n =>
-            {
-                n.Origin = newSibling.ChildNodes[0];
-                n.RightOrigin = newSibling.ChildNodes[0].RightOrigin;
-                newSibling.InsertChild(n);
-            });
-            
-            // Assert
-            Assert.That(result, Has.Length.EqualTo(2));
-            Assert.That(result[0], Is.TypeOf<StepDiff.DeleteTextDiff>());
-            Assert.That(result[1], Is.TypeOf<StepDiff.InsertTextDiff>());
-            
-            var step1 = (StepDiff.DeleteTextDiff)result[0];
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(step1.ParentId, Is.EqualTo("Test-0"));
-                Assert.That(step1.Offset, Is.EqualTo(1));
-                Assert.That(step1.Length, Is.EqualTo(1));
-            }
-            
-            var step2 = (StepDiff.InsertTextDiff)result[1];
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(step2.ParentId, Is.EqualTo("Test-7"));
-                Assert.That(step2.Offset, Is.EqualTo(1));
-                Assert.That(step2.Text, Is.EqualTo("b"));
-            }
-        }
-        
         [Test]
         public void TextNode_ReturnsExpectedSteps()
         {
