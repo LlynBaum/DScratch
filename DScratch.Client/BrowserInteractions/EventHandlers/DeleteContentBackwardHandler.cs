@@ -49,6 +49,11 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
 
     private static NodeOffset SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
     {
+        if (keyPressInfo.Selection.AnchorOffset is 0)
+        {
+            return NodeOffset.NotFound();
+        }
+        
         var walker = new TreeWalker<TextNode>(parent);
         
         var currentOffset = 0;
@@ -65,8 +70,17 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             current = walker.NextNode();
         }
 
+        if (current is null)
+        {
+            return NodeOffset.NotFound();
+        }
+
         var relativeOffset = keyPressInfo.Selection.AnchorOffset - currentOffset - 1;
-        var nodeToDelete = current?.ChildAt(relativeOffset);
+        
+        var rightText = transaction.SplitText(current, relativeOffset);
+        var nodeToDelete = rightText is not null ? transaction.SplitText(rightText, 1) : null;
+        nodeToDelete ??= rightText;
+        
         if (nodeToDelete is not null)
         {
             transaction.Delete(nodeToDelete);
