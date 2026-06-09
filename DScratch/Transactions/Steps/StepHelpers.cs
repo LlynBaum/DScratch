@@ -23,6 +23,7 @@ internal static class StepHelpers
                 ],
                 IBlockElement element => 
                 [
+                    // TODO: this could break, when the OriginElement is a deleted node... make sure this element is not deleted and therefor actaully exists in the DOM
                     new StepDiff.InsertElementBlockDiff(parentId.Value, node.OriginElement?.Id.Value, element.TagName, node.Id.Value),
                     ..node.ChildNodes.SelectMany(c => c.ToInsertSteps())
                 ],
