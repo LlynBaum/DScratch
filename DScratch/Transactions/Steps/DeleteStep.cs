@@ -4,10 +4,10 @@ namespace DScratch.Transactions.Steps;
 
 public class DeleteStep(DNode node) : IStep
 {
-    public IReadOnlyList<StepDiff?> Execute()
+    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction)
     {
-        // TODO: when deleting text, we can combine continues tombstones
         node.Delete();
+        transaction.NotifyNodeChange(node);
         return [node.ToDeleteSteps()];
     }
 

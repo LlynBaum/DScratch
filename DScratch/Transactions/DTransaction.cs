@@ -3,7 +3,7 @@ using DScratch.Transactions.Steps;
 
 namespace DScratch.Transactions;
 
-internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGenerator) : ITransaction
+internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGenerator) : ITransaction, IRunningTransaction
 {
     private readonly List<IStep> steps = [];
 
@@ -11,15 +11,21 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
 
     public DNode Root => document.Root;
 
+    private readonly List<DNode> changedNodes = [];
     private readonly List<DNode> addedNodes = [];
-
     private CursorPosition? cursorPosition;
 
     public TransactionResult Commit()
     {
+        var result = new TransactionResult(steps.SelectMany(s => s.Execute(this)).ToList(), cursorPosition);
+        
         addedNodes.ForEach(document.AddNode);
         addedNodes.Clear();
-        return new TransactionResult(steps.SelectMany(s => s.Execute()).ToList(), cursorPosition);
+
+        CleanupCode(changedNodes);
+        changedNodes.Clear();
+        
+        return result;
     }
     
     public ITransaction Insert(DNode node, DNode parent)
@@ -63,5 +69,18 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
             addedNodes.Add(splitNode);
         }
         return splitNode;
+    }
+
+    public void NotifyNodeChange(DNode node)
+    {
+        changedNodes.Add(node);
+    }
+
+    private static void CleanupCode(IReadOnlyList<DNode> nodes)
+    {
+        foreach (var node in nodes)
+        {
+            
+        }
     }
 }

@@ -4,7 +4,7 @@ namespace DScratch.Transactions.Steps;
 
 public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin) : IStep
 {
-    public IReadOnlyList<StepDiff?> Execute()
+    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction)
     {
         if (start is null && end is null) return [];
         
@@ -28,6 +28,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                         node.Origin = origin;
                         node.RightOrigin = origin?.RightOrigin ?? existingFirstChild;
                         targetParent.InsertChild(node);
+                        transaction.NotifyNodeChange(node);
                     }));
                 }
                 else
@@ -36,6 +37,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     current.Origin = origin;
                     current.RightOrigin = origin?.RightOrigin ?? existingFirstChild;
                     targetParent.InsertChild(current);
+                    transaction.NotifyNodeChange(current);
                 }
                 
                 previousOrigin = current;
@@ -59,6 +61,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                         node.RightOrigin = rightOrigin;
                         node.Origin = rightOrigin?.Origin;
                         targetParent.InsertChild(node);
+                        transaction.NotifyNodeChange(node);
                     }));
                 }
                 else
@@ -67,6 +70,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     current.RightOrigin = rightOrigin;
                     current.Origin = rightOrigin?.Origin;
                     targetParent.InsertChild(current);
+                    transaction.NotifyNodeChange(current);
                 }
                 
                 previousRightOrigin = current;
@@ -90,6 +94,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                         node.Origin = origin;
                         node.RightOrigin = origin?.RightOrigin ?? existingFirstChild;
                         targetParent.InsertChild(node);
+                        transaction.NotifyNodeChange(node);
                     }));
                 }
                 else
@@ -98,6 +103,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     current.Origin = origin;
                     current.RightOrigin = origin?.RightOrigin ?? existingFirstChild;
                     targetParent.InsertChild(current);
+                    transaction.NotifyNodeChange(current);
                 }
                 
                 previousOrigin = current;
@@ -114,6 +120,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                         node.Origin = previousOrigin;
                         node.RightOrigin = previousOrigin?.RightOrigin ?? existingFirstChild;
                         targetParent.InsertChild(node);
+                        transaction.NotifyNodeChange(node);
                     }));
                 }
                 else
@@ -122,6 +129,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     current.Origin = previousOrigin;
                     current.RightOrigin = previousOrigin?.RightOrigin ?? existingFirstChild;
                     targetParent.InsertChild(current);
+                    transaction.NotifyNodeChange(current);
                 }
             }
         }

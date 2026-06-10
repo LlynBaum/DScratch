@@ -4,9 +4,8 @@ namespace DScratch.Transactions.Steps;
 
 public class DeleteRangeStep(DNode? start, DNode? end) : IStep
 {
-    public IReadOnlyList<StepDiff?> Execute()
+    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction)
     {
-        // TODO: when deleting text, we can combine continues tombstones
         if (start is null && end is null) return [];
 
         var steps = new List<StepDiff?>();
@@ -17,6 +16,7 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
             while (current is not null)
             {
                 current.Delete();
+                transaction.NotifyNodeChange(current);
                 steps.Add(current.ToDeleteSteps());
                 current = current.RightOrigin;
             }
@@ -27,6 +27,7 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
             while (current is not null)
             {
                 current.Delete();
+                transaction.NotifyNodeChange(current);
                 steps.Add(current.ToDeleteSteps());
                 current = current.Origin;
             }
@@ -37,6 +38,7 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
             while (current is not null && current.Id != end.Id)
             {
                 current.Delete();
+                transaction.NotifyNodeChange(current);
                 steps.Add(current.ToDeleteSteps());
                 current = current.RightOrigin;
             }
@@ -44,6 +46,7 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
             if (current is not null)
             {
                 current.Delete();
+                transaction.NotifyNodeChange(current);
                 steps.Add(current.ToDeleteSteps());
             }
         }

@@ -30,5 +30,13 @@ public class DScratchDocument
     public void AddNode(DNode node)
     {
         nodes[node.Id] = node;
+
+        if (node is TextNode textNode)
+        {
+            for (var i = 0; i < textNode.Length; i++)
+            {
+                nodes[new NodeId(node.Id.Client, node.Id.IdValue + i)] = node;
+            }
+        }
     }
 }
