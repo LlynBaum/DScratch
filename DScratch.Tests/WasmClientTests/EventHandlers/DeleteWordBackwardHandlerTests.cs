@@ -79,18 +79,15 @@ public class DeleteWordBackwardHandlerTests
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
             }
             
-            Assert.That(text.Origin, Is.TypeOf<TextNode>());
-            var remainingText = (TextNode)text.Origin!;
+            Assert.That(text.RightOrigin, Is.TypeOf<TextNode>());
+            var remainingText = (TextNode)text.RightOrigin!;
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(remainingText.IsDeleted, Is.False);
                 Assert.That(remainingText.TextContent, Is.EqualTo(" "));
             }
             
-            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-                Is.TypeOf<StepDiff.DeleteTextDiff>(), 
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>()]);
+            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
         
@@ -110,7 +107,7 @@ public class DeleteWordBackwardHandlerTests
             // Assert
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(text.IsDeleted, Is.True);
+                Assert.That(text.IsDeleted, Is.False);
                 Assert.That(text.TextContent, Is.EqualTo(" "));
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
             }
@@ -143,7 +140,7 @@ public class DeleteWordBackwardHandlerTests
 
             // Assert
             Assert.That(text.IsDeleted, Is.True);
-            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>(), Is.TypeOf<StepDiff.DeleteTextDiff>());
+            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
         
@@ -187,8 +184,8 @@ public class DeleteWordBackwardHandlerTests
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
             
                 Assert.That(result.Steps, Has.Count.Zero);
+                Assert.That(result.CursorPosition, Is.Null);
             }
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
 
             using (Assert.EnterMultipleScope())
             {

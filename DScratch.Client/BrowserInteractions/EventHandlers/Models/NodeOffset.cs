@@ -28,8 +28,12 @@ public readonly struct NodeOffset
         };
     }
     
-    public static NodeOffset From(DNode? node, int offset)
+    public static NodeOffset From(DNode? node, int? offset)
     {
-        return node is not null ? NodeOffset.Found(offset) : NodeOffset.NotFound();
+        if (node is not null && offset is null)
+        {
+            throw new ArgumentNullException(nameof(offset), "Offset must be not null, when node is not null");
+        }
+        return node is not null ? Found(offset!.Value) : NotFound();
     }
 }

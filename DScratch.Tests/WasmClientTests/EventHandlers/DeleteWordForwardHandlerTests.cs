@@ -51,8 +51,8 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
             }
             
-            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>(), Is.TypeOf<StepDiff.DeleteTextDiff>());
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 1);
+            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
         
         [Test]
@@ -100,7 +100,7 @@ public class DeleteWordForwardHandlerTests
             {
                 Assert.That(text.IsDeleted, Is.False);
                 Assert.That(text.TextContent, Is.EqualTo(" "));
-                Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
             }
 
             Assert.That(text.RightOrigin, Is.TypeOf<TextNode>());
@@ -164,8 +164,8 @@ public class DeleteWordForwardHandlerTests
 
             // Assert
             Assert.That(text.IsDeleted, Is.True);
-            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>(), Is.TypeOf<StepDiff.DeleteTextDiff>());
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
+            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 1);
         }
         
         [Test]
@@ -208,8 +208,8 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
             
                 Assert.That(result.Steps, Has.Count.Zero);
+                Assert.That(result.CursorPosition, Is.Null);
             }
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
 
             using (Assert.EnterMultipleScope())
             {

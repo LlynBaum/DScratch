@@ -30,7 +30,7 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : IEdit
                 transaction.MoveRange(parent.FirstChild, null, parent.OriginElement, parent.OriginElement.LastChild);
                 transaction.Delete(parent);
             }
-            else // TODO: add a case for inline elements, that will have the same without the merging
+            else if (nodeInfo.HasFound) // TODO: add a case for inline elements, that will have the same without the merging
             {
                 transaction.AddCursorPosition(parent.Id, nodeInfo.OffsetOrDefault);
             }
@@ -48,11 +48,16 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : IEdit
 
     private static NodeOffset SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
     {
+        if (keyPressInfo.Selection.AnchorOffset is 0)
+        {
+            return NodeOffset.NotFound();
+        }
+        
         var walker = new TreeWalker<TextNode>(parent);
 
         var offset = 0;
         var current = walker.NextNode();
-        while (current?.Length < keyPressInfo.Selection.AnchorOffset)
+        while (current is not null && offset + current.Length < keyPressInfo.Selection.AnchorOffset)
         {
             offset += current.Length;
             current = walker.NextNode();
@@ -65,14 +70,37 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : IEdit
         
         var relativeOffset = keyPressInfo.Selection.AnchorOffset - offset;
         transaction.SplitText(current, relativeOffset);
-        
-        var index = current.Length;
-        while (index > 0 && char.IsWhiteSpace(current.TextContent[index--])) { }
-        while (index > 0 && !char.IsWhiteSpace(current.TextContent[index--])) { }
 
-        var word = transaction.SplitText(current, index);
+        TextNode? previous = null;
+        var index = current.Length - 1;
+        
+        while (index >= 0 && current is not null && char.IsWhiteSpace(current.TextContent[index]))
+        {
+            if (index == 0)
+            {
+                transaction.Delete(current);
+                previous = current;
+                current = walker.MovePrevious();
+                index = current?.Length ?? 0;
+            }
+            index--;
+        }
+
+        while (index >= 0 && current is not null && !char.IsWhiteSpace(current.TextContent[index]))
+        {
+            if (index == 0)
+            {
+                transaction.Delete(current);
+                previous = current;
+                current = walker.MovePrevious();
+                index = current?.Length ?? 0;
+            }
+            index--;
+        }
+
+        var word = current is not null ? transaction.SplitText(current, index + 1) : null;
         if (word is not null) transaction.Delete(word);
 
-        return NodeOffset.From(current, current.Length);
+        return NodeOffset.From(current ?? previous, current?.Length ?? 0);
     }
 }

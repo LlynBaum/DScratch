@@ -31,7 +31,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
                 transaction.MoveRange(parent.FirstChild, null, parent.RightOriginElement, null);
                 transaction.Delete(parent);
             }
-            else if(deletedNodeInfo.HasFound)
+            else if (deletedNodeInfo.HasFound)
             {
                 transaction.AddCursorPosition(parent.Id, deletedNodeInfo.Offset);
             }
@@ -56,23 +56,23 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
         var current = walker.NextNode();
         while (current is not null)
         {
-            var length = current.Length;
-            if (currentOffset + length > keyPressInfo.Selection.AnchorOffset)
+            if (currentOffset + current.Length > keyPressInfo.Selection.AnchorOffset)
             {
                 break;
             }
 
-            currentOffset += length;
+            currentOffset += current.Length;
             current = walker.NextNode();
         }
 
         var relativeOffset = keyPressInfo.Selection.AnchorOffset - currentOffset;
-        var nodeToDelete = current?.ChildAt(relativeOffset);
-        if (nodeToDelete is not null)
+        var noteToDelete = current is not null ? transaction.SplitText(current, relativeOffset) : null;
+        if (noteToDelete is not null)
         {
-            transaction.Delete(nodeToDelete);
+            transaction.SplitText(noteToDelete, 1);
+            transaction.Delete(noteToDelete);
         }
 
-        return NodeOffset.From(nodeToDelete, keyPressInfo.Selection.AnchorOffset);
+        return NodeOffset.From(noteToDelete, keyPressInfo.Selection.AnchorOffset);
     }
 }

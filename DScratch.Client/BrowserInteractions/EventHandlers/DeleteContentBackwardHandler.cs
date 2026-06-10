@@ -23,7 +23,8 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         {
             var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, parent);
 
-            if (!deletedNodeInfo.HasFound && parent is ParagraphNode && parent.OriginElement is ParagraphNode paragraphNode) // TODO: probably just BLockElements in general
+            // TODO: probably just BLockElements in general
+            if (!deletedNodeInfo.HasFound && parent is ParagraphNode && parent.OriginElement is ParagraphNode paragraphNode)
             {
                 transaction.AddCursorPosition(parent.OriginElement.Id, paragraphNode.GetTextLength());
                 
@@ -60,32 +61,23 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         var current = walker.NextNode();
         while (current is not null)
         {
-            var length = current.Length;
-            if (currentOffset + length >= keyPressInfo.Selection.AnchorOffset)
+            if (currentOffset + current.Length >= keyPressInfo.Selection.AnchorOffset)
             {
                 break;
             }
 
-            currentOffset += length;
+            currentOffset += current.Length;
             current = walker.NextNode();
         }
 
-        if (current is null)
-        {
-            return NodeOffset.NotFound();
-        }
-
         var relativeOffset = keyPressInfo.Selection.AnchorOffset - currentOffset - 1;
-        
-        var rightText = transaction.SplitText(current, relativeOffset);
-        var nodeToDelete = rightText is not null ? transaction.SplitText(rightText, 1) : null;
-        nodeToDelete ??= rightText;
-        
-        if (nodeToDelete is not null)
+        var noteToDelete = current is not null ? transaction.SplitText(current, relativeOffset) : null;
+        if (noteToDelete is not null)
         {
-            transaction.Delete(nodeToDelete);
+            transaction.SplitText(noteToDelete, 1);
+            transaction.Delete(noteToDelete);
         }
         
-        return NodeOffset.From(nodeToDelete, keyPressInfo.Selection.AnchorOffset - 1);
+        return NodeOffset.From(current, keyPressInfo.Selection.AnchorOffset - 1);
     }
 }
