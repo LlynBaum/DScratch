@@ -44,8 +44,8 @@ public class DNodeTests
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(first?.Id.IdValue, Is.EqualTo(1));
-            Assert.That(last?.Id.IdValue, Is.EqualTo(3));
+            Assert.That(first?.Id.Clock, Is.EqualTo(1));
+            Assert.That(last?.Id.Clock, Is.EqualTo(3));
         });
     }
     
@@ -65,7 +65,7 @@ public class DNodeTests
         var first = builder.FirstChild.FirstChild;
         
         // Assert
-        Assert.That(first?.Id.IdValue, Is.EqualTo(2));
+        Assert.That(first?.Id.Clock, Is.EqualTo(2));
     }
     
     [Test]
@@ -84,7 +84,7 @@ public class DNodeTests
         var last = builder.FirstChild.LastChild;
         
         // Assert
-        Assert.That(last?.Id.IdValue, Is.EqualTo(2));
+        Assert.That(last?.Id.Clock, Is.EqualTo(2));
     }
     
     [Test]

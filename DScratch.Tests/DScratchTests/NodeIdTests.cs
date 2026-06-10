@@ -7,7 +7,7 @@ public class NodeIdTests
     {
         var nodeId = new NodeId("Test", 1);
         Assert.That(nodeId.Value, Is.EqualTo("Test-1"));
-        Assert.That(nodeId.IdValue, Is.EqualTo(1));
+        Assert.That(nodeId.Clock, Is.EqualTo(1));
         Assert.That(nodeId.Client, Is.EqualTo("Test"));
     }
     
@@ -16,7 +16,7 @@ public class NodeIdTests
     {
         var path = NodeId.FromString("Test-1");
         Assert.That(path.Client, Is.EqualTo("Test"));
-        Assert.That(path.IdValue, Is.EqualTo(1));
+        Assert.That(path.Clock, Is.EqualTo(1));
     }
     
     [Test]

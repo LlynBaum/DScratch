@@ -17,7 +17,7 @@ public class DNodeFactoryTests
         
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(result.Id.IdValue, Is.EqualTo(0));
+            Assert.That(result.Id.Clock, Is.EqualTo(0));
             Assert.That(result.Origin, Is.EqualTo(testNode));
             Assert.That(result.RightOrigin, Is.EqualTo(testNode2));
         }
@@ -36,12 +36,12 @@ public class DNodeFactoryTests
         
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(result.Id.IdValue, Is.EqualTo(0));
+            Assert.That(result.Id.Clock, Is.EqualTo(0));
             Assert.That(result.TextContent, Is.EqualTo("abc"));
             Assert.That(result.Origin, Is.EqualTo(testNode));
             Assert.That(result.RightOrigin, Is.EqualTo(testNode2));
             
-            Assert.That(nodeIdGen.GetNextId().IdValue, Is.EqualTo(3));
+            Assert.That(nodeIdGen.GetNextId().Clock, Is.EqualTo(3));
         }
     }
     

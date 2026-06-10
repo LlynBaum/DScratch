@@ -6,15 +6,18 @@ namespace DScratch.Tests.DScratchTests.Transactions.Steps;
 
 public class DeleteRangeStepTests
 {
+    private readonly TestTransactionFake transactionFake = new TestTransactionFake();
+    
     [Test]
     public void DeletesNode()
     {
         // Act
         var step = new DeleteRangeStep(null, null);
-        var result = step.Execute();
+        var result = step.Execute(transactionFake);
             
         // Assert
         Assert.That(result, Has.Count.Zero);
+        Assert.That(transactionFake.ChangedNodes, Has.Count.Zero);
     }
     
     [Test]
@@ -38,7 +41,7 @@ public class DeleteRangeStepTests
         
         // Act
         var step = new DeleteRangeStep(node2, node4);
-        step.Execute();
+        step.Execute(transactionFake);
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -48,6 +51,8 @@ public class DeleteRangeStepTests
             Assert.That(node3.IsDeleted, Is.True);
             Assert.That(node4.IsDeleted, Is.True);
             Assert.That(node5.IsDeleted, Is.False);
+            
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node2, node3, node4]));
         }
     }
     
@@ -72,7 +77,7 @@ public class DeleteRangeStepTests
         
         // Act
         var step = new DeleteRangeStep(node2, null);
-        step.Execute();
+        step.Execute(transactionFake);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -82,6 +87,8 @@ public class DeleteRangeStepTests
             Assert.That(node3.IsDeleted, Is.True);
             Assert.That(node4.IsDeleted, Is.True);
             Assert.That(node5.IsDeleted, Is.True);
+            
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node2, node3, node4, node5]));
         }
     }
     
@@ -106,7 +113,7 @@ public class DeleteRangeStepTests
         
         // Act
         var step = new DeleteRangeStep(null, node3);
-        step.Execute();
+        step.Execute(transactionFake);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -116,6 +123,8 @@ public class DeleteRangeStepTests
             Assert.That(node3.IsDeleted, Is.True);
             Assert.That(node4.IsDeleted, Is.False);
             Assert.That(node5.IsDeleted, Is.False);
+            
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node1, node2, node3]));
         }
     }
 }

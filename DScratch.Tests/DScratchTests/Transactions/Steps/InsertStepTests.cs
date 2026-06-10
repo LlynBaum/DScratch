@@ -31,11 +31,11 @@ public class InsertStepTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(node.Parent?.Id.IdValue, Is.EqualTo(1));
-            Assert.That(node2.ChildNodes[1].Id.IdValue, Is.EqualTo(-1));
+            Assert.That(node.Parent?.Id.Clock, Is.EqualTo(1));
+            Assert.That(node2.ChildNodes[1].Id.Clock, Is.EqualTo(-1));
             
-            Assert.That(node3.RightOrigin!.Id.IdValue, Is.EqualTo(-1));
-            Assert.That(node4.Origin?.Id.IdValue, Is.EqualTo(-1));
+            Assert.That(node3.RightOrigin!.Id.Clock, Is.EqualTo(-1));
+            Assert.That(node4.Origin?.Id.Clock, Is.EqualTo(-1));
         }
     }
     
@@ -61,9 +61,9 @@ public class InsertStepTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(node.Parent?.Id.IdValue, Is.EqualTo(1));
-            Assert.That(node2.ChildNodes[2].Id.IdValue, Is.EqualTo(-1));
-            Assert.That(node4.RightOrigin!.Id.IdValue, Is.EqualTo(-1));
+            Assert.That(node.Parent?.Id.Clock, Is.EqualTo(1));
+            Assert.That(node2.ChildNodes[2].Id.Clock, Is.EqualTo(-1));
+            Assert.That(node4.RightOrigin!.Id.Clock, Is.EqualTo(-1));
         }
     }
 
@@ -90,8 +90,8 @@ public class InsertStepTests
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(node.Parent?.Id.IdValue, Is.EqualTo(4));
-            Assert.That(node5.ChildNodes[0].Id.IdValue, Is.EqualTo(-1));
+            Assert.That(node.Parent?.Id.Clock, Is.EqualTo(4));
+            Assert.That(node5.ChildNodes[0].Id.Clock, Is.EqualTo(-1));
         }
     }
     
@@ -106,7 +106,7 @@ public class InsertStepTests
             node4 = t.Text("ab"); // ID "1"
         });
 
-        var node = new TextNode(new NodeId(node4.LastId.Client, node4.LastId.IdValue + 1), node4, null, "c");
+        var node = new TextNode(new NodeId(node4.LastId.Client, node4.LastId.Clock + 1), node4, null, "c");
         
         // Act
         var step = new InsertStep(node, node2);
@@ -131,7 +131,7 @@ public class InsertStepTests
             node4 = t.Text("ab"); // ID "1"
         });
 
-        var node = new TextNode(new NodeId(node4.LastId.Client, node4.LastId.IdValue + 2), node4, null, "c");
+        var node = new TextNode(new NodeId(node4.LastId.Client, node4.LastId.Clock + 2), node4, null, "c");
         
         // Act
         var step = new InsertStep(node, node2);
@@ -142,7 +142,7 @@ public class InsertStepTests
         {
             Assert.That(node2.ChildNodes, Has.Count.EqualTo(2));
             Assert.That(node4.TextContent, Is.EqualTo("ab"));
-            Assert.That(node4.RightOrigin!.Id.IdValue, Is.EqualTo(4));
+            Assert.That(node4.RightOrigin!.Id.Clock, Is.EqualTo(4));
         }
     }
     
@@ -157,7 +157,7 @@ public class InsertStepTests
             node4 = t.Text("ab"); // ID "1"
         });
 
-        var node = new TextNode(new NodeId("whatever", node4.LastId.IdValue + 1), node4, null, "c");
+        var node = new TextNode(new NodeId("whatever", node4.LastId.Clock + 1), node4, null, "c");
         
         // Act
         var step = new InsertStep(node, node2);
@@ -168,7 +168,7 @@ public class InsertStepTests
         {
             Assert.That(node2.ChildNodes, Has.Count.EqualTo(2));
             Assert.That(node4.TextContent, Is.EqualTo("ab"));
-            Assert.That(node4.RightOrigin!.Id.IdValue, Is.EqualTo(3));
+            Assert.That(node4.RightOrigin!.Id.Clock, Is.EqualTo(3));
         }
     }
     
@@ -183,7 +183,7 @@ public class InsertStepTests
             node4 = t.Text("ab"); // ID "1"
         });
 
-        var node = new TextNode(new NodeId(node4.LastId.Client, node4.LastId.IdValue + 1), null, node4, "c");
+        var node = new TextNode(new NodeId(node4.LastId.Client, node4.LastId.Clock + 1), null, node4, "c");
         
         // Act
         var step = new InsertStep(node, node2);
@@ -194,7 +194,7 @@ public class InsertStepTests
         {
             Assert.That(node2.ChildNodes, Has.Count.EqualTo(2));
             Assert.That(node4.TextContent, Is.EqualTo("ab"));
-            Assert.That(node4.Origin!.Id.IdValue, Is.EqualTo(3));
+            Assert.That(node4.Origin!.Id.Clock, Is.EqualTo(3));
         }
     }
 }

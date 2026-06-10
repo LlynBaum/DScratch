@@ -111,7 +111,7 @@ public class DTransactionTests
         public bool Executed;
         public bool Reverted;
         
-        public IReadOnlyList<StepDiff> Execute()
+        public IReadOnlyList<StepDiff> Execute(IRunningTransaction transaction)
         {
             Executed = true;
             return [new TestStepDiff()];

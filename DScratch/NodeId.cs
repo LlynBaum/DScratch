@@ -2,27 +2,27 @@ namespace DScratch;
 
 public readonly record struct NodeId
 {
-    private readonly long? id;
+    private readonly long? clock;
     
-    public NodeId(string client, long id)
+    public NodeId(string client, long clock)
     {
         Client = client;
-        this.id = id;
+        this.clock = clock;
     }
 
     private NodeId(string client)
     {
         Client = client;
-        id = null;
+        clock = null;
     }
     
     public static NodeId Root => new NodeId("Root");
     
-    public long IdValue => id!.Value;
+    public long Clock => clock!.Value;
     
     public string Client { get; }
     
-    public string Value => id.HasValue ? $"{Client}-{id}" : Client;
+    public string Value => clock.HasValue ? $"{Client}-{clock}" : Client;
 
     public override string ToString()
     {
@@ -38,6 +38,6 @@ public readonly record struct NodeId
 
     public bool IsContinuesTo(NodeId nodeId)
     {
-        return nodeId.Client == Client && IdValue + 1 == nodeId.IdValue;
+        return nodeId.Client == Client && Clock + 1 == nodeId.Clock;
     }
 }

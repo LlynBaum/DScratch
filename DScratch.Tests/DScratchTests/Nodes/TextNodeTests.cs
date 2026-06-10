@@ -27,8 +27,8 @@ public class TextNodeTests
         var testNode = new TreeBuilder().Text("abc");
 
         // Act & Assert
-        Assert.That(testNode.Id.IdValue, Is.EqualTo(0));
-        Assert.That(testNode.LastId.IdValue, Is.EqualTo(2));
+        Assert.That(testNode.Id.Clock, Is.EqualTo(0));
+        Assert.That(testNode.LastId.Clock, Is.EqualTo(2));
         Assert.That(testNode.LastId.Client, Is.EqualTo(testNode.Id.Client));
     }
     
@@ -39,8 +39,8 @@ public class TextNodeTests
         var testNode = new TreeBuilder().Text("a");
 
         // Act & Assert
-        Assert.That(testNode.Id.IdValue, Is.EqualTo(0));
-        Assert.That(testNode.LastId.IdValue, Is.EqualTo(0));
+        Assert.That(testNode.Id.Clock, Is.EqualTo(0));
+        Assert.That(testNode.LastId.Clock, Is.EqualTo(0));
         Assert.That(testNode.LastId.Client, Is.EqualTo(testNode.Id.Client));
     }
     
@@ -66,7 +66,7 @@ public class TextNodeTests
         Assert.That(result, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(result.Id.IdValue, Is.EqualTo(-1));
+            Assert.That(result.Id.Clock, Is.EqualTo(-1));
 
             Assert.That(textNode.Length, Is.EqualTo(1));
             Assert.That(result.Length, Is.EqualTo(2));
@@ -115,7 +115,7 @@ public class TextNodeTests
         Assert.That(testNode.ChildNodes, Has.Count.EqualTo(3));
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(result?.Id.IdValue, Is.EqualTo(2));
+            Assert.That(result?.Id.Clock, Is.EqualTo(2));
             Assert.That(textNode.TextContent, Is.EqualTo("abc"));
         }
     }

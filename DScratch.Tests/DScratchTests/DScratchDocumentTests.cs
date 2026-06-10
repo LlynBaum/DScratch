@@ -22,7 +22,7 @@ public class DScratchDocumentTests
         
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.Id.IdValue, Is.EqualTo(1));
+        Assert.That(result.Id.Clock, Is.EqualTo(1));
     }
     
     [Test]

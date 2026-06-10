@@ -4,7 +4,7 @@ namespace DScratch.Nodes;
 
 public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null) : IDNode
 {
-    protected List<DNode> AllChildNodes = childNodes ?? [];
+    private readonly List<DNode> allChildNodes = childNodes ?? [];
     
     public NodeId Id { get; } = id;
     
@@ -22,9 +22,9 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
 
     public DNode? ParentElement => Parent is IElement or null ? Parent : Parent.ParentElement;
     
-    public IReadOnlyList<DNode> ChildNodes => AllChildNodes;
+    public IReadOnlyList<DNode> ChildNodes => allChildNodes;
     
-    public IEnumerable<DNode> ActiveChildNodes => AllChildNodes.Where(c => !c.IsDeleted);
+    public IEnumerable<DNode> ActiveChildNodes => allChildNodes.Where(c => !c.IsDeleted);
 
     public DNode? FirstChild => ActiveChildNodes.FirstOrDefault();
 
@@ -41,21 +41,21 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
     
     private void RemoveChild(DNode node)
     {
-        var index = AllChildNodes.FindIndex(n => n.Id == node.Id);
-        AllChildNodes.RemoveAt(index);
+        var index = allChildNodes.FindIndex(n => n.Id == node.Id);
+        allChildNodes.RemoveAt(index);
     }
 
     internal void Delete()
     {
         IsDeleted = true;
-        AllChildNodes.ForEach(n => n.Delete());
+        allChildNodes.ForEach(n => n.Delete());
         // TODO: some elements need to be deleted when no child is active anymore (like strong) but others not (like paragraph) how to handle?
     }
 
     internal void AppendChild(DNode node)
     {
         node.Parent = this;
-        AllChildNodes.Add(node);
+        allChildNodes.Add(node);
     }
     
     internal virtual void InsertChild(DNode node)
@@ -65,7 +65,7 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
         if (node.Origin is null)
         {
             FirstChild?.Origin = node;
-            AllChildNodes.Insert(0, node);
+            allChildNodes.Insert(0, node);
         }
         else
         {
@@ -73,8 +73,8 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
             origin.RightOrigin?.Origin = node;
             origin.RightOrigin = node;
             
-            var index = AllChildNodes.FindIndex(n => n.Id == origin.Id);
-            AllChildNodes.Insert(index + 1, node);
+            var index = allChildNodes.FindIndex(n => n.Id == origin.Id);
+            allChildNodes.Insert(index + 1, node);
         }
     }
     

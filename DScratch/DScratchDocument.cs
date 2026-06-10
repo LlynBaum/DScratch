@@ -4,7 +4,7 @@ namespace DScratch;
 
 public class DScratchDocument
 {
-    private readonly Dictionary<NodeId, DNode> nodes = new Dictionary<NodeId, DNode>();
+    private readonly CrdtLookupTable nodeLookup = new CrdtLookupTable();
     
     public DNode Root { get; }
 
@@ -25,18 +25,9 @@ public class DScratchDocument
         AddNode(Root);
     }
     
-    internal DNode? FindNode(NodeId nodeId) => nodes.GetValueOrDefault(nodeId);
+    internal DNode? FindNode(NodeId nodeId) => nodeLookup.LookUp(nodeId);
 
-    public void AddNode(DNode node)
-    {
-        nodes[node.Id] = node;
-
-        if (node is TextNode textNode)
-        {
-            for (var i = 0; i < textNode.Length; i++)
-            {
-                nodes[new NodeId(node.Id.Client, node.Id.IdValue + i)] = node;
-            }
-        }
-    }
+    internal void AddNode(DNode node) => nodeLookup.Add(node);
+    
+    internal void RemoveNode(DNode node) => nodeLookup.Remove(node);
 }
