@@ -1,3 +1,4 @@
+using DScratch.Nodes;
 using DScratch.Tests.Helpers.TestNodes;
 
 namespace DScratch.Tests.DScratchTests;
@@ -10,8 +11,65 @@ public class DScratchDocumentTests
     [SetUp]
     public void SetUp()
     {
-        Document = new DScratchDocument(new NodeId(ClientName, -1));
-        DefaultNodes();
+        var node1 = new TestNode(new NodeId(ClientName, 1), null, null);
+        Document = new DScratchDocument(node1);
+    }
+    
+    [Test]
+    public void FindNode_FindExpectedTextNode_WithAddNode()
+    {
+        // Arrange
+        var textNode1 = new TextNode(new NodeId(ClientName, 2), null, null);
+        var textNode2 = new TextNode(new NodeId(ClientName, 3), null, null);
+        
+        textNode1.AddText("a");
+        textNode2.AddText("a");
+        
+        // Act
+        Document.AddNode(textNode1);
+        Document.AddNode(textNode2);
+        var result1 = Document.FindNode(new NodeId(ClientName, 2));
+        var result2 = Document.FindNode(new NodeId(ClientName, 3));
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result1, Is.Not.Null);
+            Assert.That(result2, Is.Not.Null);
+        }
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result1, Is.EqualTo(textNode1));
+            Assert.That(result2, Is.EqualTo(textNode2));
+        }
+    }
+    
+    [Test]
+    public void FindNode_FindExpectedTextNode_WithContinuesRunNode()
+    {
+        // Arrange
+        var textNode = new TextNode(new NodeId(ClientName, 2), null, null);
+        textNode.AddText("abc");
+        Document.AddNode(textNode);
+        
+        // Act
+        var result1 = Document.FindNode(new NodeId(ClientName, 2));
+        var result2 = Document.FindNode(new NodeId(ClientName, 3));
+        var result3 = Document.FindNode(new NodeId(ClientName, 4));
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result1, Is.Not.Null);
+            Assert.That(result2, Is.Not.Null);
+            Assert.That(result3, Is.Not.Null);
+        }
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result1, Is.EqualTo(textNode));
+            Assert.That(result2, Is.EqualTo(textNode));
+            Assert.That(result3, Is.EqualTo(textNode));
+        }
     }
     
     [Test]
@@ -33,11 +91,5 @@ public class DScratchDocumentTests
         
         // Assert
         Assert.That(result, Is.Null);
-    }
-    
-    private void DefaultNodes()
-    {
-        var node1 = new TestNode(new NodeId(ClientName, 1), null, null);
-        Document = new DScratchDocument(node1);
     }
 }
