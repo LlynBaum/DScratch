@@ -7,6 +7,14 @@ namespace DScratch.Tests.DScratchTests.Transactions.Steps;
 
 public class InsertStepTests
 {
+    private TestTransactionFake transactionFake;
+
+    [SetUp]
+    public void SetUp()
+    {
+        transactionFake = new TestTransactionFake();
+    }
+    
     [Test]
     public void GivenNode_IsInsertedAsChildOfNodeFromGivenPath()
     {
@@ -26,7 +34,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute();
+        step.Execute(transactionFake);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -36,6 +44,8 @@ public class InsertStepTests
             
             Assert.That(node3.RightOrigin!.Id.Clock, Is.EqualTo(-1));
             Assert.That(node4.Origin?.Id.Clock, Is.EqualTo(-1));
+            
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
     }
     
@@ -56,7 +66,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute();
+        step.Execute(transactionFake);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -64,6 +74,8 @@ public class InsertStepTests
             Assert.That(node.Parent?.Id.Clock, Is.EqualTo(1));
             Assert.That(node2.ChildNodes[2].Id.Clock, Is.EqualTo(-1));
             Assert.That(node4.RightOrigin!.Id.Clock, Is.EqualTo(-1));
+            
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
     }
 
@@ -85,13 +97,15 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node5);
-        step.Execute();
+        step.Execute(transactionFake);
         
         // Assert
         using (Assert.EnterMultipleScope())
         {
             Assert.That(node.Parent?.Id.Clock, Is.EqualTo(4));
             Assert.That(node5.ChildNodes[0].Id.Clock, Is.EqualTo(-1));
+            
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
     }
     
@@ -110,13 +124,15 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute();
+        step.Execute(transactionFake);
         
         // Assert
         using (Assert.EnterMultipleScope())
         {
             Assert.That(node2.ChildNodes, Has.Count.EqualTo(1));
             Assert.That(node4.TextContent, Is.EqualTo("abc"));
+            
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
     }
     
@@ -135,7 +151,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute();
+        step.Execute(transactionFake);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -143,6 +159,8 @@ public class InsertStepTests
             Assert.That(node2.ChildNodes, Has.Count.EqualTo(2));
             Assert.That(node4.TextContent, Is.EqualTo("ab"));
             Assert.That(node4.RightOrigin!.Id.Clock, Is.EqualTo(4));
+            
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
     }
     
@@ -161,7 +179,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute();
+        step.Execute(transactionFake);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -169,6 +187,8 @@ public class InsertStepTests
             Assert.That(node2.ChildNodes, Has.Count.EqualTo(2));
             Assert.That(node4.TextContent, Is.EqualTo("ab"));
             Assert.That(node4.RightOrigin!.Id.Clock, Is.EqualTo(3));
+            
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
     }
     
@@ -187,7 +207,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute();
+        step.Execute(transactionFake);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -195,6 +215,8 @@ public class InsertStepTests
             Assert.That(node2.ChildNodes, Has.Count.EqualTo(2));
             Assert.That(node4.TextContent, Is.EqualTo("ab"));
             Assert.That(node4.Origin!.Id.Clock, Is.EqualTo(3));
+            
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
     }
 }

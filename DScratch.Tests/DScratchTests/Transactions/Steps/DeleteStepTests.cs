@@ -7,6 +7,14 @@ namespace DScratch.Tests.DScratchTests.Transactions.Steps;
 
 public class DeleteStepTests
 {
+    private TestTransactionFake transactionFake;
+
+    [SetUp]
+    public void SetUp()
+    {
+        transactionFake = new TestTransactionFake();
+    }
+    
     [Test]
     public void DeletesNode()
     {
@@ -23,10 +31,11 @@ public class DeleteStepTests
         
         // Act
         var step = new DeleteStep(node3);
-        step.Execute();
+        step.Execute(transactionFake);
             
         // Assert
         Assert.That(node3.IsDeleted, Is.True);
+        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node3]));
     }
     
     [Test]
@@ -47,7 +56,7 @@ public class DeleteStepTests
         
         // Act
         var steps = new DeleteStep(textNode);
-        var diffs = steps.Execute();
+        var diffs = steps.Execute(transactionFake);
         
         // Assert
         Assert.That(parent.ActiveChildNodes.Count(), Is.EqualTo(2));
@@ -58,5 +67,6 @@ public class DeleteStepTests
         var step = (StepDiff.DeleteTextDiff)diffs.Single();
         Assert.That(step.Offset, Is.EqualTo(0));
         Assert.That(step.Length, Is.EqualTo(3));
+        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([textNode]));
     }
 }

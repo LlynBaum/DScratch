@@ -7,6 +7,14 @@ namespace DScratch.Tests.DScratchTests.Transactions.Steps;
 
 public class MoveRangeStepTests
 {
+    private TestTransactionFake transactionFake;
+
+    [SetUp]
+    public void SetUp()
+    {
+        transactionFake = new TestTransactionFake();
+    }
+    
     [Test]
     public void GivenNode_IsMovedToNewParent_AndSiblingsAreUpdated()
     {
@@ -38,7 +46,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text2, text4, newParent, newSibling);
-        var result = step.Execute();
+        var result = step.Execute(transactionFake);
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(6));
@@ -85,6 +93,8 @@ public class MoveRangeStepTests
             Assert.That(sibling2.Origin, Is.EqualTo(text4));
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
+            
+        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text2, text3, text4]));
     }
     
     [Test]
@@ -118,7 +128,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text3, null, newParent, newSibling);
-        var result = step.Execute();
+        var result = step.Execute(transactionFake);
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(6));
@@ -165,6 +175,8 @@ public class MoveRangeStepTests
             Assert.That(sibling2.Origin, Is.EqualTo(text5));
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
+            
+        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text3, text4, text5]));
     }
     
     [Test]
@@ -198,7 +210,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(null, text3, newParent, newSibling);
-        var result = step.Execute();
+        var result = step.Execute(transactionFake);
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(6));
@@ -245,6 +257,8 @@ public class MoveRangeStepTests
             Assert.That(sibling2.Origin, Is.EqualTo(text3));
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
+            
+        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text1, text2, text3]));
     }
     
         [Test]
@@ -278,7 +292,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text2, text4, newParent, null);
-        var result = step.Execute();
+        var result = step.Execute(transactionFake);
 
         // Assert
         AssertHelper.ThatStepsEqualTo(result, expected: [
@@ -323,6 +337,8 @@ public class MoveRangeStepTests
             Assert.That(sibling2.Origin, Is.EqualTo(sibling1));
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
+
+        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text2, text3, text4]));
     }
     
     [Test]
@@ -356,7 +372,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text3, null, newParent, null);
-        var result = step.Execute();
+        var result = step.Execute(transactionFake);
 
         // Assert
         AssertHelper.ThatStepsEqualTo(result, expected: [
@@ -401,6 +417,8 @@ public class MoveRangeStepTests
             Assert.That(sibling2.Origin, Is.EqualTo(sibling1));
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
+            
+        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text3, text4, text5]));
     }
     
     [Test]
@@ -434,7 +452,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text3, null, newParent, sibling2);
-        var result = step.Execute();
+        var result = step.Execute(transactionFake);
 
         // Assert
         AssertHelper.ThatStepsEqualTo(result, expected: [
@@ -479,6 +497,8 @@ public class MoveRangeStepTests
             Assert.That(text5.Origin, Is.EqualTo(text4));
             Assert.That(text5.RightOrigin, Is.Null);
         }
+            
+        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text3, text4, text5]));
     }
     
     [Test]
@@ -512,7 +532,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(null, text3, newParent, null);
-        var result = step.Execute();
+        var result = step.Execute(transactionFake);
 
         // Assert
         AssertHelper.ThatStepsEqualTo(result, expected: [
@@ -557,5 +577,7 @@ public class MoveRangeStepTests
             Assert.That(sibling2.Origin, Is.EqualTo(sibling1));
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
+
+        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text1, text2, text3]));
     }
 }

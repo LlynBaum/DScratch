@@ -6,7 +6,13 @@ namespace DScratch.Tests.DScratchTests.Transactions.Steps;
 
 public class DeleteRangeStepTests
 {
-    private readonly TestTransactionFake transactionFake = new TestTransactionFake();
+    private TestTransactionFake transactionFake;
+
+    [SetUp]
+    public void SetUp()
+    {
+        transactionFake = new TestTransactionFake();
+    }
     
     [Test]
     public void DeletesNode()
