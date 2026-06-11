@@ -30,7 +30,7 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : IEdit
                 transaction.MoveRange(parent.FirstChild, null, parent.OriginElement, parent.OriginElement.LastChild);
                 transaction.Delete(parent);
             }
-            else if (nodeInfo.HasFound) // TODO: add a case for inline elements, that will have the same without the merging
+            else if (nodeInfo.HasFound)
             {
                 transaction.AddCursorPosition(parent.Id, nodeInfo.OffsetOrDefault);
             }

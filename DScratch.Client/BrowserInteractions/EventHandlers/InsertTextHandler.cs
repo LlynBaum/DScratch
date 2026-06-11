@@ -29,7 +29,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         DNode? origin;
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
-            nodeSearchResult = SimpleInsert(keyPressInfo, parent);
+            nodeSearchResult = SimpleInsert(keyPressInfo, parent); // TODO: inserts text always at beginning. The insert Step for the DOM send always 0 but why?
             origin = nodeSearchResult.Origin.Node;
             rightOrigin = nodeSearchResult.RightOrigin.Node;
         }

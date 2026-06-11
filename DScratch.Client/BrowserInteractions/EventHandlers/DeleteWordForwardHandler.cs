@@ -23,14 +23,14 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : IEdito
         {
             var nodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, parent);
             
-            if (!nodeInfo.HasFound && parent is ParagraphNode paragraphNode && parent.RightOriginElement is ParagraphNode) // TODO: probably just BLockElements in general
+            if (!nodeInfo.HasFound && parent is ParagraphNode paragraphNode && parent.RightOriginElement is ParagraphNode)
             {
                 transaction.AddCursorPosition(parent.RightOriginElement.Id, paragraphNode.GetTextLength());
                 
                 transaction.MoveRange(parent.FirstChild, null, parent.RightOriginElement, null);
                 transaction.Delete(parent);
             }
-            else if (nodeInfo.HasFound) // TODO: add a case for inline elements, that will have the same without the merging
+            else if (nodeInfo.HasFound)
             {
                 transaction.AddCursorPosition(parent.Id, nodeInfo.OffsetOrDefault);
             }

@@ -23,7 +23,6 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         {
             var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, parent);
 
-            // TODO: probably just BLockElements in general
             if (!deletedNodeInfo.HasFound && parent is ParagraphNode && parent.OriginElement is ParagraphNode paragraphNode)
             {
                 transaction.AddCursorPosition(parent.OriginElement.Id, paragraphNode.GetTextLength());
@@ -31,7 +30,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
                 transaction.MoveRange(parent.FirstChild, null, parent.OriginElement, parent.OriginElement.LastChild);
                 transaction.Delete(parent);
             }
-            else if (deletedNodeInfo.HasFound) // TODO: add a case for inline elements, that will have the same without the merging
+            else if (deletedNodeInfo.HasFound)
             {
                 transaction.AddCursorPosition(parent.Id, deletedNodeInfo.Offset);
             }
