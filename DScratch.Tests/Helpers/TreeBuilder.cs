@@ -15,22 +15,22 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder
     private readonly DNode parent;
     private DNode? previousChild;
 
-    private readonly TestNodeIdGenerator idGenerator;
+    public readonly TestNodeIdGenerator IdGenerator;
     private readonly DNodeFactory factory;
 
     public TreeBuilder(TestNodeIdGenerator? testNodeIdGenerator = null)
     {
         Root = new RootNode();
         parent = Root;
-        idGenerator = testNodeIdGenerator ?? new TestNodeIdGenerator();
-        factory =  new DNodeFactory(idGenerator);
+        IdGenerator = testNodeIdGenerator ?? new TestNodeIdGenerator();
+        factory =  new DNodeFactory(IdGenerator);
     }
     
     private TreeBuilder(DNode parent, TestNodeIdGenerator idGenerator, RootNode rootNode)
     {
         Root = rootNode;
         this.parent = parent;
-        this.idGenerator = idGenerator;
+        this.IdGenerator = idGenerator;
         factory = new DNodeFactory(idGenerator);
     }
 
@@ -63,7 +63,7 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder
 
     public TestNode TestNode(Action<TreeBuilder>? configureChildNodes = null)
     {
-        var testNode = new TestNode(idGenerator.GetNextId(), null, null);
+        var testNode = new TestNode(IdGenerator.GetNextId(), null, null);
         configureChildNodes?.Invoke(GetChildTreeBuilder(testNode));
         Append(testNode);
         return testNode;
@@ -71,7 +71,7 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder
     
     public TestInlineElementNode TestInlineElementNode(Action<TreeBuilder>? configureChildNodes = null)
     {
-        var testNode = new TestInlineElementNode(idGenerator.GetNextId(), null, null);
+        var testNode = new TestInlineElementNode(IdGenerator.GetNextId(), null, null);
         configureChildNodes?.Invoke(GetChildTreeBuilder(testNode));
         Append(testNode);
         return testNode;
@@ -79,7 +79,7 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder
     
     public TestBlockElementNode TestBlockElementNode(Action<TreeBuilder>? configureChildNodes = null)
     {
-        var testNode = new TestBlockElementNode(idGenerator.GetNextId(), null, null);
+        var testNode = new TestBlockElementNode(IdGenerator.GetNextId(), null, null);
         configureChildNodes?.Invoke(GetChildTreeBuilder(testNode));
         Append(testNode);
         return testNode;
@@ -97,7 +97,7 @@ public class TreeBuilder : TreeBuilder.IParagraphTreeBuilder
 
     private TreeBuilder GetChildTreeBuilder(DNode parentNode)
     {
-        return new TreeBuilder(parentNode, idGenerator, Root);
+        return new TreeBuilder(parentNode, IdGenerator, Root);
     }
     
     public interface ITreeMaker

@@ -7,6 +7,8 @@ public class DScratchService(INodeFactory nodeFactory, INodeIdGenerator nodeIdGe
 {
     private readonly DScratchDocument document = new DScratchDocument(nodeIdGenerator.GetNextId());
 
+    public bool DisableCleanUp { get; init; } = false;
+
     internal DScratchService(DScratchDocument document, INodeFactory nodeFactory, INodeIdGenerator nodeIdGenerator) 
         : this(nodeFactory, nodeIdGenerator)
     {
@@ -20,7 +22,7 @@ public class DScratchService(INodeFactory nodeFactory, INodeIdGenerator nodeIdGe
 
     public ITransaction StartTransaction()
     {
-        return new DTransaction(document, nodeIdGenerator);
+        return new DTransaction(document, nodeIdGenerator, DisableCleanUp);
     }
     
     public TransactionResult Apply(ITransaction transaction)

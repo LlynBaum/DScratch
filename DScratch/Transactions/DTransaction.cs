@@ -3,7 +3,7 @@ using DScratch.Transactions.Steps;
 
 namespace DScratch.Transactions;
 
-internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGenerator) : ITransaction, IRunningTransaction
+internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGenerator, bool disableCleanUp) : ITransaction, IRunningTransaction
 {
     private readonly List<IStep> steps = [];
 
@@ -11,7 +11,7 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
 
     public DNode Root => document.Root;
 
-    private readonly List<DNode> changedNodes = [];
+    private readonly List<DNode> modifiedNodes = [];
     private readonly List<DNode> addedNodes = [];
     private CursorPosition? cursorPosition;
 
@@ -22,8 +22,8 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
         addedNodes.ForEach(document.AddNode);
         addedNodes.Clear();
 
-        CleanupCode(changedNodes);
-        changedNodes.Clear();
+        CleanupCode(modifiedNodes);
+        modifiedNodes.Clear();
         
         return result;
     }
@@ -71,16 +71,26 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
         return splitNode;
     }
 
-    public void NotifyNodeChange(DNode node)
-    {
-        changedNodes.Add(node);
-    }
+    public void NotifyNodeChange(DNode node) => modifiedNodes.Add(node);
 
-    private static void CleanupCode(IReadOnlyList<DNode> nodes)
+    private void CleanupCode(IReadOnlyList<DNode> nodes)
     {
-        foreach (var node in nodes)
+        if(disableCleanUp) return;
+        
+        foreach (var node in nodes.OfType<TextNode>())
         {
-            
+            if (node.Origin is TextNode originTextNode && originTextNode.IsDeleted == node.IsDeleted && originTextNode.LastId.IsContinuesTo(node.Id))
+            {
+                originTextNode.AddText(node.TextContent);
+                node.Remove();
+                document.RemoveNode(node);
+            }
+            else if (node.RightOrigin is TextNode rightOriginTextNode && rightOriginTextNode.IsDeleted == node.IsDeleted && node.LastId.IsContinuesTo(rightOriginTextNode.Id))
+            {
+                node.AddText(rightOriginTextNode.TextContent);
+                rightOriginTextNode.Remove();
+                document.RemoveNode(rightOriginTextNode);
+            }
         }
     }
 }

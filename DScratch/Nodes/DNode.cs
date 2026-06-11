@@ -34,9 +34,11 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
     {
         Origin?.RightOrigin = RightOrigin;
         RightOrigin?.Origin = Origin;
+        Parent?.RemoveChild(this);
+        
+        Parent = null;
         RightOrigin = null;
         Origin = null;
-        Parent?.RemoveChild(this);
     }
     
     private void RemoveChild(DNode node)
