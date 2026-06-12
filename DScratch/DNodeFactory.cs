@@ -9,6 +9,11 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
         return new ParagraphNode(nodeIdGenerator.GetNextId(), origin, rightOrigin);
     }
     
+    public HeadingNode Heading(HeadingLevel headingLevel, DNode? origin, DNode? rightOrigin)
+    {
+        return new HeadingNode(headingLevel, nodeIdGenerator.GetNextId(), origin, rightOrigin);
+    }
+    
     public TextNode String(string value, DNode? origin, DNode? rightOrigin)
     {
         if (value.Length == 0)

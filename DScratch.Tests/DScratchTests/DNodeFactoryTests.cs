@@ -24,6 +24,30 @@ public class DNodeFactoryTests
     }
     
     [Test]
+    [TestCase(HeadingLevel.Level1)]
+    [TestCase(HeadingLevel.Level2)]
+    [TestCase(HeadingLevel.Level3)]
+    [TestCase(HeadingLevel.Level4)]
+    [TestCase(HeadingLevel.Level5)]
+    [TestCase(HeadingLevel.Level6)]
+    public void Heading_ReturnsHeadingNode_WithNewId(HeadingLevel headingLevel)
+    {
+        var factory = new DNodeFactory(new TestNodeIdGenerator());
+
+        var testNode = new ParagraphNode(new NodeId(), null, null);
+        var testNode2 = new ParagraphNode(new NodeId(), null, null);
+        var result = factory.Heading(headingLevel, testNode, testNode2);
+        
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.Id.Clock, Is.EqualTo(0));
+            Assert.That(result.Origin, Is.EqualTo(testNode));
+            Assert.That(result.RightOrigin, Is.EqualTo(testNode2));
+            Assert.That(result.HeadingLevel, Is.EqualTo(headingLevel));
+        }
+    }
+    
+    [Test]
     public void String_ReturnsTextNode_WithNewId()
     {
         var testNode = new TestNode(new NodeId(), null, null);
