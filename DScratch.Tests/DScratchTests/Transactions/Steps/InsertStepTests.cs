@@ -34,7 +34,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute(transactionFake);
+        step.Execute(transactionFake, null!);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -66,7 +66,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute(transactionFake);
+        step.Execute(transactionFake, null!);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -97,7 +97,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node5);
-        step.Execute(transactionFake);
+        step.Execute(transactionFake, null!);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -124,7 +124,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute(transactionFake);
+        step.Execute(transactionFake, null!);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -152,7 +152,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute(transactionFake);
+        step.Execute(transactionFake, null!);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -180,7 +180,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute(transactionFake);
+        step.Execute(transactionFake, null!);
         
         // Assert
         using (Assert.EnterMultipleScope())

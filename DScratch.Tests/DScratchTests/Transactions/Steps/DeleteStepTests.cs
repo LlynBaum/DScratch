@@ -31,7 +31,7 @@ public class DeleteStepTests
         
         // Act
         var step = new DeleteStep(node3);
-        step.Execute(transactionFake);
+        step.Execute(transactionFake, null!);
             
         // Assert
         Assert.That(node3.IsDeleted, Is.True);
@@ -56,7 +56,7 @@ public class DeleteStepTests
         
         // Act
         var steps = new DeleteStep(textNode);
-        var diffs = steps.Execute(transactionFake);
+        var diffs = steps.Execute(transactionFake, null!);
         
         // Assert
         Assert.That(parent.ActiveChildNodes.Count(), Is.EqualTo(2));

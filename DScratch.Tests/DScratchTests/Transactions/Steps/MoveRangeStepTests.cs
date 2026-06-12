@@ -46,7 +46,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text2, text4, newParent, newSibling);
-        var result = step.Execute(transactionFake);
+        var result = step.Execute(transactionFake, null!);
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(6));
@@ -128,7 +128,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text3, null, newParent, newSibling);
-        var result = step.Execute(transactionFake);
+        var result = step.Execute(transactionFake, null!);
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(6));
@@ -210,7 +210,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(null, text3, newParent, newSibling);
-        var result = step.Execute(transactionFake);
+        var result = step.Execute(transactionFake, null!);
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(6));
@@ -292,7 +292,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text2, text4, newParent, null);
-        var result = step.Execute(transactionFake);
+        var result = step.Execute(transactionFake, null!);
 
         // Assert
         AssertHelper.ThatStepsEqualTo(result, expected: [
@@ -372,7 +372,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text3, null, newParent, null);
-        var result = step.Execute(transactionFake);
+        var result = step.Execute(transactionFake, null!);
 
         // Assert
         AssertHelper.ThatStepsEqualTo(result, expected: [
@@ -452,7 +452,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text3, null, newParent, sibling2);
-        var result = step.Execute(transactionFake);
+        var result = step.Execute(transactionFake, null!);
 
         // Assert
         AssertHelper.ThatStepsEqualTo(result, expected: [
@@ -532,7 +532,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(null, text3, newParent, null);
-        var result = step.Execute(transactionFake);
+        var result = step.Execute(transactionFake, null!);
 
         // Assert
         AssertHelper.ThatStepsEqualTo(result, expected: [

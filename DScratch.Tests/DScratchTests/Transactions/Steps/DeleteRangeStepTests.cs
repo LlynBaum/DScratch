@@ -19,7 +19,7 @@ public class DeleteRangeStepTests
     {
         // Act
         var step = new DeleteRangeStep(null, null);
-        var result = step.Execute(transactionFake);
+        var result = step.Execute(transactionFake, null!);
             
         // Assert
         Assert.That(result, Has.Count.Zero);
@@ -47,7 +47,7 @@ public class DeleteRangeStepTests
         
         // Act
         var step = new DeleteRangeStep(node2, node4);
-        step.Execute(transactionFake);
+        step.Execute(transactionFake, null!);
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -83,7 +83,7 @@ public class DeleteRangeStepTests
         
         // Act
         var step = new DeleteRangeStep(node2, null);
-        step.Execute(transactionFake);
+        step.Execute(transactionFake, null!);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -119,7 +119,7 @@ public class DeleteRangeStepTests
         
         // Act
         var step = new DeleteRangeStep(null, node3);
-        step.Execute(transactionFake);
+        step.Execute(transactionFake, null!);
         
         // Assert
         using (Assert.EnterMultipleScope())

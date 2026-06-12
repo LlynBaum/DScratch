@@ -4,7 +4,7 @@ namespace DScratch.Transactions.Steps;
 
 public class DeleteRangeStep(DNode? start, DNode? end) : IStep
 {
-    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction)
+    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
     {
         if (start is null && end is null) return [];
 

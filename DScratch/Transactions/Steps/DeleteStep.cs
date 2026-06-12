@@ -4,7 +4,7 @@ namespace DScratch.Transactions.Steps;
 
 public class DeleteStep(DNode node) : IStep
 {
-    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction)
+    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
     {
         node.Delete();
         transaction.NotifyNodeChange(node);

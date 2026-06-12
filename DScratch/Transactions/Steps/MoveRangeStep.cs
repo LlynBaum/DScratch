@@ -4,7 +4,7 @@ namespace DScratch.Transactions.Steps;
 
 public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin) : IStep
 {
-    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction)
+    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
     {
         if (start is null && end is null) return [];
         

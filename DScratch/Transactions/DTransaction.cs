@@ -1,4 +1,5 @@
 using DScratch.Nodes;
+using DScratch.Nodes.NodeTypes;
 using DScratch.Transactions.Steps;
 
 namespace DScratch.Transactions;
@@ -17,7 +18,7 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
 
     public TransactionResult Commit()
     {
-        var result = new TransactionResult(steps.SelectMany(s => s.Execute(this)).ToList(), cursorPosition);
+        var result = new TransactionResult(steps.SelectMany(s => s.Execute(this, document)).ToList(), cursorPosition);
         
         addedNodes.ForEach(document.AddNode);
         addedNodes.Clear();
@@ -50,6 +51,12 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
     public ITransaction MoveRange(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin)
     {
         steps.Add(new MoveRangeStep(start, end, targetParent, targetOrigin));
+        return this;
+    }
+    
+    public ITransaction UpdateNodeType(DNode node, Func<DNode, DNode> copyFactory)
+    {
+        steps.Add(new UpdateNodeTypeStep(node, copyFactory));
         return this;
     }
 

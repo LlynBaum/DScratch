@@ -24,6 +24,28 @@ public class DNodeFactoryTests
     }
     
     [Test]
+    public void ParagraphFrom_ReturnsParagraphNode_AsCopyOfGivenNode()
+    {
+        var factory = new DNodeFactory(new TestNodeIdGenerator());
+
+        var id = new NodeId("Test", 1);
+        var origin = TestNode.Empty();
+        var rightOrigin = TestNode.Empty();
+        var child = TestNode.Empty();
+        
+        var testNode = new ParagraphNode(id, origin, rightOrigin, [child]);
+        var result = factory.ParagraphFrom(testNode);
+        
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.Id, Is.EqualTo(id));
+            Assert.That(result.Origin, Is.EqualTo(origin));
+            Assert.That(result.RightOrigin, Is.EqualTo(rightOrigin));
+            Assert.That(result.ChildNodes, Is.EquivalentTo([child]));
+        }
+    }
+    
+    [Test]
     [TestCase(HeadingLevel.Level1)]
     [TestCase(HeadingLevel.Level2)]
     [TestCase(HeadingLevel.Level3)]
@@ -44,6 +66,29 @@ public class DNodeFactoryTests
             Assert.That(result.Origin, Is.EqualTo(testNode));
             Assert.That(result.RightOrigin, Is.EqualTo(testNode2));
             Assert.That(result.HeadingLevel, Is.EqualTo(headingLevel));
+        }
+    }
+    
+    [Test]
+    public void HeadingFrom_ReturnsHeadingNode_AsCopyOfGivenNode()
+    {
+        var factory = new DNodeFactory(new TestNodeIdGenerator());
+
+        var id = new NodeId("Test", 1);
+        var origin = TestNode.Empty();
+        var rightOrigin = TestNode.Empty();
+        var child = TestNode.Empty();
+        
+        var testNode = new HeadingNode(HeadingLevel.Level1, id, origin, rightOrigin, [child]);
+        var result = factory.HeadingFrom(testNode, HeadingLevel.Level2);
+        
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.Id, Is.EqualTo(id));
+            Assert.That(result.Origin, Is.EqualTo(origin));
+            Assert.That(result.RightOrigin, Is.EqualTo(rightOrigin));
+            Assert.That(result.ChildNodes, Is.EquivalentTo([child]));
+            Assert.That(result.HeadingLevel, Is.EqualTo(HeadingLevel.Level2));
         }
     }
     

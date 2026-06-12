@@ -106,12 +106,23 @@ public class DTransactionTests
         Assert.That(Transaction.Steps.Single(), Is.TypeOf<MoveRangeStep>());
     }
     
+    [Test]
+    public void UpdateNodeType_AddsUpdateNodeTypeStep()
+    {
+        // Act
+        Transaction.UpdateNodeType(TestNode.Empty(), node => node);
+        
+        // Assert
+        Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
+        Assert.That(Transaction.Steps.Single(), Is.TypeOf<UpdateNodeTypeStep>());
+    }
+    
     private class TestStep : IStep
     {
         public bool Executed;
         public bool Reverted;
         
-        public IReadOnlyList<StepDiff> Execute(IRunningTransaction transaction)
+        public IReadOnlyList<StepDiff> Execute(IRunningTransaction transaction, DScratchDocument document)
         {
             Executed = true;
             return [new TestStepDiff()];

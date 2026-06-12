@@ -4,7 +4,7 @@ namespace DScratch.Transactions.Steps;
 
 internal class InsertStep(DNode node, DNode parent) : IStep
 {
-    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction)
+    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
     {
         parent.InsertChild(node);
         transaction.NotifyNodeChange(node);

@@ -6,7 +6,7 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
 {
     private readonly List<DNode> allChildNodes = childNodes ?? [];
     
-    public NodeId Id { get; } = id;
+    public NodeId Id { get; init; } = id;
     
     public DNode? Origin { get; internal set; } = origin;
 
@@ -51,7 +51,6 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
     {
         IsDeleted = true;
         allChildNodes.ForEach(n => n.Delete());
-        // TODO: some elements need to be deleted when no child is active anymore (like strong) but others not (like paragraph) how to handle?
     }
 
     internal void AppendChild(DNode node)
