@@ -16,7 +16,7 @@ interface CursorPosition {
     offset: number;
 }
 
-interface TransactionResult {
+export interface TransactionResult {
     steps: Array<Step | null | undefined>;
     cursorPosition: CursorPosition | null;
 }

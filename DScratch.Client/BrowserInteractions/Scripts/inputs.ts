@@ -18,6 +18,9 @@ export async function handleInput(event: InputEvent, bridgeReference: any) {
     event.preventDefault();
 
     const selection = window.getSelection();
+    if (isInvalidUserAction(selection)) {
+        return;
+    }
 
     const anchorElement = getElementFromNode(selection?.anchorNode!);
     const focusElement = getElementFromNode(selection?.focusNode!);
@@ -41,4 +44,11 @@ export async function handleInput(event: InputEvent, bridgeReference: any) {
 
     snapshotSelection(anchorOffset, anchorId, focusOffset, focusId);
     await bridgeReference?.invokeMethodAsync("OnKeyPressCallbackAsync", payload);
+}
+
+function isInvalidUserAction(selection: Selection | null) {
+    if (!selection) return false;
+    
+    return selection?.anchorNode === window.editor.node 
+        || selection?.focusNode === window.editor.node;
 }

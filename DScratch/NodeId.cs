@@ -2,7 +2,7 @@ namespace DScratch;
 
 public readonly record struct NodeId
 {
-    private readonly long? clock;
+    public static readonly NodeId Root = new NodeId("Root");
     
     public NodeId(string client, long clock)
     {
@@ -16,13 +16,15 @@ public readonly record struct NodeId
         clock = null;
     }
     
-    public static NodeId Root => new NodeId("Root");
+    private readonly long? clock;
     
     public long Clock => clock!.Value;
     
     public string Client { get; }
     
     public string Value => clock.HasValue ? $"{Client}-{clock}" : Client;
+
+    public bool IsRoot => this == Root;
 
     public override string ToString()
     {
@@ -31,6 +33,7 @@ public readonly record struct NodeId
 
     public static NodeId FromString(string anchorId)
     {
+        if (anchorId is "root") return Root;
         var parts = anchorId.Split('-');
         var id = Convert.ToInt64(parts[1]);
         return new NodeId(parts[0], id);

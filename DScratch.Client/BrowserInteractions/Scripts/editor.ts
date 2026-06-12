@@ -1,18 +1,31 @@
-import { applyTransaction } from "./transaction";
+import {applyTransaction, TransactionResult} from "./transaction";
 import { handleInput } from "./inputs";
 
 let bridgeReference: any = null;
 
+interface Editor {
+    initialize: (dotNetRef: any) => void;
+    applyTransaction: (transaction: TransactionResult) => void;
+    node: HTMLElement | null;
+}
+
 declare global {
     interface Window {
-        editor: any;
+        editor: Editor;
     }
 }
 
 function initEditor() {
     const editor = document.getElementById("editor");
+    
+    if (!editor) {
+        console.error("There is no editor node.");
+        return;
+    }
+    
     editor?.addEventListener("click", setCursorToEnd);
     editor?.addEventListener("beforeinput", async event => await handleInput(event, bridgeReference));
+    window.editor.node = editor;
 }
 
 function setCursorToEnd(event: PointerEvent) {
@@ -42,5 +55,6 @@ window.editor = {
         bridgeReference = dotNetRef;
         initEditor();
     },
-    applyTransaction: applyTransaction
+    applyTransaction: applyTransaction,
+    node: null
 };

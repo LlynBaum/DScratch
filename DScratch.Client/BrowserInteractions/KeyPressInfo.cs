@@ -7,7 +7,7 @@ public class KeyPressInfo
 {
     public required string InputType { get; init; }
     
-    public required string? Data { get; set; }
+    public required string? Data { get; init; }
     
     public required SelectionInfo Selection { get; init; }
     
@@ -15,13 +15,13 @@ public class KeyPressInfo
     {
         public SelectionDirection Direction { get; init; }
         
-        public required string AnchorId { get; set; }
+        public required string AnchorId { get; init; }
 
         public NodeId AnchorNodeId => NodeId.FromString(AnchorId);
         
         public int AnchorOffset { get; init; }
         
-        public required string FocusId { get; set; }
+        public required string FocusId { get; init; }
 
         public NodeId FocusNodeId => NodeId.FromString(FocusId);
         

@@ -9,6 +9,11 @@ public class InputEventHelper(DJsInvoker jsInvoker, IServiceProvider serviceProv
     [JSInvokable]
     public async Task OnKeyPressCallbackAsync(KeyPressInfo keyPressInfo)
     {
+        if (keyPressInfo.Selection.AnchorNodeId.IsRoot || keyPressInfo.Selection.FocusNodeId.IsRoot)
+        {
+            return;
+        }
+        
         var handler = serviceProvider.GetKeyedService<IEditorEventHandler>(keyPressInfo.InputType);
         if (handler is not null)
         {
