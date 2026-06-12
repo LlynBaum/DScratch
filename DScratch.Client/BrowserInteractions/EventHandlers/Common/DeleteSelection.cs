@@ -17,7 +17,7 @@ public static class DeleteSelection
     {
         var (originOffset, rightOriginOffset) = keyPressInfo.Selection.GetConvertedOffsets();
 
-        var result = GetSelectedNodes(parent, originOffset, rightOriginOffset);
+        var result = SearchSelectedNodes(parent, originOffset, rightOriginOffset);
 
         var deleteStart = result.Origin.HasFoundNode 
             ? transaction.SplitText(result.Origin.Node!, result.Origin.AbsolutOffset) 
@@ -43,7 +43,7 @@ public static class DeleteSelection
             RightOrigin: new DNodeInfo(rightOrigin?.RightOrigin, rightOriginOffset));
     }
     
-    private static NodeSearchResult<TextNode> GetSelectedNodes(DNode parent, int originOffset, int rightOriginOffset)
+    private static NodeSearchResult<TextNode> SearchSelectedNodes(DNode parent, int originOffset, int rightOriginOffset)
     {
         var walker = new TreeWalker<TextNode>(parent);
         var currentOffset = 0;
@@ -91,7 +91,7 @@ public static class DeleteSelection
         {
             throw new ArgumentException($"Parent with given path not found: {firstParentPath}");
         }
-        var deleteStart = GetNodesAtOffset(firstParent, firstParentOffset, transaction);
+        var deleteStart = SearchOrigins(firstParent, firstParentOffset, transaction);
         
         var secondParent = transaction.FindNode(secondParentPath);
         if (secondParent is null)
@@ -99,7 +99,7 @@ public static class DeleteSelection
             throw new ArgumentException($"Parent with given path not found: {secondParentPath}");
         }
         
-        var deleteEnd = GetNodesAtOffset(secondParent, secondParentOffset, transaction);
+        var deleteEnd = SearchOrigins(secondParent, secondParentOffset, transaction);
 
         transaction.DeleteRange(deleteStart.RightOrigin.Node, null);
         transaction.DeleteRange(null, deleteEnd.Origin.Node);
@@ -114,7 +114,7 @@ public static class DeleteSelection
             RightOrigin: new DNodeInfo(deleteEnd.RightOrigin.Node, secondParentOffset));
     }
 
-    private static DNodeSearchResult GetNodesAtOffset(DNode parent, int offset, ITransaction transaction)
+    private static DNodeSearchResult SearchOrigins(DNode parent, int offset, ITransaction transaction)
     {
         var walker = new TreeWalker<TextNode>(parent);
         

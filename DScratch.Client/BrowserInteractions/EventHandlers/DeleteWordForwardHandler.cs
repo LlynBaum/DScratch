@@ -50,7 +50,61 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : IEdito
     private static NodeOffset SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
     {
         var walker = new TreeWalker<TextNode>(parent);
+        var relativeOffset = SearchNode(keyPressInfo, walker);
+        
+        if (walker.Node is null)
+        {
+            return NodeOffset.NotFound();
+        }
+        
+        var rightNode = transaction.SplitText(walker.Node, relativeOffset);
+        if (rightNode is null || relativeOffset > 0)
+        {
+            walker.NextNode();
+        }
+        
+        var result = NodeOffset.From(walker.Node, keyPressInfo.Selection.AnchorOffset);
+        
+        var remainingCharacterOffset = DeleteWord(transaction, walker);
+        if (walker.Node is not null)
+        {
+            transaction.SplitText(walker.Node, remainingCharacterOffset);
+            transaction.Delete(walker.Node);
+        }
+        
+        return result;
+    }
 
+    private static int DeleteWord(ITransaction transaction, TreeWalker<TextNode> walker)
+    {
+        var characterOffset = 0;
+        while (walker.Node is not null && characterOffset < walker.Node.Length && char.IsWhiteSpace(walker.Node.TextContent[characterOffset]))
+        {
+            if (characterOffset == walker.Node.Length - 1)
+            {
+                transaction.Delete(walker.Node);
+                walker.NextNode();
+                characterOffset = 0;
+            }
+            characterOffset++;
+        }
+
+        while (walker.Node is not null && characterOffset < walker.Node.Length && !char.IsWhiteSpace(walker.Node.TextContent[characterOffset]))
+        {
+            if (characterOffset == walker.Node.Length - 1)
+            {
+                transaction.Delete(walker.Node);
+                walker.NextNode();
+                characterOffset = 0;
+            }
+            characterOffset++;
+        }
+
+        return characterOffset;
+    }
+
+    private static int SearchNode(KeyPressInfo keyPressInfo, TreeWalker<TextNode> walker)
+    {
         var offset = 0;
         var current = walker.NextNode();
         while (current is not null && offset + current.Length < keyPressInfo.Selection.AnchorOffset)
@@ -58,52 +112,7 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : IEdito
             offset += current.Length;
             current = walker.NextNode();
         }
-        
-        if (current is null)
-        {
-            return NodeOffset.NotFound();
-        }
-        
 
-        var relativeOffset = keyPressInfo.Selection.AnchorOffset - offset;
-        var newTextNode = transaction.SplitText(current, relativeOffset);
-
-        if (newTextNode is null || relativeOffset > 0)
-        {
-            current = walker.NextNode();
-        }
-        
-        var result = NodeOffset.From(current, keyPressInfo.Selection.AnchorOffset);
-        
-        var index = 0;
-        while (current is not null && index < current.Length && char.IsWhiteSpace(current.TextContent[index]))
-        {
-            if (index == current.Length - 1)
-            {
-                transaction.Delete(current);
-                current = walker.NextNode();
-                index = 0;
-            }
-            index++;
-        }
-
-        while (current is not null && index < current.Length && !char.IsWhiteSpace(current.TextContent[index]))
-        {
-            if (index == current.Length - 1)
-            {
-                transaction.Delete(current);
-                current = walker.NextNode();
-                index = 0;
-            }
-            index++;
-        }
-        
-        if (current is not null)
-        {
-            transaction.SplitText(current, index);
-            transaction.Delete(current);
-        }
-        
-        return result;
+        return keyPressInfo.Selection.AnchorOffset - offset;
     }
 }

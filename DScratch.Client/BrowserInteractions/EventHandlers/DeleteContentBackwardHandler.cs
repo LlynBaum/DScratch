@@ -55,6 +55,19 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             return NodeOffset.NotFound();
         }
         
+        var targetNode = SearchNode(keyPressInfo, parent, out var relativeOffset);
+        var noteToDelete = targetNode is not null ? transaction.SplitText(targetNode, relativeOffset) : null;
+        if (noteToDelete is not null)
+        {
+            transaction.SplitText(noteToDelete, 1);
+            transaction.Delete(noteToDelete);
+        }
+        
+        return NodeOffset.From(targetNode, keyPressInfo.Selection.AnchorOffset - 1);
+    }
+
+    private static TextNode? SearchNode(KeyPressInfo keyPressInfo, DNode parent, out int relativeOffset)
+    {
         var walker = new TreeWalker<TextNode>(parent);
         
         var currentOffset = 0;
@@ -70,14 +83,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             current = walker.NextNode();
         }
 
-        var relativeOffset = keyPressInfo.Selection.AnchorOffset - currentOffset - 1;
-        var noteToDelete = current is not null ? transaction.SplitText(current, relativeOffset) : null;
-        if (noteToDelete is not null)
-        {
-            transaction.SplitText(noteToDelete, 1);
-            transaction.Delete(noteToDelete);
-        }
-        
-        return NodeOffset.From(current, keyPressInfo.Selection.AnchorOffset - 1);
+        relativeOffset = keyPressInfo.Selection.AnchorOffset - currentOffset - 1;
+        return current;
     }
 }

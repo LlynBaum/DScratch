@@ -56,6 +56,55 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : IEdit
         
         var walker = new TreeWalker<TextNode>(parent);
 
+        var relativeOffset = SearchNode(keyPressInfo, walker);
+        if (walker.Node is null)
+        {
+            return NodeOffset.NotFound();
+        }
+        
+        transaction.SplitText(walker.Node, relativeOffset);
+
+        var previousNode = DeleteWord(transaction, walker, out var remainingCharacterOffset);
+        var word = walker.Node is not null ? transaction.SplitText(walker.Node, remainingCharacterOffset + 1) : null;
+        if (word is not null) transaction.Delete(word);
+
+        return NodeOffset.From(walker.Node ?? previousNode, walker.Node?.Length ?? 0);
+    }
+
+    private static TextNode? DeleteWord(ITransaction transaction, TreeWalker<TextNode> walker, out int index)
+    {
+        TextNode? previous = null;
+        index = walker.Node!.Length - 1;
+        
+        while (index >= 0 && walker.Node is not null && char.IsWhiteSpace(walker.Node.TextContent[index]))
+        {
+            if (index == 0)
+            {
+                transaction.Delete(walker.Node);
+                previous = walker.Node;
+                walker.MovePrevious();
+                index = walker.Node?.Length ?? 0;
+            }
+            index--;
+        }
+
+        while (index >= 0 && walker.Node is not null && !char.IsWhiteSpace(walker.Node.TextContent[index]))
+        {
+            if (index == 0)
+            {
+                transaction.Delete(walker.Node);
+                previous = walker.Node;
+                walker.MovePrevious();
+                index = walker.Node?.Length ?? 0;
+            }
+            index--;
+        }
+
+        return previous;
+    }
+
+    private static int SearchNode(KeyPressInfo keyPressInfo, TreeWalker<TextNode> walker)
+    {
         var offset = 0;
         var current = walker.NextNode();
         while (current is not null && offset + current.Length < keyPressInfo.Selection.AnchorOffset)
@@ -63,45 +112,7 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : IEdit
             offset += current.Length;
             current = walker.NextNode();
         }
-        
-        if (current is null)
-        {
-            return NodeOffset.NotFound();
-        }
-        
-        var relativeOffset = keyPressInfo.Selection.AnchorOffset - offset;
-        transaction.SplitText(current, relativeOffset);
 
-        TextNode? previous = null;
-        var index = current.Length - 1;
-        
-        while (index >= 0 && current is not null && char.IsWhiteSpace(current.TextContent[index]))
-        {
-            if (index == 0)
-            {
-                transaction.Delete(current);
-                previous = current;
-                current = walker.MovePrevious();
-                index = current?.Length ?? 0;
-            }
-            index--;
-        }
-
-        while (index >= 0 && current is not null && !char.IsWhiteSpace(current.TextContent[index]))
-        {
-            if (index == 0)
-            {
-                transaction.Delete(current);
-                previous = current;
-                current = walker.MovePrevious();
-                index = current?.Length ?? 0;
-            }
-            index--;
-        }
-
-        var word = current is not null ? transaction.SplitText(current, index + 1) : null;
-        if (word is not null) transaction.Delete(word);
-
-        return NodeOffset.From(current ?? previous, current?.Length ?? 0);
+        return keyPressInfo.Selection.AnchorOffset - offset;
     }
 }

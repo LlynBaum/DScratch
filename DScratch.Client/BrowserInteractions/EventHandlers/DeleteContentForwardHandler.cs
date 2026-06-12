@@ -50,6 +50,19 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
     
     private static NodeOffset SimpleDeleteForward(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
     {
+        var targetNode = SearchNode(keyPressInfo, parent, out var relativeOffset);
+        var noteToDelete = targetNode is not null ? transaction.SplitText(targetNode, relativeOffset) : null;
+        if (noteToDelete is not null)
+        {
+            transaction.SplitText(noteToDelete, 1);
+            transaction.Delete(noteToDelete);
+        }
+
+        return NodeOffset.From(noteToDelete, keyPressInfo.Selection.AnchorOffset);
+    }
+
+    private static TextNode? SearchNode(KeyPressInfo keyPressInfo, DNode parent, out int relativeOffset)
+    {
         var walker = new TreeWalker<TextNode>(parent);
         
         var currentOffset = 0;
@@ -65,14 +78,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
             current = walker.NextNode();
         }
 
-        var relativeOffset = keyPressInfo.Selection.AnchorOffset - currentOffset;
-        var noteToDelete = current is not null ? transaction.SplitText(current, relativeOffset) : null;
-        if (noteToDelete is not null)
-        {
-            transaction.SplitText(noteToDelete, 1);
-            transaction.Delete(noteToDelete);
-        }
-
-        return NodeOffset.From(noteToDelete, keyPressInfo.Selection.AnchorOffset);
+        relativeOffset = keyPressInfo.Selection.AnchorOffset - currentOffset;
+        return current;
     }
 }

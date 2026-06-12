@@ -6,6 +6,8 @@ namespace DScratch;
 public class TreeWalker<TFilter>(DNode parent, bool includeDeleted = false) 
     : TreeWalkerBase(parent, includeDeleted) where TFilter : IDNode
 {
+    public TFilter? Node;
+    
     public TFilter? NextNode()
     {
         var next = Next(Current);
@@ -14,12 +16,14 @@ public class TreeWalker<TFilter>(DNode parent, bool includeDeleted = false)
             if (next is TFilter filteredNode)
             {
                 Current = next;
+                Node = filteredNode;
                 return filteredNode;
             }
 
             next = Next(next);
         }
 
+        Node = default;
         Current = null;
         return default;
     }
@@ -32,12 +36,14 @@ public class TreeWalker<TFilter>(DNode parent, bool includeDeleted = false)
             if (next is TFilter filteredNode)
             {
                 Current = next;
+                Node = filteredNode;
                 return filteredNode;
             }
 
             next = Previous(next);
         }
 
+        Node = default;
         Current = null;
         return default;
     }
@@ -50,6 +56,7 @@ public class TreeWalker<TFilter>(DNode parent, bool includeDeleted = false)
             if (next is TFilter filteredNode)
             {
                 Current = next;
+                Node = filteredNode;
                 return filteredNode;
             }
 
@@ -68,6 +75,7 @@ public class TreeWalker<TFilter>(DNode parent, bool includeDeleted = false)
             if (next is TFilter filteredNode)
             {
                 Current = next;
+                Node = filteredNode;
                 return filteredNode;
             }
 
@@ -132,6 +140,8 @@ public class TreeWalker<TFilter1, TFilter2>(DNode parent, bool includeDeleted = 
 public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
 {
     private const bool EnableDebug = false;
+
+    private readonly DNode parent = parent;
     
     public DNode? Current { get; protected set; } = parent;
     
