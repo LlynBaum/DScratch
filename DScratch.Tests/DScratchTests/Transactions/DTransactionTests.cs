@@ -110,11 +110,11 @@ public class DTransactionTests
     public void UpdateNodeType_AddsUpdateNodeTypeStep()
     {
         // Act
-        Transaction.UpdateNodeType(TestNode.Empty(), node => node);
+        Transaction.ReplaceNode(TestNode.Empty(), node => node);
         
         // Assert
         Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
-        Assert.That(Transaction.Steps.Single(), Is.TypeOf<UpdateNodeTypeStep>());
+        Assert.That(Transaction.Steps.Single(), Is.TypeOf<ReplaceNodeStep>());
     }
     
     private class TestStep : IStep

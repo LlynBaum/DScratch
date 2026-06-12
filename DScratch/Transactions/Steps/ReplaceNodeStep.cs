@@ -2,7 +2,7 @@ using DScratch.Nodes;
 
 namespace DScratch.Transactions.Steps;
 
-public class UpdateNodeTypeStep(DNode node, Func<DNode, DNode> copyFactory) : IStep
+public class ReplaceNodeStep(DNode node, Func<DNode, DNode> copyFactory) : IStep
 {
     public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
     {

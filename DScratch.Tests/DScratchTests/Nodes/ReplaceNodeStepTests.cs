@@ -1,6 +1,6 @@
 namespace DScratch.Tests.DScratchTests.Nodes;
 
-public class UpdateNodeTypeStepTests
+public class ReplaceNodeStepTests
 {
     // TODO: unit test
 }

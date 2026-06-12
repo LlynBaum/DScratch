@@ -1,10 +1,10 @@
 using DScratch.Nodes;
-using DScratch.Nodes.NodeTypes;
 using DScratch.Transactions.Steps;
 
 namespace DScratch.Transactions;
 
-internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGenerator, bool disableCleanUp) : ITransaction, IRunningTransaction
+internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGenerator, bool disableCleanUp) 
+    : ITransaction, IRunningTransaction
 {
     private readonly List<IStep> steps = [];
 
@@ -54,9 +54,9 @@ internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGe
         return this;
     }
     
-    public ITransaction UpdateNodeType(DNode node, Func<DNode, DNode> copyFactory)
+    public ITransaction ReplaceNode(DNode node, Func<DNode, DNode> copyFactory)
     {
-        steps.Add(new UpdateNodeTypeStep(node, copyFactory));
+        steps.Add(new ReplaceNodeStep(node, copyFactory));
         return this;
     }
 
