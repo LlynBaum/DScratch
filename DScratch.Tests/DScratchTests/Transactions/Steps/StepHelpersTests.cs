@@ -33,6 +33,27 @@ public class StepHelpersTests
         }
         
         [Test]
+        public void WhenParentIsNull_OriginIsFirstActiveElement()
+        {
+            // Arrange - Single node, manual setup is fine
+            var builder = new TreeBuilder();
+
+            var origin = builder.TestBlockElementNode();
+            builder.TestBlockElementNode().Delete();
+            var node = builder.TestBlockElementNode();
+
+            // Act
+            var result = node.ToInsertSteps();
+            
+            // Assert
+            Assert.That(result, Has.Length.EqualTo(1));
+            Assert.That(result.Single(), Is.TypeOf<StepDiff.InsertElementBlockDiff>());
+            
+            var step = (StepDiff.InsertElementBlockDiff)result.Single();
+            Assert.That(step.PreviousSiblingId, Is.EqualTo(origin.Id.Value));
+        }
+        
+        [Test]
         public void Element_ReturnsInsertElementDiff()
         {
             // Arrange

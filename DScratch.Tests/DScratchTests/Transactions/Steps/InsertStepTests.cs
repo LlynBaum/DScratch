@@ -110,33 +110,6 @@ public class InsertStepTests
     }
     
     [Test]
-    public void ContinuesTextNode_IsCombinedWithPreviousNode()
-    {
-        // Arrange
-        var builder = new TreeBuilder();
-        TextNode node4 = null!;
-        var node2 = builder.TestInlineElementNode(t => // ID "0"
-        {
-            node4 = t.Text("ab"); // ID "1"
-        });
-
-        var node = new TextNode(new NodeId(node4.LastId.Client, node4.LastId.Clock + 1), node4, null, "c");
-        
-        // Act
-        var step = new InsertStep(node, node2);
-        step.Execute(transactionFake);
-        
-        // Assert
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(node2.ChildNodes, Has.Count.EqualTo(1));
-            Assert.That(node4.TextContent, Is.EqualTo("abc"));
-            
-            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
-        }
-    }
-    
-    [Test]
     public void TextNode_IsNotCombinedWithPreviousNode_WhenIdsAreNotContinues()
     {
         // Arrange

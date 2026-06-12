@@ -23,8 +23,7 @@ internal static class StepHelpers
                 ],
                 IBlockElement element => 
                 [
-                    // TODO: this could break, when the OriginElement is a deleted node... make sure this element is not deleted and therefor actaully exists in the DOM
-                    new StepDiff.InsertElementBlockDiff(parentId.Value, node.OriginElement?.Id.Value, element.TagName, node.Id.Value),
+                    new StepDiff.InsertElementBlockDiff(parentId.Value, node.GetFirstActiveOriginElement()?.Id.Value, element.TagName, node.Id.Value),
                     ..node.ChildNodes.SelectMany(c => c.ToInsertSteps())
                 ],
                 _ => throw new ArgumentException("Node type is not an element, text or char node.")
@@ -80,7 +79,7 @@ internal static class StepHelpers
                 IBlockElement => new StepDiff.MoveBlockDiff(
                     TargetNodeId: node.Id.Value,
                     TargetParentId: node.ParentElement!.Id.Value,
-                    PreviousSiblingId: node.OriginElement?.Id.Value),
+                    PreviousSiblingId: node.GetFirstActiveOriginElement()?.Id.Value),
                 _ => throw new ArgumentException("Node type is not an element.")
             };
         }

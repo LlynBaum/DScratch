@@ -96,4 +96,11 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
     {
         return $"[{Id}] - {GetType().Name}";
     }
+
+    public DNode? GetFirstActiveOriginElement()
+    {
+        return OriginElement?.IsDeleted is false 
+            ? OriginElement 
+            : OriginElement?.GetFirstActiveOriginElement();
+    }
 }
