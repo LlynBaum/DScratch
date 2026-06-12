@@ -24,19 +24,19 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
             throw new ArgumentException($"Parent with given path not found: {keyPressInfo.Selection.AnchorId}");
         }
 
-        NodeSearchResult nodeSearchResult;
+        DNodeSearchResult dNodeSearchResult;
         DNode? rightOrigin;
         DNode? origin;
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
-            nodeSearchResult = SimpleInsert(keyPressInfo, parent);
-            origin = nodeSearchResult.Origin.Node;
-            rightOrigin = nodeSearchResult.RightOrigin.Node;
+            dNodeSearchResult = SimpleInsert(keyPressInfo, parent);
+            origin = dNodeSearchResult.Origin.Node;
+            rightOrigin = dNodeSearchResult.RightOrigin.Node;
         }
         else
         {
-            nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, parent);
-            origin = nodeSearchResult.Origin.Node;
+            dNodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, parent);
+            origin = dNodeSearchResult.Origin.Node;
             rightOrigin = origin?.RightOrigin;
         }
         
@@ -44,18 +44,18 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         var targetParent = origin?.Parent ?? rightOrigin?.Parent ?? parent;
         transaction.Insert(textNode, targetParent);
         
-        var cursorPosition = nodeSearchResult.Origin.AbsolutOffset + textNode.Length;
+        var cursorPosition = dNodeSearchResult.Origin.AbsolutOffset + textNode.Length;
         transaction.AddCursorPosition(targetParent.Id, cursorPosition);
         return dScratchService.Apply(transaction);
     }
 
-    private static NodeSearchResult SimpleInsert(KeyPressInfo keyPressInfo, DNode parent)
+    private static DNodeSearchResult SimpleInsert(KeyPressInfo keyPressInfo, DNode parent)
     {
         if (keyPressInfo.Selection.AnchorOffset <= 0)
         {
-            return new NodeSearchResult(
-                Origin: new NodeInfo(null, 0),
-                RightOrigin: new NodeInfo(parent.FirstChild, 0));
+            return new DNodeSearchResult(
+                Origin: new DNodeInfo(null, 0),
+                RightOrigin: new DNodeInfo(parent.FirstChild, 0));
         }
 
         var walker = new TreeWalker<TextNode>(parent);
@@ -73,8 +73,8 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
             currentNode = walker.NextSibling();
         }
 
-        return new NodeSearchResult(
-            Origin: new NodeInfo(currentNode, keyPressInfo.Selection.AnchorOffset), 
-            RightOrigin: new NodeInfo(walker.NextSibling(), currentOffset + currentNode?.Length ?? 0));
+        return new DNodeSearchResult(
+            Origin: new DNodeInfo(currentNode, keyPressInfo.Selection.AnchorOffset), 
+            RightOrigin: new DNodeInfo(walker.NextSibling(), currentOffset + currentNode?.Length ?? 0));
     }
 }
