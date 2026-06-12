@@ -64,13 +64,12 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         var currentNode = walker.FirstChild();
         while (currentNode is not null)
         {
-            var length = currentNode.Length;
-            if (currentOffset + length >= keyPressInfo.Selection.AnchorOffset)
+            if (currentOffset + currentNode.Length >= keyPressInfo.Selection.AnchorOffset)
             {
                 break;
             }
 
-            currentOffset += length;
+            currentOffset += currentNode.Length;
             currentNode = walker.NextSibling();
         }
 

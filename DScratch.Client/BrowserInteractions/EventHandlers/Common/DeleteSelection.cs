@@ -22,13 +22,12 @@ public static class DeleteSelection
         var currentNode = walker.FirstChild();
         while (currentNode is not null)
         {
-            var length = currentNode.Length;
-            if (currentOffset + length >= originOffset)
+            if (currentOffset + currentNode.Length >= originOffset)
             {
                 break;
             }
 
-            currentOffset += length;
+            currentOffset += currentNode.Length;
             currentNode = walker.NextSibling();
         }
 
@@ -37,13 +36,12 @@ public static class DeleteSelection
         
         while (currentNode is not null)
         {
-            var length = currentNode.Length;
-            if (currentOffset + length >= rightOriginOffset)
+            if (currentOffset + currentNode.Length >= rightOriginOffset)
             {
                 break;
             }
 
-            currentOffset += length;
+            currentOffset += currentNode.Length;
             currentNode = walker.NextSibling();
         }
 
@@ -109,13 +107,12 @@ public static class DeleteSelection
         var currentNode = walker.FirstChild();
         while (currentNode is not null)
         {
-            var length = currentNode.Length;
-            if (currentOffset + length >= offset)
+            if (currentOffset + currentNode.Length >= offset)
             {
                 break;
             }
 
-            currentOffset += length;
+            currentOffset += currentNode.Length;
             currentNode = walker.NextSibling();
         }
         
