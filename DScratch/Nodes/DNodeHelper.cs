@@ -2,32 +2,47 @@ using DScratch.Nodes.NodeTypes;
 
 namespace DScratch.Nodes;
 
-public static class DNodeExtension
+public static class DNodeHelper
 {
-    extension(ParagraphNode paragraphNode)
+    internal static int GetTextLength(DNode node)
     {
-        public int GetTextLength()
-        {
-            var walker = new TreeWalker<TextNode>(paragraphNode);
-            var length = 0;
+        var walker = new TreeWalker<TextNode>(node);
+        var length = 0;
             
-            var current = walker.NextNode();
-            while (current is not null)
-            {
-                length += current.Length;
-                current = walker.NextNode();
-            }
-
-            return length;
+        var current = walker.NextNode();
+        while (current is not null)
+        {
+            length += current.Length;
+            current = walker.NextNode();
         }
+
+        return length;
     }
     
     extension(DNode node)
     {
         internal int FindAbsolutTextOffset(TextNode child)
         {
-            var (result, offset) = FindAbsolutTextOffsetCore(node, child.Id, child.IsDeleted);
-            if (result is null)
+            var walker = new TreeWalker<TextNode>(node, child.IsDeleted);
+            
+            var offset = 0;
+            var current = walker.NextNode();
+            while (current is not null)
+            {
+                if (current.Id == child.Id)
+                {
+                    break;
+                }
+                
+                if (!current.IsDeleted)
+                {
+                    offset += current.Length;
+                }
+                
+                current = walker.NextNode();
+            }
+            
+            if (current is null)
             {
                 throw new InvalidOperationException("Can not find absolut offset of node. Probably the node is node a child of given parent.");
             }
@@ -63,29 +78,5 @@ public static class DNodeExtension
             
             return offset;
         }
-    }
-    
-    private static (DNode? node, int offset) FindAbsolutTextOffsetCore(DNode parent, NodeId id, bool includeDeleted)
-    {
-        var walker = new TreeWalker<TextNode>(parent, includeDeleted);
-            
-        var offset = 0;
-        var current = walker.NextNode();
-        while (current is not null)
-        {
-            if (current.Id == id)
-            {
-                break;
-            }
-                
-            if (!current.IsDeleted)
-            {
-                offset += current.Length;
-            }
-                
-            current = walker.NextNode();
-        }
-
-        return (current, offset);
     }
 }

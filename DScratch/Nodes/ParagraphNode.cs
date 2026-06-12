@@ -3,9 +3,11 @@ using DScratch.Nodes.NodeTypes;
 namespace DScratch.Nodes;
 
 public class ParagraphNode(NodeId id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null)
-    : DNode(id, origin, rightOrigin, childNodes), IBlockElement
+    : DNode(id, origin, rightOrigin, childNodes), IBlockTextNode
 {
     public string TagName => "p";
+    
+    public int GetTextLength() => DNodeHelper.GetTextLength(this);
 
     internal override void InsertChild(DNode node)
     {

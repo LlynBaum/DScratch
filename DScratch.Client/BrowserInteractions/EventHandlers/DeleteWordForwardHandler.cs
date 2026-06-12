@@ -1,6 +1,7 @@
 using DScratch.Client.BrowserInteractions.EventHandlers.Common;
 using DScratch.Client.BrowserInteractions.EventHandlers.Models;
 using DScratch.Nodes;
+using DScratch.Nodes.NodeTypes;
 using DScratch.Transactions;
 
 namespace DScratch.Client.BrowserInteractions.EventHandlers;
@@ -23,9 +24,9 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : IEdito
         {
             var nodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, parent);
             
-            if (!nodeInfo.HasFound && parent is ParagraphNode paragraphNode && parent.RightOriginElement is ParagraphNode)
+            if (!nodeInfo.HasFound && parent is IBlockTextNode blockTextNode && parent.RightOriginElement is IBlockTextNode)
             {
-                transaction.AddCursorPosition(parent.RightOriginElement.Id, paragraphNode.GetTextLength());
+                transaction.AddCursorPosition(parent.RightOriginElement.Id, blockTextNode.GetTextLength());
                 
                 transaction.MoveRange(parent.FirstChild, null, parent.RightOriginElement, null);
                 transaction.Delete(parent);

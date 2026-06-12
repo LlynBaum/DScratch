@@ -1,6 +1,7 @@
 using DScratch.Client.BrowserInteractions.EventHandlers.Common;
 using DScratch.Client.BrowserInteractions.EventHandlers.Models;
 using DScratch.Nodes;
+using DScratch.Nodes.NodeTypes;
 using DScratch.Transactions;
 
 namespace DScratch.Client.BrowserInteractions.EventHandlers;
@@ -23,9 +24,9 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         {
             var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, parent);
 
-            if (!deletedNodeInfo.HasFound && parent is ParagraphNode && parent.OriginElement is ParagraphNode paragraphNode)
+            if (!deletedNodeInfo.HasFound && parent is IBlockTextNode && parent.OriginElement is IBlockTextNode blockTextNode)
             {
-                transaction.AddCursorPosition(parent.OriginElement.Id, paragraphNode.GetTextLength());
+                transaction.AddCursorPosition(parent.OriginElement.Id, blockTextNode.GetTextLength());
                 
                 transaction.MoveRange(parent.FirstChild, null, parent.OriginElement, parent.OriginElement.LastChild);
                 transaction.Delete(parent);
