@@ -33,7 +33,7 @@ public readonly record struct NodeId
 
     public static NodeId FromString(string anchorId)
     {
-        if (anchorId is "root") return Root;
+        if (anchorId is "Root") return Root;
         var parts = anchorId.Split('-');
         var id = Convert.ToInt64(parts[1]);
         return new NodeId(parts[0], id);

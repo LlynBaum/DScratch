@@ -14,7 +14,7 @@ export async function handleInput(event: InputEvent, bridgeReference: any) {
     if (!handledTypes.includes(event.inputType)) {
         return; // Let the browser handle unsupported inputs natively for now
     }
-
+    
     event.preventDefault();
 
     const selection = window.getSelection();
@@ -43,7 +43,12 @@ export async function handleInput(event: InputEvent, bridgeReference: any) {
     }
 
     snapshotSelection(anchorOffset, anchorId, focusOffset, focusId);
-    await bridgeReference?.invokeMethodAsync("OnKeyPressCallbackAsync", payload);
+    
+    try {
+        await bridgeReference?.invokeMethodAsync("OnKeyPressCallbackAsync", payload);
+    } catch (e) {
+        console.error(e, "Failed to send event with anchor ", anchorId);
+    }
 }
 
 function isInvalidUserAction(selection: Selection | null) {

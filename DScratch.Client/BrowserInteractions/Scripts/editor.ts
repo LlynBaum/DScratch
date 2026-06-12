@@ -15,7 +15,7 @@ declare global {
     }
 }
 
-function initEditor() {
+function initEditor(dotNetRef: any) {
     const editor = document.getElementById("editor");
     
     if (!editor) {
@@ -25,7 +25,13 @@ function initEditor() {
     
     editor?.addEventListener("click", setCursorToEnd);
     editor?.addEventListener("beforeinput", async event => await handleInput(event, bridgeReference));
+    
+    const rootNode = editor.querySelector<HTMLElement>("[data-dnode-id='Root']");
+    rootNode?.setAttribute("contenteditable", '');
+    
     window.editor.node = editor;
+    bridgeReference = dotNetRef;
+    console.info("editor ready!");
 }
 
 function setCursorToEnd(event: PointerEvent) {
@@ -51,10 +57,7 @@ function setCursorToEnd(event: PointerEvent) {
 }
 
 window.editor = {
-    initialize: (dotNetRef: any) => {
-        bridgeReference = dotNetRef;
-        initEditor();
-    },
+    initialize: initEditor,
     applyTransaction: applyTransaction,
-    node: null
+    node: null,
 };
