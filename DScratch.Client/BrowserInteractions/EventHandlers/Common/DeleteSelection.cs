@@ -91,7 +91,7 @@ public static class DeleteSelection
         {
             throw new ArgumentException($"Parent with given path not found: {firstParentPath}");
         }
-        var deleteStart = GetNode(firstParent, firstParentOffset, transaction);
+        var deleteStart = GetNodesAtOffset(firstParent, firstParentOffset, transaction);
         
         var secondParent = transaction.FindNode(secondParentPath);
         if (secondParent is null)
@@ -99,7 +99,7 @@ public static class DeleteSelection
             throw new ArgumentException($"Parent with given path not found: {secondParentPath}");
         }
         
-        var deleteEnd = GetNode(secondParent, secondParentOffset, transaction);
+        var deleteEnd = GetNodesAtOffset(secondParent, secondParentOffset, transaction);
 
         transaction.DeleteRange(deleteStart.RightOrigin.Node, null);
         transaction.DeleteRange(null, deleteEnd.Origin.Node);
@@ -114,7 +114,7 @@ public static class DeleteSelection
             RightOrigin: new DNodeInfo(deleteEnd.RightOrigin.Node, secondParentOffset));
     }
 
-    private static DNodeSearchResult GetNode(DNode parent, int offset, ITransaction transaction)
+    private static DNodeSearchResult GetNodesAtOffset(DNode parent, int offset, ITransaction transaction)
     {
         var walker = new TreeWalker<TextNode>(parent);
         
