@@ -23,7 +23,6 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
         {
             var deletedNodeInfo = SimpleDeleteForward(keyPressInfo, transaction, parent);
             
-            // TODO: for some reason, it deletes the first char in the next para first
             if (!deletedNodeInfo.HasFound && parent is ParagraphNode paragraphNode && parent.RightOriginElement is ParagraphNode)
             {
                 transaction.AddCursorPosition(parent.RightOriginElement.Id, paragraphNode.GetTextLength());

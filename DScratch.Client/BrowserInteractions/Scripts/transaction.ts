@@ -106,8 +106,6 @@ function handleInsertTextStep(step: InsertTextStep) {
     const element = findNode(step.parentId);
     if (!element) return;
     
-    // TODO: browser combines multiple spaces into one, can I force it to render all of them?
-    
     const { node, relativeOffset } = findTextNodeAtOffset(element, step.offset);
     if(node) {
         const text = node.textContent;
@@ -152,7 +150,6 @@ function handleDeleteElementStep(step: DeleteElementStep) {
     if (!element) return;
     
     element.remove();
-   // TODO: this might work out of the box of the browser, but check. Else seek for the a previous text node and set selection there.
 }
 
 function handleMoveInlineStep(step: MoveInlineStep) {
@@ -161,7 +158,6 @@ function handleMoveInlineStep(step: MoveInlineStep) {
     if (element && newParent) {
         insertElementInline(element, newParent, step.targetOffset);
     }
-    // TODO: this might work out of the box of the browser, but check. Else seek for the a previous text node and set selection there.
 }
 
 function handleMoveBlockStep(step: MoveBlockStep) {
@@ -171,7 +167,6 @@ function handleMoveBlockStep(step: MoveBlockStep) {
         const previousSibling = step.previousSiblingId ? findNode(step.previousSiblingId) : null;
         insertElementBlock(element, newParent, previousSibling);
     }
-    // TODO: this might work out of the box of the browser, but check. Else seek for the a previous text node and set selection there.
 }
 
 function createElement(tagName: string, id: string) {
