@@ -14,4 +14,9 @@ public sealed class DJsInvoker(IJSRuntime jsRuntime)
     {
         await jsRuntime.InvokeVoidAsync(ScriptConstants.ApplyTransactionJs, transactionResult);
     }
+
+    public async Task<SelectionInfo> GetSelectionAsync()
+    {
+        return await jsRuntime.InvokeAsync<SelectionInfo>(ScriptConstants.GetSelectionJs);
+    }
 }

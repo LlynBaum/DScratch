@@ -3,7 +3,7 @@ using DScratch.Client.BrowserInteractions.EventHandlers.Models;
 using DScratch.Nodes;
 using DScratch.Transactions;
 
-namespace DScratch.Client.BrowserInteractions.EventHandlers;
+namespace DScratch.Client.BrowserInteractions.EventHandlers.Events;
 
 public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventHandler
 {

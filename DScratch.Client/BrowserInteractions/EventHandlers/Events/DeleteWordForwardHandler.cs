@@ -4,7 +4,7 @@ using DScratch.Nodes;
 using DScratch.Nodes.NodeTypes;
 using DScratch.Transactions;
 
-namespace DScratch.Client.BrowserInteractions.EventHandlers;
+namespace DScratch.Client.BrowserInteractions.EventHandlers.Events;
 
 public class DeleteWordForwardHandler(IDScratchService dScratchService) : IEditorEventHandler
 {

@@ -1,5 +1,6 @@
 using DScratch.Client.BrowserInteractions;
 using DScratch.Client.BrowserInteractions.EventHandlers;
+using DScratch.Client.BrowserInteractions.EventHandlers.Events;
 
 namespace DScratch.Tests.WasmClientTests.Helpers;
 
@@ -11,7 +12,7 @@ public class KeyPressInfoHelper
         {
             Data = "abc",
             InputType = InsertTextHandler.EventName,
-            Selection = new KeyPressInfo.SelectionInfo
+            Selection = new SelectionInfo
             {
                 Direction = SelectionDirection.None,
                 AnchorId = nodeId.Value,
@@ -30,7 +31,7 @@ public class KeyPressInfoHelper
         {
             Data = "xyz",
             InputType = InsertTextHandler.EventName,
-            Selection = new KeyPressInfo.SelectionInfo
+            Selection = new SelectionInfo
             {
                 Direction = direction,
                 AnchorId = nodeId.Value,
@@ -53,7 +54,7 @@ public class KeyPressInfoHelper
         {
             Data = "xyz",
             InputType = InsertTextHandler.EventName,
-            Selection = new KeyPressInfo.SelectionInfo
+            Selection = new SelectionInfo
             {
                 Direction = direction,
                 AnchorId = anchorId.Value,

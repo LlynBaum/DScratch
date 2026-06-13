@@ -1,3 +1,5 @@
+using DScratch.Client.BrowserInteractions.EventHandlers.Events;
+
 namespace DScratch.Client.BrowserInteractions.EventHandlers;
 
 public static class EventHandlerRegistration

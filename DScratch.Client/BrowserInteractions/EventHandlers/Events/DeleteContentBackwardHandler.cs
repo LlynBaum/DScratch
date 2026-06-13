@@ -4,11 +4,11 @@ using DScratch.Nodes;
 using DScratch.Nodes.NodeTypes;
 using DScratch.Transactions;
 
-namespace DScratch.Client.BrowserInteractions.EventHandlers;
+namespace DScratch.Client.BrowserInteractions.EventHandlers.Events;
 
-public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEditorEventHandler
+public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IEditorEventHandler
 {
-    public const string EventName = "deleteContentForward";
+    public const string EventName = "deleteContentBackward";
     
     public TransactionResult Handle(KeyPressInfo keyPressInfo)
     {
@@ -22,13 +22,13 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
         
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
-            var deletedNodeInfo = SimpleDeleteForward(keyPressInfo, transaction, parent);
-            
-            if (!deletedNodeInfo.HasFound && parent is IBlockTextNode blockTextNode && parent.RightOriginElement is IBlockTextNode)
+            var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, parent);
+
+            if (!deletedNodeInfo.HasFound && parent is IBlockTextNode && parent.OriginElement is IBlockTextNode blockTextNode)
             {
-                transaction.AddCursorPosition(parent.RightOriginElement.Id, blockTextNode.GetTextLength());
+                transaction.AddCursorPosition(parent.OriginElement.Id, blockTextNode.GetTextLength());
                 
-                transaction.MoveRange(parent.FirstChild, null, parent.RightOriginElement, null);
+                transaction.MoveRange(parent.FirstChild, null, parent.OriginElement, parent.OriginElement.LastChild);
                 transaction.Delete(parent);
             }
             else if (deletedNodeInfo.HasFound)
@@ -47,9 +47,14 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
         
         return dScratchService.Apply(transaction);
     }
-    
-    private static NodeOffset SimpleDeleteForward(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
+
+    private static NodeOffset SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
     {
+        if (keyPressInfo.Selection.AnchorOffset is 0)
+        {
+            return NodeOffset.NotFound();
+        }
+        
         var targetNode = SearchNode(keyPressInfo, parent, out var relativeOffset);
         var noteToDelete = targetNode is not null ? transaction.SplitText(targetNode, relativeOffset) : null;
         if (noteToDelete is not null)
@@ -57,8 +62,8 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
             transaction.SplitText(noteToDelete, 1);
             transaction.Delete(noteToDelete);
         }
-
-        return NodeOffset.From(noteToDelete, keyPressInfo.Selection.AnchorOffset);
+        
+        return NodeOffset.From(targetNode, keyPressInfo.Selection.AnchorOffset - 1);
     }
 
     private static TextNode? SearchNode(KeyPressInfo keyPressInfo, DNode parent, out int relativeOffset)
@@ -69,7 +74,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
         var current = walker.NextNode();
         while (current is not null)
         {
-            if (currentOffset + current.Length > keyPressInfo.Selection.AnchorOffset)
+            if (currentOffset + current.Length >= keyPressInfo.Selection.AnchorOffset)
             {
                 break;
             }
@@ -78,7 +83,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
             current = walker.NextNode();
         }
 
-        relativeOffset = keyPressInfo.Selection.AnchorOffset - currentOffset;
+        relativeOffset = keyPressInfo.Selection.AnchorOffset - currentOffset - 1;
         return current;
     }
 }

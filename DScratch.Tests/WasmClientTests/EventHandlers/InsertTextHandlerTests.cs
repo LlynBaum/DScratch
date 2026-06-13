@@ -1,5 +1,6 @@
 using DScratch.Client.BrowserInteractions;
 using DScratch.Client.BrowserInteractions.EventHandlers;
+using DScratch.Client.BrowserInteractions.EventHandlers.Events;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
 using DScratch.Tests.WasmClientTests.Helpers;

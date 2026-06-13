@@ -1,5 +1,15 @@
 import {findTextNodeAtOffset, getAbsolutOffset, getElementFromNode, getNodeId} from "./nodeHelper";
 
+export type SelectionDirection = "none" | "forward" | "backward"
+
+export interface SelectionInfo {
+    Direction: SelectionDirection;
+    AnchorId: string;
+    AnchorOffset: number;
+    FocusId: string | null;
+    FocusOffset: number | null;
+}
+
 interface SelectionSnapshot {
     selection: Selection | null;
     absolutAnchorOffset: number;
@@ -8,21 +18,21 @@ interface SelectionSnapshot {
     focusId: string | null;
 }
 
-interface SelectionInfo {
+interface CurrentSelectionInfo {
     anchorOffset: number;
     anchorNode: Node | null;
 }
 
 let snapshot: SelectionSnapshot | null = null;
-let currentSelection: SelectionInfo | null = null;
+let currentSelection: CurrentSelectionInfo | null = null;
 
-export function snapshotSelection(offset: number, anchorId: string, endOffset: number, focusId: string | null) {
+export function snapshotSelection(selectionInfo: SelectionInfo) {
     snapshot = {
         selection: window.getSelection(),
-        absolutAnchorOffset: offset,
-        anchorId: anchorId,
-        absolutFocusOffset: endOffset,
-        focusId: focusId
+        absolutAnchorOffset: selectionInfo.AnchorOffset,
+        anchorId: selectionInfo.AnchorId,
+        absolutFocusOffset: selectionInfo.FocusOffset,
+        focusId: selectionInfo.FocusId
     }
 }
 
@@ -40,6 +50,26 @@ export function saveSelection() {
     currentSelection = {
         anchorOffset: selection.anchorOffset,
         anchorNode: selection.anchorNode
+    };
+}
+
+export function getSelection(): SelectionInfo {
+    const selection = window.getSelection();
+
+    const anchorElement = getElementFromNode(selection?.anchorNode!);
+    const focusElement = getElementFromNode(selection?.focusNode!);
+
+    const anchorId = getNodeId(anchorElement)!;
+    const anchorOffset = getAbsolutOffset(anchorElement, selection?.anchorNode!, selection?.anchorOffset);
+    const focusId = getNodeId(focusElement);
+    const focusOffset = getAbsolutOffset(focusElement, selection?.focusNode!, selection?.focusOffset);
+    
+    return {
+        Direction: selection?.direction as SelectionDirection ?? "none",
+        AnchorId: anchorId,
+        AnchorOffset: anchorOffset,
+        FocusId: focusId,
+        FocusOffset: focusOffset
     };
 }
 
