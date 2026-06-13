@@ -7,11 +7,11 @@
     <button @onclick="ItalicAsync">Italic</button>
     <button @onclick="CodeAsync">Code</button>
     
-    <div>|</div>
+    <MenuDivider />
     
     <button @onclick="BlockquoteAsync">Blockquote</button>
     
-    <div>|</div>
+    <MenuDivider />
     
     <MenubarButton OnClick="@ParagraphAsync">Paragraph</MenubarButton>
     <MenubarButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading1))">Heading 1</MenubarButton>
@@ -22,7 +22,7 @@
     <MenubarButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading6))">Heading 6</MenubarButton>
     <MenubarButton OnClick="@CodeBlockAsync">Code Block</MenubarButton>
     
-    <div>|</div>
+    <MenuDivider />
     
     <input type="color" @bind="color" @bind:event="onchange" @bind:after="OnColorChangeAsync" />
 </div>
