@@ -1,21 +1,49 @@
 @scope (#editor) {
     :scope {
-        color: var(--paragraph-color);
+        color: var(--text-color-default);
     }
     
     * {
         outline: none;
     }
     
+    /* Headings */
     h1 {
-        color: currentColor;
+        color: var(--text-color-heading-1, currentColor);
+        margin: var(--spacing-heading-1) 0;
     }
 
+    h2 {
+        color: var(--text-color-heading-2, currentColor);
+        margin: var(--spacing-heading-2) 0;
+    }
+
+    h3 {
+        color: var(--text-color-heading-3, currentColor);
+        margin: var(--spacing-heading-3) 0;
+    }
+
+    h4 {
+        color: var(--text-color-heading-4, currentColor);
+        margin: var(--spacing-heading-4) 0;
+    }
+
+    h5 {
+        color: var(--text-color-heading-5, currentColor);
+        margin: var(--spacing-heading-5) 0;
+    }
+
+    h6 {
+        color: var(--text-color-heading-6, currentColor);
+        margin: var(--spacing-heading-6) 0;
+    }
+
+    /* Paragraph */
     p {
-        color: currentColor;
+        color: var(--text-color-paragraph, currentColor);
         white-space: pre-wrap;
         
         min-height: 1lh;
-        margin: var(--paragraph-gap) 0;
+        margin: var(--spacing-paragraph) 0;
     }
 }

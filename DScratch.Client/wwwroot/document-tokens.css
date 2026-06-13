@@ -1,4 +1,21 @@
 :root {
-    --paragraph-color: #000;
-    --paragraph-gap: 1em;
+    /* Text */
+    --text-color-default: #000;
+    --text-color-paragraph: ;
+    --text-color-heading-1: ;
+    --text-color-heading-2: ;
+    --text-color-heading-3: ;
+    --text-color-heading-4: ;
+    --text-color-heading-5: ;
+    --text-color-heading-6: ;
+    
+    /* Spacing */
+    --spacing-paragraph: 1em;
+    --spacing-heading-1: 1em;
+    --spacing-heading-2: 1em;
+    --spacing-heading-3: 1em;
+    --spacing-heading-4: 1em;
+    --spacing-heading-5: 1em;
+    --spacing-heading-6: 1em;
+
 }
