@@ -2,13 +2,13 @@
     background-color: white;
     height: 80%;
     width: min-content;
-    aspect-ratio: 210 / 297;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    aspect-ratio: 210 / 297; /* A4 Aspect Ratio */
+    border: 1px solid #e2e8f0;
 }
 
 .paper > div {
-    --paper-padding: 8px;
-    padding: 0 var(--paper-padding);
+    box-sizing: border-box;
+    padding: var(--paper-padding);
     height: 100%;
     width: 100%;
 }

@@ -3,13 +3,13 @@
 @rendermode InteractiveWebAssembly
 
 <div class="menu">
-    <button @onclick="BoldAsync">Bold</button>
-    <button @onclick="ItalicAsync">Italic</button>
-    <button @onclick="CodeAsync">Code</button>
+    <MenubarButton OnClick="@BoldAsync">Bold</MenubarButton>
+    <MenubarButton OnClick="@ItalicAsync">Italic</MenubarButton>
+    <MenubarButton OnClick="@CodeAsync">Code</MenubarButton>
     
     <MenuDivider />
     
-    <button @onclick="BlockquoteAsync">Blockquote</button>
+    <MenubarButton OnClick="@BlockquoteAsync">Blockquote</MenubarButton>
     
     <MenuDivider />
     

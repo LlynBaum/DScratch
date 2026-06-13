@@ -1,5 +1,7 @@
 @scope (#editor) {
     :scope {
+        --paper-padding: 24px;
+        
         color: var(--text-color-default);
     }
     
