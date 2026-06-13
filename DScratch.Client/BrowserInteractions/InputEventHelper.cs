@@ -5,7 +5,6 @@ namespace DScratch.Client.BrowserInteractions;
 
 public class InputEventHelper(DJsInvoker jsInvoker, IServiceProvider serviceProvider, ILogger<InputEventHelper> logger)
 {
-    
     [JSInvokable]
     public async Task OnKeyPressCallbackAsync(KeyPressInfo keyPressInfo)
     {

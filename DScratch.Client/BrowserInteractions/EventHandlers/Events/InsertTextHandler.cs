@@ -40,7 +40,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
             rightOrigin = origin?.RightOrigin;
         }
         
-        var textNode = dScratchService.NodeFactory.String(keyPressInfo.Data, origin, rightOrigin);
+        var textNode = transaction.NodeFactory.String(keyPressInfo.Data, origin, rightOrigin);
         var targetParent = origin?.Parent ?? rightOrigin?.Parent ?? parent;
         transaction.Insert(textNode, targetParent);
         

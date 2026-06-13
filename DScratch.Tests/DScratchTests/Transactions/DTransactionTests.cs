@@ -16,7 +16,7 @@ public class DTransactionTests
     {
         TreeBuilder = new TreeBuilder();
         Document = TreeBuilder.CreateDocument();
-        Transaction = new DTransaction(Document, new TestNodeIdGenerator(), true);
+        Transaction = new DTransaction(Document, new DNodeFactory(TreeBuilder.IdGenerator), new TestNodeIdGenerator(), true);
     }
 
     [Test]

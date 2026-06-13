@@ -3,18 +3,20 @@ using DScratch.Transactions.Steps;
 
 namespace DScratch.Transactions;
 
-internal class DTransaction(DScratchDocument document, INodeIdGenerator nodeIdGenerator, bool disableCleanUp) 
+internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory, INodeIdGenerator nodeIdGenerator, bool disableCleanUp) 
     : ITransaction, IRunningTransaction
 {
     private readonly List<IStep> steps = [];
+    
+    private readonly List<DNode> modifiedNodes = [];
+    private readonly List<DNode> addedNodes = [];
+    private CursorPosition? cursorPosition;
 
     public IReadOnlyList<IStep> Steps => steps;
 
     public DNode Root => document.Root;
 
-    private readonly List<DNode> modifiedNodes = [];
-    private readonly List<DNode> addedNodes = [];
-    private CursorPosition? cursorPosition;
+    public INodeFactory NodeFactory => nodeFactory;
 
     public TransactionResult Commit()
     {

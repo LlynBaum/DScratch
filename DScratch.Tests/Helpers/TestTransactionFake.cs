@@ -11,6 +11,8 @@ public class TestTransactionFake : ITransaction, IRunningTransaction
     
     public DNode Root { get; }
     
+    public INodeFactory NodeFactory { get; }
+
     public TransactionResult Commit()
     {
         throw new NotImplementedException();
@@ -32,6 +34,11 @@ public class TestTransactionFake : ITransaction, IRunningTransaction
     }
 
     public ITransaction MoveRange(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ITransaction ReplaceNode(DNode node, Func<DNode, DNode> copyFactory)
     {
         throw new NotImplementedException();
     }

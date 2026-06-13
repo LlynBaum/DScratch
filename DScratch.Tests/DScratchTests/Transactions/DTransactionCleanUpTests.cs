@@ -16,7 +16,7 @@ public class DTransactionCleanUpTests
     {
         TreeBuilder = new TreeBuilder();
         Document = TreeBuilder.CreateDocument();
-        Transaction = new DTransaction(Document, new TestNodeIdGenerator(), false);
+        Transaction = new DTransaction(Document, new DNodeFactory(TreeBuilder.IdGenerator), new TestNodeIdGenerator(), false);
     }
 
     private class MergeContinuesTextNodes : DTransactionCleanUpTests

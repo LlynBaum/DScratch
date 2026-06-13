@@ -1,6 +1,8 @@
+using DScratch.Client.BrowserInteractions.CommandHandlers;
+
 namespace DScratch.Client.Components;
 
-public partial class EditorMenu
+public partial class EditorMenu(IEditorCommandDispatcher editorCommandDispatcher)
 {
     private string color = "#000000";
     
@@ -26,12 +28,12 @@ public partial class EditorMenu
     
     private async Task ParagraphAsync()
     {
-        
+        await editorCommandDispatcher.ChangeBlockTypeAsync(BlockType.Paragraph);
     }
     
-    private async Task HeadingAsync(ushort level)
+    private async Task HeadingAsync(BlockType blockType)
     {
-        
+        await editorCommandDispatcher.ChangeBlockTypeAsync(blockType);
     }
     
     private async Task CodeBlockAsync()

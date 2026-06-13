@@ -36,7 +36,7 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorE
         }
 
         var (origin, rightOrigin) = GetOrigins(keyPressInfo, sibling);
-        var paragraph = dScratchService.NodeFactory.Paragraph(origin, rightOrigin);
+        var paragraph = transaction.NodeFactory.Paragraph(origin, rightOrigin);
 
         transaction.Insert(paragraph, sibling.Parent);
         

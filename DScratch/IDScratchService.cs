@@ -4,8 +4,6 @@ namespace DScratch;
 
 public interface IDScratchService
 {
-    INodeFactory NodeFactory { get; }
-    
     ITransaction StartTransaction();
     
     TransactionResult Apply(ITransaction transaction);

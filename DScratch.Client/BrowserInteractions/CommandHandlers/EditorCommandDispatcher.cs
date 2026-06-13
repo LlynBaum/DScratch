@@ -7,9 +7,14 @@ public class EditorCommandDispatcher(IDScratchService dScratchService, DJsInvoke
     public async Task ChangeBlockTypeAsync(BlockType targetBlockType)
     {
         var transaction = dScratchService.StartTransaction();
-        var keyPressInfo = await jsInvoker.GetSelectionAsync();
+        var selectionInfo = await jsInvoker.GetSelectionAsync();
         
-        ChangeBlockTypeHandler.Execute(transaction, keyPressInfo, targetBlockType);
+        if (selectionInfo.AnchorNodeId.IsRoot || selectionInfo.FocusNodeId.IsRoot)
+        {
+            return;
+        }
+        
+        ChangeBlockTypeHandler.Execute(transaction, selectionInfo, targetBlockType);
 
         var result = dScratchService.Apply(transaction);
         await jsInvoker.ApplyTransaction(result);

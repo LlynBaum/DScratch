@@ -30,7 +30,7 @@ public class TreeBuilder : TreeBuilder.IBlockTextTreeBuilder
     {
         Root = rootNode;
         this.parent = parent;
-        this.IdGenerator = idGenerator;
+        IdGenerator = idGenerator;
         factory = new DNodeFactory(idGenerator);
     }
 
