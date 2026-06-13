@@ -36,12 +36,14 @@ public class ChangeBlockTypeHandlerTests
         {
             Direction = SelectionDirection.None,
             AnchorId = target.Id.Value,
-            FocusId = target.Id.Value
+            AnchorOffset = 2,
+            FocusId = target.Id.Value,
+            FocusOffset = 3
         };
         
         // Act
         ChangeBlockTypeHandler.Execute(transaction, selection, BlockType.Paragraph);
-        transaction.Commit();
+        var result = transaction.Commit();
         
         // Assert
         Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(3));
@@ -51,6 +53,7 @@ public class ChangeBlockTypeHandlerTests
             Assert.That(builder.Root.ChildNodes[1], Is.TypeOf<ParagraphNode>());
             Assert.That(builder.Root.ChildNodes[2], Is.TypeOf<TestBlockElementNode>());
         }
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, target.Id, 2);
     }
     
     [Test]
@@ -67,12 +70,14 @@ public class ChangeBlockTypeHandlerTests
         {
             Direction = SelectionDirection.Forward,
             AnchorId = start.Id.Value,
-            FocusId = end.Id.Value
+            AnchorOffset = 2,
+            FocusId = end.Id.Value,
+            FocusOffset = 3
         };
         
         // Act
         ChangeBlockTypeHandler.Execute(transaction, selection, BlockType.Paragraph);
-        transaction.Commit();
+        var result = transaction.Commit();
         
         // Assert
         Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(5));
@@ -84,6 +89,7 @@ public class ChangeBlockTypeHandlerTests
             Assert.That(builder.Root.ChildNodes[3], Is.TypeOf<ParagraphNode>());
             Assert.That(builder.Root.ChildNodes[4], Is.TypeOf<TestBlockElementNode>());
         }
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, start.Id, 2);
     }
     
     [Test]
@@ -100,12 +106,14 @@ public class ChangeBlockTypeHandlerTests
         {
             Direction = SelectionDirection.Backward,
             AnchorId = end.Id.Value,
-            FocusId = start.Id.Value
+            AnchorOffset = 3,
+            FocusId = start.Id.Value,
+            FocusOffset = 2
         };
         
         // Act
         ChangeBlockTypeHandler.Execute(transaction, selection, BlockType.Paragraph);
-        transaction.Commit();
+        var result = transaction.Commit();
         
         // Assert
         Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(5));
@@ -117,5 +125,6 @@ public class ChangeBlockTypeHandlerTests
             Assert.That(builder.Root.ChildNodes[3], Is.TypeOf<ParagraphNode>());
             Assert.That(builder.Root.ChildNodes[4], Is.TypeOf<TestBlockElementNode>());
         }
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, start.Id, 2);
     }
 }

@@ -20,7 +20,7 @@ public static class ChangeBlockTypeHandler
         }
 
         var (originOffset, _) = selectionInfo.GetConvertedOffsets();
-        transaction.AddCursorPosition(selectedNodes.First().Id, originOffset);
+        transaction.AddCursorPosition(selectedNodes.First().Id, originOffset); // TODO: fix, always goes to offset 0
         return;
         
         Func<DNode, DNode> GetFactory()

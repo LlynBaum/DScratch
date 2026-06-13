@@ -18,11 +18,11 @@ public class SelectionInfo
         
     public (NodeId origin, NodeId rightOrigin) GetConvertedNodeIds()
     {
-        var originOffset = Direction is SelectionDirection.Forward
+        var originOffset = Direction is SelectionDirection.Forward or SelectionDirection.None
             ? AnchorNodeId
             : FocusNodeId;
             
-        var rightOriginOffset = Direction is SelectionDirection.Forward
+        var rightOriginOffset = Direction is SelectionDirection.Forward or SelectionDirection.None
             ? FocusNodeId
             : AnchorNodeId;
 
@@ -31,11 +31,11 @@ public class SelectionInfo
         
     public (int originOffset, int rightOriginOffset) GetConvertedOffsets()
     {
-        var originOffset = Direction is SelectionDirection.Forward
+        var originOffset = Direction is SelectionDirection.Forward or SelectionDirection.None
             ? AnchorOffset
             : FocusOffset;
             
-        var rightOriginOffset = Direction is SelectionDirection.Forward
+        var rightOriginOffset = Direction is SelectionDirection.Forward or SelectionDirection.None
             ? FocusOffset
             : AnchorOffset;
 
