@@ -1,0 +1,28 @@
+@using DScratch.Client.BrowserInteractions.CommandHandlers
+@using DScratch.Client.Components
+@rendermode InteractiveWebAssembly
+
+<div class="menu">
+    <button @onclick="BoldAsync">Bold</button>
+    <button @onclick="ItalicAsync">Italic</button>
+    <button @onclick="CodeAsync">Code</button>
+    
+    <div>|</div>
+    
+    <button @onclick="BlockquoteAsync">Blockquote</button>
+    
+    <div>|</div>
+    
+    <MenubarButton OnClick="@ParagraphAsync">Paragraph</MenubarButton>
+    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockType.Heading1))">Heading 1</MenubarButton>
+    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockType.Heading2))">Heading 2</MenubarButton>
+    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockType.Heading3))">Heading 3</MenubarButton>
+    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockType.Heading4))">Heading 4</MenubarButton>
+    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockType.Heading5))">Heading 5</MenubarButton>
+    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockType.Heading6))">Heading 6</MenubarButton>
+    <MenubarButton OnClick="@CodeBlockAsync">Code Block</MenubarButton>
+    
+    <div>|</div>
+    
+    <input type="color" @bind="color" @bind:event="onchange" @bind:after="OnColorChangeAsync" />
+</div>

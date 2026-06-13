@@ -18,6 +18,9 @@ public static class ChangeBlockTypeHandler
         {
             transaction.ReplaceNode(selectedNode, factory);
         }
+
+        var (originOffset, _) = selectionInfo.GetConvertedOffsets();
+        transaction.AddCursorPosition(selectedNodes.First().Id, originOffset);
         return;
         
         Func<DNode, DNode> GetFactory()
