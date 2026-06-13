@@ -5,7 +5,7 @@ namespace DScratch.Client.BrowserInteractions.CommandHandlers.Commands;
 
 public static class ChangeBlockTypeHandler
 {
-    public static void Execute(ITransaction transaction, SelectionInfo selectionInfo, BlockType targetBlockType)
+    public static void Execute(ITransaction transaction, SelectionInfo selectionInfo, BlockNodeType targetBlockNodeType)
     {
         var selectedNodes = GetSelectedNodes(transaction, selectionInfo);
         if (!selectedNodes.Any())
@@ -20,21 +20,21 @@ public static class ChangeBlockTypeHandler
         }
 
         var (originOffset, _) = selectionInfo.GetConvertedOffsets();
-        transaction.AddCursorPosition(selectedNodes.First().Id, originOffset); // TODO: fix, always goes to offset 0
+        transaction.AddCursorPosition(selectedNodes.First().Id, originOffset);
         return;
         
         Func<DNode, DNode> GetFactory()
         {
-            return targetBlockType switch
+            return targetBlockNodeType switch
             {
-                BlockType.Paragraph => transaction.NodeFactory.ParagraphFrom,
-                BlockType.Heading1 => n => transaction.NodeFactory.HeadingFrom(n ,HeadingLevel.Level1),
-                BlockType.Heading2 => n => transaction.NodeFactory.HeadingFrom(n ,HeadingLevel.Level2),
-                BlockType.Heading3 => n => transaction.NodeFactory.HeadingFrom(n ,HeadingLevel.Level3),
-                BlockType.Heading4 => n => transaction.NodeFactory.HeadingFrom(n ,HeadingLevel.Level4),
-                BlockType.Heading5 => n => transaction.NodeFactory.HeadingFrom(n ,HeadingLevel.Level5),
-                BlockType.Heading6 => n => transaction.NodeFactory.HeadingFrom(n ,HeadingLevel.Level6),
-                _ => throw new ArgumentOutOfRangeException(nameof(targetBlockType))
+                BlockNodeType.Paragraph => transaction.NodeFactory.ParagraphFrom,
+                BlockNodeType.Heading1 => n => transaction.NodeFactory.HeadingFrom(n ,HeadingLevel.Level1),
+                BlockNodeType.Heading2 => n => transaction.NodeFactory.HeadingFrom(n ,HeadingLevel.Level2),
+                BlockNodeType.Heading3 => n => transaction.NodeFactory.HeadingFrom(n ,HeadingLevel.Level3),
+                BlockNodeType.Heading4 => n => transaction.NodeFactory.HeadingFrom(n ,HeadingLevel.Level4),
+                BlockNodeType.Heading5 => n => transaction.NodeFactory.HeadingFrom(n ,HeadingLevel.Level5),
+                BlockNodeType.Heading6 => n => transaction.NodeFactory.HeadingFrom(n ,HeadingLevel.Level6),
+                _ => throw new ArgumentOutOfRangeException(nameof(targetBlockNodeType))
             };
         }
     }

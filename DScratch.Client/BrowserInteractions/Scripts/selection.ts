@@ -88,6 +88,8 @@ export function setSelection(parentId: string, offset: number) {
     const currentFocusOffset = getAbsolutOffset(currentParent, currentSelection.focusNode!, currentSelection.focusOffset);*/
     
     if(!snapshot) {
+        setSelectionFrom(parentId, offset);
+        resetSnapshot();
         return;
     }
     

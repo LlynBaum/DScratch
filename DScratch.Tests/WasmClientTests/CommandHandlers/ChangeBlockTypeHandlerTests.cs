@@ -42,7 +42,7 @@ public class ChangeBlockTypeHandlerTests
         };
         
         // Act
-        ChangeBlockTypeHandler.Execute(transaction, selection, BlockType.Paragraph);
+        ChangeBlockTypeHandler.Execute(transaction, selection, BlockNodeType.Paragraph);
         var result = transaction.Commit();
         
         // Assert
@@ -76,7 +76,7 @@ public class ChangeBlockTypeHandlerTests
         };
         
         // Act
-        ChangeBlockTypeHandler.Execute(transaction, selection, BlockType.Paragraph);
+        ChangeBlockTypeHandler.Execute(transaction, selection, BlockNodeType.Paragraph);
         var result = transaction.Commit();
         
         // Assert
@@ -112,7 +112,7 @@ public class ChangeBlockTypeHandlerTests
         };
         
         // Act
-        ChangeBlockTypeHandler.Execute(transaction, selection, BlockType.Paragraph);
+        ChangeBlockTypeHandler.Execute(transaction, selection, BlockNodeType.Paragraph);
         var result = transaction.Commit();
         
         // Assert

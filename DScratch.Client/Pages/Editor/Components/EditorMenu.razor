@@ -14,12 +14,12 @@
     <div>|</div>
     
     <MenubarButton OnClick="@ParagraphAsync">Paragraph</MenubarButton>
-    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockType.Heading1))">Heading 1</MenubarButton>
-    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockType.Heading2))">Heading 2</MenubarButton>
-    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockType.Heading3))">Heading 3</MenubarButton>
-    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockType.Heading4))">Heading 4</MenubarButton>
-    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockType.Heading5))">Heading 5</MenubarButton>
-    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockType.Heading6))">Heading 6</MenubarButton>
+    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading1))">Heading 1</MenubarButton>
+    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading2))">Heading 2</MenubarButton>
+    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading3))">Heading 3</MenubarButton>
+    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading4))">Heading 4</MenubarButton>
+    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading5))">Heading 5</MenubarButton>
+    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading6))">Heading 6</MenubarButton>
     <MenubarButton OnClick="@CodeBlockAsync">Code Block</MenubarButton>
     
     <div>|</div>

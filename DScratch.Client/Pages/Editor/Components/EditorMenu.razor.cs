@@ -28,12 +28,12 @@ public partial class EditorMenu(IEditorCommandDispatcher editorCommandDispatcher
     
     private async Task ParagraphAsync()
     {
-        await editorCommandDispatcher.ChangeBlockTypeAsync(BlockType.Paragraph);
+        await editorCommandDispatcher.ChangeBlockTypeAsync(BlockNodeType.Paragraph);
     }
     
-    private async Task HeadingAsync(BlockType blockType)
+    private async Task HeadingAsync(BlockNodeType blockNodeType)
     {
-        await editorCommandDispatcher.ChangeBlockTypeAsync(blockType);
+        await editorCommandDispatcher.ChangeBlockTypeAsync(blockNodeType);
     }
     
     private async Task CodeBlockAsync()

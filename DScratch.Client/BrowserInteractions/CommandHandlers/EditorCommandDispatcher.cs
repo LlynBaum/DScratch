@@ -4,7 +4,7 @@ namespace DScratch.Client.BrowserInteractions.CommandHandlers;
 
 public class EditorCommandDispatcher(IDScratchService dScratchService, DJsInvoker jsInvoker) : IEditorCommandDispatcher
 {
-    public async Task ChangeBlockTypeAsync(BlockType targetBlockType)
+    public async Task ChangeBlockTypeAsync(BlockNodeType targetBlockNodeType)
     {
         var transaction = dScratchService.StartTransaction();
         var selectionInfo = await jsInvoker.GetSelectionAsync();
@@ -14,7 +14,7 @@ public class EditorCommandDispatcher(IDScratchService dScratchService, DJsInvoke
             return;
         }
         
-        ChangeBlockTypeHandler.Execute(transaction, selectionInfo, targetBlockType);
+        ChangeBlockTypeHandler.Execute(transaction, selectionInfo, targetBlockNodeType);
 
         var result = dScratchService.Apply(transaction);
         await jsInvoker.ApplyTransaction(result);

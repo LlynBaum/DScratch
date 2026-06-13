@@ -1,6 +1,6 @@
 namespace DScratch.Client.BrowserInteractions.CommandHandlers;
 
-public enum BlockType
+public enum BlockNodeType
 {
     Paragraph,
     Heading1,
