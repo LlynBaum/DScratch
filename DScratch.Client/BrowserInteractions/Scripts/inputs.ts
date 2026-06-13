@@ -20,13 +20,19 @@ export async function handleInput(event: InputEvent, bridgeReference: any) {
         return;
     }
 
-    const payload = getSelection();
-    snapshotSelection(payload);
+    const selectionInfo = getSelection();
+    const payload = {
+        InputType: event.inputType,
+        Data: event.data,
+        Selection: selectionInfo
+    };
+    
+    snapshotSelection(selectionInfo);
     
     try {
         await bridgeReference?.invokeMethodAsync("OnKeyPressCallbackAsync", payload);
     } catch (e) {
-        console.error(e, "Failed to send event with anchor ", payload.AnchorId);
+        console.error(e, "Failed to send event with anchor ", selectionInfo.AnchorId);
     }
 }
 
