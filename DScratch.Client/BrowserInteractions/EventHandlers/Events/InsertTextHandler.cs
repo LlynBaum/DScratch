@@ -18,63 +18,40 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         
         var transaction = dScratchService.StartTransaction();
 
-        var parent = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId);
-        if (parent is null)
+        var targetNode = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId);
+        if (targetNode is null)
         {
             throw new ArgumentException($"Parent with given path not found: {keyPressInfo.Selection.AnchorId}");
         }
 
-        DNodeSearchResult dNodeSearchResult;
+        int offset;
         DNode? rightOrigin;
         DNode? origin;
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
-            dNodeSearchResult = SimpleInsert(keyPressInfo, parent);
-            origin = dNodeSearchResult.Origin.Node;
-            rightOrigin = dNodeSearchResult.RightOrigin.Node;
+            if (targetNode is not TextNode targetTextNode)
+            {
+                throw new ArgumentException("Expected TextNode as target for insert with no selection.", nameof(keyPressInfo));
+            }
+
+            offset = keyPressInfo.Selection.AnchorOffset;
+            origin = targetTextNode;
+            rightOrigin = targetTextNode.RightOrigin;
         }
         else
         {
-            dNodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, parent);
+            var dNodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, targetNode.GetNearestBlock());
             origin = dNodeSearchResult.Origin.Node;
             rightOrigin = origin?.RightOrigin;
+            offset = dNodeSearchResult.Origin.AbsolutOffset;
         }
 
         var textNode = transaction.NodeFactory.String(keyPressInfo.Data, origin, rightOrigin);
-        var targetParent = origin?.Parent ?? rightOrigin?.Parent ?? parent;
+        var targetParent = origin?.Parent ?? rightOrigin?.Parent ?? targetNode;
         transaction.Insert(textNode, targetParent);
         
-        var cursorPosition = dNodeSearchResult.Origin.AbsolutOffset + textNode.Length;
+        var cursorPosition = offset + textNode.Length;
         transaction.AddCursorPosition(targetParent.Id, cursorPosition);
         return dScratchService.Apply(transaction);
-    }
-
-    private static DNodeSearchResult SimpleInsert(KeyPressInfo keyPressInfo, DNode parent)
-    {
-        if (keyPressInfo.Selection.AnchorOffset <= 0)
-        {
-            return new DNodeSearchResult(
-                Origin: new DNodeInfo(null, 0),
-                RightOrigin: new DNodeInfo(parent.FirstChild, 0));
-        }
-
-        var walker = new TreeWalker<TextNode>(parent);
-
-        var currentOffset = 0;
-        var currentNode = walker.FirstChild();
-        while (currentNode is not null)
-        {
-            if (currentOffset + currentNode.Length >= keyPressInfo.Selection.AnchorOffset)
-            {
-                break;
-            }
-
-            currentOffset += currentNode.Length;
-            currentNode = walker.NextSibling();
-        }
-
-        return new DNodeSearchResult(
-            Origin: new DNodeInfo(currentNode, keyPressInfo.Selection.AnchorOffset), 
-            RightOrigin: new DNodeInfo(walker.NextSibling(), currentOffset + currentNode?.Length ?? 0));
     }
 }

@@ -3,6 +3,8 @@ namespace DScratch.Nodes;
 public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string content = "") 
     : DNode(id, origin, rightOrigin)
 {
+    public override string TagName => "span";
+    
     private readonly HashSet<Mark> marks = new HashSet<Mark>(new Mark.MarkTable());
     
     public int Length => TextContent.Length;

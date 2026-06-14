@@ -13,7 +13,7 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorE
         var transaction = dScratchService.StartTransaction();
         
         var (siblingPath, _) = keyPressInfo.Selection.GetConvertedNodeIds();
-        var sibling = transaction.FindNode(siblingPath);
+        var sibling = transaction.FindNode(siblingPath)?.GetNearestBlock(); // TODO: make that easier now that we have directly the text node
         if (sibling is null)
         {
             throw new ArgumentException($"Sibling node with given path not found: {keyPressInfo.Selection.AnchorId}");

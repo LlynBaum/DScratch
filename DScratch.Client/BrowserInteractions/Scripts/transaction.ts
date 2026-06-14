@@ -4,11 +4,9 @@ import {findTextNodeAtOffset} from "./nodeHelper";
 enum StepType {
     insertText = "insertText",
     deleteText = "deleteText",
-    insertElementInline = "insertElementInline",
-    insertElementBlock = "insertElementBlock",
+    insertElement = "insertElement",
     deleteElement = "deleteElement",
-    moveInline = "moveInline",
-    moveBlock = "moveBlock",
+    move = "move",
 }
 
 interface CursorPosition {
@@ -37,14 +35,7 @@ interface DeleteTextStep extends Step {
     length: number;
 }
 
-interface InsertElementInlineStep extends Step {
-    parentId: string;
-    offset: number;
-    tagName: string;
-    newNodeId: string;
-}
-
-interface InsertElementBlockStep extends Step {
+interface InsertElementStep extends Step {
     parentId: string;
     previousSiblingId: string | null;
     tagName: string;
@@ -55,13 +46,7 @@ interface DeleteElementStep extends Step {
     targetId: string;
 }
 
-interface MoveInlineStep extends Step {
-    targetNodeId: string;
-    targetParentId: string;
-    targetOffset: number;
-}
-
-interface MoveBlockStep extends Step {
+interface MoveStep extends Step {
     targetNodeId: string;
     targetParentId: string;
     previousSiblingId: string | null;
@@ -83,20 +68,14 @@ export function applyTransaction(transaction: TransactionResult){
             case StepType.deleteText:
                 handleDeleteTextStep(step as DeleteTextStep);
                 break
-            case StepType.insertElementInline:
-                handleInsertElementInlineStep(step as InsertElementInlineStep);
-                break;
-            case StepType.insertElementBlock:
-                handleInsertElementBlockStep(step as InsertElementBlockStep);
+            case StepType.insertElement:
+                handleInsertElementBlockStep(step as InsertElementStep);
                 break;
             case StepType.deleteElement:
                 handleDeleteElementStep(step as DeleteElementStep);
                 break;
-            case StepType.moveInline:
-                handleMoveInlineStep(step as MoveInlineStep);
-                break;
-            case StepType.moveBlock:
-                handleMoveBlockStep(step as MoveBlockStep);
+            case StepType.move:
+                handleMoveBlockStep(step as MoveStep);
                 break;
         }
     }
@@ -119,23 +98,17 @@ function handleInsertTextStep(step: InsertTextStep) {
 function handleDeleteTextStep(step: DeleteTextStep) {
     const element = findNode(step.parentId);
     if (!element) return;
-
+    
     const { node, relativeOffset } = findTextNodeAtOffset(element, step.offset);
     if(node) {
         const text = node.textContent;
         node.textContent = text.slice(0, relativeOffset) + text.slice(relativeOffset + step.length);
     }
+    
+    // TODO: if the wrapping span is empty, just remove it from the DOM.
 }
 
-function handleInsertElementInlineStep(step: InsertElementInlineStep) {
-    const parent = findNode(step.parentId);
-    if (!parent) return;
-
-    const element = createElement(step.tagName, step.newNodeId);
-    insertElementInline(element, parent, step.offset);
-}
-
-function handleInsertElementBlockStep(step: InsertElementBlockStep) {
+function handleInsertElementBlockStep(step: InsertElementStep) {
     const parent = findNode(step.parentId);
     if (!parent) return;
 
@@ -152,15 +125,7 @@ function handleDeleteElementStep(step: DeleteElementStep) {
     element.remove();
 }
 
-function handleMoveInlineStep(step: MoveInlineStep) {
-    const element = findNode(step.targetNodeId);
-    const newParent = findNode(step.targetParentId);
-    if (element && newParent) {
-        insertElementInline(element, newParent, step.targetOffset);
-    }
-}
-
-function handleMoveBlockStep(step: MoveBlockStep) {
+function handleMoveBlockStep(step: MoveStep) {
     const element = findNode(step.targetNodeId);
     const newParent = findNode(step.targetParentId);
     if (element && newParent) {

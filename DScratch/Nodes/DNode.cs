@@ -4,9 +4,11 @@ namespace DScratch.Nodes;
 
 public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null) : IDNode
 {
+    public abstract string TagName { get; }
+    
     private readonly List<DNode> allChildNodes = childNodes ?? [];
     
-    public NodeId Id { get; init; } = id;
+    public NodeId Id { get; } = id;
     
     public DNode? Origin { get; internal set; } = origin;
 
@@ -96,10 +98,21 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
         return $"[{Id}] - {GetType().Name}";
     }
 
-    public DNode? GetFirstActiveOriginElement()
+    public DNode? GetFirstActiveOrigin()
     {
-        return OriginElement?.IsDeleted is false 
-            ? OriginElement 
-            : OriginElement?.GetFirstActiveOriginElement();
+        return Origin?.IsDeleted is false 
+            ? Origin 
+            : Origin?.GetFirstActiveOrigin();
+    }
+
+    public DNode GetNearestBlock()
+    {
+        var current = ParentElement;
+        while (current is not null and not IBlockElement)
+        {
+            current = current.ParentElement;
+        }
+
+        return current ?? throw new InvalidOperationException("Node does not have a Block Parent.");
     }
 }

@@ -14,7 +14,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
     {
         var transaction = dScratchService.StartTransaction();
         
-        var parent = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId);
+        var parent = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId)?.GetNearestBlock(); // TODO: make that easier now that we have directly the text node
         if (parent is null)
         {
             throw new ArgumentException($"Parent with given path not found: {keyPressInfo.Selection.AnchorId}");

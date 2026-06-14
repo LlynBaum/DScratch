@@ -6,7 +6,7 @@ namespace DScratch.Tests.Helpers.TestNodes;
 public class TestInlineElementNode(NodeId id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null) 
     : DNode(id, origin, rightOrigin, childNodes), IInlineElement
 {
-    public string TagName => "testinline";
+    public override string TagName => "testinline";
     
     public static TestInlineElementNode Empty()
     {
