@@ -15,7 +15,7 @@ internal static class StepHelpers
             return node switch
             {
                 RootNode => [..node.ChildNodes.SelectMany(c => c.ToInsertSteps())],
-                TextNode textNode => [new StepDiff.InsertTextDiff(parentId.Value, node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, textNode.TextContent)],
+                TextNode textNode => InsertTextNode(textNode, parentId),
                 IInlineElement element => 
                 [
                     new StepDiff.InsertElementInlineDiff(parentId.Value, node.ParentElement?.FindAbsolutTextOffset<IInlineElement>(node) ?? 0, element.TagName, node.Id.Value),
@@ -29,7 +29,7 @@ internal static class StepHelpers
                 _ => throw new ArgumentException("Node type is not an element, text or char node.")
             };
         }
-        
+
         public StepDiff? ToDeleteSteps()
         {
             return node switch
@@ -83,5 +83,31 @@ internal static class StepHelpers
                 _ => throw new ArgumentException("Node type is not an element.")
             };
         }
+    }
+    
+    private static StepDiff[] InsertTextNode(TextNode textNode, NodeId parentId)
+    {
+        if (textNode.Marks.Count > 0)
+        {
+            return [
+                new StepDiff.InsertElementInlineDiff(
+                    ParentId: parentId.Value,
+                    Offset: textNode.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0,
+                    TagName: "span",
+                    NewNodeId: null),
+                new StepDiff.InsertTextDiff(
+                    ParentId: null,
+                    Offset: 0,
+                    Text: textNode.TextContent)
+            ];
+        }
+            
+        return
+        [
+            new StepDiff.InsertTextDiff(
+                ParentId: parentId.Value,
+                Offset: textNode.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0,
+                Text: textNode.TextContent)
+        ];
     }
 }

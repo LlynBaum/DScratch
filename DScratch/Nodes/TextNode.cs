@@ -3,11 +3,15 @@ namespace DScratch.Nodes;
 public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string content = "") 
     : DNode(id, origin, rightOrigin)
 {
+    private readonly HashSet<Mark> marks = new HashSet<Mark>(new Mark.MarkTable());
+    
     public int Length => TextContent.Length;
 
     public string TextContent { get; private set; } = content;
 
     public NodeId LastId => Length > 0 ? new NodeId(Id.Client, Id.Clock + Length - 1) : Id;
+
+    public IReadOnlySet<Mark> Marks => marks;
 
     internal override void InsertChild(DNode node)
     {
@@ -17,6 +21,12 @@ public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string conte
     internal void AddText(string value)
     {
         TextContent += value;
+    }
+
+    internal void SetMark(Mark mark)
+    {
+        marks.Remove(mark);
+        marks.Add(mark);
     }
 
     internal TextNode? Split(int offset, NodeId nextId)
