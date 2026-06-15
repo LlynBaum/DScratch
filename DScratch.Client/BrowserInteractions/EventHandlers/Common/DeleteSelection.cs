@@ -104,8 +104,6 @@ public static class DeleteSelection
         transaction.DeleteRange(deleteStart.RightOrigin.Node, null);
         transaction.DeleteRange(null, deleteEnd.Origin.Node);
         
-        // TODO: this is only the case of a block elements... Inline elements will not merge
-        // In case of inline elements, search for nearest block element. If they are not the same, merge them. Else it should only delete but not the second parent and also not merging
         transaction.MoveRange(deleteEnd.Origin.Node?.RightOrigin, null, firstParent, firstParent.LastChild);
         transaction.DeleteRange(firstParent.RightOrigin, secondParent);
         
@@ -114,6 +112,7 @@ public static class DeleteSelection
             RightOrigin: new DNodeInfo(deleteEnd.RightOrigin.Node, secondParentOffset));
     }
 
+    // TODO: does not take into account that InlineElements might exist
     private static DNodeSearchResult SearchOrigins(DNode parent, int offset, ITransaction transaction)
     {
         var walker = new TreeWalker<TextNode>(parent);
