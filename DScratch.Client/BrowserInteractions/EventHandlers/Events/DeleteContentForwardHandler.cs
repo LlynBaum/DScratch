@@ -38,7 +38,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
         }
         else
         {
-            var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, parent);
+            var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction);
             
             var cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent;
             var cursorTarget = nodeSearchResult.Origin.Node?.ParentElement ?? parent;

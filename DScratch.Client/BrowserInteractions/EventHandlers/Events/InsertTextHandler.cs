@@ -24,7 +24,6 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
             throw new ArgumentException($"Parent with given path not found: {keyPressInfo.Selection.AnchorId}");
         }
 
-        int offset;
         DNode? rightOrigin;
         DNode? origin;
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
@@ -34,24 +33,39 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
                 throw new ArgumentException("Expected TextNode as target for insert with no selection.", nameof(keyPressInfo));
             }
 
-            offset = keyPressInfo.Selection.AnchorOffset;
-            origin = targetTextNode;
-            rightOrigin = targetTextNode.RightOrigin;
+            var searchResult = SimpleInsert(targetTextNode, keyPressInfo.Selection, transaction);
+
+            origin = searchResult.Origin.Node;
+            rightOrigin = searchResult.RightOrigin.Node;
         }
         else
         {
-            var dNodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction, targetNode.GetNearestBlock());
+            var dNodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction);
             origin = dNodeSearchResult.Origin.Node;
             rightOrigin = origin?.RightOrigin;
-            offset = dNodeSearchResult.Origin.AbsolutOffset;
         }
 
         var textNode = transaction.NodeFactory.String(keyPressInfo.Data, origin, rightOrigin);
-        var targetParent = origin?.Parent ?? rightOrigin?.Parent ?? targetNode;
-        transaction.Insert(textNode, targetParent);
+        var parent = origin?.Parent ?? rightOrigin?.Parent ?? targetNode.Parent;
+        transaction.Insert(textNode, parent!);
         
-        var cursorPosition = offset + textNode.Length;
-        transaction.AddCursorPosition(targetParent.Id, cursorPosition);
+        transaction.AddCursorPosition(textNode.Id, textNode.Length);
         return dScratchService.Apply(transaction);
+    }
+
+    private static DNodeSearchResult SimpleInsert(TextNode targetNode, SelectionInfo selectionInfo, ITransaction transaction)
+    {
+        if (selectionInfo.AnchorOffset is 0)
+        {
+            return new DNodeSearchResult(
+                Origin: new DNodeInfo(null, -1), 
+                RightOrigin: new DNodeInfo(targetNode, 0));
+        }
+
+        var rightOrigin = transaction.SplitText(targetNode, selectionInfo.AnchorOffset);
+        
+        return new DNodeSearchResult(
+            Origin: new DNodeInfo(targetNode, selectionInfo.AnchorOffset), 
+            RightOrigin: new DNodeInfo(rightOrigin, 0));
     }
 }

@@ -6,30 +6,46 @@ namespace DScratch.Client.BrowserInteractions.EventHandlers.Common;
 
 public static class DeleteSelection
 {
-    public static DNodeSearchResult Handle(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
+    public static DNodeSearchResult Handle(KeyPressInfo keyPressInfo, ITransaction transaction)
     {
+        var result = SearchSelectedNodes(keyPressInfo, transaction);
         return keyPressInfo.Selection.AnchorId == keyPressInfo.Selection.FocusId 
-            ? DeleteContentInParent(keyPressInfo, transaction, parent) 
+            ? DeleteContentInParent(result, transaction) 
             : DeleteAndMerge(keyPressInfo, transaction);
     }
-
-    private static DNodeSearchResult DeleteContentInParent(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
+    
+    private static NodeSearchResult<TextNode> SearchSelectedNodes(KeyPressInfo keyPressInfo, ITransaction transaction)
     {
         var (originOffset, rightOriginOffset) = keyPressInfo.Selection.GetConvertedOffsets();
+        var (originId, rightOriginId) = keyPressInfo.Selection.GetConvertedNodeIds();
+        var origin = transaction.FindNode(originId);
+        var rightOrigin = transaction.FindNode(rightOriginId);
 
-        var result = SearchSelectedNodes(parent, originOffset, rightOriginOffset);
+        if (origin is not TextNode originTextNode || rightOrigin is not TextNode rightOriginTextNode)
+        {
+            throw new ArgumentException($"Expected TextNodes for {originId} and {rightOriginId}");
+        }
 
-        var deleteStart = result.Origin.HasFoundNode 
-            ? transaction.SplitText(result.Origin.Node!, result.Origin.AbsolutOffset) 
+        return new NodeSearchResult<TextNode>(
+            Origin: new NodeInfo<TextNode>(originTextNode, originOffset),
+            RightOrigin: new NodeInfo<TextNode>(rightOriginTextNode, rightOriginOffset));
+    }
+
+    private static DNodeSearchResult DeleteContentInParent(NodeSearchResult<TextNode> nodeSearchResult, ITransaction transaction)
+    {
+        var deleteStart = nodeSearchResult.Origin.HasFoundNode 
+            ? transaction.SplitText(nodeSearchResult.Origin.Node!, nodeSearchResult.Origin.AbsolutOffset) 
             : null;
 
-        var rightOrigin = result.RightOrigin.Node;
-        var relativeRightOriginOffset = result.RightOrigin.AbsolutOffset;
+        var rightOrigin = nodeSearchResult.RightOrigin.Node;
+        var relativeRightOriginOffset = nodeSearchResult.RightOrigin.AbsolutOffset;
         
-        if (result.Origin.HasFoundNode && result.RightOrigin.HasFoundNode && result.Origin.Node!.Id == result.RightOrigin.Node!.Id)
+        if (nodeSearchResult.Origin.HasFoundNode 
+            && nodeSearchResult.RightOrigin.HasFoundNode
+            && nodeSearchResult.Origin.Node!.Id == nodeSearchResult.RightOrigin.Node!.Id)
         {
             rightOrigin = deleteStart;
-            relativeRightOriginOffset -= result.Origin.Node.Length;
+            relativeRightOriginOffset -= nodeSearchResult.Origin.Node.Length;
         }
         
         if (rightOrigin != null)
@@ -37,48 +53,10 @@ public static class DeleteSelection
             transaction.SplitText(rightOrigin, relativeRightOriginOffset);
         }
         
-        transaction.DeleteRange(deleteStart ?? result.Origin.Node?.RightOrigin, rightOrigin);
+        transaction.DeleteRange(deleteStart ?? nodeSearchResult.Origin.Node?.RightOrigin, rightOrigin);
         return new DNodeSearchResult(
-            Origin: new DNodeInfo(result.Origin.Node, originOffset), 
-            RightOrigin: new DNodeInfo(rightOrigin?.RightOrigin, rightOriginOffset));
-    }
-    
-    private static NodeSearchResult<TextNode> SearchSelectedNodes(DNode parent, int originOffset, int rightOriginOffset)
-    {
-        var walker = new TreeWalker<TextNode>(parent);
-        var currentOffset = 0;
-        var currentNode = walker.FirstChild();
-        while (currentNode is not null)
-        {
-            if (currentOffset + currentNode.Length >= originOffset)
-            {
-                break;
-            }
-
-            currentOffset += currentNode.Length;
-            currentNode = walker.NextSibling();
-        }
-
-        var relativeOriginOffset = originOffset - currentOffset;
-        var origin = currentNode;
-        
-        while (currentNode is not null)
-        {
-            if (currentOffset + currentNode.Length >= rightOriginOffset)
-            {
-                break;
-            }
-
-            currentOffset += currentNode.Length;
-            currentNode = walker.NextSibling();
-        }
-
-        var relativeRightOriginOffset = rightOriginOffset - currentOffset;
-        var rightOrigin = currentNode;
-
-        return new NodeSearchResult<TextNode>(
-            Origin: new NodeInfo<TextNode>(origin, relativeOriginOffset),
-            RightOrigin: new NodeInfo<TextNode>(rightOrigin, relativeRightOriginOffset));
+            Origin: new DNodeInfo(nodeSearchResult.Origin.Node, nodeSearchResult.Origin.AbsolutOffset), 
+            RightOrigin: new DNodeInfo(rightOrigin?.RightOrigin, relativeRightOriginOffset));
     }
 
     private static DNodeSearchResult DeleteAndMerge(KeyPressInfo keyPressInfo, ITransaction transaction)
