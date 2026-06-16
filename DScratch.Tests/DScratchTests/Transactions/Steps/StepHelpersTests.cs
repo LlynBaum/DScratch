@@ -88,7 +88,7 @@ public class StepHelpersTests
             {
                 var insertParagraph = (StepDiff.InsertElementDiff)result[0];
                 Assert.That(insertParagraph.ParentId, Is.EqualTo("Test-0"));
-                Assert.That(insertParagraph.PreviousSiblingId, Is.Null);
+                Assert.That(insertParagraph.PreviousSiblingId, Is.EqualTo("Test-1"));
                 Assert.That(insertParagraph.NewNodeId, Is.EqualTo("Test-2"));
                 Assert.That(insertParagraph.TagName, Is.EqualTo(paragraph.TagName));
                 
