@@ -28,17 +28,18 @@ public class ChangeBlockTypeHandlerTests
     public void MakesExpectedChanges()
     {
         // Arrange
+        DNode target = null!;
         builder.TestBlockElementNode();
-        var target = builder.TestBlockElementNode();
+        builder.TestBlockElementNode(t => target = t.Text("abc"));
         builder.TestBlockElementNode();
         
         var selection = new SelectionInfo
         {
             Direction = SelectionDirection.None,
             AnchorId = target.Id.Value,
-            AnchorOffset = 2,
+            AnchorOffset = 1,
             FocusId = target.Id.Value,
-            FocusOffset = 3
+            FocusOffset = 1
         };
         
         // Act
@@ -60,18 +61,20 @@ public class ChangeBlockTypeHandlerTests
     public void MakesExpectedChanges_InGivenSelectionRange()
     {
         // Arrange
+        DNode targetStart = null!;
+        DNode targetEnd = null!;
         builder.TestBlockElementNode();
-        var start =builder.TestBlockElementNode();
+        builder.TestBlockElementNode(t => targetStart = t.Text("a"));
         builder.TestBlockElementNode();
-        var end = builder.TestBlockElementNode();
+        builder.TestBlockElementNode(t => targetEnd = t.Text("b"));
         builder.TestBlockElementNode();
         
         var selection = new SelectionInfo
         {
             Direction = SelectionDirection.Forward,
-            AnchorId = start.Id.Value,
+            AnchorId = targetStart.Id.Value,
             AnchorOffset = 2,
-            FocusId = end.Id.Value,
+            FocusId = targetEnd.Id.Value,
             FocusOffset = 3
         };
         
@@ -89,25 +92,27 @@ public class ChangeBlockTypeHandlerTests
             Assert.That(builder.Root.ChildNodes[3], Is.TypeOf<ParagraphNode>());
             Assert.That(builder.Root.ChildNodes[4], Is.TypeOf<TestBlockElementNode>());
         }
-        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, start.Id, 2);
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, targetStart.Id, 2);
     }
     
     [Test]
     public void MakesExpectedChanges_InGivenSelectionRange_Reversed()
     {
         // Arrange
+        DNode targetStart = null!;
+        DNode targetEnd = null!;
         builder.TestBlockElementNode();
-        var start =builder.TestBlockElementNode();
+        builder.TestBlockElementNode(t => targetEnd = t.Text("a"));
         builder.TestBlockElementNode();
-        var end = builder.TestBlockElementNode();
+        builder.TestBlockElementNode(t => targetStart = t.Text("b"));
         builder.TestBlockElementNode();
         
         var selection = new SelectionInfo
         {
             Direction = SelectionDirection.Backward,
-            AnchorId = end.Id.Value,
+            AnchorId = targetStart.Id.Value,
             AnchorOffset = 3,
-            FocusId = start.Id.Value,
+            FocusId = targetEnd.Id.Value,
             FocusOffset = 2
         };
         
@@ -125,6 +130,6 @@ public class ChangeBlockTypeHandlerTests
             Assert.That(builder.Root.ChildNodes[3], Is.TypeOf<ParagraphNode>());
             Assert.That(builder.Root.ChildNodes[4], Is.TypeOf<TestBlockElementNode>());
         }
-        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, start.Id, 2);
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, targetEnd.Id, 2);
     }
 }

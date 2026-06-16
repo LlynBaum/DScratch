@@ -1,5 +1,4 @@
 using DScratch.Client.BrowserInteractions;
-using DScratch.Client.BrowserInteractions.EventHandlers;
 using DScratch.Client.BrowserInteractions.EventHandlers.Events;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
@@ -35,10 +34,11 @@ public class InsertParagraphHandlerTests
         public void CreatesExpectedChanges_WithOffsetOfZero()
         {
             // Arrange
-            var parent = builder.Paragraph(t => { t.Text("abc"); });
+            TextNode textNode = null!;
+            var parent = builder.Paragraph(t => { textNode = t.Text("abc"); });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 0));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0));
 
             // Assert
             Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
@@ -58,10 +58,11 @@ public class InsertParagraphHandlerTests
         public void CreatesExpectedChanges_WithOffsetAtEnd()
         {
             // Arrange
-            var parent = builder.Paragraph(t => { t.Text("abc"); });
+            TextNode textNode = null!;
+            var parent = builder.Paragraph(t => { textNode = t.Text("abc"); });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 3));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 3));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -81,10 +82,11 @@ public class InsertParagraphHandlerTests
         public void CreatesExpectedChanges_WithOffsetInBetweenText()
         {
             // Arrange
-            var parent = builder.Paragraph(t => { t.Text("abc"); });
+            TextNode textNode = null!;
+            var parent = builder.Paragraph(t => { textNode = t.Text("abc"); });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 1));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -105,15 +107,16 @@ public class InsertParagraphHandlerTests
         public void CreatesExpectedChanges_WithOffsetInBetweenText_WithTextNodeForEachChar()
         {
             // Arrange
+            TextNode textNode = null!;
             var parent = builder.Paragraph(t =>
             {
-                t.Text("a");
+                textNode = t.Text("a");
                 t.Text("b");
                 t.Text("c");
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 1));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -138,18 +141,18 @@ public class InsertParagraphHandlerTests
         public void CreatesExpectedChanges_WithOffsetInBetweenText_WithTextNodeForEachChar_TwoInsertParagraph()
         {
             // Arrange
+            TextNode textNode1 = null!;
+            TextNode textNode2 = null!;
             var parent = builder.Paragraph(t =>
             {
-                t.Text("a");
-                t.Text("b");
+                textNode1 = t.Text("a");
+                textNode2 = t.Text("b");
                 t.Text("c");
             });
 
             // Act
-            var result1 = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 1));
-            var result2 =
-                handler.Handle(
-                    KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.RightOrigin!.Id, 1));
+            var result1 = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode1.Id, 1));
+            var result2 = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode2.Id, 1));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -176,10 +179,11 @@ public class InsertParagraphHandlerTests
         public void CreatesExpectedChanges_WithSelection()
         {
             // Arrange
-            var parent = builder.Paragraph(t => { t.Text("abcde"); });
+            TextNode textNode = null!;
+            var parent = builder.Paragraph(t => { textNode = t.Text("abcde"); });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.Id, 1, 4));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, 1, 4));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -204,19 +208,21 @@ public class InsertParagraphHandlerTests
         public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverTwoParagraphs()
         {
             // Arrange
+            TextNode startNode = null!;
+            TextNode endNode = null!;
             var parent = builder.Paragraph(t => 
             {
-                t.Text("abc");
+                startNode = t.Text("abc");
             });
             var parent2 = builder.Paragraph(t => 
             {
-                t.Text("def");
+                endNode = t.Text("def");
             });
             
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(
-                anchorId: parent.Id,
+                anchorId: startNode.Id,
                 anchorOffset: 2,
-                focusId: parent2.Id,
+                focusId: endNode.Id,
                 focusOffset: 1);
 
             // Act
@@ -255,19 +261,21 @@ public class InsertParagraphHandlerTests
         public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverTwoParagraphs_Backwards()
         {
             // Arrange
+            TextNode startNode = null!;
+            TextNode endNode = null!;
             var parent = builder.Paragraph(t => 
             {
-                t.Text("abc");
+                endNode = t.Text("abc");
             });
             var parent2 = builder.Paragraph(t => 
             {
-                t.Text("def");
+                startNode = t.Text("def");
             });
             
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(
-                anchorId: parent2.Id,
+                anchorId: startNode.Id,
                 anchorOffset: 1,
-                focusId: parent.Id,
+                focusId: endNode.Id,
                 focusOffset: 2,
                 direction: SelectionDirection.Backward);
 
@@ -313,9 +321,11 @@ public class InsertParagraphHandlerTests
         public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverThreeParagraphs()
         {
             // Arrange
+            TextNode startNode = null!;
+            TextNode endNode = null!;
             var parent = builder.Paragraph(t => 
             {
-                t.Text("abc");
+                startNode = t.Text("abc");
             });
             var parent2 = builder.Paragraph(t => 
             {
@@ -323,13 +333,13 @@ public class InsertParagraphHandlerTests
             });
             var parent3 = builder.Paragraph(t => 
             {
-                t.Text("ghi");
+                endNode = t.Text("ghi");
             });
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(
-                anchorId: parent.Id,
+                anchorId: startNode.Id,
                 anchorOffset: 2,
-                focusId: parent3.Id,
+                focusId: endNode.Id,
                 focusOffset: 1);
             
             // Act
@@ -371,9 +381,11 @@ public class InsertParagraphHandlerTests
         public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverThreeParagraphs_Backwards()
         {
             // Arrange
+            TextNode startNode = null!;
+            TextNode endNode = null!;
             var parent = builder.Paragraph(t => 
             {
-                t.Text("abc");
+                endNode = t.Text("abc");
             });
             var parent2 = builder.Paragraph(t => 
             {
@@ -381,13 +393,13 @@ public class InsertParagraphHandlerTests
             });
             var parent3 = builder.Paragraph(t => 
             {
-                t.Text("ghi");
+                startNode = t.Text("ghi");
             });
             
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(
-                anchorId: parent3.Id,
+                anchorId: endNode.Id,
                 anchorOffset: 1,
-                focusId: parent.Id, 
+                focusId: startNode.Id, 
                 focusOffset: 2, 
                 direction: SelectionDirection.Backward);
 

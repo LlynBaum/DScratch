@@ -1,5 +1,4 @@
 using DScratch.Client.BrowserInteractions;
-using DScratch.Client.BrowserInteractions.EventHandlers;
 using DScratch.Client.BrowserInteractions.EventHandlers.Events;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
@@ -45,7 +44,7 @@ public class DeleteWordBackwardHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 3));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(text2.Id, 1));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -70,7 +69,7 @@ public class DeleteWordBackwardHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 3));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(text.Id, 3));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -103,7 +102,7 @@ public class DeleteWordBackwardHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 4));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(text.Id, 4));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -137,7 +136,7 @@ public class DeleteWordBackwardHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 2));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(text.Id, 2));
 
             // Assert
             Assert.That(text.IsDeleted, Is.True);
@@ -157,7 +156,7 @@ public class DeleteWordBackwardHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 1));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(text.Id, 1));
 
             // Assert
             Assert.That(text.IsDeleted, Is.True);
@@ -169,14 +168,15 @@ public class DeleteWordBackwardHandlerTests
         public void Handle_DoesNothing_WhenWhereIsNoPreviousParagraph()
         {
             // Arrange
+            TextNode textNode = null!;
             var parent = builder.Paragraph(t => 
             {
-                t.Text("abc");
+                textNode = t.Text("abc");
                 t.Text("def");
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 0));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0));
         
             // Assert
             using (Assert.EnterMultipleScope())
@@ -202,20 +202,27 @@ public class DeleteWordBackwardHandlerTests
     private class SelectionDelete : DeleteWordBackwardHandlerTests
     {
         [Test]
-        [TestCase(2, 5)]
-        [TestCase(5, 2)]
-        public void Handle_CreatesExpectedChanges_WhenTextIsSelected(int start, int end)
+        [TestCase(SelectionDirection.Forward)]
+        [TestCase(SelectionDirection.Backward)]
+        public void Handle_CreatesExpectedChanges_WhenTextIsSelected(SelectionDirection direction)
         {
             // Arrange
+            TextNode startNode = null!;
+            TextNode endNode = null!;
             var parent = builder.TestInlineElementNode(t =>
             {
-                t.Text("abc");
-                t.Text("def");
+                startNode = t.Text("abc");
+                endNode = t.Text("def");
                 t.Text("ghi");
             });
 
+            var startNodeId = direction is SelectionDirection.Forward ? startNode.Id : endNode.Id;
+            var endNodeId = direction is SelectionDirection.Forward ? endNode.Id : startNode.Id;
+
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(endNodeId, 2, startNodeId, 2, direction);
+
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.Id, start, end));
+            var result = handler.Handle(keyPressInfo);
 
             var visualizer = new DocumentVisualizer(document);
             visualizer.Print();
@@ -249,15 +256,16 @@ public class DeleteWordBackwardHandlerTests
         public void Handle_CreatesExpectedChanges_WhenTextIsSelected_AtStart(int start, int end)
         {
             // Arrange
+            TextNode textNode = null!;
             var parent = builder.TestInlineElementNode(t =>
             {
-                t.Text("abc");
+                textNode = t.Text("abc");
                 t.Text("def");
                 t.Text("ghi");
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.Id, start, end));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end));
 
             var visualizer = new DocumentVisualizer(document);
             visualizer.Print();
@@ -284,10 +292,11 @@ public class DeleteWordBackwardHandlerTests
         public void Handle_CreatesExpectedChanges_WhenTextIsSelected_InBetween(int start, int end)
         {
             // Arrange
-            var parent = builder.TestInlineElementNode(t => { t.Text("abcdef"); });
+            TextNode textNode = null!;
+            var parent = builder.TestInlineElementNode(t => { textNode = t.Text("abcdef"); });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.Id, start, end));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end));
 
             var visualizer = new DocumentVisualizer(document);
             visualizer.Print();
@@ -309,20 +318,27 @@ public class DeleteWordBackwardHandlerTests
         }
 
         [Test]
-        [TestCase(6, 9)]
-        [TestCase(9, 6)]
-        public void Handle_CreatesExpectedChanges_WhenTextIsSelected_AtEnd(int start, int end)
+        [TestCase(SelectionDirection.Forward)]
+        [TestCase(SelectionDirection.Backward)]
+        public void Handle_CreatesExpectedChanges_WhenTextIsSelected_AtEnd(SelectionDirection direction)
         {
             // Arrange
+            TextNode startNode = null!;
+            TextNode endNode = null!;
             var parent = builder.TestInlineElementNode(t =>
             {
                 t.Text("abc");
-                t.Text("def");
-                t.Text("ghi");
+                startNode = t.Text("def");
+                endNode = t.Text("ghi");
             });
 
+            var startNodeId = direction is SelectionDirection.Forward ? startNode.Id : endNode.Id;
+            var endNodeId = direction is SelectionDirection.Forward ? endNode.Id : startNode.Id;
+
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(startNodeId, 3, endNodeId, 3, direction);
+
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(parent.Id, start, end));
+            var result = handler.Handle(keyPressInfo);
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -352,13 +368,14 @@ public class DeleteWordBackwardHandlerTests
                 t.Text("abc");
                 t.Text("def");
             });
+            TextNode oldTextNode = null!;
             var oldParent = builder.Paragraph(t =>
             {
-                t.Text("ghi");
+                oldTextNode = t.Text("ghi");
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(oldParent.Id, 0));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(oldTextNode.Id, 0));
         
             // Assert
             using (Assert.EnterMultipleScope())
@@ -393,19 +410,21 @@ public class DeleteWordBackwardHandlerTests
         public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverTwoParagraphs()
         {
             // Arrange
+            TextNode startNode = null!;
+            TextNode endNode = null!;
             var parent = builder.Paragraph(t => 
             {
-                t.Text("abc");
+                startNode = t.Text("abc");
             });
             var parent2 = builder.Paragraph(t => 
             {
-                t.Text("def");
+                endNode = t.Text("def");
             });
             
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(
-                anchorId: parent.Id, 
+                anchorId: startNode.Id, 
                 anchorOffset: 2, 
-                focusId: parent2.Id, 
+                focusId: endNode.Id, 
                 focusOffset: 1);
 
             // Act
@@ -442,19 +461,21 @@ public class DeleteWordBackwardHandlerTests
         public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverTwoParagraphs_Backwards()
         {
             // Arrange
+            TextNode startNode = null!;
+            TextNode endNode = null!;
             var parent = builder.Paragraph(t => 
             {
-                t.Text("abc");
+                endNode = t.Text("abc");
             });
             var parent2 = builder.Paragraph(t => 
             {
-                t.Text("def");
+                startNode = t.Text("def");
             });
             
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(
-                anchorId: parent2.Id, 
+                anchorId: startNode.Id, 
                 anchorOffset: 1,
-                focusId: parent.Id, 
+                focusId: endNode.Id, 
                 focusOffset: 2, 
                 direction: SelectionDirection.Backward);
 
@@ -492,9 +513,11 @@ public class DeleteWordBackwardHandlerTests
         public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverThreeParagraphs()
         {
             // Arrange
+            TextNode startNode = null!;
+            TextNode endNode = null!;
             var parent = builder.Paragraph(t => 
             {
-                t.Text("abc");
+                startNode = t.Text("abc");
             });
             var parent2 = builder.Paragraph(t => 
             {
@@ -502,13 +525,13 @@ public class DeleteWordBackwardHandlerTests
             });
             var parent3 = builder.Paragraph(t => 
             {
-                t.Text("ghi");
+                endNode = t.Text("ghi");
             });
             
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(
-                anchorId: parent.Id, 
+                anchorId: startNode.Id, 
                 anchorOffset: 2, 
-                focusId: parent3.Id, 
+                focusId: endNode.Id, 
                 focusOffset: 1);
 
             // Act
@@ -550,9 +573,11 @@ public class DeleteWordBackwardHandlerTests
         public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverThreeParagraphs_Backwards()
         {
             // Arrange
+            TextNode startNode = null!;
+            TextNode endNode = null!;
             var parent = builder.Paragraph(t => 
             {
-                t.Text("abc");
+                endNode = t.Text("abc");
             });
             var parent2 = builder.Paragraph(t => 
             {
@@ -560,13 +585,13 @@ public class DeleteWordBackwardHandlerTests
             });
             var parent3 = builder.Paragraph(t => 
             {
-                t.Text("ghi");
+                startNode = t.Text("ghi");
             });
             
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(
-                anchorId: parent3.Id, 
+                anchorId: startNode.Id, 
                 anchorOffset: 1,
-                focusId: parent.Id, 
+                focusId: endNode.Id, 
                 focusOffset: 2, 
                 direction: SelectionDirection.Backward);
 
