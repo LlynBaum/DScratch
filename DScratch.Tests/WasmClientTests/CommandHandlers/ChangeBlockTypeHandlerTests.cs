@@ -37,9 +37,9 @@ public class ChangeBlockTypeHandlerTests
         {
             Direction = SelectionDirection.None,
             AnchorId = target.Id.Value,
-            AnchorOffset = 1,
+            AnchorOffset = 2,
             FocusId = target.Id.Value,
-            FocusOffset = 1
+            FocusOffset = 2
         };
         
         // Act

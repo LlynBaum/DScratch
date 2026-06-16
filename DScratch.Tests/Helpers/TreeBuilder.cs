@@ -105,7 +105,9 @@ public class TreeBuilder : TreeBuilder.IBlockTextTreeBuilder
 
     private TreeBuilder GetChildTreeBuilder(DNode parentNode)
     {
-        return new TreeBuilder(parentNode, IdGenerator, Root);
+        var builder = new TreeBuilder(parentNode, IdGenerator, Root);
+        builder.NodeAdded = NodeAdded;
+        return builder;
     }
     
     public interface ITreeMaker

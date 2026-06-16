@@ -20,7 +20,11 @@ public static class ChangeBlockTypeHandler
         }
 
         var (originOffset, _) = selectionInfo.GetConvertedOffsets();
-        transaction.AddCursorPosition(selectedNodes.First().Id, originOffset);
+        var targetNode = selectedNodes.SelectMany(n => n.ActiveChildNodes).OfType<TextNode>().FirstOrDefault();
+        if (targetNode is not null)
+        {
+            transaction.AddCursorPosition(targetNode.Id, originOffset);
+        }
         return;
         
         Func<DNode, DNode> GetFactory()
@@ -43,23 +47,30 @@ public static class ChangeBlockTypeHandler
     {
         if (selectionInfo.Direction is SelectionDirection.None)
         {
-            var node = transaction.FindNode(selectionInfo.AnchorNodeId)
+            var node = transaction.FindNode(selectionInfo.AnchorNodeId)?.GetNearestBlock()
                    ?? throw new ArgumentException($"Node with given id not found: {selectionInfo.AnchorId}");
             return [node];
         }
         
         var (originId, rightOriginId) = selectionInfo.GetConvertedNodeIds();
         
-        var origin = transaction.FindNode(originId);
-        if (origin is null)
+        var origin = transaction.FindNode(originId)?.GetNearestBlock();
+        var rightOrigin = transaction.FindNode(rightOriginId)?.GetNearestBlock();
+        
+        if (origin is null || rightOrigin is null)
         {
-            throw new ArgumentException($"Node with given id not found: {selectionInfo.AnchorId}");
+            throw new ArgumentException($"Node with given id not found: {selectionInfo.AnchorId} or {selectionInfo.FocusId}");
+        }
+
+        if (origin.Parent?.Id != rightOrigin.Parent?.Id)
+        {
+            throw new ArgumentException($"Nodes {selectionInfo.AnchorId} and {selectionInfo.FocusId} do not share the same parent.");
         }
 
         List<DNode> result = [];
         var current = origin;
 
-        while (current is not null && current.Id != rightOriginId)
+        while (current is not null && current.Id != rightOrigin.Id)
         {
             result.Add(current);
             current = current.RightOrigin;
@@ -68,6 +79,6 @@ public static class ChangeBlockTypeHandler
         if (current is not null) result.Add(current);
         return current is not null 
             ? result 
-            : throw new NotImplementedException("Not even sure if this should be possible"); // When they don't share the same parent
+            : throw new ArgumentException($"Nodes {selectionInfo.AnchorId} and {selectionInfo.FocusId} do not share the same parent.");
     }
 }
