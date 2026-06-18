@@ -9,7 +9,7 @@ public static class DeleteSelection
     public static DNodeSearchResult Handle(KeyPressInfo keyPressInfo, ITransaction transaction)
     {
         var result = SearchSelectedNodes(keyPressInfo, transaction);
-        return keyPressInfo.Selection.AnchorId == keyPressInfo.Selection.FocusId 
+        return result.Origin.Node?.Parent == result.RightOrigin.Node?.Parent 
             ? DeleteContentInParent(result, transaction) 
             : DeleteAndMerge(keyPressInfo, transaction);
     }
@@ -47,13 +47,21 @@ public static class DeleteSelection
             rightOrigin = deleteStart;
             relativeRightOriginOffset -= nodeSearchResult.Origin.Node.Length;
         }
-        
+
+        DNode? deleteEnd = rightOrigin;
         if (rightOrigin != null)
         {
-            transaction.SplitText(rightOrigin, relativeRightOriginOffset);
+            if (relativeRightOriginOffset > 0)
+            {
+                transaction.SplitText(rightOrigin, relativeRightOriginOffset);
+            }
+            else
+            {
+                deleteEnd = rightOrigin.Origin;
+            }
         }
         
-        transaction.DeleteRange(deleteStart ?? nodeSearchResult.Origin.Node?.RightOrigin, rightOrigin);
+        transaction.DeleteRange(deleteStart ?? nodeSearchResult.Origin.Node?.RightOrigin, deleteEnd);
         return new DNodeSearchResult(
             Origin: new DNodeInfo(nodeSearchResult.Origin.Node, nodeSearchResult.Origin.AbsolutOffset), 
             RightOrigin: new DNodeInfo(rightOrigin?.RightOrigin, relativeRightOriginOffset));
@@ -61,58 +69,43 @@ public static class DeleteSelection
 
     private static DNodeSearchResult DeleteAndMerge(KeyPressInfo keyPressInfo, ITransaction transaction)
     {
-        var (firstParentOffset, secondParentOffset) = keyPressInfo.Selection.GetConvertedOffsets();
-        var (firstParentPath, secondParentPath) = keyPressInfo.Selection.GetConvertedNodeIds();
+        var (startOffset, endOffset) = keyPressInfo.Selection.GetConvertedOffsets();
+        var (startNodeId, endNodeId) = keyPressInfo.Selection.GetConvertedNodeIds();
         
-        var firstParent = transaction.FindNode(firstParentPath);
-        if (firstParent is null)
+        var deleteStart = transaction.FindNode(startNodeId);
+        if (deleteStart is null)
         {
-            throw new ArgumentException($"Parent with given path not found: {firstParentPath}");
+            throw new ArgumentException($"Node not found: {startNodeId}");
         }
-        var deleteStart = SearchOrigins(firstParent, firstParentOffset, transaction);
-        
-        var secondParent = transaction.FindNode(secondParentPath);
-        if (secondParent is null)
-        {
-            throw new ArgumentException($"Parent with given path not found: {secondParentPath}");
-        }
-        
-        var deleteEnd = SearchOrigins(secondParent, secondParentOffset, transaction);
 
-        transaction.DeleteRange(deleteStart.RightOrigin.Node, null);
-        transaction.DeleteRange(null, deleteEnd.Origin.Node);
+        if (deleteStart is not TextNode startText)
+        {
+            throw new ArgumentException($"Expected TextNode: {startNodeId}");
+        }
+
+        deleteStart = transaction.SplitText(startText, startOffset);
         
-        transaction.MoveRange(deleteEnd.Origin.Node?.RightOrigin, null, firstParent, firstParent.LastChild);
-        transaction.DeleteRange(firstParent.RightOrigin, secondParent);
+        var deleteEnd = transaction.FindNode(endNodeId);
+        if (deleteEnd is null)
+        {
+            throw new ArgumentException($"Node not found: {endNodeId}");
+        }
+        
+        if (deleteEnd is not TextNode endText)
+        {
+            throw new ArgumentException($"Expected TextNode: {startNodeId}");
+        }
+        
+        transaction.SplitText(endText, endOffset);
+
+        transaction.DeleteRange(deleteStart, null);
+        transaction.DeleteRange(null, deleteEnd);
+        
+        transaction.MoveRange(deleteEnd.RightOrigin, null, deleteStart?.Parent!, deleteStart?.Parent?.LastChild);
+        transaction.DeleteRange(deleteStart?.Parent?.RightOrigin, deleteEnd.Parent);
         
         return new DNodeSearchResult(
-            Origin: new DNodeInfo(deleteStart.Origin.Node, firstParentOffset), 
-            RightOrigin: new DNodeInfo(deleteEnd.RightOrigin.Node, secondParentOffset));
-    }
-
-    // TODO: does not take into account that InlineElements might exist
-    private static DNodeSearchResult SearchOrigins(DNode parent, int offset, ITransaction transaction)
-    {
-        var walker = new TreeWalker<TextNode>(parent);
-        
-        var currentOffset = 0;
-        var currentNode = walker.FirstChild();
-        while (currentNode is not null)
-        {
-            if (currentOffset + currentNode.Length >= offset)
-            {
-                break;
-            }
-
-            currentOffset += currentNode.Length;
-            currentNode = walker.NextSibling();
-        }
-        
-        var relativeOffset = offset - currentOffset;
-        var origin = currentNode is not null ? transaction.SplitText(currentNode, relativeOffset) : null;
-        
-        var originInfo = new DNodeInfo(currentNode, offset);
-        var rightOriginInfo = new DNodeInfo(origin ?? currentNode?.RightOrigin, offset);
-        return new DNodeSearchResult(originInfo, rightOriginInfo);
+            Origin: new DNodeInfo(deleteStart?.Origin, startOffset), 
+            RightOrigin: new DNodeInfo(deleteEnd.RightOrigin, endOffset));
     }
 }

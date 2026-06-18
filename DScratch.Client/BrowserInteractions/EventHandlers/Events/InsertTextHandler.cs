@@ -15,7 +15,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : IEditorEventH
         {
             return TransactionResult.Empty;
         }
-        
+
         var transaction = dScratchService.StartTransaction();
 
         var targetNode = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId);

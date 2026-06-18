@@ -72,6 +72,7 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
 
     public TextNode? SplitText(TextNode node, int offset)
     {
+        // TODO: emit StepDiffs to mirror that in the DOM. Also check Cursor position and recalculate it
         var splitNode = node.Split(offset, nodeIdGenerator.GetNextId());
         if (splitNode is not null)
         {
@@ -88,6 +89,7 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
         
         foreach (var node in nodes.OfType<TextNode>())
         {
+            // TODO: emit StepDiffs to merge nodes in the DOM the same way. Also keep on mind to update the cursor metadata as well, so that it will point to the same location even after merging
             if (node.Origin is TextNode originTextNode && originTextNode.IsDeleted == node.IsDeleted && originTextNode.LastId.IsContinuesTo(node.Id))
             {
                 originTextNode.AddText(node.TextContent);
