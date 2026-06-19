@@ -34,18 +34,18 @@ public static class DeleteSelection
     private static DNodeSearchResult DeleteContentInParent(NodeSearchResult<TextNode> nodeSearchResult, ITransaction transaction)
     {
         var deleteStart = nodeSearchResult.Origin.HasFoundNode 
-            ? transaction.SplitText(nodeSearchResult.Origin.Node, nodeSearchResult.Origin.AbsolutOffset) 
+            ? transaction.SplitText(nodeSearchResult.Origin.Node, nodeSearchResult.Origin.Offset) 
             : null;
 
         var rightOrigin = nodeSearchResult.RightOrigin.Node;
-        var relativeRightOriginOffset = nodeSearchResult.RightOrigin.AbsolutOffset;
+        var relativeRightOriginOffset = nodeSearchResult.RightOrigin.Offset;
         
         if (nodeSearchResult.Origin.HasFoundNode 
             && nodeSearchResult.RightOrigin.HasFoundNode
             && nodeSearchResult.Origin.Node.Id == nodeSearchResult.RightOrigin.Node.Id)
         {
             rightOrigin = deleteStart;
-            relativeRightOriginOffset -= nodeSearchResult.Origin.AbsolutOffset;
+            relativeRightOriginOffset -= nodeSearchResult.Origin.Offset;
         }
 
         DNode? deleteEnd = rightOrigin;
@@ -63,14 +63,17 @@ public static class DeleteSelection
         
         transaction.DeleteRange(deleteStart ?? nodeSearchResult.Origin.Node?.RightOrigin, deleteEnd);
         return new DNodeSearchResult(
-            Origin: new DNodeInfo(nodeSearchResult.Origin.Node, nodeSearchResult.Origin.AbsolutOffset), 
+            Origin: new DNodeInfo(nodeSearchResult.Origin.Node, nodeSearchResult.Origin.Offset), 
             RightOrigin: new DNodeInfo(rightOrigin?.RightOrigin, relativeRightOriginOffset));
     }
 
     private static DNodeSearchResult DeleteAndMerge(NodeSearchResult<TextNode> nodeSearchResult, ITransaction transaction)
     {
-        var deleteStart = nodeSearchResult.Origin.HasFoundNode ? transaction.SplitText(nodeSearchResult.Origin.Node, nodeSearchResult.Origin.AbsolutOffset) : null;
-        if(nodeSearchResult.RightOrigin.HasFoundNode) transaction.SplitText(nodeSearchResult.RightOrigin.Node, nodeSearchResult.RightOrigin.AbsolutOffset);
+        var deleteStart = nodeSearchResult.Origin.HasFoundNode 
+            ? transaction.SplitText(nodeSearchResult.Origin.Node, nodeSearchResult.Origin.Offset) 
+            : null;
+        
+        if(nodeSearchResult.RightOrigin.HasFoundNode) transaction.SplitText(nodeSearchResult.RightOrigin.Node, nodeSearchResult.RightOrigin.Offset);
 
         transaction.DeleteRange(deleteStart, null);
         transaction.DeleteRange(null, nodeSearchResult.RightOrigin.Node);
@@ -79,7 +82,7 @@ public static class DeleteSelection
         transaction.DeleteRange(deleteStart?.Parent?.RightOrigin, nodeSearchResult.RightOrigin.Node?.Parent);
         
         return new DNodeSearchResult(
-            Origin: new DNodeInfo(deleteStart?.Origin, 0), 
-            RightOrigin: new DNodeInfo(nodeSearchResult.RightOrigin.Node?.RightOrigin, 0));
+            Origin: new DNodeInfo(deleteStart?.Origin, nodeSearchResult.Origin.AbsoluteOffsetIfPresent ?? 0), 
+            RightOrigin: new DNodeInfo(nodeSearchResult.RightOrigin.Node?.RightOrigin, nodeSearchResult.RightOrigin.AbsoluteOffsetIfPresent ?? 0));
     }
 }

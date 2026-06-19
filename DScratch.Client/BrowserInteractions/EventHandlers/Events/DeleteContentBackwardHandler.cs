@@ -24,16 +24,19 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
         {
             var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, targetTextNode);
 
-            if (!deletedNodeInfo.HasFound && targetNode is IBlockTextNode && targetNode.OriginElement is IBlockTextNode blockTextNode)
+            if (!deletedNodeInfo.HasFoundNode && targetNode.GetNearestBlock() is { Origin: not null } parent)
             {
-                transaction.AddCursorPosition(targetNode.OriginElement.Id, blockTextNode.GetTextLength());
+                if (parent.LastChild is TextNode textNode) // TODO: take inline element into account
+                {
+                    transaction.AddCursorPosition(textNode.Id, 0); 
+                }
                 
-                transaction.MoveRange(targetNode.FirstChild, null, targetNode.OriginElement, targetNode.OriginElement.LastChild);
-                transaction.Delete(targetNode);
+                transaction.MoveRange(parent.FirstChild, null, parent.Origin, parent.Origin.LastChild);
+                transaction.Delete(parent);
             }
-            else if (deletedNodeInfo.HasFound)
+            else if (deletedNodeInfo.HasFoundNode)
             {
-                transaction.AddCursorPosition(targetNode.Id, deletedNodeInfo.Offset);
+                transaction.AddCursorPosition(deletedNodeInfo.Node.Origin?.Id ?? deletedNodeInfo.Node.Id, deletedNodeInfo.Offset);
             }
         }
         else
@@ -41,24 +44,24 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction);
             
             var cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent;
-            var cursorTarget = nodeSearchResult.Origin.Node?.ParentElement ?? targetNode;
+            var cursorTarget = nodeSearchResult.Origin.Node ?? targetNode;
             if (cursorPosition is not null) transaction.AddCursorPosition(cursorTarget.Id, cursorPosition.Value);
         }
         
         return dScratchService.Apply(transaction);
     }
 
-    private static NodeOffset SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
+    private static NodeInfo<TextNode> SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
     {
         if (keyPressInfo.Selection.AnchorOffset is 0)
         {
-            return NodeOffset.NotFound();
+            return new NodeInfo<TextNode>(null, 0);
         }
         
         transaction.SplitText(targetTextNode, keyPressInfo.Selection.AnchorOffset);
         var nodeToDelete = transaction.SplitText(targetTextNode, 1) ?? targetTextNode;
         transaction.Delete(nodeToDelete);
         
-        return NodeOffset.From(nodeToDelete, keyPressInfo.Selection.AnchorOffset - 1);
+        return new NodeInfo<TextNode>(nodeToDelete, keyPressInfo.Selection.AnchorOffset - 1);
     }
 }
