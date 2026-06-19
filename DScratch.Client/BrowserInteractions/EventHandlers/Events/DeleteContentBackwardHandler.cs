@@ -26,11 +26,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
 
             if (!deletedNodeInfo.HasFoundNode && targetNode.GetNearestBlock() is { Origin: not null } parent)
             {
-                if (parent.LastChild is TextNode textNode) // TODO: take inline element into account
-                {
-                    transaction.AddCursorPosition(textNode.Id, 0); 
-                }
-                
+                transaction.AddCursorPosition(targetNode.Id, 0); 
                 transaction.MoveRange(parent.FirstChild, null, parent.Origin, parent.Origin.LastChild);
                 transaction.Delete(parent);
             }

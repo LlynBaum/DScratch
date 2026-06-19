@@ -25,7 +25,7 @@ public class DeleteContentForwardHandlerTests
         idGenerator = new TestNodeIdGenerator();
         builder = new TreeBuilder(idGenerator);
         document = builder.CreateDocument();
-        service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator);
+        service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator) { DisableCleanUp = true };
         handler = new DeleteContentForwardHandler(service);
     }
 
@@ -35,15 +35,16 @@ public class DeleteContentForwardHandlerTests
         public void Handle_DoesNothing_WhenNodesDoesNotExist()
         {
             // Arrange
-            var parent = builder.Text("a");
+            TextNode node = null!;
+            builder.TestBlockElementNode(t => node = t.Text("a"));
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 1));
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1));
 
             // Assert
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(parent.IsDeleted, Is.False);
+                Assert.That(node.IsDeleted, Is.False);
                 Assert.That(result.IsEmpty, Is.True);
                 Assert.That(result.CursorPosition, Is.Null);
             }
@@ -94,7 +95,7 @@ public class DeleteContentForwardHandlerTests
             }
 
             AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 1);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.RightOrigin.Id, 1);
         }
         
         [Test]
@@ -125,7 +126,7 @@ public class DeleteContentForwardHandlerTests
             }
 
             AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 1);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.RightOrigin!.Id, 1);
         }
 
         [Test]
@@ -203,13 +204,10 @@ public class DeleteContentForwardHandlerTests
             var startNodeId = direction is SelectionDirection.Forward ? startNode.Id : endNode.Id;
             var endNodeId = direction is SelectionDirection.Forward ? endNode.Id : startNode.Id;
 
-            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(endNodeId, 2, startNodeId, 2, direction);
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(startNodeId, 2, endNodeId, 2, direction);
 
             // Act
             var result = handler.Handle(keyPressInfo);
-
-            var visualizer = new DocumentVisualizer(document);
-            visualizer.Print();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -228,7 +226,7 @@ public class DeleteContentForwardHandlerTests
 
             AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteTextDiff>());
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 2);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, startNode.Id, 2);
         }
 
         [Test]
@@ -248,9 +246,6 @@ public class DeleteContentForwardHandlerTests
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end));
 
-            var visualizer = new DocumentVisualizer(document);
-            visualizer.Print();
-
             // Assert
             using (Assert.EnterMultipleScope())
             {
@@ -264,7 +259,7 @@ public class DeleteContentForwardHandlerTests
             }
 
             AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 0);
         }
 
         [Test]
@@ -279,9 +274,6 @@ public class DeleteContentForwardHandlerTests
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end));
 
-            var visualizer = new DocumentVisualizer(document);
-            visualizer.Print();
-
             // Assert
             using (Assert.EnterMultipleScope())
             {
@@ -295,7 +287,7 @@ public class DeleteContentForwardHandlerTests
             }
 
             AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 2);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 2);
         }
 
         [Test]
@@ -337,7 +329,7 @@ public class DeleteContentForwardHandlerTests
             }
 
             AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 6);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, startNode.Id, 3);
         }
     }
     
@@ -347,25 +339,24 @@ public class DeleteContentForwardHandlerTests
         public void Handle_MergesParagraph_WhenAtEndOfParagraph()
         {
             // Arrange
-            TextNode oldTextNode = null!;
-            var oldParent = builder.Paragraph(t => 
+            TextNode targetText = null!;
+            var parent = builder.Paragraph(t => 
             {
-                oldTextNode = t.Text("abc");
+                targetText = t.Text("abc");
             });
-            var parent = builder.Paragraph(t =>
+            var oldParent = builder.Paragraph(t =>
             {
                 t.Text("def");
                 t.Text("ghi");
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(oldTextNode.Id, 3));
-        
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(targetText.Id, 3));
+        builder.Print();
             // Assert
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(oldParent.IsDeleted, Is.True);
-            
                 Assert.That(oldParent.ChildNodes, Has.Count.Zero);
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
             }
@@ -384,10 +375,14 @@ public class DeleteContentForwardHandlerTests
         
             AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
+                Is.TypeOf<StepDiff.InsertElementDiff>(),
+                Is.TypeOf<StepDiff.InsertTextDiff>(),
+                Is.TypeOf<StepDiff.DeleteTextDiff>(),
+                Is.TypeOf<StepDiff.InsertElementDiff>(),
                 Is.TypeOf<StepDiff.InsertTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteElementDiff>(),
             ]);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, targetText.Id, 3);
         }
         
         [Test]
@@ -435,10 +430,11 @@ public class DeleteContentForwardHandlerTests
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
+                Is.TypeOf<StepDiff.InsertElementDiff>(),
                 Is.TypeOf<StepDiff.InsertTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteElementDiff>()
             ]);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 2);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, startNode.Id, 2);
         }
         
         [Test]
@@ -487,10 +483,11 @@ public class DeleteContentForwardHandlerTests
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
+                Is.TypeOf<StepDiff.InsertElementDiff>(),
                 Is.TypeOf<StepDiff.InsertTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteElementDiff>()
             ]);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 2);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, endNode.Id, 2);
         }
         
         [Test]
@@ -544,11 +541,12 @@ public class DeleteContentForwardHandlerTests
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
+                Is.TypeOf<StepDiff.InsertElementDiff>(),
                 Is.TypeOf<StepDiff.InsertTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteElementDiff>(),
                 Is.TypeOf<StepDiff.DeleteElementDiff>()
             ]);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 2);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, startNode.Id, 2);
         }
         
         [Test]
@@ -603,11 +601,12 @@ public class DeleteContentForwardHandlerTests
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
+                Is.TypeOf<StepDiff.InsertElementDiff>(),
                 Is.TypeOf<StepDiff.InsertTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteElementDiff>(),
                 Is.TypeOf<StepDiff.DeleteElementDiff>()
             ]);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 2);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, endNode.Id, 2);
         }
     }
 }
