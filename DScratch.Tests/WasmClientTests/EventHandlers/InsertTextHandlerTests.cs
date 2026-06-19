@@ -223,11 +223,11 @@ public class InsertTextHandlerTests
             var startNodeId = direction is SelectionDirection.Forward ? startNode.Id : endNode.Id;
             var endNodeId = direction is SelectionDirection.Forward ? endNode.Id : startNode.Id;
 
-            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(endNodeId, 2, startNodeId, 2, direction);
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(startNodeId, 2, endNodeId, 2, direction);
 
             // Act
             var result = handler.Handle(keyPressInfo);
-
+            
             // Assert
             using (Assert.EnterMultipleScope())
             {
@@ -255,8 +255,9 @@ public class InsertTextHandlerTests
             AssertHelper.ThatStepsEqualTo(result.Steps,
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
+                Is.TypeOf<StepDiff.InsertElementDiff>(),
                 Is.TypeOf<StepDiff.InsertTextDiff>());
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 2);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
 
         [Test]
@@ -276,9 +277,6 @@ public class InsertTextHandlerTests
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end));
 
-            var visualizer = new DocumentVisualizer(document);
-            visualizer.Print();
-
             // Assert
             using (Assert.EnterMultipleScope())
             {
@@ -296,6 +294,7 @@ public class InsertTextHandlerTests
 
             AssertHelper.ThatStepsEqualTo(result.Steps,
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
+                Is.TypeOf<StepDiff.InsertElementDiff>(),
                 Is.TypeOf<StepDiff.InsertTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
@@ -311,9 +310,6 @@ public class InsertTextHandlerTests
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end));
-
-            var visualizer = new DocumentVisualizer(document);
-            visualizer.Print();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -332,14 +328,15 @@ public class InsertTextHandlerTests
 
             AssertHelper.ThatStepsEqualTo(result.Steps,
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
+                Is.TypeOf<StepDiff.InsertElementDiff>(),
                 Is.TypeOf<StepDiff.InsertTextDiff>());
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 2);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
 
         [Test]
-        [TestCase(6, 9, SelectionDirection.Forward)]
-        [TestCase(9, 6, SelectionDirection.Backward)]
-        public void Handle_CreatesExpectedChanges_WhenTextIsSelected_AtEnd(int start, int end, SelectionDirection direction)
+        [TestCase(SelectionDirection.Forward)]
+        [TestCase(SelectionDirection.Backward)]
+        public void Handle_CreatesExpectedChanges_WhenTextIsSelected_AtEnd(SelectionDirection direction)
         {
             // Arrange
             TextNode startNode = null!;
@@ -354,7 +351,7 @@ public class InsertTextHandlerTests
             var startNodeId = direction is SelectionDirection.Forward ? startNode.Id : endNode.Id;
             var endNodeId = direction is SelectionDirection.Forward ? endNode.Id : startNode.Id;
 
-            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(startNodeId, start, endNodeId, end, direction);
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(startNodeId, 3, endNodeId, 3, direction);
             
             // Act
             var result = handler.Handle(keyPressInfo);
@@ -376,6 +373,7 @@ public class InsertTextHandlerTests
 
             AssertHelper.ThatStepsEqualTo(result.Steps,
                 Is.TypeOf<StepDiff.DeleteTextDiff>(),
+                Is.TypeOf<StepDiff.InsertElementDiff>(),
                 Is.TypeOf<StepDiff.InsertTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[2].Id, 3);
         }
@@ -555,10 +553,10 @@ public class InsertTextHandlerTests
             var parent3 = builder.Paragraph(t => { startNode = t.Text("ghi"); });
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(
-                anchorId: endNode.Id, 
+                anchorId: startNode.Id, 
                 anchorOffset: 1, 
-                focusId: startNode.Id,
-                focusOffset: 2, 
+                focusId: endNode.Id,
+                focusOffset: 2,
                 direction: SelectionDirection.Backward);
             
             // Act
