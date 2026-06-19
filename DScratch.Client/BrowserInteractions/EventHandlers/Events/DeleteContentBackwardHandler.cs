@@ -13,27 +13,27 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
     public TransactionResult Handle(KeyPressInfo keyPressInfo)
     {
         var transaction = dScratchService.StartTransaction();
-        
-        var parent = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId)?.GetNearestBlock(); // TODO: make that easier now that we have directly the text node
-        if (parent is null)
+
+        var targetNode = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId);
+        if (targetNode is not TextNode targetTextNode)
         {
-            throw new ArgumentException($"Parent with given path not found: {keyPressInfo.Selection.AnchorId}");
+            throw new ArgumentException($"Expected TextNode at {keyPressInfo.Selection.AnchorId}");
         }
         
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
-            var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, parent);
+            var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, targetTextNode);
 
-            if (!deletedNodeInfo.HasFound && parent is IBlockTextNode && parent.OriginElement is IBlockTextNode blockTextNode)
+            if (!deletedNodeInfo.HasFound && targetNode is IBlockTextNode && targetNode.OriginElement is IBlockTextNode blockTextNode)
             {
-                transaction.AddCursorPosition(parent.OriginElement.Id, blockTextNode.GetTextLength());
+                transaction.AddCursorPosition(targetNode.OriginElement.Id, blockTextNode.GetTextLength());
                 
-                transaction.MoveRange(parent.FirstChild, null, parent.OriginElement, parent.OriginElement.LastChild);
-                transaction.Delete(parent);
+                transaction.MoveRange(targetNode.FirstChild, null, targetNode.OriginElement, targetNode.OriginElement.LastChild);
+                transaction.Delete(targetNode);
             }
             else if (deletedNodeInfo.HasFound)
             {
-                transaction.AddCursorPosition(parent.Id, deletedNodeInfo.Offset);
+                transaction.AddCursorPosition(targetNode.Id, deletedNodeInfo.Offset);
             }
         }
         else
@@ -41,49 +41,24 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : IE
             var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction);
             
             var cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent;
-            var cursorTarget = nodeSearchResult.Origin.Node?.ParentElement ?? parent;
+            var cursorTarget = nodeSearchResult.Origin.Node?.ParentElement ?? targetNode;
             if (cursorPosition is not null) transaction.AddCursorPosition(cursorTarget.Id, cursorPosition.Value);
         }
         
         return dScratchService.Apply(transaction);
     }
 
-    private static NodeOffset SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
+    private static NodeOffset SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
     {
         if (keyPressInfo.Selection.AnchorOffset is 0)
         {
             return NodeOffset.NotFound();
         }
         
-        var targetNode = SearchNode(keyPressInfo, parent, out var relativeOffset);
-        var noteToDelete = targetNode is not null ? transaction.SplitText(targetNode, relativeOffset) : null;
-        if (noteToDelete is not null)
-        {
-            transaction.SplitText(noteToDelete, 1);
-            transaction.Delete(noteToDelete);
-        }
+        transaction.SplitText(targetTextNode, keyPressInfo.Selection.AnchorOffset);
+        var nodeToDelete = transaction.SplitText(targetTextNode, 1) ?? targetTextNode;
+        transaction.Delete(nodeToDelete);
         
-        return NodeOffset.From(targetNode, keyPressInfo.Selection.AnchorOffset - 1);
-    }
-
-    private static TextNode? SearchNode(KeyPressInfo keyPressInfo, DNode parent, out int relativeOffset)
-    {
-        var walker = new TreeWalker<TextNode>(parent);
-        
-        var currentOffset = 0;
-        var current = walker.NextNode();
-        while (current is not null)
-        {
-            if (currentOffset + current.Length >= keyPressInfo.Selection.AnchorOffset)
-            {
-                break;
-            }
-
-            currentOffset += current.Length;
-            current = walker.NextNode();
-        }
-
-        relativeOffset = keyPressInfo.Selection.AnchorOffset - currentOffset - 1;
-        return current;
+        return NodeOffset.From(nodeToDelete, keyPressInfo.Selection.AnchorOffset - 1);
     }
 }

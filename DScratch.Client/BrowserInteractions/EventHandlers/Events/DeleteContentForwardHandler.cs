@@ -13,27 +13,27 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
     public TransactionResult Handle(KeyPressInfo keyPressInfo)
     {
         var transaction = dScratchService.StartTransaction();
-        
-        var parent = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId)?.GetNearestBlock(); // TODO: make that easier now that we have directly the text node
-        if (parent is null)
+
+        var targetNode = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId);
+        if (targetNode is not TextNode targetTextNode)
         {
             throw new ArgumentException($"Parent with given path not found: {keyPressInfo.Selection.AnchorId}");
         }
         
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
-            var deletedNodeInfo = SimpleDeleteForward(keyPressInfo, transaction, parent);
+            var deletedNodeInfo = SimpleDeleteForward(keyPressInfo, transaction, targetTextNode);
             
-            if (!deletedNodeInfo.HasFound && parent is IBlockTextNode blockTextNode && parent.RightOriginElement is IBlockTextNode)
+            if (!deletedNodeInfo.HasFound && targetNode is IBlockTextNode blockTextNode && targetNode.RightOriginElement is IBlockTextNode)
             {
-                transaction.AddCursorPosition(parent.RightOriginElement.Id, blockTextNode.GetTextLength());
+                transaction.AddCursorPosition(targetNode.RightOriginElement.Id, blockTextNode.GetTextLength());
                 
-                transaction.MoveRange(parent.FirstChild, null, parent.RightOriginElement, null);
-                transaction.Delete(parent);
+                transaction.MoveRange(targetNode.FirstChild, null, targetNode.RightOriginElement, null);
+                transaction.Delete(targetNode);
             }
             else if (deletedNodeInfo.HasFound)
             {
-                transaction.AddCursorPosition(parent.Id, deletedNodeInfo.Offset);
+                transaction.AddCursorPosition(targetNode.Id, deletedNodeInfo.Offset);
             }
         }
         else
@@ -41,17 +41,16 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
             var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction);
             
             var cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent;
-            var cursorTarget = nodeSearchResult.Origin.Node?.ParentElement ?? parent;
+            var cursorTarget = nodeSearchResult.Origin.Node?.ParentElement ?? targetNode;
             if (cursorPosition is not null) transaction.AddCursorPosition(cursorTarget.Id, cursorPosition.Value);
         }
         
         return dScratchService.Apply(transaction);
     }
     
-    private static NodeOffset SimpleDeleteForward(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
+    private static NodeOffset SimpleDeleteForward(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
     {
-        var targetNode = SearchNode(keyPressInfo, parent, out var relativeOffset);
-        var noteToDelete = targetNode is not null ? transaction.SplitText(targetNode, relativeOffset) : null;
+        var noteToDelete = transaction.SplitText(targetTextNode, keyPressInfo.Selection.AnchorOffset);
         if (noteToDelete is not null)
         {
             transaction.SplitText(noteToDelete, 1);
@@ -59,26 +58,5 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
         }
 
         return NodeOffset.From(noteToDelete, keyPressInfo.Selection.AnchorOffset);
-    }
-
-    private static TextNode? SearchNode(KeyPressInfo keyPressInfo, DNode parent, out int relativeOffset)
-    {
-        var walker = new TreeWalker<TextNode>(parent);
-        
-        var currentOffset = 0;
-        var current = walker.NextNode();
-        while (current is not null)
-        {
-            if (currentOffset + current.Length > keyPressInfo.Selection.AnchorOffset)
-            {
-                break;
-            }
-
-            currentOffset += current.Length;
-            current = walker.NextNode();
-        }
-
-        relativeOffset = keyPressInfo.Selection.AnchorOffset - currentOffset;
-        return current;
     }
 }
