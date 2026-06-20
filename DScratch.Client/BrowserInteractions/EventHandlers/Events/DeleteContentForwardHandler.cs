@@ -17,7 +17,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : IEd
         var targetNode = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId);
         if (targetNode is not TextNode targetTextNode)
         {
-            throw new ArgumentException($"Parent with given path not found: {keyPressInfo.Selection.AnchorId}");
+            throw new ArgumentException($"Expected TextNode at {keyPressInfo.Selection.AnchorId}");
         }
         
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)

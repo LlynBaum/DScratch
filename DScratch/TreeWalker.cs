@@ -85,6 +85,15 @@ public class TreeWalker<TFilter>(DNode parent, bool includeDeleted = false)
         Current = null;
         return default;
     }
+
+    public static TreeWalker<T> StartFrom<T>(T node, DNode parent) where T : DNode, IDNode
+    {
+        return new TreeWalker<T>(parent)
+        {
+            Node = node,
+            Current = node
+        };
+    }
 }
 
 public class TreeWalker<TFilter1, TFilter2>(DNode parent, bool includeDeleted = false) 

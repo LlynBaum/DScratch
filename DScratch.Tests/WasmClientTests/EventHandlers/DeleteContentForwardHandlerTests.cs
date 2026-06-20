@@ -352,7 +352,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(targetText.Id, 3));
-        builder.Print();
+            
             // Assert
             using (Assert.EnterMultipleScope())
             {

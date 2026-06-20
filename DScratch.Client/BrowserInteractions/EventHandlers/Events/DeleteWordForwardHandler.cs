@@ -13,57 +13,55 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : IEdito
     public TransactionResult Handle(KeyPressInfo keyPressInfo)
     {
         var transaction = dScratchService.StartTransaction();
-        
-        var parent = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId)?.GetNearestBlock(); // TODO: make that easier now that we have directly the text node
-        if (parent is null)
+
+        var targetNode = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId);
+        if (targetNode is not TextNode targetTextNode)
         {
-            throw new ArgumentException($"Parent with given path not found: {keyPressInfo.Selection.AnchorId}");
+            throw new ArgumentException($"Expected TextNode at {keyPressInfo.Selection.AnchorId}");
         }
 
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
-            var nodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, parent);
+            var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, targetTextNode);
             
-            if (!nodeInfo.HasFound && parent is IBlockTextNode blockTextNode && parent.RightOriginElement is IBlockTextNode)
+            if (!deletedNodeInfo.HasFoundNode && targetNode.GetNearestBlock() is { RightOrigin: not null } parent)
             {
-                transaction.AddCursorPosition(parent.RightOriginElement.Id, blockTextNode.GetTextLength());
-                
-                transaction.MoveRange(parent.FirstChild, null, parent.RightOriginElement, null);
-                transaction.Delete(parent);
+                transaction.AddCursorPosition(targetTextNode.Id, targetTextNode.Length); 
+                transaction.MoveRange(parent.RightOrigin.FirstChild, null, parent, parent.LastChild);
+                transaction.Delete(parent.RightOrigin);
             }
-            else if (nodeInfo.HasFound)
+            else if (deletedNodeInfo.HasFoundNode)
             {
-                transaction.AddCursorPosition(parent.Id, nodeInfo.OffsetOrDefault);
+                transaction.AddCursorPosition(deletedNodeInfo.Node.Id, deletedNodeInfo.Offset);
             }
         }
         else
         {   
             var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction);
+            
             var cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent;
-            var cursorTarget = nodeSearchResult.Origin.Node?.ParentElement ?? parent;
+            var cursorTarget = nodeSearchResult.Origin.Node ?? targetNode;
             if (cursorPosition is not null) transaction.AddCursorPosition(cursorTarget.Id, cursorPosition.Value);
         }
 
         return dScratchService.Apply(transaction);
     }
     
-    private static NodeOffset SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
+    private static DNodeInfo SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
     {
-        var walker = new TreeWalker<TextNode>(parent);
-        var relativeOffset = SearchNode(keyPressInfo, walker);
-        
+        var walker = TreeWalker<TextNode>.StartFrom(targetTextNode, targetTextNode.GetNearestBlock());
         if (walker.Node is null)
         {
-            return NodeOffset.NotFound();
+            return DNodeInfo.NotFound();
         }
         
-        var rightNode = transaction.SplitText(walker.Node, relativeOffset);
-        if (rightNode is null || relativeOffset > 0)
+        var rightNode = transaction.SplitText(walker.Node, keyPressInfo.Selection.AnchorOffset);
+        if (rightNode is null || keyPressInfo.Selection.AnchorOffset > 0)
         {
             walker.NextNode();
         }
         
-        var result = NodeOffset.From(walker.Node, keyPressInfo.Selection.AnchorOffset);
+        var result = DNodeInfo.From(walker.Node, 0);
         
         var remainingCharacterOffset = DeleteWord(transaction, walker);
         if (walker.Node is not null)
@@ -101,18 +99,5 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : IEdito
         }
 
         return characterOffset;
-    }
-
-    private static int SearchNode(KeyPressInfo keyPressInfo, TreeWalker<TextNode> walker)
-    {
-        var offset = 0;
-        var current = walker.NextNode();
-        while (current is not null && offset + current.Length < keyPressInfo.Selection.AnchorOffset)
-        {
-            offset += current.Length;
-            current = walker.NextNode();
-        }
-
-        return keyPressInfo.Selection.AnchorOffset - offset;
     }
 }
