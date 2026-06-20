@@ -9,9 +9,28 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : EventWit
 {
     public const string EventName = "insertParagraph";
 
-    protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode? anchorNode)
+    protected override DNodeInfo HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode anchorTextNode)
     {
-        throw new NotImplementedException();
+        if (keyPressInfo.Selection.AnchorOffset <= 0)
+        {
+            var parent = anchorTextNode.GetNearestBlock();
+            return DNodeInfo.From(parent.FirstChild, 0);
+        }
+
+        transaction.SplitText(anchorTextNode, keyPressInfo.Selection.AnchorOffset);
+        return DNodeInfo.From(anchorTextNode, 0);
+    }
+    
+    protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
+    {
+        if (anchorNode.Parent is null)
+        {
+            throw new ArgumentException("Expected node to have a parent.");
+        }
+        
+        var paragraph = transaction.NodeFactory.Paragraph(anchorNode, anchorNode.RightOrigin);
+        transaction.Insert(paragraph, anchorNode.Parent);
+        transaction.AddCursorPosition(paragraph.Id, 0);
     }
 
     protected override void OnAfterSelection(
@@ -39,18 +58,6 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : EventWit
         
         var cursorTarget = keyPressInfo.Selection.AnchorOffset > 0 ? paragraph : rightOrigin!;
         transaction.AddCursorPosition(cursorTarget.Id, 0);
-    }
-
-    protected override DNodeInfo HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode anchorTextNode)
-    {
-        if (keyPressInfo.Selection.AnchorOffset <= 0)
-        {
-            var parent = anchorTextNode.GetNearestBlock();
-            return DNodeInfo.From(parent.FirstChild, 0);
-        }
-
-        transaction.SplitText(anchorTextNode, keyPressInfo.Selection.AnchorOffset);
-        return DNodeInfo.From(anchorTextNode, 0);
     }
 
     private static (DNode? origin, DNode? rightOrigin) GetOrigins(KeyPressInfo keyPressInfo, DNode sibling)

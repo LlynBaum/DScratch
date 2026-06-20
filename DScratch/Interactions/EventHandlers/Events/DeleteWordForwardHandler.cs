@@ -27,9 +27,12 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventW
         return deletedNodeInfo;
     }
 
-    protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode? anchorNode)
+    protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
     {
-        throw new NotImplementedException();
+        transaction.Delete(anchorNode);
+        var index = anchorNode.Parent?.IndexOf(anchorNode);
+        var focusNode = index.HasValue ? anchorNode.Parent?.ChildAt(index.Value + 1) : null;
+        if (focusNode is not null) transaction.AddCursorPosition(focusNode.Id, 0);
     }
 
     private static DNodeInfo SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)

@@ -1,4 +1,4 @@
-import {findTextNodeAtOffset, getAbsolutOffset, getElementFromNode, getNodeId} from "./nodeHelper";
+import {findNode, findTextNodeAtOffset, getAbsolutOffset, getElementFromNode, getNodeId} from "./nodeHelper";
 
 export type SelectionDirection = "none" | "forward" | "backward"
 
@@ -112,7 +112,7 @@ export function setSelection(parentId: string, offset: number) {
 }
 
 function setSelectionFrom(parentId: string, offset: number) {
-    const element = document.querySelector<HTMLElement>(`[data-dnode-id="${parentId}"]`);
+    const element = findNode(parentId);
     if (!element) return;
     
     const { node, relativeOffset } = findTextNodeAtOffset(element, offset);

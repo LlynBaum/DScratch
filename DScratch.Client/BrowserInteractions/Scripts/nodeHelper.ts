@@ -48,6 +48,10 @@ export function findTextNodeAtOffset(parent: Element, offset: number){
     return { node: null, relativeOffset: 0 };
 }
 
+export function findNode(nodeId: string) {
+    return document.querySelector<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
+}
+
 export function getNodeId(element: Element) {
     return element.getAttribute(NODE_ID_ATTRIBUTE);
 }

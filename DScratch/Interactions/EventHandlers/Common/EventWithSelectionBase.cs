@@ -10,7 +10,12 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
     {
         var transaction = dScratchService.StartTransaction();
         var targetNode = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId);
-
+        if (targetNode is null)
+        {
+            throw new ArgumentException($"Node not found: {keyPressInfo.Selection.AnchorId}");
+        }
+        
+        
         DNodeInfo nodeInfo;
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
@@ -30,7 +35,7 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
             
             var cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent ?? 0;
             var cursorTarget = nodeSearchResult.Origin.Node ?? targetNode;
-            if (cursorTarget is not null) transaction.AddCursorPosition(cursorTarget.Id, cursorPosition);
+            transaction.AddCursorPosition(cursorTarget.Id, cursorPosition);
 
             nodeInfo = nodeSearchResult.Origin;
         }
@@ -48,7 +53,7 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
     protected abstract void HandleEmptyBlock(
         KeyPressInfo keyPressInfo,
         ITransaction transaction,
-        DNode? anchorNode);
+        DNode anchorNode);
 
     protected virtual void OnAfterSelection(
         KeyPressInfo keyPressInfo,
