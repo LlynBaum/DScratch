@@ -27,6 +27,11 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : Ev
         return deletedNodeInfo;
     }
 
+    protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode? anchorNode)
+    {
+        throw new NotImplementedException();
+    }
+
     private static DNodeInfo SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
     {
         if (keyPressInfo.Selection.AnchorOffset is 0)

@@ -26,7 +26,12 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : Eve
 
         return deletedNodeInfo;
     }
-    
+
+    protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode? anchorNode)
+    {
+        throw new NotImplementedException();
+    }
+
     private static DNodeInfo SimpleDeleteForward(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
     {
         var noteToDelete = transaction.SplitText(targetTextNode, keyPressInfo.Selection.AnchorOffset);

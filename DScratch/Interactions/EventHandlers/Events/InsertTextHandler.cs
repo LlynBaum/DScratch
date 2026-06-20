@@ -9,10 +9,15 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
 {
     public const string EventName = "insertText";
 
+    protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode? anchorNode)
+    {
+        throw new NotImplementedException();
+    }
+
     protected override void OnAfterSelection(
         KeyPressInfo keyPressInfo,
         ITransaction transaction,
-        TextNode anchorTextNode,
+        DNode? anchorNode,
         DNodeInfo nodeInfo)
     {
         if (string.IsNullOrEmpty(keyPressInfo.Data))
@@ -27,11 +32,11 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
             transaction.Insert(textNode, parent!);
             transaction.AddCursorPosition(textNode.Id, textNode.Length);
         }
-        else
+        else if (anchorNode?.Parent is not null)
         {
-            var textNode = transaction.NodeFactory.String(keyPressInfo.Data, null, anchorTextNode.FirstChild);
-            var parent = anchorTextNode.Parent;
-            transaction.Insert(textNode, parent!);
+            var textNode = transaction.NodeFactory.String(keyPressInfo.Data, null, anchorNode.FirstChild);
+            var parent = anchorNode.Parent;
+            transaction.Insert(textNode, parent);
             transaction.AddCursorPosition(textNode.Id, textNode.Length);
         }
     }

@@ -9,17 +9,22 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : EventWit
 {
     public const string EventName = "insertParagraph";
 
+    protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode? anchorNode)
+    {
+        throw new NotImplementedException();
+    }
+
     protected override void OnAfterSelection(
         KeyPressInfo keyPressInfo,
         ITransaction transaction,
-        TextNode anchorTextNode,
+        DNode? anchorNode,
         DNodeInfo nodeInfo)
     {
-        var siblingBlock = nodeInfo.Node?.GetNearestBlock() ?? anchorTextNode.GetNearestBlock();
-        if (siblingBlock.Parent is null)
+        var siblingBlock = nodeInfo.Node?.GetNearestBlock() ?? anchorNode?.GetNearestBlock();
+        if (siblingBlock?.Parent is null)
         {
             // Even blocks at least have to have root as a parent.
-            throw new ArgumentException($"Sibling node with given path has no parent: {keyPressInfo.Selection.AnchorId}");
+            throw new ArgumentException($"Expected an block at {keyPressInfo.Selection.AnchorId} with a parent node.");
         }
         
         var (origin, rightOrigin) = GetOrigins(keyPressInfo, siblingBlock);

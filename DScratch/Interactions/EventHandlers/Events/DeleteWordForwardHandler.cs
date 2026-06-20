@@ -26,7 +26,12 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventW
 
         return deletedNodeInfo;
     }
-    
+
+    protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode? anchorNode)
+    {
+        throw new NotImplementedException();
+    }
+
     private static DNodeInfo SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
     {
         var walker = TreeWalker<TextNode>.StartFrom(targetTextNode, targetTextNode.GetNearestBlock());
