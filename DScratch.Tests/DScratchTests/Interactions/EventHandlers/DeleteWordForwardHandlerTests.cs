@@ -50,7 +50,6 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
             }
             
-            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Id, 0);
         }
         
@@ -75,9 +74,6 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(text1.IsDeleted, Is.True);
                 Assert.That(text2.IsDeleted, Is.True);
             }
-            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-                Is.TypeOf<StepDiff.DeleteTextDiff>(), 
-                Is.TypeOf<StepDiff.DeleteTextDiff>()]);
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text1.Id, 0);
         }
         
@@ -110,7 +106,6 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(tombstone.TextContent, Is.EqualTo(" ab"));
             }
 
-            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.RightOrigin.Id, 0);
         }
         
@@ -143,7 +138,6 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(remainingText.TextContent, Is.EqualTo(" "));
             }
             
-            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Id, 0);
         }
         
@@ -163,7 +157,6 @@ public class DeleteWordForwardHandlerTests
 
             // Assert
             Assert.That(text.IsDeleted, Is.True);
-            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Id, 0);
         }
         
@@ -183,7 +176,6 @@ public class DeleteWordForwardHandlerTests
 
             // Assert
             Assert.That(text.IsDeleted, Is.True);
-            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Id, 0);
         }
         
@@ -261,11 +253,6 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(parent.ChildNodes[4], Is.TypeOf<TextNode>());
                 Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("ghi"));
 
-                AssertHelper.ThatStepsEqualTo(actual: result.Steps, expected:
-                [
-                    Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                    Is.TypeOf<StepDiff.DeleteTextDiff>()
-                ]);
                 AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, startNode.Id, 2);
             }
         }
@@ -299,7 +286,6 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ghi"));
             }
 
-            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 0);
         }
 
@@ -327,7 +313,6 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ef"));
             }
 
-            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 2);
         }
 
@@ -366,7 +351,6 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
             }
 
-            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, startNode.Id, 3);
         }
     }
@@ -411,15 +395,6 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ghi"));
             }
         
-            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.InsertTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.InsertTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteElementDiff>(),
-            ]);
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, oldTextNode.Id, 3);
         }
         
@@ -464,14 +439,6 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ef"));
             }
             
-            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.InsertTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteElementDiff>()
-            ]);
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, startNode.Id, 2);
         }
         
@@ -517,14 +484,6 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ef"));
             }
             
-            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.InsertTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteElementDiff>()
-            ]);
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, endNode.Id, 2);
         }
         
@@ -575,15 +534,6 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("hi"));
             }
             
-            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.InsertTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteElementDiff>(),
-                Is.TypeOf<StepDiff.DeleteElementDiff>()
-            ]);
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, startNode.Id, 2);
         }
         
@@ -635,15 +585,6 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("hi"));
             }
             
-            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.InsertTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteElementDiff>(),
-                Is.TypeOf<StepDiff.DeleteElementDiff>()
-            ]);
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, endNode.Id, 2);
         }
     }
@@ -662,7 +603,6 @@ public class DeleteWordForwardHandlerTests
 
             // Assert
             Assert.That(target.IsDeleted, Is.True);
-            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteElementDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
     }

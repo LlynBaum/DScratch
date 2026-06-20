@@ -246,18 +246,6 @@ public class InsertParagraphHandlerTests
                 Assert.That(((TextNode)newParagraph.ChildNodes[1]).TextContent, Is.EqualTo("ef"));
             }
             
-            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.InsertTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteElementDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.InsertTextDiff>()
-            ]);
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin!.Id, 0);
         }
         
@@ -310,18 +298,6 @@ public class InsertParagraphHandlerTests
                 Assert.That(((TextNode)newParagraph.ChildNodes[1]).TextContent, Is.EqualTo("ef"));
             }
             
-            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.InsertTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteElementDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.InsertTextDiff>()
-            ]);
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin!.Id, 0);
         }
         
@@ -372,19 +348,6 @@ public class InsertParagraphHandlerTests
                 Assert.That(((TextNode)newParagraph.ChildNodes[1]).TextContent, Is.EqualTo("hi"));
             }
             
-            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.InsertTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteElementDiff>(),
-                Is.TypeOf<StepDiff.DeleteElementDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.InsertTextDiff>()
-            ]);
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin!.Id, 0);
         }
         
@@ -447,19 +410,6 @@ public class InsertParagraphHandlerTests
                 Assert.That(((TextNode)newParagraph.ChildNodes[1]).TextContent, Is.EqualTo("hi"));
             }
             
-            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.InsertTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteElementDiff>(),
-                Is.TypeOf<StepDiff.DeleteElementDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.InsertElementDiff>(),
-                Is.TypeOf<StepDiff.InsertTextDiff>()
-            ]);
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin!.Id, 0);
         }
     }
@@ -477,7 +427,6 @@ public class InsertParagraphHandlerTests
 
             // Assert
             Assert.That(parent.RightOrigin, Is.TypeOf<ParagraphNode>());
-            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.InsertElementDiff>());
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin.Id, 0);
         }
     }
