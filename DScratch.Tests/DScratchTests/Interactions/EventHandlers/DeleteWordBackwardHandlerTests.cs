@@ -636,4 +636,23 @@ public class DeleteWordBackwardHandlerTests
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, endNode.Id, 2);
         }
     }
+    
+    private class EmptyBlocks : DeleteWordBackwardHandlerTests
+    {
+        [Test]
+        public void Handle_CreatesExpectedChanges()
+        {
+            // Arrange
+            var parent = builder.TestBlockElementNode(t => t.Text("abc"));
+            var target = builder.TestBlockElementNode();
+
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0));
+
+            // Assert
+            Assert.That(target.IsDeleted, Is.True);
+            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteElementDiff>());
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.FirstChild!.Id, 3);
+        }
+    }
 }

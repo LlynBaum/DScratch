@@ -598,4 +598,30 @@ public class InsertTextHandlerTests
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
     }
+
+    private class EmptyBlocks : InsertTextHandlerTests
+    {
+        [Test]
+        public void Handle_CreatesExpectedChanges()
+        {
+            // Arrange
+            var parent = builder.TestBlockElementNode();
+
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 0));
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
+                Assert.That(parent.FirstChild, Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.FirstChild).TextContent, Is.EqualTo("abc"));
+            }
+
+            AssertHelper.ThatStepsEqualTo(result.Steps, 
+                Is.TypeOf<StepDiff.InsertElementDiff>(), 
+                Is.TypeOf<StepDiff.InsertTextDiff>());
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.FirstChild.Id, 3);
+        }
+    }
 }

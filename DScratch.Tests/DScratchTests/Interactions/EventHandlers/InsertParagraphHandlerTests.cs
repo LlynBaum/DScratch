@@ -463,4 +463,22 @@ public class InsertParagraphHandlerTests
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin!.Id, 0);
         }
     }
+    
+    private class EmptyBlocks : InsertParagraphHandlerTests
+    {
+        [Test]
+        public void Handle_CreatesExpectedChanges()
+        {
+            // Arrange
+            var parent = builder.TestBlockElementNode();
+
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 0));
+
+            // Assert
+            Assert.That(parent.RightOrigin, Is.TypeOf<ParagraphNode>());
+            AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.InsertElementDiff>());
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin.Id, 0);
+        }
+    }
 }
