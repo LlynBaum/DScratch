@@ -1,3 +1,4 @@
+using DScratch.Interactions;
 using DScratch.Transactions;
 using Microsoft.JSInterop;
 

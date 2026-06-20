@@ -1,4 +1,4 @@
-using DScratch.Client.BrowserInteractions.CommandHandlers;
+using DScratch.Interactions.CommandHandlers;
 
 namespace DScratch.Client.Pages.Editor.Components;
 

@@ -1,4 +1,5 @@
-using DScratch.Client.BrowserInteractions.EventHandlers;
+using DScratch.Interactions;
+using DScratch.Interactions.EventHandlers;
 using Microsoft.JSInterop;
 
 namespace DScratch.Client.BrowserInteractions;
