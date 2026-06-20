@@ -12,16 +12,16 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : Eve
     protected override DNodeInfo HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode anchorTextNode)
     {
         var deletedNodeInfo = SimpleDeleteForward(keyPressInfo, transaction, anchorTextNode);
-            
-        if (!deletedNodeInfo.HasFoundNode && anchorTextNode.GetNearestBlock() is { RightOrigin: not null } parent)
+        
+        if (deletedNodeInfo.HasFoundNode)
+        {
+            transaction.AddCursorPosition(deletedNodeInfo.Node.Id, deletedNodeInfo.Offset);
+        }   
+        else if (!deletedNodeInfo.HasFoundNode && anchorTextNode.GetNearestBlock() is { RightOrigin: not null } parent)
         {
             transaction.AddCursorPosition(anchorTextNode.Id, anchorTextNode.Length); 
             transaction.MoveRange(parent.RightOrigin.FirstChild, null, parent, parent.LastChild);
             transaction.Delete(parent.RightOrigin);
-        }
-        else if (deletedNodeInfo.HasFoundNode)
-        {
-            transaction.AddCursorPosition(deletedNodeInfo.Node.Id, deletedNodeInfo.Offset);
         }
 
         return deletedNodeInfo;

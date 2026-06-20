@@ -13,15 +13,15 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : Ev
     {
         var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, anchorTextNode);
 
-        if (!deletedNodeInfo.HasFoundNode && anchorTextNode.GetNearestBlock() is { Origin: not null } parent)
+        if (deletedNodeInfo.HasFoundNode)
+        {
+            transaction.AddCursorPosition(deletedNodeInfo.Node.Origin?.Id ?? deletedNodeInfo.Node.Id, deletedNodeInfo.Offset);
+        }
+        else if (!deletedNodeInfo.HasFoundNode && anchorTextNode.GetNearestBlock() is { Origin: not null } parent)
         {
             transaction.AddCursorPosition(anchorTextNode.Id, 0); 
             transaction.MoveRange(parent.FirstChild, null, parent.Origin, parent.Origin.LastChild);
             transaction.Delete(parent);
-        }
-        else if (deletedNodeInfo.HasFoundNode)
-        {
-            transaction.AddCursorPosition(deletedNodeInfo.Node.Origin?.Id ?? deletedNodeInfo.Node.Id, deletedNodeInfo.Offset);
         }
 
         return deletedNodeInfo;
