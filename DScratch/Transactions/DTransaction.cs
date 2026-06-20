@@ -7,6 +7,7 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
     : ITransaction, IRunningTransaction
 {
     private readonly List<IStep> steps = [];
+    private readonly List<StepDiff> additionalStepDiffs = [];
     
     private readonly List<DNode> modifiedNodes = [];
     private readonly List<DNode> addedNodes = [];
@@ -23,10 +24,12 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
         var result = new TransactionResult(steps.SelectMany(s => s.Execute(this, document)).ToList(), cursorPosition);
         
         addedNodes.ForEach(document.AddNode);
-        addedNodes.Clear();
-
-        CleanupCode(modifiedNodes);
+        var cleanUpSteps = CleanupCode(modifiedNodes);
+        result = result with { Steps = [..additionalStepDiffs, ..result.Steps, ..cleanUpSteps]};
+        
         modifiedNodes.Clear();
+        addedNodes.Clear();
+        additionalStepDiffs.Clear();
         
         return result;
     }
@@ -72,36 +75,68 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
 
     public TextNode? SplitText(TextNode node, int offset)
     {
-        // TODO: emit StepDiffs to mirror that in the DOM. Also check Cursor position and recalculate it
+        var originalLength = node.Length;
         var splitNode = node.Split(offset, nodeIdGenerator.GetNextId());
+        
         if (splitNode is not null)
         {
             addedNodes.Add(splitNode);
+            additionalStepDiffs.Add(new StepDiff.DeleteTextDiff(node.Id.Value, originalLength, originalLength - offset));
+            additionalStepDiffs.AddRange(splitNode.ToInsertSteps());
         }
+        
         return splitNode;
     }
 
     public void NotifyNodeChange(DNode node) => modifiedNodes.Add(node);
 
-    private void CleanupCode(IReadOnlyList<DNode> nodes)
+    private List<StepDiff?> CleanupCode(IReadOnlyList<DNode> nodes)
     {
-        if(disableCleanUp) return;
+        List<StepDiff?> result = [];
+        if(disableCleanUp) return result;
         
         foreach (var node in nodes.OfType<TextNode>())
         {
-            // TODO: emit StepDiffs to merge nodes in the DOM the same way. Also keep on mind to update the cursor metadata as well, so that it will point to the same location even after merging
             if (node.Origin is TextNode originTextNode && originTextNode.IsDeleted == node.IsDeleted && originTextNode.LastId.IsContinuesTo(node.Id))
             {
+                var textInsert = new StepDiff.InsertTextDiff(
+                    originTextNode.Parent!.Id.Value,
+                    originTextNode.Length,
+                    node.TextContent);
+                
+                result.Add(textInsert);
+                result.Add(node.ToDeleteSteps());
+
+                if (cursorPosition?.ParentId == node.Id.Value)
+                {
+                    cursorPosition = cursorPosition with { ParentId = originTextNode.Id.Value };
+                }
+                
                 originTextNode.AddText(node.TextContent);
                 node.Remove();
                 document.RemoveNode(node);
             }
             else if (node.RightOrigin is TextNode rightOriginTextNode && rightOriginTextNode.IsDeleted == node.IsDeleted && node.LastId.IsContinuesTo(rightOriginTextNode.Id))
             {
+                var textInsert = new StepDiff.InsertTextDiff(
+                    node.Parent!.Id.Value,
+                    node.Length,
+                    rightOriginTextNode.TextContent);
+                
+                result.Add(textInsert);
+                result.Add(rightOriginTextNode.ToDeleteSteps());
+
+                if (cursorPosition?.ParentId == rightOriginTextNode.Id.Value)
+                {
+                    cursorPosition = cursorPosition with { ParentId = node.Id.Value };
+                }
+                
                 node.AddText(rightOriginTextNode.TextContent);
                 rightOriginTextNode.Remove();
                 document.RemoveNode(rightOriginTextNode);
             }
         }
+
+        return result;
     }
 }
