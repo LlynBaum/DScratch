@@ -62,11 +62,10 @@ public class DeleteStepTests
         Assert.That(parent.ActiveChildNodes.Count(), Is.EqualTo(2));
         Assert.That(textNode.IsDeleted, Is.True);
         Assert.That(diffs, Has.Count.EqualTo(1));
-        Assert.That(diffs.Single(), Is.TypeOf<StepDiff.DeleteTextDiff>());
+        Assert.That(diffs.Single(), Is.TypeOf<StepDiff.DeleteElementDiff>());
         
-        var step = (StepDiff.DeleteTextDiff)diffs.Single();
-        Assert.That(step.Offset, Is.EqualTo(0));
-        Assert.That(step.Length, Is.EqualTo(3));
+        var step = (StepDiff.DeleteElementDiff)diffs.Single();
+        Assert.That(step.TargetId, Is.EqualTo(textNode.Id.Value));
         Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([textNode]));
     }
 }

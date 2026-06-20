@@ -43,7 +43,7 @@ public class DTransactionCleanUpTests
         
             // Act
             Transaction.NotifyNodeChange(modifiedNode);
-            Transaction.Commit();
+            var result = Transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -56,6 +56,25 @@ public class DTransactionCleanUpTests
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(node.TextContent, Is.EqualTo("abcdef"));
+            }
+
+            if (!deleted)
+            {
+                AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
+                    Is.TypeOf<StepDiff.InsertTextDiff>(),
+                    Is.TypeOf<StepDiff.DeleteElementDiff>()
+                ]);
+
+                using (Assert.EnterMultipleScope())
+                {
+                    var insert = (StepDiff.InsertTextDiff)result.Steps[0]!;
+                    Assert.That(insert.ParentId, Is.EqualTo(node.Id.Value));
+                    Assert.That(insert.Offset, Is.EqualTo(3));
+                    Assert.That(insert.Text, Is.EqualTo("def"));
+                
+                    var delete = (StepDiff.DeleteElementDiff)result.Steps[1]!;
+                    Assert.That(delete.TargetId, Is.EqualTo(modifiedNode.Id.Value));
+                }
             }
         }
     
@@ -81,7 +100,7 @@ public class DTransactionCleanUpTests
         
             // Act
             Transaction.NotifyNodeChange(modifiedNode);
-            Transaction.Commit();
+            var result = Transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -94,6 +113,25 @@ public class DTransactionCleanUpTests
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(modifiedNode.TextContent, Is.EqualTo("abcdef"));
+            }
+
+            if (!deleted)
+            {
+                AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
+                    Is.TypeOf<StepDiff.InsertTextDiff>(),
+                    Is.TypeOf<StepDiff.DeleteElementDiff>()
+                ]);
+                
+                using (Assert.EnterMultipleScope())
+                {
+                    var insert = (StepDiff.InsertTextDiff)result.Steps[0]!;
+                    Assert.That(insert.ParentId, Is.EqualTo(modifiedNode.Id.Value));
+                    Assert.That(insert.Offset, Is.EqualTo(3));
+                    Assert.That(insert.Text, Is.EqualTo("def"));
+                
+                    var delete = (StepDiff.DeleteElementDiff)result.Steps[1]!;
+                    Assert.That(delete.TargetId, Is.EqualTo(node.Id.Value));
+                }
             }
         }
     }

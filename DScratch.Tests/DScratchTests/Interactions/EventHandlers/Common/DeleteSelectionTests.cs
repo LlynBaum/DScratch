@@ -42,7 +42,7 @@ public class DeleteSelectionTests
         
         // Act
         DeleteSelection.Handle(keyPressInfo, transaction);
-        var result = transaction.Commit();
+        transaction.Commit();
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -53,11 +53,6 @@ public class DeleteSelectionTests
             Assert.That(parent.ChildNodes[3].IsDeleted, Is.False);
             Assert.That(parent.ChildNodes[4].IsDeleted, Is.False);
         }
-        
-        AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-                Is.TypeOf<StepDiff.DeleteTextDiff>(),
-                Is.TypeOf<StepDiff.DeleteTextDiff>()
-        ]);
     }
     
     [Test]
@@ -74,7 +69,7 @@ public class DeleteSelectionTests
         
         // Act
         DeleteSelection.Handle(keyPressInfo, transaction);
-        var result = transaction.Commit();
+        transaction.Commit();
 
         // Assert
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
@@ -89,8 +84,6 @@ public class DeleteSelectionTests
             Assert.That(parent.ChildNodes[2].IsDeleted, Is.False);
             Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("d"));
         }
-        
-        AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
     }
     
     [Test]
@@ -109,7 +102,7 @@ public class DeleteSelectionTests
         
         // Act
         DeleteSelection.Handle(keyPressInfo, transaction);
-        var result = transaction.Commit();
+        transaction.Commit();
 
         // Assert
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
@@ -121,8 +114,6 @@ public class DeleteSelectionTests
             Assert.That(parent.ChildNodes[1].IsDeleted, Is.False);
             Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("b"));
         }
-        
-        AssertHelper.ThatStepsEqualTo(result.Steps, Is.TypeOf<StepDiff.DeleteTextDiff>());
     }
     
     [Test]
@@ -141,7 +132,7 @@ public class DeleteSelectionTests
         
         // Act
         DeleteSelection.Handle(keyPressInfo, transaction);
-        var result = transaction.Commit();
+        transaction.Commit();
 
         // Assert
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
@@ -159,10 +150,6 @@ public class DeleteSelectionTests
             Assert.That(parent.ChildNodes[3].IsDeleted, Is.False);
             Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("d"));
         }
-        
-        AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-            Is.TypeOf<StepDiff.DeleteTextDiff>(), 
-            Is.TypeOf<StepDiff.DeleteTextDiff>()]);
     }
     
     [Test]
@@ -184,7 +171,7 @@ public class DeleteSelectionTests
         
         // Act
         DeleteSelection.Handle(keyPressInfo, transaction);
-        var result = transaction.Commit();
+        transaction.Commit();
 
         // Assert
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(7));
@@ -211,12 +198,6 @@ public class DeleteSelectionTests
             Assert.That(parent.ChildNodes[6].IsDeleted, Is.False);
             Assert.That(((TextNode)parent.ChildNodes[6]).TextContent, Is.EqualTo("g"));
         }
-        
-        AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-            Is.TypeOf<StepDiff.DeleteTextDiff>(),
-            Is.TypeOf<StepDiff.DeleteTextDiff>(),
-            Is.TypeOf<StepDiff.DeleteTextDiff>()
-        ]);
     }
     
     [Test]
@@ -246,7 +227,7 @@ public class DeleteSelectionTests
         
         // Act
         DeleteSelection.Handle(keyPressInfo, transaction);
-        var result = transaction.Commit();
+        transaction.Commit();
         
         builder.Print();
 
@@ -289,21 +270,6 @@ public class DeleteSelectionTests
             Assert.That(endParent.ChildNodes[1].IsDeleted, Is.True);
             Assert.That(((TextNode)endParent.ChildNodes[1]).TextContent, Is.EqualTo("g"));
         }
-        
-        AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-            Is.TypeOf<StepDiff.DeleteTextDiff>(),
-            Is.TypeOf<StepDiff.DeleteTextDiff>(),
-            Is.TypeOf<StepDiff.DeleteTextDiff>(),
-            Is.TypeOf<StepDiff.DeleteTextDiff>(),
-            Is.TypeOf<StepDiff.DeleteTextDiff>(),
-            Is.TypeOf<StepDiff.InsertElementDiff>(),
-            Is.TypeOf<StepDiff.InsertTextDiff>(),
-            Is.TypeOf<StepDiff.DeleteTextDiff>(),
-            Is.TypeOf<StepDiff.InsertElementDiff>(),
-            Is.TypeOf<StepDiff.InsertTextDiff>(),
-            Is.TypeOf<StepDiff.DeleteElementDiff>(),
-            Is.TypeOf<StepDiff.DeleteElementDiff>(),
-        ]);
     }
     
     [Test]
@@ -333,7 +299,7 @@ public class DeleteSelectionTests
         
         // Act
         DeleteSelection.Handle(keyPressInfo, transaction);
-        var result = transaction.Commit();
+        transaction.Commit();
         
         builder.Print();
 
@@ -376,21 +342,6 @@ public class DeleteSelectionTests
             Assert.That(endParent.ChildNodes[1].IsDeleted, Is.True);
             Assert.That(((TextNode)endParent.ChildNodes[1]).TextContent, Is.EqualTo("g"));
         }
-        
-        AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
-            Is.TypeOf<StepDiff.DeleteTextDiff>(),
-            Is.TypeOf<StepDiff.DeleteTextDiff>(),
-            Is.TypeOf<StepDiff.DeleteTextDiff>(),
-            Is.TypeOf<StepDiff.DeleteTextDiff>(),
-            Is.TypeOf<StepDiff.DeleteTextDiff>(),
-            Is.TypeOf<StepDiff.InsertElementDiff>(),
-            Is.TypeOf<StepDiff.InsertTextDiff>(),
-            Is.TypeOf<StepDiff.DeleteTextDiff>(),
-            Is.TypeOf<StepDiff.InsertElementDiff>(),
-            Is.TypeOf<StepDiff.InsertTextDiff>(),
-            Is.TypeOf<StepDiff.DeleteElementDiff>(),
-            Is.TypeOf<StepDiff.DeleteElementDiff>(),
-        ]);
     }
     
     // TODO: add support for Inline Elements

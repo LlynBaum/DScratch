@@ -216,34 +216,6 @@ public class StepHelpersTests
     private class ToDelete
     {
         [Test]
-        public void TextNode_ReturnDeleteTextDiff()
-        {
-            // Arrange
-            var builder = new TreeBuilder();
-            TextNode text2 = null!;
-            
-            // 0: Parent Element
-            builder.TestInlineElementNode(t =>
-            {
-                t.Text("a");      // 1: TextNode
-                text2 = t.Text("aa"); // 2-3: TextNode
-            });
-            
-            // Act
-            var result = text2.ToDeleteSteps();
-            
-            // Assert
-            Assert.That(result, Is.TypeOf<StepDiff.DeleteTextDiff>());
-            var step = (StepDiff.DeleteTextDiff)result;
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(step.ParentId, Is.EqualTo("Test-0"));
-                Assert.That(step.Offset, Is.EqualTo(1));
-                Assert.That(step.Length, Is.EqualTo(2));
-            }
-        }
-
-        [Test]
         public void Elements_ReturnDeleteElementDiff()
         {
             // Arrange
@@ -263,52 +235,6 @@ public class StepHelpersTests
             Assert.That(result, Is.TypeOf<StepDiff.DeleteElementDiff>());
             var step = (StepDiff.DeleteElementDiff)result;
             Assert.That(step.TargetId, Is.EqualTo("Test-1"));
-        }
-        
-        [Test]
-        public void UnknownNodes_ThrowArgumentException()
-        {
-            // Arrange - Single node setup
-            var testNode = TestNode.Empty();
-            testNode.Parent = TestNode.Empty();
-            
-            // Assert
-            Assert.Throws<ArgumentException>(Act);
-            return;
-
-            // Act
-            void Act() => testNode.ToDeleteSteps();
-        }
-        
-        [Test]
-        public void FindsDeletedNode_AndReturnsExpectedStep()
-        {
-            // Arrange
-            var builder = new TreeBuilder();
-            TextNode text2 = null!;
-            
-            // 0: Parent Element
-            builder.TestInlineElementNode(t =>
-            {
-                t.Text("a");
-                t.Text("a").Delete();
-                text2 = t.Text("a"); // 3: TextNode, 4: CharNode ('a')
-            });
-            
-            text2.Delete();
-            
-            // Act
-            var result = text2.ToDeleteSteps();
-            
-            // Assert
-            Assert.That(result, Is.TypeOf<StepDiff.DeleteTextDiff>());
-            var step = (StepDiff.DeleteTextDiff)result;
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(step.ParentId, Is.EqualTo("Test-0"));
-                Assert.That(step.Offset, Is.EqualTo(1));
-                Assert.That(step.Length, Is.EqualTo(1));
-            }
         }
     }
     

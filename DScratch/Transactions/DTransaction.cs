@@ -99,13 +99,16 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
         {
             if (node.Origin is TextNode originTextNode && originTextNode.IsDeleted == node.IsDeleted && originTextNode.LastId.IsContinuesTo(node.Id))
             {
-                var textInsert = new StepDiff.InsertTextDiff(
-                    originTextNode.Parent!.Id.Value,
-                    originTextNode.Length,
-                    node.TextContent);
+                if (!originTextNode.IsDeleted)
+                {
+                    var textInsert = new StepDiff.InsertTextDiff(
+                        originTextNode.Id.Value,
+                        originTextNode.Length,
+                        node.TextContent);
                 
-                result.Add(textInsert);
-                result.Add(node.ToDeleteSteps());
+                    result.Add(textInsert);
+                    result.Add(node.ToDeleteSteps());
+                }
 
                 if (cursorPosition?.ParentId == node.Id.Value)
                 {
@@ -118,13 +121,16 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
             }
             else if (node.RightOrigin is TextNode rightOriginTextNode && rightOriginTextNode.IsDeleted == node.IsDeleted && node.LastId.IsContinuesTo(rightOriginTextNode.Id))
             {
-                var textInsert = new StepDiff.InsertTextDiff(
-                    node.Parent!.Id.Value,
-                    node.Length,
-                    rightOriginTextNode.TextContent);
+                if (!rightOriginTextNode.IsDeleted)
+                {
+                    var textInsert = new StepDiff.InsertTextDiff(
+                        node.Id.Value,
+                        node.Length,
+                        rightOriginTextNode.TextContent);
                 
-                result.Add(textInsert);
-                result.Add(rightOriginTextNode.ToDeleteSteps());
+                    result.Add(textInsert);
+                    result.Add(rightOriginTextNode.ToDeleteSteps());
+                }
 
                 if (cursorPosition?.ParentId == rightOriginTextNode.Id.Value)
                 {
