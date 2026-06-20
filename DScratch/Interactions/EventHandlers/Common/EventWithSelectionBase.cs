@@ -32,7 +32,7 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
             nodeInfo = nodeSearchResult.Origin;
         }
         
-        OnAfterSelection(nodeInfo);
+        OnAfterSelection(keyPressInfo, transaction, targetTextNode, nodeInfo);
         
         return dScratchService.Apply(transaction);
     }
@@ -42,5 +42,9 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
         ITransaction transaction,
         TextNode anchorTextNode);
 
-    protected virtual void OnAfterSelection(DNodeInfo nodeInfo) { }
+    protected virtual void OnAfterSelection(
+        KeyPressInfo keyPressInfo,
+        ITransaction transaction,
+        TextNode anchorTextNode,
+        DNodeInfo nodeInfo) { }
 }

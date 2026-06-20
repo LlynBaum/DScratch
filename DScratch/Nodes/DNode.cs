@@ -12,11 +12,7 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
     
     public DNode? Origin { get; internal set; } = origin;
 
-    public DNode? OriginElement => Origin is IElement or null ? Origin : Origin.OriginElement;
-
     public DNode? RightOrigin { get; internal set; } = rightOrigin;
-
-    public DNode? RightOriginElement => RightOrigin is IElement or null ? RightOrigin : RightOrigin.RightOriginElement;
 
     public bool IsDeleted { get; private set; }
 

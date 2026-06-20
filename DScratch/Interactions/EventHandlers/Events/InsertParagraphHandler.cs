@@ -1,82 +1,51 @@
 using DScratch.Interactions.EventHandlers.Common;
+using DScratch.Interactions.EventHandlers.Models;
 using DScratch.Nodes;
 using DScratch.Transactions;
 
 namespace DScratch.Interactions.EventHandlers.Events;
 
-public class InsertParagraphHandler(IDScratchService dScratchService) : IEditorEventHandler
+public class InsertParagraphHandler(IDScratchService dScratchService) : EventWithSelectionBase(dScratchService)
 {
     public const string EventName = "insertParagraph";
-    
-    public TransactionResult Handle(KeyPressInfo keyPressInfo)
-    {
-        var transaction = dScratchService.StartTransaction();
-        
-        var (siblingPath, _) = keyPressInfo.Selection.GetConvertedNodeIds();
-        var sibling = transaction.FindNode(siblingPath)?.GetNearestBlock(); // TODO: make that easier now that we have directly the text node
-        if (sibling is null)
-        {
-            throw new ArgumentException($"Sibling node with given path not found: {keyPressInfo.Selection.AnchorId}");
-        }
 
-        if (sibling.Parent is null)
+    protected override void OnAfterSelection(
+        KeyPressInfo keyPressInfo,
+        ITransaction transaction,
+        TextNode anchorTextNode,
+        DNodeInfo nodeInfo)
+    {
+        var siblingBlock = nodeInfo.Node?.GetNearestBlock() ?? anchorTextNode.GetNearestBlock();
+        if (siblingBlock.Parent is null)
         {
+            // Even blocks at least have to have root as a parent.
             throw new ArgumentException($"Sibling node with given path has no parent: {keyPressInfo.Selection.AnchorId}");
         }
-
-        DNode? firstNodeToMove;
-        if (keyPressInfo.Selection.Direction is SelectionDirection.None)
-        {
-            firstNodeToMove = SimpleInsert(keyPressInfo, transaction, sibling);
-        }
-        else
-        {
-            var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction);
-            firstNodeToMove = nodeSearchResult.RightOrigin.Node;
-        }
-
-        var (origin, rightOrigin) = GetOrigins(keyPressInfo, sibling);
+        
+        var (origin, rightOrigin) = GetOrigins(keyPressInfo, siblingBlock);
         var paragraph = transaction.NodeFactory.Paragraph(origin, rightOrigin);
 
-        transaction.Insert(paragraph, sibling.Parent);
+        transaction.Insert(paragraph, siblingBlock.Parent!);
         
         if (keyPressInfo.Selection.AnchorOffset > 0)
         {
-            transaction.MoveRange(firstNodeToMove, null, paragraph, null);
+            transaction.MoveRange(nodeInfo.Node?.RightOrigin, null, paragraph, null);
         }
-
+        
         var cursorTarget = keyPressInfo.Selection.AnchorOffset > 0 ? paragraph : rightOrigin!;
         transaction.AddCursorPosition(cursorTarget.Id, 0);
-        return dScratchService.Apply(transaction);
     }
 
-    private static DNode? SimpleInsert(KeyPressInfo keyPressInfo, ITransaction transaction, DNode parent)
+    protected override DNodeInfo HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode anchorTextNode)
     {
         if (keyPressInfo.Selection.AnchorOffset <= 0)
         {
-            return parent.FirstChild;
+            var parent = anchorTextNode.GetNearestBlock();
+            return DNodeInfo.From(parent.FirstChild, 0);
         }
 
-        var walker = new TreeWalker<TextNode>(parent);
-
-        var currentOffset = 0;
-        var currentNode = walker.FirstChild();
-        while (currentNode is not null)
-        {
-            var length = currentNode.Length;
-            if (currentOffset + length >= keyPressInfo.Selection.AnchorOffset)
-            {
-                break;
-            }
-
-            currentOffset += length;
-            currentNode = walker.NextSibling();
-        }
-
-        var relativeOffset = keyPressInfo.Selection.AnchorOffset - currentOffset;
-        return currentNode is null || relativeOffset <= 0 
-            ? currentNode 
-            : transaction.SplitText(currentNode, relativeOffset) ?? currentNode.RightOrigin;
+        transaction.SplitText(anchorTextNode, keyPressInfo.Selection.AnchorOffset);
+        return DNodeInfo.From(anchorTextNode, 0);
     }
 
     private static (DNode? origin, DNode? rightOrigin) GetOrigins(KeyPressInfo keyPressInfo, DNode sibling)
