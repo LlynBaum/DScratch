@@ -5,45 +5,26 @@ using DScratch.Transactions;
 
 namespace DScratch.Interactions.EventHandlers.Events;
 
-public class DeleteWordForwardHandler(IDScratchService dScratchService) : IEditorEventHandler
+public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventWithSelectionBase(dScratchService)
 {
     public const string EventName = "deleteWordForward";
     
-    public TransactionResult Handle(KeyPressInfo keyPressInfo)
+    protected override DNodeInfo HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode anchorTextNode)
     {
-        var transaction = dScratchService.StartTransaction();
-
-        var targetNode = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId);
-        if (targetNode is not TextNode targetTextNode)
-        {
-            throw new ArgumentException($"Expected TextNode at {keyPressInfo.Selection.AnchorId}");
-        }
-
-        if (keyPressInfo.Selection.Direction is SelectionDirection.None)
-        {
-            var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, targetTextNode);
+        var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, anchorTextNode);
             
-            if (!deletedNodeInfo.HasFoundNode && targetNode.GetNearestBlock() is { RightOrigin: not null } parent)
-            {
-                transaction.AddCursorPosition(targetTextNode.Id, targetTextNode.Length); 
-                transaction.MoveRange(parent.RightOrigin.FirstChild, null, parent, parent.LastChild);
-                transaction.Delete(parent.RightOrigin);
-            }
-            else if (deletedNodeInfo.HasFoundNode)
-            {
-                transaction.AddCursorPosition(deletedNodeInfo.Node.Id, deletedNodeInfo.Offset);
-            }
+        if (!deletedNodeInfo.HasFoundNode && anchorTextNode.GetNearestBlock() is { RightOrigin: not null } parent)
+        {
+            transaction.AddCursorPosition(anchorTextNode.Id, anchorTextNode.Length); 
+            transaction.MoveRange(parent.RightOrigin.FirstChild, null, parent, parent.LastChild);
+            transaction.Delete(parent.RightOrigin);
         }
-        else
-        {   
-            var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction);
-            
-            var cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent;
-            var cursorTarget = nodeSearchResult.Origin.Node ?? targetNode;
-            if (cursorPosition is not null) transaction.AddCursorPosition(cursorTarget.Id, cursorPosition.Value);
+        else if (deletedNodeInfo.HasFoundNode)
+        {
+            transaction.AddCursorPosition(deletedNodeInfo.Node.Id, deletedNodeInfo.Offset);
         }
 
-        return dScratchService.Apply(transaction);
+        return deletedNodeInfo;
     }
     
     private static DNodeInfo SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
