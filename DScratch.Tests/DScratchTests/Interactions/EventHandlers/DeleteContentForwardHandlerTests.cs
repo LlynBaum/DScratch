@@ -93,7 +93,7 @@ public class DeleteContentForwardHandlerTests
                 Assert.That(textNode2.IsDeleted, Is.False);
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.RightOrigin.Id, 1);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 1);
         }
         
         [Test]
@@ -123,7 +123,7 @@ public class DeleteContentForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("c"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.RightOrigin!.Id, 1);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 1);
         }
 
         [Test]

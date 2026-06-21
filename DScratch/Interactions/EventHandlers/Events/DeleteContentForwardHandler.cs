@@ -11,20 +11,19 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : Eve
     
     protected override DNodeInfo HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode anchorTextNode)
     {
-        var deletedNodeInfo = SimpleDeleteForward(keyPressInfo, transaction, anchorTextNode);
-        
-        if (deletedNodeInfo.HasFoundNode)
+        var targetSelection = SimpleDeleteForward(keyPressInfo, transaction, anchorTextNode);
+        if (targetSelection.HasFoundNode)
         {
-            transaction.AddCursorPosition(deletedNodeInfo.Node.Id, deletedNodeInfo.Offset);
-        }   
-        else if (!deletedNodeInfo.HasFoundNode && anchorTextNode.GetNearestBlock() is { RightOrigin: not null } parent)
+            transaction.AddCursorPosition(targetSelection.Node.Id, targetSelection.Offset);
+        }
+        else if (anchorTextNode.GetNearestBlock() is { RightOrigin: not null } parent)
         {
             transaction.AddCursorPosition(anchorTextNode.Id, anchorTextNode.Length); 
             transaction.MoveRange(parent.RightOrigin.FirstChild, null, parent, parent.LastChild);
             transaction.Delete(parent.RightOrigin);
         }
 
-        return deletedNodeInfo;
+        return targetSelection;
     }
 
     protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
@@ -38,12 +37,13 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : Eve
     private static DNodeInfo SimpleDeleteForward(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
     {
         var noteToDelete = transaction.SplitText(targetTextNode, keyPressInfo.Selection.AnchorOffset);
-        if (noteToDelete is not null)
+        if (noteToDelete is null)
         {
-            transaction.SplitText(noteToDelete, 1);
-            transaction.Delete(noteToDelete);
+            return DNodeInfo.NotFound();
         }
-
-        return new DNodeInfo(noteToDelete, keyPressInfo.Selection.AnchorOffset);
+     
+        transaction.SplitText(noteToDelete, 1);
+        transaction.Delete(noteToDelete);
+        return new DNodeInfo(targetTextNode, keyPressInfo.Selection.AnchorOffset);
     }
 }

@@ -11,20 +11,19 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : Event
     
     protected override DNodeInfo HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode anchorTextNode)
     {
-        var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, anchorTextNode);
-            
-        if (deletedNodeInfo.HasFoundNode)
+        var targetSelection = SimpleDeleteBackwards(keyPressInfo, transaction, anchorTextNode);
+        if (targetSelection.HasFoundNode)
         {
-            transaction.AddCursorPosition(deletedNodeInfo.Node.Origin?.Id ?? deletedNodeInfo.Node.Id, deletedNodeInfo.Offset);
+            transaction.AddCursorPosition(targetSelection.Node.Origin?.Id ?? targetSelection.Node.Id, targetSelection.Offset);
         }
-        else if (!deletedNodeInfo.HasFoundNode && anchorTextNode.GetNearestBlock() is { Origin: not null } parent)
+        else if (!targetSelection.HasFoundNode && anchorTextNode.GetNearestBlock() is { Origin: not null } parent)
         {
             transaction.AddCursorPosition(anchorTextNode.Id, 0); 
             transaction.MoveRange(parent.FirstChild, null, parent.Origin, parent.Origin.LastChild);
             transaction.Delete(parent);
         }
 
-        return deletedNodeInfo;
+        return targetSelection;
     }
 
     protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
@@ -33,21 +32,10 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : Event
         var index = anchorNode.Parent?.IndexOf(anchorNode);
         var focusNode = index.HasValue ? anchorNode.Parent?.ChildAt(index.Value - 1) : null;
         
-        if (focusNode is not null && GetCursorPosition(focusNode) is { HasFoundNode: true } nodeInfo)
+        if (focusNode is not null && SelectionHelper.NearestTextNode(focusNode) is { HasFoundNode: true } nodeInfo)
         {
             transaction.AddCursorPosition(nodeInfo.Node.Id, nodeInfo.Offset);
         }
-    }
-    
-    private static DNodeInfo GetCursorPosition(DNode target)
-    {
-        while (target is not null)
-        {
-            if (target is TextNode textNode) return new DNodeInfo(target, textNode.Length);
-            target = target.LastChild;
-        }
-        
-        return new DNodeInfo(target, 0);
     }
 
     private static DNodeInfo SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
@@ -57,7 +45,8 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : Event
             return DNodeInfo.NotFound();
         }
 
-        var walker = TreeWalker<TextNode>.StartFrom(targetTextNode, targetTextNode.GetNearestBlock());
+        var parent = targetTextNode.GetNearestBlock();
+        var walker = TreeWalker<TextNode>.StartFrom(targetTextNode, parent);
         if (walker.Node is null)
         {
             return DNodeInfo.NotFound();
@@ -65,24 +54,20 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : Event
         
         transaction.SplitText(walker.Node, keyPressInfo.Selection.AnchorOffset);
         
-        var previousNode = DeleteWord(transaction, walker, out var remainingCharacterOffset);
-        var word = walker.Node is not null ? transaction.SplitText(walker.Node, remainingCharacterOffset + 1) : null;
-        if (word is not null) transaction.Delete(word);
-
-        return DNodeInfo.From(walker.Node ?? previousNode, walker.Node?.Length ?? 0);
+        return DeleteWord(transaction, walker);
     }
 
-    private static TextNode? DeleteWord(ITransaction transaction, TreeWalker<TextNode> walker, out int index)
+    private static DNodeInfo DeleteWord(ITransaction transaction, TreeWalker<TextNode> walker)
     {
-        TextNode? previous = null;
-        index = walker.Node!.Length - 1;
+        var hasFoundNoe = false;
+        var index = walker.Node!.Length - 1;
         
         while (index >= 0 && walker.Node is not null && char.IsWhiteSpace(walker.Node.TextContent[index]))
         {
             if (index == 0)
             {
+                hasFoundNoe = true;
                 transaction.Delete(walker.Node);
-                previous = walker.Node;
                 walker.MovePrevious();
                 index = walker.Node?.Length ?? 0;
             }
@@ -93,14 +78,23 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : Event
         {
             if (index == 0)
             {
+                hasFoundNoe = true;
                 transaction.Delete(walker.Node);
-                previous = walker.Node;
                 walker.MovePrevious();
                 index = walker.Node?.Length ?? 0;
             }
             index--;
         }
+        
+        var word = walker.Node is not null ? transaction.SplitText(walker.Node, index + 1) : null;
+        if (!hasFoundNoe && word is null)
+        {
+            return DNodeInfo.NotFound();
+        }
 
-        return previous;
+        if (word is not null) transaction.Delete(word);
+        return word?.Origin is not null
+            ? SelectionHelper.NearestTextNode(word.Origin)
+            : new DNodeInfo(word?.Parent ?? walker.Parent, 0);
     }
 }

@@ -11,20 +11,19 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : Ev
 
     protected override DNodeInfo HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode anchorTextNode)
     {
-        var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, anchorTextNode);
-
-        if (deletedNodeInfo.HasFoundNode)
+        var targetSelection = SimpleDeleteBackwards(keyPressInfo, transaction, anchorTextNode);
+        if (targetSelection.HasFoundNode)
         {
-            transaction.AddCursorPosition(deletedNodeInfo.Node.Origin?.Id ?? deletedNodeInfo.Node.Id, deletedNodeInfo.Offset);
+            transaction.AddCursorPosition(targetSelection.Node!.Id, targetSelection.Offset);
         }
-        else if (!deletedNodeInfo.HasFoundNode && anchorTextNode.GetNearestBlock() is { Origin: not null } parent)
+        else if (anchorTextNode.GetNearestBlock() is { Origin: not null } parent)
         {
             transaction.AddCursorPosition(anchorTextNode.Id, 0); 
             transaction.MoveRange(parent.FirstChild, null, parent.Origin, parent.Origin.LastChild);
             transaction.Delete(parent);
         }
 
-        return deletedNodeInfo;
+        return targetSelection;
     }
 
     protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
@@ -33,21 +32,10 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : Ev
         var index = anchorNode.Parent?.IndexOf(anchorNode);
         var focusNode = index.HasValue ? anchorNode.Parent?.ChildAt(index.Value - 1) : null;
         
-        if (focusNode is not null && GetCursorPosition(focusNode) is { HasFoundNode: true } nodeInfo)
+        if (focusNode is not null && SelectionHelper.NearestTextNode(focusNode) is { HasFoundNode: true } nodeInfo)
         {
             transaction.AddCursorPosition(nodeInfo.Node.Id, nodeInfo.Offset);
         }
-    }
-
-    private static DNodeInfo GetCursorPosition(DNode target)
-    {
-        while (target is not null)
-        {
-            if (target is TextNode textNode) return new DNodeInfo(target, textNode.Length);
-            target = target.LastChild;
-        }
-        
-        return new DNodeInfo(target, 0);
     }
 
     private static DNodeInfo SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
@@ -56,11 +44,13 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : Ev
         {
             return new DNodeInfo(null, 0);
         }
-        
+
         transaction.SplitText(targetTextNode, keyPressInfo.Selection.AnchorOffset);
-        var nodeToDelete = transaction.SplitText(targetTextNode, 1) ?? targetTextNode;
+        var nodeToDelete = transaction.SplitText(targetTextNode, targetTextNode.Length - 1)!;
         transaction.Delete(nodeToDelete);
-        
-        return new DNodeInfo(nodeToDelete, keyPressInfo.Selection.AnchorOffset - 1);
+
+        return nodeToDelete.Origin is not null
+            ? SelectionHelper.NearestTextNode(nodeToDelete.Origin)
+            : new DNodeInfo(nodeToDelete.Parent, 0);
     }
 }

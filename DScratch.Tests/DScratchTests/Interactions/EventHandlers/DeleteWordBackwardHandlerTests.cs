@@ -36,7 +36,7 @@ public class DeleteWordBackwardHandlerTests
             // Arrange
             TextNode text1 = null!;
             TextNode text2 = null!;
-            builder.TestBlockElementNode(t => 
+            var parent = builder.TestBlockElementNode(t => 
             {
                 text1 = t.Text("ab");
                 text2 = t.Text("c");
@@ -52,7 +52,7 @@ public class DeleteWordBackwardHandlerTests
                 Assert.That(text2.IsDeleted, Is.True);
             }
             
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text1.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
         
         [Test]
@@ -84,7 +84,7 @@ public class DeleteWordBackwardHandlerTests
                 Assert.That(remainingText.TextContent, Is.EqualTo(" "));
             }
             
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
         
         [Test]
@@ -124,7 +124,7 @@ public class DeleteWordBackwardHandlerTests
         {
             // Arrange
             TextNode text = null!;
-            builder.TestBlockElementNode(t => 
+            var parent = builder.TestBlockElementNode(t => 
             {
                 text = t.Text("bc");
                 t.Text("a");
@@ -135,7 +135,7 @@ public class DeleteWordBackwardHandlerTests
 
             // Assert
             Assert.That(text.IsDeleted, Is.True);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
         
         [Test]
@@ -143,7 +143,7 @@ public class DeleteWordBackwardHandlerTests
         {
             // Arrange
             TextNode text = null!;
-            builder.TestBlockElementNode(t => 
+            var parent = builder.TestBlockElementNode(t => 
             {
                 text = t.Text("a");
                 t.Text("bc");
@@ -154,7 +154,7 @@ public class DeleteWordBackwardHandlerTests
 
             // Assert
             Assert.That(text.IsDeleted, Is.True);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
         
         [Test]

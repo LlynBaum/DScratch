@@ -150,7 +150,7 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
 {
     private const bool EnableDebug = false;
 
-    private readonly DNode parent = parent;
+    public readonly DNode Parent = parent;
     
     public DNode? Current { get; protected set; } = parent;
     
@@ -174,7 +174,7 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
 
             node = node.Parent;
 
-            if (node == parent)
+            if (node == Parent)
             {
                 return null;
             }
@@ -188,7 +188,7 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
     {
         if (current?.Origin is null)
         {
-            return current?.Parent == parent ? null : current?.Parent;
+            return current?.Parent == Parent ? null : current?.Parent;
         }
         
         var node = current.Origin;
