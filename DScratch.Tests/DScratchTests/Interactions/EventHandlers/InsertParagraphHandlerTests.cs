@@ -3,7 +3,6 @@ using DScratch.Interactions.EventHandlers.Events;
 using DScratch.Nodes;
 using DScratch.Tests.DScratchTests.Interactions.Helpers;
 using DScratch.Tests.Helpers;
-using DScratch.Transactions;
 
 namespace DScratch.Tests.DScratchTests.Interactions.EventHandlers;
 
@@ -47,7 +46,7 @@ public class InsertParagraphHandlerTests
                 Assert.That(((TextNode)parent.FirstChild!).TextContent, Is.EqualTo("abc"));
 
                 Assert.That(parent.Origin, Is.Not.Null);
-                Assert.That(parent.Origin.RightOrigin, Is.EqualTo(parent));
+                Assert.That(parent.Origin!.RightOrigin, Is.EqualTo(parent));
                 Assert.That(parent.Origin.ChildNodes, Has.Count.Zero);
             }
 
@@ -71,7 +70,7 @@ public class InsertParagraphHandlerTests
                 Assert.That(((TextNode)parent.FirstChild!).TextContent, Is.EqualTo("abc"));
 
                 Assert.That(parent.RightOrigin, Is.Not.Null);
-                Assert.That(parent.RightOrigin.Origin, Is.EqualTo(parent));
+                Assert.That(parent.RightOrigin!.Origin, Is.EqualTo(parent));
                 Assert.That(parent.RightOrigin.ChildNodes, Has.Count.Zero);
             }
 
@@ -95,7 +94,7 @@ public class InsertParagraphHandlerTests
                 Assert.That(((TextNode)parent.FirstChild!).TextContent, Is.EqualTo("a"));
 
                 Assert.That(parent.RightOrigin, Is.Not.Null);
-                Assert.That(parent.RightOrigin.Origin, Is.EqualTo(parent));
+                Assert.That(parent.RightOrigin!.Origin, Is.EqualTo(parent));
                 Assert.That(parent.RightOrigin.ChildNodes, Has.Count.EqualTo(1));
                 Assert.That(((TextNode)parent.RightOrigin.FirstChild!).TextContent, Is.EqualTo("bc"));
             }
@@ -125,7 +124,7 @@ public class InsertParagraphHandlerTests
                 Assert.That(((TextNode)parent.FirstChild!).TextContent, Is.EqualTo("a"));
 
                 Assert.That(parent.RightOrigin, Is.Not.Null);
-                Assert.That(parent.RightOrigin.Origin, Is.EqualTo(parent));
+                Assert.That(parent.RightOrigin!.Origin, Is.EqualTo(parent));
                 Assert.That(parent.RightOrigin.ChildNodes, Has.Count.EqualTo(2));
                 Assert.That(((TextNode)parent.RightOrigin.ChildNodes[0]).TextContent, Is.EqualTo("b"));
                 Assert.That(((TextNode)parent.RightOrigin.ChildNodes[1]).TextContent, Is.EqualTo("c"));
@@ -161,13 +160,13 @@ public class InsertParagraphHandlerTests
                 Assert.That(((TextNode)parent.FirstChild!).TextContent, Is.EqualTo("a"));
 
                 Assert.That(parent.RightOrigin, Is.Not.Null);
-                Assert.That(parent.RightOrigin.Origin, Is.EqualTo(parent));
+                Assert.That(parent.RightOrigin!.Origin, Is.EqualTo(parent));
 
                 Assert.That(parent.RightOrigin.ChildNodes, Has.Count.EqualTo(1));
                 Assert.That(((TextNode)parent.RightOrigin.ChildNodes[0]).TextContent, Is.EqualTo("b"));
 
                 Assert.That(parent.RightOrigin.RightOrigin, Is.Not.Null);
-                Assert.That(parent.RightOrigin.RightOrigin.ChildNodes, Has.Count.EqualTo(1));
+                Assert.That(parent.RightOrigin.RightOrigin!.ChildNodes, Has.Count.EqualTo(1));
                 Assert.That(((TextNode)parent.RightOrigin.RightOrigin.ChildNodes[0]).TextContent, Is.EqualTo("c"));
             }
 
@@ -193,7 +192,7 @@ public class InsertParagraphHandlerTests
 
                 var newParagraph = parent.RightOrigin;
                 Assert.That(newParagraph, Is.Not.Null);
-                Assert.That(newParagraph.Origin, Is.EqualTo(parent));
+                Assert.That(newParagraph!.Origin, Is.EqualTo(parent));
                 Assert.That(newParagraph.ChildNodes, Has.Count.EqualTo(2));
                 Assert.That(newParagraph.ChildNodes[0].IsDeleted, Is.True);
                 Assert.That(((TextNode)newParagraph.ChildNodes[1]).TextContent, Is.EqualTo("e"));
@@ -240,7 +239,7 @@ public class InsertParagraphHandlerTests
 
                 var newParagraph = parent.RightOrigin;
                 Assert.That(newParagraph, Is.Not.Null);
-                Assert.That(newParagraph.Origin, Is.EqualTo(parent));
+                Assert.That(newParagraph!.Origin, Is.EqualTo(parent));
                 Assert.That(newParagraph.ChildNodes, Has.Count.EqualTo(2));
                 Assert.That(newParagraph.ChildNodes[0].IsDeleted, Is.True);
                 Assert.That(((TextNode)newParagraph.ChildNodes[1]).TextContent, Is.EqualTo("ef"));
@@ -293,7 +292,7 @@ public class InsertParagraphHandlerTests
                 
                 var newParagraph = parent.RightOrigin;
                 Assert.That(newParagraph, Is.Not.Null);
-                Assert.That(newParagraph.ChildNodes, Has.Count.EqualTo(2));
+                Assert.That(newParagraph!.ChildNodes, Has.Count.EqualTo(2));
                 Assert.That(newParagraph.ChildNodes[0].IsDeleted, Is.True);
                 Assert.That(((TextNode)newParagraph.ChildNodes[1]).TextContent, Is.EqualTo("ef"));
             }
@@ -342,7 +341,7 @@ public class InsertParagraphHandlerTests
                 
                 var newParagraph = parent.RightOrigin;
                 Assert.That(newParagraph, Is.Not.Null);
-                Assert.That(newParagraph.Origin, Is.EqualTo(parent));
+                Assert.That(newParagraph!.Origin, Is.EqualTo(parent));
                 Assert.That(newParagraph.ChildNodes, Has.Count.EqualTo(2));
                 Assert.That(newParagraph.ChildNodes[0].IsDeleted, Is.True);
                 Assert.That(((TextNode)newParagraph.ChildNodes[1]).TextContent, Is.EqualTo("hi"));
@@ -405,7 +404,7 @@ public class InsertParagraphHandlerTests
                 
                 var newParagraph = parent.RightOrigin;
                 Assert.That(newParagraph, Is.Not.Null);
-                Assert.That(newParagraph.ChildNodes, Has.Count.EqualTo(2));
+                Assert.That(newParagraph!.ChildNodes, Has.Count.EqualTo(2));
                 Assert.That(newParagraph.ChildNodes[0].IsDeleted, Is.True);
                 Assert.That(((TextNode)newParagraph.ChildNodes[1]).TextContent, Is.EqualTo("hi"));
             }

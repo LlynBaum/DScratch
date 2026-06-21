@@ -8,10 +8,10 @@ public class TestTransactionFake : ITransaction, IRunningTransaction
     public List<DNode> ChangedNodes => changedNodes;
 
     private readonly List<DNode> changedNodes = [];
-    
-    public DNode Root { get; }
-    
-    public INodeFactory NodeFactory { get; }
+
+    public DNode Root { get; } = null!;
+
+    public INodeFactory NodeFactory { get; } = null!;
 
     public TransactionResult Commit()
     {

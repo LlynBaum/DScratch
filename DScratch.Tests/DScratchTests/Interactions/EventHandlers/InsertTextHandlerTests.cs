@@ -3,7 +3,6 @@ using DScratch.Interactions.EventHandlers.Events;
 using DScratch.Nodes;
 using DScratch.Tests.DScratchTests.Interactions.Helpers;
 using DScratch.Tests.Helpers;
-using DScratch.Transactions;
 
 namespace DScratch.Tests.DScratchTests.Interactions.EventHandlers;
 
@@ -534,7 +533,7 @@ public class InsertTextHandlerTests
             {
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
                 Assert.That(parent.FirstChild, Is.TypeOf<TextNode>());
-                Assert.That(((TextNode)parent.FirstChild).TextContent, Is.EqualTo("abc"));
+                Assert.That(((TextNode)parent.FirstChild!).TextContent, Is.EqualTo("abc"));
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.FirstChild.Id, 3);

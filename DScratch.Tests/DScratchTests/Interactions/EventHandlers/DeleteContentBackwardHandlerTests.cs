@@ -3,7 +3,6 @@ using DScratch.Interactions.EventHandlers.Events;
 using DScratch.Nodes;
 using DScratch.Tests.DScratchTests.Interactions.Helpers;
 using DScratch.Tests.Helpers;
-using DScratch.Transactions;
 
 namespace DScratch.Tests.DScratchTests.Interactions.EventHandlers;
 
