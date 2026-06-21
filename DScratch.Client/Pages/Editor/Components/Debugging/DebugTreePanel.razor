@@ -1,8 +1,6 @@
 @using Microsoft.AspNetCore.Components.Sections
-@rendermode InteractiveWebAssembly
-@{
-#if DEBUG
-if (!treeNodes.Any())
+
+@if (!treeNodes.Any())
 {
     <div class="empty-state">
         <p>No nodes found. Start typing to build the tree.</p>
@@ -55,5 +53,3 @@ else
 <SectionContent SectionName="debug-footer">
     <span>Total Nodes: @(treeNodes.Count)</span>
 </SectionContent>
-#endif
-}

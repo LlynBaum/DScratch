@@ -133,6 +133,11 @@
     transform: translateX(14px);
 }
 
+.debug-tabs {
+    display: flex;
+    flex-direction: row;
+}
+
 .label-text {
     font-size: 11px;
     font-weight: 500;

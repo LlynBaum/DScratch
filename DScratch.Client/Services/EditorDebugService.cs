@@ -1,3 +1,5 @@
+using DScratch.Transactions;
+
 namespace DScratch.Client.Services;
 
 public class EditorDebugService
@@ -15,11 +17,11 @@ public class EditorDebugService
         }
     }
 
-    public event Action? DocumentChanged;
+    public event Action<TransactionResult>? DocumentChanged;
     public event Action? DebugModeChanged;
 
-    public void NotifyDocumentChanged()
+    public void NotifyDocumentChanged(TransactionResult transactionResult)
     {
-        DocumentChanged?.Invoke();
+        DocumentChanged?.Invoke(transactionResult);
     }
 }

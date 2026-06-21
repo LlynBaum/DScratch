@@ -1,5 +1,6 @@
 @using Microsoft.AspNetCore.Components.Sections
 @rendermode InteractiveWebAssembly
+
 @{
 #if DEBUG
 <!-- Floating Toggle Button -->
@@ -29,9 +30,22 @@
             </label>
         </div>
     </div>
+    
+    <div class="debug-tabs">
+        <button @onclick="@(() => SwitchTab(nameof(DebugTreePanel)))">Tree</button>
+        <button @onclick="@(() => SwitchTab(nameof(DebugTransaction)))">Transaction</button>
+    </div>
 
     <div class="debug-content">
-        <DebugTreePanel />
+        @switch (currentTab)
+        {
+            case nameof(DebugTreePanel):
+                <DebugTreePanel />
+                break;
+            case nameof(DebugTransaction):
+                <DebugTransaction />
+                break;
+        }
     </div>
 
     <div class="debug-footer">

@@ -30,7 +30,7 @@ public class InputEventHelper(
 
             await jsInvoker.ApplyTransaction(result);
 
-            editorDebugService.NotifyDocumentChanged();
+            editorDebugService.NotifyDocumentChanged(result);
 
             if (editorDebugService.IsDebugEnabled)
             {

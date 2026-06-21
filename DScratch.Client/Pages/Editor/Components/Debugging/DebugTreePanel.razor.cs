@@ -1,6 +1,6 @@
-#if DEBUG
 using DScratch.Client.Services;
 using DScratch.Nodes;
+using DScratch.Transactions;
 
 namespace DScratch.Client.Pages.Editor.Components.Debugging;
 
@@ -15,7 +15,7 @@ public partial class DebugTreePanel(EditorDebugService debugService, IDScratchSe
         UpdateTreeNodes();
     }
 
-    private void OnDocumentChanged()
+    private void OnDocumentChanged(TransactionResult _)
     {
         InvokeAsync(() =>
         {
@@ -103,4 +103,3 @@ public class TreeNodeViewModel
     public string RightOriginId { get; set; } = "";
     public string TextContent { get; set; } = "";
 }
-#endif

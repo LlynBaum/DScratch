@@ -23,6 +23,6 @@ public class EditorCommandDispatcher(
         var result = dScratchService.Apply(transaction);
         await jsInvoker.ApplyTransaction(result);
         
-        editorDebugService.NotifyDocumentChanged();
+        editorDebugService.NotifyDocumentChanged(result);
     }
 }

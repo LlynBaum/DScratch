@@ -1,0 +1,65 @@
+@using DScratch.Transactions
+@if (lastTransaction is null)
+{
+    <span>No Transactions yet. Start typing to see transactions</span>
+    return;
+}
+
+<div>
+    <div>
+        <h4>Selection</h4>
+        @if (lastTransaction.CursorPosition is not null)
+        {
+            @lastTransaction.CursorPosition.ParentId
+            @lastTransaction.CursorPosition.Offset
+        }
+        else
+        {
+            <span>No Cursor Position for Transaction</span>
+        }
+    </div>
+    
+    <table>
+        <thead>
+        <tr>
+            <td>Type</td>
+            <td>Data</td>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var step in lastTransaction.Steps)
+        {
+            if (step is null) continue;
+
+            <tr>
+                <td>@step.Type</td>
+                <td>
+                    @switch (step.Type)
+                    {
+                        case StepDiff.InsertText:
+                            var insertText = (StepDiff.InsertTextDiff)step;
+                            <span>@insertText.ParentId : @insertText.Offset (@insertText.Text)</span>
+                            break;
+                        case StepDiff.DeleteText:
+                            var deleteText = (StepDiff.DeleteTextDiff)step;
+                            <span>@deleteText.ParentId : @deleteText.Offset - @deleteText.Length</span>
+                            break;
+                        case StepDiff.InsertElement:
+                            var insertElement = (StepDiff.InsertElementDiff)step;
+                            <span>@insertElement.ParentId @insertElement.PreviousSiblingId @insertElement.NewNodeId (@insertElement.TagName)</span>
+                            break;
+                        case StepDiff.DeleteElement:
+                            var deleteElement = (StepDiff.DeleteElementDiff)step;
+                            <span>@deleteElement.TargetId</span>
+                            break;
+                        case StepDiff.Move:
+                            var move = (StepDiff.MoveDiff)step;
+                            <span>@move.TargetNodeId -> @move.TargetParentId @move.PreviousSiblingId</span>
+                            break;
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

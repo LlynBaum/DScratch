@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Components;
 
 namespace DScratch.Client.Pages.Editor.Components.Debugging;
 
-public partial class DebugPanel(EditorDebugService debugService) : ComponentBase
+public partial class DebugPanel(EditorDebugService debugService)
 {
     [Parameter]
     public bool IsOpen { get; set; }
+
+    private string currentTab = nameof(DebugTreePanel);
 
     private bool IsConsoleLogEnabled
     {
@@ -18,4 +20,6 @@ public partial class DebugPanel(EditorDebugService debugService) : ComponentBase
     {
         IsOpen = !IsOpen;
     }
+
+    private void SwitchTab(string tab) => currentTab = tab;
 }
