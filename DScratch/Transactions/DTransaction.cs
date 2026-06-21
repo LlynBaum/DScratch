@@ -75,13 +75,12 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
 
     public TextNode? SplitText(TextNode node, int offset)
     {
-        var originalLength = node.Length;
         var splitNode = node.Split(offset, nodeIdGenerator.GetNextId);
         
-        if (splitNode is not null)
+        if (splitNode is not null && splitNode.Id != node.Id)
         {
             addedNodes.Add(splitNode);
-            additionalStepDiffs.Add(new StepDiff.DeleteTextDiff(node.Id.Value, originalLength - 1, originalLength - offset));
+            additionalStepDiffs.Add(new StepDiff.DeleteTextDiff(node.Id.Value, offset, splitNode.Length));
             additionalStepDiffs.AddRange(splitNode.ToInsertSteps());
         }
         

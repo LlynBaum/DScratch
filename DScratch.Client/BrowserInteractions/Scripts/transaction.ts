@@ -105,7 +105,10 @@ function handleDeleteTextStep(step: DeleteTextStep) {
         node.textContent = text.slice(0, relativeOffset) + text.slice(relativeOffset + step.length);
     }
     
-    // TODO: if the wrapping span is empty, just remove it from the DOM.
+    // TODO: test if that really works. Should clean up any empty spans
+    if (element.childNodes.length == 0) {
+        element.remove();
+    }
 }
 
 function handleInsertElementBlockStep(step: InsertElementStep) {
