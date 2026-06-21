@@ -58,7 +58,7 @@ export function applyTransaction(transaction: TransactionResult){
     if (transaction.cursorPosition) {
         setSelection(transaction.cursorPosition.parentId, transaction.cursorPosition.offset);
     }
-    
+
     function handle(step?: Step | null) {
         if(!step) return;
         switch (step.type) {
@@ -121,7 +121,7 @@ function handleInsertElementBlockStep(step: InsertElementStep) {
 function handleDeleteElementStep(step: DeleteElementStep) {
     const element = findNode(step.targetId);
     if (!element) return;
-    
+
     element.remove();
 }
 
@@ -138,22 +138,6 @@ function createElement(tagName: string, id: string) {
     const element = document.createElement(tagName);
     element.setAttribute("data-dnode-id", id);
     return element;
-}
-
-function insertElementInline(element: Element, parent: Element, offset: number) {
-    if(!parent.hasChildNodes()){
-        parent.appendChild(element);
-        return;
-    }
-    
-    const { node, relativeOffset } = findTextNodeAtOffset(parent, offset);
-    
-    if (node) {
-        const remainingTextNode = node.splitText(relativeOffset);
-        node.parentNode?.insertBefore(element, remainingTextNode);
-    } else {
-        parent.appendChild(element);
-    }
 }
 
 function insertElementBlock(element: Element, parent: Element, previousSibling: Element | null) {

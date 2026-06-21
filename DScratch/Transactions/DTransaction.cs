@@ -81,7 +81,7 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
         if (splitNode is not null)
         {
             addedNodes.Add(splitNode);
-            additionalStepDiffs.Add(new StepDiff.DeleteTextDiff(node.Id.Value, originalLength, originalLength - offset));
+            additionalStepDiffs.Add(new StepDiff.DeleteTextDiff(node.Id.Value, originalLength - 1, originalLength - offset));
             additionalStepDiffs.AddRange(splitNode.ToInsertSteps());
         }
         
