@@ -47,6 +47,37 @@ public class DeleteContentBackwardHandlerTests
             Assert.That(textNode.IsDeleted, Is.True);
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Origin!.Id, 2);
         }
+
+        [Test]
+        public void Handle_CreatesExpectedChanges_WithDeletedText()
+        {
+            // Arrange
+            TextNode textNode = null!;
+            var parent = builder.TestInlineElementNode(t =>
+            {
+                textNode = t.Text("abc");
+                t.Text("d").Delete();
+            });
+
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 3));
+
+            // Assert
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(textNode.IsDeleted, Is.False);
+                Assert.That(textNode.TextContent, Is.EqualTo("ab"));
+                
+                Assert.That(parent.ChildNodes[1].IsDeleted, Is.True);
+                Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("c"));
+                
+                Assert.That(parent.ChildNodes[2].IsDeleted, Is.True);
+                Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("d"));
+            }
+
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 2);
+        }
         
         [Test]
         public void Handle_CreatesExpectedChanges_MiddleOfTextNode()

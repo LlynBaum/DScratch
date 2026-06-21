@@ -76,7 +76,7 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
     public TextNode? SplitText(TextNode node, int offset)
     {
         var originalLength = node.Length;
-        var splitNode = node.Split(offset, nodeIdGenerator.GetNextId());
+        var splitNode = node.Split(offset, nodeIdGenerator.GetNextId);
         
         if (splitNode is not null)
         {

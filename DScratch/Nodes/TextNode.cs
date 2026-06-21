@@ -31,7 +31,7 @@ public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string conte
         marks.Add(mark);
     }
 
-    internal TextNode? Split(int offset, NodeId nextId)
+    internal TextNode? Split(int offset, Func<NodeId> nextId)
     {
         if (offset is 0) return this;
         if (offset == Length) return null;
@@ -41,7 +41,7 @@ public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string conte
 
         TextContent = remainingText;
         
-        var newNode = new TextNode(nextId, this, RightOrigin)
+        var newNode = new TextNode(nextId.Invoke(), this, RightOrigin)
         {
             TextContent = otherText
         };

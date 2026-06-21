@@ -28,8 +28,9 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : Ev
 
     protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
     {
+        // TODO: check if there is a origin, else skip. Also for other deletes the same
         transaction.Delete(anchorNode);
-        var index = anchorNode.Parent?.IndexOf(anchorNode);
+        var index = anchorNode.Parent?.IndexOf(anchorNode); // TODO: can replace with just origin I guess
         var focusNode = index.HasValue ? anchorNode.Parent?.ChildAt(index.Value - 1) : null;
         
         if (focusNode is not null && SelectionHelper.NearestTextNode(focusNode) is { HasFoundNode: true } nodeInfo)
