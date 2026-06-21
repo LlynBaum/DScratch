@@ -1,0 +1,59 @@
+@using Microsoft.AspNetCore.Components.Sections
+@rendermode InteractiveWebAssembly
+@{
+#if DEBUG
+if (!treeNodes.Any())
+{
+    <div class="empty-state">
+        <p>No nodes found. Start typing to build the tree.</p>
+    </div>
+}
+else
+{
+    <div class="tree-list">
+        @foreach (var node in treeNodes)
+        {
+            <div class="tree-row @(node.IsDeleted ? "deleted" : "")" style="padding-left: @(node.Indent * 16 + 8)px;">
+                <span class="tree-line" style="left: @(node.Indent * 16)px;"></span>
+
+                <div class="node-badge @node.Type.ToLower()">
+                    <span class="node-type">@node.Type.Replace("Node", "")</span>
+                    <span class="node-id">@node.Id</span>
+                </div>
+
+                <div class="node-links">
+                    @if (node.OriginId != "null")
+                    {
+                        <span class="link-badge origin" title="Origin Node ID">
+                            ← @node.OriginId
+                        </span>
+                    }
+                    @if (node.RightOriginId != "null")
+                    {
+                        <span class="link-badge right-origin" title="Right Origin Node ID">
+                            @node.RightOriginId →
+                        </span>
+                    }
+                </div>
+
+                @if (!string.IsNullOrEmpty(node.TextContent))
+                {
+                    <div class="node-text">
+                        <span class="text-val">@node.TextContent</span>
+                    </div>
+                }
+
+                @if (node.IsDeleted)
+                {
+                    <span class="deleted-label">Deleted</span>
+                }
+            </div>
+        }
+    </div>
+}
+
+<SectionContent SectionName="debug-footer">
+    <span>Total Nodes: @(treeNodes.Count)</span>
+</SectionContent>
+#endif
+}

@@ -1,0 +1,149 @@
+.tree-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+}
+
+.tree-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    position: relative;
+    transition: all 0.15s ease-in-out;
+    font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+    font-size: 12px;
+}
+
+.tree-row:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.tree-row.deleted {
+    background-color: #fef2f2;
+    border-color: #fee2e2;
+    opacity: 0.7;
+}
+
+.tree-row.deleted .node-badge .node-type,
+.tree-row.deleted .node-badge .node-id,
+.tree-row.deleted .node-text,
+.tree-row.deleted .node-links .link-badge {
+    text-decoration: line-through;
+    color: #94a3b8;
+}
+
+.tree-line {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 1px;
+    background-color: #cbd5e1;
+}
+
+.node-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 4px;
+    overflow: hidden;
+    font-size: 11px;
+    font-weight: 500;
+    border: 1px solid #e2e8f0;
+}
+
+.node-badge .node-type {
+    padding: 2px 6px;
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+.node-badge .node-id {
+    padding: 2px 6px;
+    background-color: #f8fafc;
+    color: #64748b;
+    border-left: 1px solid #e2e8f0;
+}
+
+/* Node type colors matching modern palette */
+.node-badge.rootnode {
+    border-color: #cbd5e1;
+}
+.node-badge.rootnode .node-type {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+.node-badge.paragraphnode {
+    border-color: #c7d2fe;
+}
+.node-badge.paragraphnode .node-type {
+    background-color: #e0e7ff;
+    color: #4338ca;
+}
+
+.node-badge.heading1node,
+.node-badge.heading2node,
+.node-badge.heading3node,
+.node-badge.heading4node,
+.node-badge.heading5node,
+.node-badge.heading6node {
+    border-color: #bae6fd;
+}
+.node-badge.heading1node .node-type,
+.node-badge.heading2node .node-type,
+.node-badge.heading3node .node-type,
+.node-badge.heading4node .node-type,
+.node-badge.heading5node .node-type,
+.node-badge.heading6node .node-type {
+    background-color: #e0f2fe;
+    color: #0369a1;
+}
+
+.node-badge.textnode {
+    border-color: #99f6e4;
+}
+.node-badge.textnode .node-type {
+    background-color: #ccfbf1;
+    color: #0f766e;
+}
+
+.node-links {
+    display: flex;
+    gap: 4px;
+}
+
+.link-badge {
+    font-size: 10px;
+    padding: 1px 4px;
+    border-radius: 3px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+}
+
+.node-text {
+    color: #0d9488;
+    word-break: break-all;
+}
+
+.text-val {
+    font-weight: 500;
+}
+
+.deleted-label {
+    margin-left: auto;
+    font-size: 10px;
+    background-color: #ef4444;
+    color: #ffffff;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 500;
+}

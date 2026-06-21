@@ -1,33 +1,18 @@
 #if DEBUG
 using DScratch.Client.Services;
 using DScratch.Nodes;
-using Microsoft.AspNetCore.Components;
 
-namespace DScratch.Client.Pages.Editor.Components;
+namespace DScratch.Client.Pages.Editor.Components.Debugging;
 
 public partial class DebugTreePanel(EditorDebugService debugService, IDScratchService dScratchService) : IDisposable
 {
     private List<TreeNodeViewModel> treeNodes = [];
-
-    [Parameter]
-    public bool IsOpen { get; set; }
-
-    private bool IsConsoleLogEnabled
-    {
-        get => debugService.IsDebugEnabled;
-        set => debugService.IsDebugEnabled = value;
-    }
-
+    
     protected override void OnInitialized()
     {
         debugService.DocumentChanged += OnDocumentChanged;
         debugService.DebugModeChanged += OnDebugModeChanged;
         UpdateTreeNodes();
-    }
-
-    private void TogglePanel()
-    {
-        IsOpen = !IsOpen;
     }
 
     private void OnDocumentChanged()
