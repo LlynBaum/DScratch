@@ -3,26 +3,17 @@ using DScratch.Transactions;
 
 namespace DScratch.Client.Pages.Editor.Components.Debugging;
 
-public partial class DebugTransaction(EditorDebugService debugService) : IDisposable
+public partial class DebugTransaction(EditorDebugService editorDebugService) : IDisposable
 {
-    private TransactionResult? lastTransaction;
+     private TransactionResult? LastTransaction => editorDebugService.Transactions.LastOrDefault();
 
-    protected override void OnInitialized()
-    {
-        debugService.DocumentChanged += OnDocumentChane;
-    }
+     protected override void OnInitialized()
+     {
+          editorDebugService.DocumentChanged += StateHasChanged;
+     }
 
-    private void OnDocumentChane(TransactionResult transactionResult)
-    {
-        InvokeAsync(() =>
-        {
-            lastTransaction = transactionResult;
-            StateHasChanged();
-        });
-    }
-
-    public void Dispose()
-    {
-        debugService.DocumentChanged -= OnDocumentChane;
-    }
+     public void Dispose()
+     {
+          editorDebugService.DocumentChanged -= StateHasChanged;
+     }
 }

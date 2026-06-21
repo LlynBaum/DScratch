@@ -14,6 +14,8 @@ public static class ClientServiceRegistration
         services.AddScoped<InputEventHelper>();
         services.AddScoped<DJsInvoker>();
         services.AddScoped<INodeIdGenerator, NodeIdGenerator>();
+#if DEBUG // TODO replace by checking env. Do that everywhere
         services.AddScoped<EditorDebugService>();
+#endif
     }
 }
