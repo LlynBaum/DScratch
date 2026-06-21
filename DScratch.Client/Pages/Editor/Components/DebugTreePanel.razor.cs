@@ -1,9 +1,11 @@
+#if DEBUG
+using DScratch.Client.Services;
 using DScratch.Nodes;
 using Microsoft.AspNetCore.Components;
 
 namespace DScratch.Client.Pages.Editor.Components;
 
-public partial class DebugTreePanel(IDScratchService dScratchService) : IDisposable
+public partial class DebugTreePanel(EditorDebugService debugService, IDScratchService dScratchService) : IDisposable
 {
     private List<TreeNodeViewModel> treeNodes = [];
 
@@ -12,14 +14,14 @@ public partial class DebugTreePanel(IDScratchService dScratchService) : IDisposa
 
     private bool IsConsoleLogEnabled
     {
-        get => dScratchService.IsDebugEnabled;
-        set => dScratchService.IsDebugEnabled = value;
+        get => debugService.IsDebugEnabled;
+        set => debugService.IsDebugEnabled = value;
     }
 
     protected override void OnInitialized()
     {
-        dScratchService.DocumentChanged += OnDocumentChanged;
-        dScratchService.DebugModeChanged += OnDebugModeChanged;
+        debugService.DocumentChanged += OnDocumentChanged;
+        debugService.DebugModeChanged += OnDebugModeChanged;
         UpdateTreeNodes();
     }
 
@@ -44,7 +46,8 @@ public partial class DebugTreePanel(IDScratchService dScratchService) : IDisposa
 
     private void UpdateTreeNodes()
     {
-        treeNodes = BuildTreeNodes(dScratchService.Document.Root);
+        var doc = dScratchService.Document;
+        treeNodes = BuildTreeNodes(doc.Root);
     }
 
     private List<TreeNodeViewModel> BuildTreeNodes(DNode root)
@@ -68,8 +71,7 @@ public partial class DebugTreePanel(IDScratchService dScratchService) : IDisposa
                 IsDeleted = current.IsDeleted,
                 OriginId = current.Origin?.Id.Value ?? "null",
                 RightOriginId = current.RightOrigin?.Id.Value ?? "null",
-                TextContent = text,
-                TagName = current.Id.IsRoot ? "root" : current.TagName
+                TextContent = text
             });
             
             if (current.ChildNodes.Count > 0)
@@ -101,8 +103,8 @@ public partial class DebugTreePanel(IDScratchService dScratchService) : IDisposa
 
     public void Dispose()
     {
-        dScratchService.DocumentChanged -= OnDocumentChanged;
-        dScratchService.DebugModeChanged -= OnDebugModeChanged;
+        debugService.DocumentChanged -= OnDocumentChanged;
+        debugService.DebugModeChanged -= OnDebugModeChanged;
     }
 }
 
@@ -115,5 +117,5 @@ public class TreeNodeViewModel
     public string OriginId { get; set; } = "";
     public string RightOriginId { get; set; } = "";
     public string TextContent { get; set; } = "";
-    public string TagName { get; set; } = "";
 }
+#endif

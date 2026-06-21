@@ -7,6 +7,7 @@ namespace DScratch.Client.BrowserInteractions;
 public class InputEventHelper(
     DJsInvoker jsInvoker, 
     IDScratchService dScratchService,
+    Services.EditorDebugService editorDebugService,
     IServiceProvider serviceProvider, 
     ILogger<InputEventHelper> logger)
 {
@@ -29,7 +30,9 @@ public class InputEventHelper(
 
             await jsInvoker.ApplyTransaction(result);
 
-            if (dScratchService.IsDebugEnabled)
+            editorDebugService.NotifyDocumentChanged();
+
+            if (editorDebugService.IsDebugEnabled)
             {
                 var visualizer = new TreeVisualizers.DocumentVisualizer(dScratchService.Document);
                 visualizer.Print();

@@ -16,5 +16,9 @@
         <DocumentEditor />
     </div>
 
-    <DebugTreePanel />
+    @{
+    #if DEBUG
+        <DebugTreePanel />
+    #endif
+    }
 </div>

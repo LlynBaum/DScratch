@@ -5,33 +5,14 @@ namespace DScratch;
 
 public class DScratchService(INodeFactory nodeFactory, INodeIdGenerator nodeIdGenerator) : IDScratchService
 {
-    private readonly DScratchDocument document = new DScratchDocument(nodeIdGenerator.GetNextId());
-
-    public DScratchDocument Document => document;
-
-    private bool isDebugEnabled;
-    public bool IsDebugEnabled
-    {
-        get => isDebugEnabled;
-        set
-        {
-            if (isDebugEnabled != value)
-            {
-                isDebugEnabled = value;
-                DebugModeChanged?.Invoke();
-            }
-        }
-    }
-
-    public event Action? DocumentChanged;
-    public event Action? DebugModeChanged;
+    public DScratchDocument Document { get; } = new DScratchDocument(nodeIdGenerator.GetNextId());
 
     public bool DisableCleanUp { get; init; } = false;
 
     internal DScratchService(DScratchDocument document, INodeFactory nodeFactory, INodeIdGenerator nodeIdGenerator) 
         : this(nodeFactory, nodeIdGenerator)
     {
-        this.document = document;
+        this.Document = document;
     }
     
     // TODO: history of past transaction, so things like ctrl-z can be possible.
@@ -39,21 +20,17 @@ public class DScratchService(INodeFactory nodeFactory, INodeIdGenerator nodeIdGe
 
     public ITransaction StartTransaction()
     {
-        return new DTransaction(document, nodeFactory, nodeIdGenerator, DisableCleanUp);
+        return new DTransaction(Document, nodeFactory, nodeIdGenerator, DisableCleanUp);
     }
     
     public TransactionResult Apply(ITransaction transaction)
     {
         transactions.Push(transaction);
-        var result = transaction.Commit();
-        DocumentChanged?.Invoke();
-        return result;
+        return transaction.Commit();
     }
 
     public TransactionResult InitialTransaction()
     { 
-        var result = new TransactionResult(document.Root.ToInsertSteps());
-        DocumentChanged?.Invoke();
-        return result;
+        return new TransactionResult(Document.Root.ToInsertSteps());
     }
 }

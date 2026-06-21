@@ -1,4 +1,5 @@
 using DScratch.Client.BrowserInteractions;
+using DScratch.Client.Services;
 using DScratch.Interactions.CommandHandlers;
 using DScratch.Interactions.EventHandlers;
 
@@ -13,5 +14,6 @@ public static class ClientServiceRegistration
         services.AddScoped<InputEventHelper>();
         services.AddScoped<DJsInvoker>();
         services.AddScoped<INodeIdGenerator, NodeIdGenerator>();
+        services.AddScoped<EditorDebugService>();
     }
 }

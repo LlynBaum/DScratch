@@ -3,7 +3,10 @@ using DScratch.Interactions.CommandHandlers.Commands;
 
 namespace DScratch.Client.BrowserInteractions;
 
-public class EditorCommandDispatcher(IDScratchService dScratchService, DJsInvoker jsInvoker) : IEditorCommandDispatcher
+public class EditorCommandDispatcher(
+    IDScratchService dScratchService, 
+    DJsInvoker jsInvoker,
+    Services.EditorDebugService editorDebugService) : IEditorCommandDispatcher
 {
     public async Task ChangeBlockTypeAsync(BlockNodeType targetBlockNodeType)
     {
@@ -19,5 +22,7 @@ public class EditorCommandDispatcher(IDScratchService dScratchService, DJsInvoke
 
         var result = dScratchService.Apply(transaction);
         await jsInvoker.ApplyTransaction(result);
+        
+        editorDebugService.NotifyDocumentChanged();
     }
 }
