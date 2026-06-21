@@ -93,7 +93,10 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
     private List<StepDiff?> CleanupCode(IReadOnlyList<DNode> nodes)
     {
         List<StepDiff?> result = [];
-        if(disableCleanUp) return result;
+        if(disableCleanUp)
+        {
+            return result;
+        }
         
         foreach (var node in nodes.OfType<TextNode>())
         {

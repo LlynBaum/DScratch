@@ -31,8 +31,8 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
             throw new InvalidOperationException("A TextNode must have at least 1 character.");
         }
         
-        var textNode = new TextNode(nodeIdGenerator.GetNextId(), origin, rightOrigin);
-        nodeIdGenerator.TakeIds(value.Length - 1);
+        var nodeId = nodeIdGenerator.TakeIds(value.Length);
+        var textNode = new TextNode(nodeId, origin, rightOrigin);
         textNode.AddText(value);
         return textNode;
     }

@@ -2,7 +2,7 @@ namespace DScratch;
 
 public interface INodeIdGenerator
 {
-    public NodeId GetNextId();
+    NodeId GetNextId();
     
-    void TakeIds(int count);
+    NodeId TakeIds(int count);
 }

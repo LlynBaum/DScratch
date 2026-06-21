@@ -9,8 +9,10 @@ public class TestNodeIdGenerator : INodeIdGenerator
         return new NodeId("Test", currentId++);
     }
 
-    public void TakeIds(int count)
+    public NodeId TakeIds(int count)
     {
+        var firstId = new NodeId("Test", currentId);
         currentId += count;
+        return firstId;
     }
 }

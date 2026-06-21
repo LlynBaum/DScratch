@@ -7,12 +7,12 @@ public class DScratchService(INodeFactory nodeFactory, INodeIdGenerator nodeIdGe
 {
     public DScratchDocument Document { get; } = new DScratchDocument(nodeIdGenerator.GetNextId());
 
-    public bool DisableCleanUp { get; init; } = false;
+    public bool DisableCleanUp { get; init; }
 
     internal DScratchService(DScratchDocument document, INodeFactory nodeFactory, INodeIdGenerator nodeIdGenerator) 
         : this(nodeFactory, nodeIdGenerator)
     {
-        this.Document = document;
+        Document = document;
     }
     
     // TODO: history of past transaction, so things like ctrl-z can be possible.
