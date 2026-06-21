@@ -4,7 +4,11 @@ using Microsoft.JSInterop;
 
 namespace DScratch.Client.BrowserInteractions;
 
-public class InputEventHelper(DJsInvoker jsInvoker, IServiceProvider serviceProvider, ILogger<InputEventHelper> logger)
+public class InputEventHelper(
+    DJsInvoker jsInvoker, 
+    IDScratchService dScratchService,
+    IServiceProvider serviceProvider, 
+    ILogger<InputEventHelper> logger)
 {
     [JSInvokable]
     public async Task OnKeyPressCallbackAsync(KeyPressInfo keyPressInfo)
@@ -24,6 +28,12 @@ public class InputEventHelper(DJsInvoker jsInvoker, IServiceProvider serviceProv
             }
 
             await jsInvoker.ApplyTransaction(result);
+
+            if (dScratchService.IsDebugEnabled)
+            {
+                var visualizer = new TreeVisualizers.DocumentVisualizer(dScratchService.Document);
+                visualizer.Print();
+            }
         }
         else
         {

@@ -7,6 +7,25 @@ public class DScratchService(INodeFactory nodeFactory, INodeIdGenerator nodeIdGe
 {
     private readonly DScratchDocument document = new DScratchDocument(nodeIdGenerator.GetNextId());
 
+    public DScratchDocument Document => document;
+
+    private bool isDebugEnabled;
+    public bool IsDebugEnabled
+    {
+        get => isDebugEnabled;
+        set
+        {
+            if (isDebugEnabled != value)
+            {
+                isDebugEnabled = value;
+                DebugModeChanged?.Invoke();
+            }
+        }
+    }
+
+    public event Action? DocumentChanged;
+    public event Action? DebugModeChanged;
+
     public bool DisableCleanUp { get; init; } = false;
 
     internal DScratchService(DScratchDocument document, INodeFactory nodeFactory, INodeIdGenerator nodeIdGenerator) 
@@ -26,11 +45,15 @@ public class DScratchService(INodeFactory nodeFactory, INodeIdGenerator nodeIdGe
     public TransactionResult Apply(ITransaction transaction)
     {
         transactions.Push(transaction);
-        return transaction.Commit();
+        var result = transaction.Commit();
+        DocumentChanged?.Invoke();
+        return result;
     }
 
     public TransactionResult InitialTransaction()
     { 
-        return new TransactionResult(document.Root.ToInsertSteps());
+        var result = new TransactionResult(document.Root.ToInsertSteps());
+        DocumentChanged?.Invoke();
+        return result;
     }
 }
