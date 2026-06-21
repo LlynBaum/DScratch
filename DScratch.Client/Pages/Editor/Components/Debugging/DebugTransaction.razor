@@ -1,65 +1,128 @@
 @using DScratch.Transactions
+
 @if (lastTransaction is null)
 {
-    <span>No Transactions yet. Start typing to see transactions</span>
-    return;
-}
-
-<div>
-    <div>
-        <h4>Selection</h4>
-        @if (lastTransaction.CursorPosition is not null)
-        {
-            @lastTransaction.CursorPosition.ParentId
-            @lastTransaction.CursorPosition.Offset
-        }
-        else
-        {
-            <span>No Cursor Position for Transaction</span>
-        }
+    <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <p>No transactions recorded yet. Start typing in the editor to see event diffs.</p>
     </div>
-    
-    <table>
-        <thead>
-        <tr>
-            <td>Type</td>
-            <td>Data</td>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var step in lastTransaction.Steps)
-        {
-            if (step is null) continue;
+}
+else
+{
+    <div class="transaction-container">
+        <!-- Selection Info Card -->
+        <div class="info-card">
+            <div class="info-card-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"></path><path d="M9 21H3v-6"></path><path d="M21 3l-7 7"></path><path d="M3 21l7-7"></path></svg>
+                <h4>Selection / Cursor State</h4>
+            </div>
+            <div class="info-card-body">
+                @if (lastTransaction.CursorPosition is not null)
+                {
+                    <div class="selection-field">
+                        <span class="field-label">Parent Node ID</span>
+                        <span class="field-value monospace badge">@lastTransaction.CursorPosition.ParentId</span>
+                    </div>
+                    <div class="selection-field">
+                        <span class="field-label">Offset</span>
+                        <span class="field-value monospace badge font-bold">@lastTransaction.CursorPosition.Offset</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="no-selection">
+                        <span>No cursor position captured for this transaction.</span>
+                    </div>
+                }
+            </div>
+        </div>
+        
+        <!-- Steps Table -->
+        <div class="table-card">
+            <div class="table-card-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                <h4>Transaction Steps Diff</h4>
+            </div>
+            <div class="table-wrapper">
+                <table class="transaction-table">
+                    <thead>
+                        <tr>
+                            <th class="col-type">Type</th>
+                            <th class="col-data">Data Diffs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var step in lastTransaction.Steps)
+                        {
+                            if (step is null) continue;
 
-            <tr>
-                <td>@step.Type</td>
-                <td>
-                    @switch (step.Type)
-                    {
-                        case StepDiff.InsertText:
-                            var insertText = (StepDiff.InsertTextDiff)step;
-                            <span>@insertText.ParentId : @insertText.Offset (@insertText.Text)</span>
-                            break;
-                        case StepDiff.DeleteText:
-                            var deleteText = (StepDiff.DeleteTextDiff)step;
-                            <span>@deleteText.ParentId : @deleteText.Offset - @deleteText.Length</span>
-                            break;
-                        case StepDiff.InsertElement:
-                            var insertElement = (StepDiff.InsertElementDiff)step;
-                            <span>@insertElement.ParentId @insertElement.PreviousSiblingId @insertElement.NewNodeId (@insertElement.TagName)</span>
-                            break;
-                        case StepDiff.DeleteElement:
-                            var deleteElement = (StepDiff.DeleteElementDiff)step;
-                            <span>@deleteElement.TargetId</span>
-                            break;
-                        case StepDiff.Move:
-                            var move = (StepDiff.MoveDiff)step;
-                            <span>@move.TargetNodeId -> @move.TargetParentId @move.PreviousSiblingId</span>
-                            break;
-                    }
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-</div>
+                            <tr>
+                                <td>
+                                    <span class="step-badge @step.Type.ToLower()">
+                                        @step.Type
+                                    </span>
+                                </td>
+                                <td class="monospace cell-data">
+                                    @switch (step.Type)
+                                    {
+                                        case StepDiff.InsertText:
+                                            var insertText = (StepDiff.InsertTextDiff)step;
+                                            <div class="diff-data-line">
+                                                <span class="data-label">Parent ID:</span> <span class="data-value font-bold">@insertText.ParentId</span>
+                                                <span class="data-separator">|</span>
+                                                <span class="data-label">Offset:</span> <span class="data-value">@insertText.Offset</span>
+                                                <span class="data-separator">|</span>
+                                                <span class="data-label">Text:</span> <span class="data-text">"@insertText.Text"</span>
+                                            </div>
+                                            break;
+                                        case StepDiff.DeleteText:
+                                            var deleteText = (StepDiff.DeleteTextDiff)step;
+                                            <div class="diff-data-line">
+                                                <span class="data-label">Parent ID:</span> <span class="data-value font-bold">@deleteText.ParentId</span>
+                                                <span class="data-separator">|</span>
+                                                <span class="data-label">Offset:</span> <span class="data-value">@deleteText.Offset</span>
+                                                <span class="data-separator">|</span>
+                                                <span class="data-label">Len:</span> <span class="data-value text-red-600">@deleteText.Length</span>
+                                            </div>
+                                            break;
+                                        case StepDiff.InsertElement:
+                                            var insertElement = (StepDiff.InsertElementDiff)step;
+                                            <div class="diff-data-line">
+                                                <span class="data-label">Parent:</span> <span class="data-value font-bold">@insertElement.ParentId</span>
+                                                <span class="data-separator">|</span>
+                                                <span class="data-label">Prev:</span> <span class="data-value">@insertElement.PreviousSiblingId</span>
+                                                <span class="data-separator">|</span>
+                                                <span class="data-label">New:</span> <span class="data-value text-indigo-600">@insertElement.NewNodeId</span>
+                                                <span class="data-separator">|</span>
+                                                <span class="data-tag">&lt;@insertElement.TagName&gt;</span>
+                                            </div>
+                                            break;
+                                        case StepDiff.DeleteElement:
+                                            var deleteElement = (StepDiff.DeleteElementDiff)step;
+                                            <div class="diff-data-line">
+                                                <span class="data-label">Target ID:</span> <span class="data-value text-red-600 font-bold">@deleteElement.TargetId</span>
+                                            </div>
+                                            break;
+                                        case StepDiff.Move:
+                                            var move = (StepDiff.MoveDiff)step;
+                                            <div class="diff-data-line">
+                                                <span class="data-label">Target:</span> <span class="data-value font-bold">@move.TargetNodeId</span>
+                                                <span class="data-separator">→</span>
+                                                <span class="data-label">Parent:</span> <span class="data-value">@move.TargetParentId</span>
+                                                <span class="data-separator">|</span>
+                                                <span class="data-label">Prev:</span> <span class="data-value">@move.PreviousSiblingId</span>
+                                            </div>
+                                            break;
+                                        default:
+                                            <span class="text-slate-400">@step.ToString()</span>
+                                            break;
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

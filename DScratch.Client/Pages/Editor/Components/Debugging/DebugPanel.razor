@@ -1,8 +1,6 @@
 @using Microsoft.AspNetCore.Components.Sections
 @rendermode InteractiveWebAssembly
 
-@{
-#if DEBUG
 <!-- Floating Toggle Button -->
 <button class="debug-toggle-btn @(IsOpen ? "open" : "")" @onclick="TogglePanel" title="Toggle Tree Visualizer">
     @if (IsOpen)
@@ -32,8 +30,8 @@
     </div>
     
     <div class="debug-tabs">
-        <button @onclick="@(() => SwitchTab(nameof(DebugTreePanel)))">Tree</button>
-        <button @onclick="@(() => SwitchTab(nameof(DebugTransaction)))">Transaction</button>
+        <button class="tab-btn @(currentTab == nameof(DebugTreePanel) ? "active" : "")" @onclick="@(() => SwitchTab(nameof(DebugTreePanel)))">Tree</button>
+        <button class="tab-btn @(currentTab == nameof(DebugTransaction) ? "active" : "")" @onclick="@(() => SwitchTab(nameof(DebugTransaction)))">Transaction</button>
     </div>
 
     <div class="debug-content">
@@ -52,5 +50,3 @@
         <SectionOutlet SectionName="debug-footer" />
     </div>
 </div>
-#endif
-}
