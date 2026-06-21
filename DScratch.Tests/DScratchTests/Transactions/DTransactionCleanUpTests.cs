@@ -40,6 +40,8 @@ public class DTransactionCleanUpTests
                 node.Delete();
                 modifiedNode.Delete();
             }
+
+            Transaction.AddCursorPosition(modifiedNode.Id, 2);
         
             // Act
             Transaction.NotifyNodeChange(modifiedNode);
@@ -51,10 +53,6 @@ public class DTransactionCleanUpTests
                 Assert.That(modifiedNode.Parent, Is.Null);
                 Assert.That(modifiedNode.Origin, Is.Null);
                 Assert.That(modifiedNode.RightOrigin, Is.Null);
-            }
-        
-            using (Assert.EnterMultipleScope())
-            {
                 Assert.That(node.TextContent, Is.EqualTo("abcdef"));
             }
 
@@ -76,6 +74,8 @@ public class DTransactionCleanUpTests
                     Assert.That(delete.TargetId, Is.EqualTo(modifiedNode.Id.Value));
                 }
             }
+            
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, node.Id, 5);
         }
     
         [Test]
@@ -97,6 +97,8 @@ public class DTransactionCleanUpTests
                 node.Delete();
                 modifiedNode.Delete();
             }
+            
+            Transaction.AddCursorPosition(node.Id, 2);
         
             // Act
             Transaction.NotifyNodeChange(modifiedNode);
@@ -108,10 +110,6 @@ public class DTransactionCleanUpTests
                 Assert.That(node.Parent, Is.Null);
                 Assert.That(node.Origin, Is.Null);
                 Assert.That(node.RightOrigin, Is.Null);
-            }
-        
-            using (Assert.EnterMultipleScope())
-            {
                 Assert.That(modifiedNode.TextContent, Is.EqualTo("abcdef"));
             }
 
@@ -133,6 +131,8 @@ public class DTransactionCleanUpTests
                     Assert.That(delete.TargetId, Is.EqualTo(node.Id.Value));
                 }
             }
+            
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, modifiedNode.Id, 5);
         }
     }
     

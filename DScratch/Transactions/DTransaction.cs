@@ -21,17 +21,17 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
 
     public TransactionResult Commit()
     {
-        var result = new TransactionResult(steps.SelectMany(s => s.Execute(this, document)).ToList(), cursorPosition);
+        var stepDiffs = steps.SelectMany(s => s.Execute(this, document)).ToList();
         
         addedNodes.ForEach(document.AddNode);
         var cleanUpSteps = CleanupCode(modifiedNodes);
-        result = result with { Steps = [..additionalStepDiffs, ..result.Steps, ..cleanUpSteps]};
+        stepDiffs = [..additionalStepDiffs, ..stepDiffs, ..cleanUpSteps];
         
         modifiedNodes.Clear();
         addedNodes.Clear();
         additionalStepDiffs.Clear();
         
-        return result;
+        return new TransactionResult(stepDiffs, cursorPosition);
     }
     
     public ITransaction Insert(DNode node, DNode parent)
@@ -115,7 +115,7 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
 
                 if (cursorPosition?.ParentId == node.Id.Value)
                 {
-                    cursorPosition = cursorPosition with { ParentId = originTextNode.Id.Value };
+                    cursorPosition = new CursorPosition(ParentId: originTextNode.Id.Value, Offset: originTextNode.Length + cursorPosition.Offset);
                 }
                 
                 originTextNode.AddText(node.TextContent);
@@ -137,7 +137,7 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
 
                 if (cursorPosition?.ParentId == rightOriginTextNode.Id.Value)
                 {
-                    cursorPosition = cursorPosition with { ParentId = node.Id.Value };
+                    cursorPosition = new CursorPosition(ParentId: node.Id.Value, Offset: rightOriginTextNode.Length + cursorPosition.Offset);
                 }
                 
                 node.AddText(rightOriginTextNode.TextContent);
