@@ -1,11 +1,11 @@
 using DScratch.Interactions;
 using Microsoft.Playwright;
-using Microsoft.Playwright.NUnit;
 
 namespace DScratch.Tests.E2E.Framework;
 
 [TestFixture]
-public class PlaywrightTestBase : PageTest
+[Parallelizable(ParallelScope.Self)] // TODO: this caused problems, and suddenly had ghost processes running. Maybe double check if this is actually save to do.
+public class PlaywrightTestBase : E2ETestsRunnerBase
 {
     protected ILocator Editor => Page.Locator("div[contenteditable]");
 

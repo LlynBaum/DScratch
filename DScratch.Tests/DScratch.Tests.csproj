@@ -28,8 +28,4 @@
       <ProjectReference Include="..\DScratch\DScratch.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="DScratchTests\Interactions\" />
-    </ItemGroup>
-
 </Project>
