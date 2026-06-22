@@ -378,8 +378,6 @@ public class InsertParagraphHandlerTests
 
             // Act
             var result = handler.Handle(keyPressInfo);
-
-            builder.Print();
             
             // Assert
             using (Assert.EnterMultipleScope()) 

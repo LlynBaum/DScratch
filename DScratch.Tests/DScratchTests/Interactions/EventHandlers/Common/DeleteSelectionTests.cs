@@ -228,8 +228,6 @@ public class DeleteSelectionTests
         // Act
         DeleteSelection.Handle(keyPressInfo, transaction);
         transaction.Commit();
-        
-        builder.Print();
 
         // Assert
         Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(3));
@@ -300,8 +298,6 @@ public class DeleteSelectionTests
         // Act
         DeleteSelection.Handle(keyPressInfo, transaction);
         transaction.Commit();
-        
-        builder.Print();
 
         // Assert
         Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(3));

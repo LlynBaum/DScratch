@@ -149,7 +149,6 @@ public class DeleteContentBackwardHandlerTests
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1));
-            builder.Print();
             
             // Assert
             Assert.That(textNode.IsDeleted, Is.True);
@@ -492,8 +491,6 @@ public class DeleteContentBackwardHandlerTests
 
             // Act
             var result = handler.Handle(keyPressInfo);
-
-            builder.Print();
             
             // Assert
             using (Assert.EnterMultipleScope())
@@ -545,8 +542,6 @@ public class DeleteContentBackwardHandlerTests
 
             // Act
             var result = handler.Handle(keyPressInfo);
-
-            builder.Print();
             
             // Assert
             using (Assert.EnterMultipleScope())

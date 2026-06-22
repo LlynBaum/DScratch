@@ -217,9 +217,6 @@ public class DeleteWordBackwardHandlerTests
             // Act
             var result = handler.Handle(keyPressInfo);
 
-            var visualizer = new DocumentVisualizer(document);
-            visualizer.Print();
-
             // Assert
             using (Assert.EnterMultipleScope())
             {
@@ -255,9 +252,6 @@ public class DeleteWordBackwardHandlerTests
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end));
 
-            var visualizer = new DocumentVisualizer(document);
-            visualizer.Print();
-
             // Assert
             using (Assert.EnterMultipleScope())
             {
@@ -284,9 +278,6 @@ public class DeleteWordBackwardHandlerTests
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end));
-
-            var visualizer = new DocumentVisualizer(document);
-            visualizer.Print();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -502,8 +493,6 @@ public class DeleteWordBackwardHandlerTests
 
             // Act
             var result = handler.Handle(keyPressInfo);
-
-            builder.Print();
             
             // Assert
             using (Assert.EnterMultipleScope())
@@ -555,8 +544,6 @@ public class DeleteWordBackwardHandlerTests
 
             // Act
             var result = handler.Handle(keyPressInfo);
-
-            builder.Print();
             
             // Assert
             using (Assert.EnterMultipleScope())

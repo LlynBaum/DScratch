@@ -2,7 +2,7 @@
 @using DScratch.Interactions.CommandHandlers
 @rendermode InteractiveWebAssembly
 
-<div class="menu">
+<nav class="menu">
     <MenubarButton OnClick="@BoldAsync">Bold</MenubarButton>
     <MenubarButton OnClick="@ItalicAsync">Italic</MenubarButton>
     <MenubarButton OnClick="@CodeAsync">Code</MenubarButton>
@@ -25,4 +25,4 @@
     <MenuDivider />
     
     <input type="color" @bind="color" @bind:event="onchange" @bind:after="OnColorChangeAsync" />
-</div>
+</nav>

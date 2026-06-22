@@ -304,9 +304,6 @@ public class DeleteContentForwardHandlerTests
             // Act
             var result = handler.Handle(keyPressInfo);
 
-            var visualizer = new DocumentVisualizer(document);
-            visualizer.Print();
-
             // Assert
             using (Assert.EnterMultipleScope())
             {

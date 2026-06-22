@@ -101,15 +101,11 @@ public class TextNodeTests
                 t.Text("abc");
                 t.Text("a");
             });
-
-        new TreeVisualizer(testNode).Print();
         
         var textNode = (TextNode)testNode.ChildNodes[1];
         
         // Act
         var result = textNode.Split(0, () => new NodeId("Test", -1));
-        
-        new TreeVisualizer(testNode).Print();
 
         // Assert
         Assert.That(testNode.ChildNodes, Has.Count.EqualTo(3));

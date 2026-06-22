@@ -1,5 +1,4 @@
 import {getSelection, snapshotSelection} from "./selection";
-import {getAbsolutOffset, getElementFromNode, getNodeId} from "./nodeHelper";
 
 const handledTypes = [
     "insertText",
