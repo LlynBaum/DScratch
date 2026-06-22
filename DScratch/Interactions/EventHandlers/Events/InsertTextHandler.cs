@@ -20,7 +20,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
         var offset = rightOrigin is not null ? 0 : anchorTextNode.Length;
         return new DNodeInfo(rightOrigin ?? anchorTextNode, offset);
     }
-    
+
     protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
     {
         if (string.IsNullOrEmpty(keyPressInfo.Data))

@@ -166,20 +166,23 @@ public class DTransactionTests
             Is.TypeOf<StepDiff.InsertTextDiff>()
         ]);
 
-        var deleteText = (StepDiff.DeleteTextDiff)transactionResult.Steps[0]!;
-        Assert.That(deleteText.ParentId, Is.EqualTo(node.Id.Value));
-        Assert.That(deleteText.Offset, Is.EqualTo(2));
-        Assert.That(deleteText.Length, Is.EqualTo(1));
+        using (Assert.EnterMultipleScope())
+        {
+            var deleteText = (StepDiff.DeleteTextDiff)transactionResult.Steps[0]!;
+            Assert.That(deleteText.ParentId, Is.EqualTo(node.Id.Value));
+            Assert.That(deleteText.Offset, Is.EqualTo(2));
+            Assert.That(deleteText.Length, Is.EqualTo(1));
         
-        var insertElement = (StepDiff.InsertElementDiff)transactionResult.Steps[1]!;
-        Assert.That(insertElement.ParentId, Is.EqualTo("Root"));
-        Assert.That(insertElement.PreviousSiblingId, Is.EqualTo(node.Id.Value));
+            var insertElement = (StepDiff.InsertElementDiff)transactionResult.Steps[1]!;
+            Assert.That(insertElement.ParentId, Is.EqualTo("Root"));
+            Assert.That(insertElement.PreviousSiblingId, Is.EqualTo(node.Id.Value));
         
-        var insertText = (StepDiff.InsertTextDiff)transactionResult.Steps[2]!;
-        Assert.That(insertText.ParentId, Is.EqualTo(insertElement.NewNodeId));
-        Assert.That(insertText.Text, Is.EqualTo("c"));
+            var insertText = (StepDiff.InsertTextDiff)transactionResult.Steps[2]!;
+            Assert.That(insertText.ParentId, Is.EqualTo(insertElement.NewNodeId));
+            Assert.That(insertText.Text, Is.EqualTo("c"));
+        }
     }
-    
+
     private class TestStep : IStep
     {
         public bool Executed;

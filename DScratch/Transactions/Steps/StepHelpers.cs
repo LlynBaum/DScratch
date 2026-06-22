@@ -33,44 +33,15 @@ internal static class StepHelpers
             };
         }
 
-        public StepDiff?[] ToMoveStep(Action<DNode> move)
-        {
-            var result = new List<StepDiff?>
-            {
-                node.ToMovePrepStep()
-            };
-            
-            move.Invoke(node);
-            result.AddRange(node.ToFinalizedMoveStep());
-            return [..result];
-        }
-
-        private StepDiff.DeleteTextDiff? ToMovePrepStep()
+        public StepDiff? ToMoveStep()
         {
             return node switch
             {
-                TextNode textNode => new StepDiff.DeleteTextDiff(
-                    ParentId: node.ParentElement!.Id.Value, 
-                    Offset: node.ParentElement?.FindAbsolutTextOffset(textNode) ?? 0, 
-                    Length: textNode.Length),
-                _ => null
-            };
-        }
-        
-        private StepDiff[] ToFinalizedMoveStep()
-        {
-            return node switch
-            {
-                RootNode => [],
-                TextNode textNode => InsertTextNode(textNode, node.ParentElement!.Id),
-                IElement =>
-                [
-                    new StepDiff.MoveDiff(
-                        TargetNodeId: node.Id.Value,
-                        TargetParentId: node.ParentElement!.Id.Value,
-                        PreviousSiblingId: node.GetFirstActiveOrigin()?.Id.Value)
-                ],
-                _ => throw new ArgumentException("Node type is not an element.")
+                RootNode => null,
+                _ => new StepDiff.MoveDiff(
+                    TargetNodeId: node.Id.Value,
+                    TargetParentId: node.ParentElement!.Id.Value,
+                    PreviousSiblingId: node.GetFirstActiveOrigin()?.Id.Value)
             };
         }
     }

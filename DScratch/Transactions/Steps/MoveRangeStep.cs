@@ -22,14 +22,12 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                 var origin = previousOrigin;
                 if (!current.IsDeleted)
                 {
-                    steps.AddRange(current.ToMoveStep(node =>
-                    {
-                        node.Remove();
-                        node.Origin = origin;
-                        node.RightOrigin = origin?.RightOrigin ?? existingFirstChild;
-                        targetParent.InsertChild(node);
-                        transaction.NotifyNodeChange(node);
-                    }));
+                    current.Remove();
+                    current.Origin = origin;
+                    current.RightOrigin = origin?.RightOrigin ?? existingFirstChild;
+                    targetParent.InsertChild(current);
+                    transaction.NotifyNodeChange(current);
+                    steps.Add(current.ToMoveStep());
                 }
                 else
                 {
@@ -55,14 +53,12 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
 
                 if (!current.IsDeleted)
                 {
-                    steps.AddRange(current.ToMoveStep(node =>
-                    {
-                        node.Remove();
-                        node.RightOrigin = rightOrigin;
-                        node.Origin = rightOrigin?.Origin;
-                        targetParent.InsertChild(node);
-                        transaction.NotifyNodeChange(node);
-                    }));
+                    current.Remove();
+                    current.RightOrigin = rightOrigin;
+                    current.Origin = rightOrigin?.Origin;
+                    targetParent.InsertChild(current);
+                    transaction.NotifyNodeChange(current);
+                    steps.Add(current.ToMoveStep());
                 }
                 else
                 {
@@ -88,14 +84,12 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
 
                 if (!current.IsDeleted)
                 {
-                    steps.AddRange(current.ToMoveStep(node =>
-                    {
-                        node.Remove();
-                        node.Origin = origin;
-                        node.RightOrigin = origin?.RightOrigin ?? existingFirstChild;
-                        targetParent.InsertChild(node);
-                        transaction.NotifyNodeChange(node);
-                    }));
+                    current.Remove();
+                    current.Origin = origin;
+                    current.RightOrigin = origin?.RightOrigin ?? existingFirstChild;
+                    targetParent.InsertChild(current);
+                    transaction.NotifyNodeChange(current);
+                    steps.Add(current.ToMoveStep());
                 }
                 else
                 {
@@ -114,14 +108,12 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
             {
                 if (!current.IsDeleted)
                 {
-                    steps.AddRange(current.ToMoveStep(node =>
-                    {
-                        node.Remove();
-                        node.Origin = previousOrigin;
-                        node.RightOrigin = previousOrigin?.RightOrigin ?? existingFirstChild;
-                        targetParent.InsertChild(node);
-                        transaction.NotifyNodeChange(node);
-                    }));
+                    current.Remove();
+                    current.Origin = previousOrigin;
+                    current.RightOrigin = previousOrigin?.RightOrigin ?? existingFirstChild;
+                    targetParent.InsertChild(current);
+                    transaction.NotifyNodeChange(current);
+                    steps.Add(current.ToMoveStep());
                 }
                 else
                 {
