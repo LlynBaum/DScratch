@@ -44,6 +44,7 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=bd789cb4_002Dc666_002D49b9_002Da7a0_002D3b96beea6b56/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="InsertTextTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;NUnit3x::13F4ED47-D3F2-7A46-6ED5-94A5A15AED29::net10.0::DScratch.Tests.E2E.Tests.InsertTextTests&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::13F4ED47-D3F2-7A46-6ED5-94A5A15AED29::net10.0::DScratch.Tests.E2E.Tests.DeleteTextTests&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	

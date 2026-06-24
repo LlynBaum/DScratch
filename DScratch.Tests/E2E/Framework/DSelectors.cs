@@ -18,6 +18,30 @@ public static class DSelectors
             await page.Keyboard.TypeAsync(text, new() { Delay = 100 });
         }
 
+        public async Task BackspaceAsync(bool ctrl = false)
+        {
+            if (ctrl)
+            {
+                await page.Keyboard.PressAsync("Control+Backspace");
+            }
+            else
+            {
+                await page.Keyboard.PressAsync("Backspace");
+            }
+        }
+        
+        public async Task DelAsync(bool ctrl = false)
+        {
+            if (ctrl)
+            {
+                await page.Keyboard.PressAsync("Control+Delete");
+            }
+            else
+            {
+                await page.Keyboard.PressAsync("Delete");
+            }
+        }
+        
         public async Task SetCursorToOffsetAsync(string dataPathId, int offset)
         {
             await page.EvaluateAsync("""
