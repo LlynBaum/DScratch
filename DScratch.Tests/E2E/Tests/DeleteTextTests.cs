@@ -10,7 +10,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Editor.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("abc");
         await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync("abc");
-        await Page.SetCursorToOffsetAsync("Darki-2", 2);
+        await Page.SetCursorAsync("Darki-2", 2);
 
         await Page.BackspaceAsync();
         await Expect(Editor.Paragraph.TextSpan.First).ToHaveTextAsync("a");
@@ -30,7 +30,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Editor.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("abc");
         await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync("abc");
-        await Page.SetCursorToOffsetAsync("Darki-2", 1);
+        await Page.SetCursorAsync("Darki-2", 1);
 
         await Page.DelAsync();
         await Expect(Editor.Paragraph.TextSpan.First).ToHaveTextAsync("a");
@@ -52,7 +52,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Editor.ClickAsync();
         await Page.TypeAtCurrentCursorAsync(text);
         await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync(text);
-        await Page.SetCursorToOffsetAsync("Darki-2", text.Length - 1);
+        await Page.SetCursorAsync("Darki-2", text.Length - 1);
 
         await Page.BackspaceAsync(true);
         await Expect(Editor.Paragraph.TextSpan.First).ToHaveTextAsync("   ");
@@ -75,7 +75,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Editor.ClickAsync();
         await Page.TypeAtCurrentCursorAsync(text);
         await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync(text);
-        await Page.SetCursorToOffsetAsync("Darki-2", 1);
+        await Page.SetCursorAsync("Darki-2", 1);
 
         await Page.DelAsync(true);
         await Expect(Editor.Paragraph.TextSpan.First).ToHaveTextAsync("d");
@@ -134,7 +134,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Editor.ClickAsync();
         await Page.EnterAsync();
         await Page.TypeAtCurrentCursorAsync("a");
-        await Page.SetCursorToOffsetAsync("Darki-2", 0);
+        await Page.SetCursorAsync("Darki-2", 0);
 
         await Page.BackspaceAsync(ctrl);
         await Expect(Editor.Paragraph).ToHaveCountAsync(1);
@@ -173,7 +173,7 @@ public class DeleteTextTests : PlaywrightTestBase
     {
         await Editor.ClickAsync();
         await Page.EnterAsync();
-        await Page.SetCursorToOffsetAsync("Darki-1", 0);
+        await Page.SetCursorAsync("Darki-1", 0);
 
         await Page.DelAsync(ctrl);
         await Expect(Editor.Paragraph).ToHaveCountAsync(1);
@@ -193,7 +193,7 @@ public class DeleteTextTests : PlaywrightTestBase
     {
         await Editor.ClickAsync();
         await Page.EnterAsync();
-        await Page.SetCursorToOffsetAsync("Darki-1", 0);
+        await Page.SetCursorAsync("Darki-1", 0);
         await Page.TypeAtCurrentCursorAsync("a");
 
         await Page.BackspaceAsync(ctrl);

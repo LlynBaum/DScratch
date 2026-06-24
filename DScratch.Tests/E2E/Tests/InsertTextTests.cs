@@ -32,7 +32,7 @@ public class InsertTextTests : PlaywrightTestBase
         await Editor.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("a");
 
-        await Page.SetCursorToOffsetAsync("Darki-2", 0);
+        await Page.SetCursorAsync("Darki-2", 0);
         await Page.TypeAtCurrentCursorAsync(text);
 
         await Expect(Editor.Paragraph.TextSpan.First).ToHaveTextAsync(text);
@@ -55,7 +55,7 @@ public class InsertTextTests : PlaywrightTestBase
         await Editor.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("a");
 
-        await Page.SetCursorToOffsetAsync("Darki-2", 1);
+        await Page.SetCursorAsync("Darki-2", 1);
         await Page.TypeAtCurrentCursorAsync(text);
 
         await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync("a" + text);
@@ -77,7 +77,7 @@ public class InsertTextTests : PlaywrightTestBase
         await Editor.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("ab");
 
-        await Page.SetCursorToOffsetAsync("Darki-2", 1);
+        await Page.SetCursorAsync("Darki-2", 1);
         await Page.TypeAtCurrentCursorAsync(text);
 
         await Expect(Editor.Paragraph.TextSpan.First).ToHaveTextAsync("a");

@@ -1,3 +1,4 @@
+using DScratch.Interactions;
 using Microsoft.Playwright;
 
 namespace DScratch.Tests.E2E.Framework;
@@ -7,6 +8,13 @@ public static class DSelectors
     extension(ILocator locator)
     {
         public ILocator Paragraph => locator.Locator("p[data-dnode-id]");
+        
+        public ILocator Heading1 => locator.Locator("h1[data-dnode-id]");
+        public ILocator Heading2 => locator.Locator("h2[data-dnode-id]");
+        public ILocator Heading3 => locator.Locator("h3[data-dnode-id]");
+        public ILocator Heading4 => locator.Locator("h4[data-dnode-id]");
+        public ILocator Heading5 => locator.Locator("h5[data-dnode-id]");
+        public ILocator Heading6 => locator.Locator("h6[data-dnode-id]");
 
         public ILocator Heading(HeadingLevel level)
         {
@@ -63,7 +71,7 @@ public static class DSelectors
             await page.Keyboard.PressAsync("Enter");
         }
         
-        public async Task SetCursorToOffsetAsync(string dataPathId, int offset)
+        public async Task SetCursorAsync(string dataPathId, int offset)
         {
             await page.EvaluateAsync("""
                  ([id, off]) => {
@@ -97,6 +105,59 @@ public static class DSelectors
                  """, 
                 new object[] { dataPathId, offset }
             );
+        }
+        
+        public async Task SetSelectionAsync(SelectionInfo selectionInfo)
+        {
+            var payload = new object[] 
+            { 
+                selectionInfo.AnchorId, 
+                selectionInfo.AnchorOffset, 
+                selectionInfo.FocusId, 
+                selectionInfo.FocusOffset 
+            };
+
+            await page.EvaluateAsync("""
+                (args) => {
+                    const [anchorId, anchorOffset, focusId, focusOffset] = args;
+
+                    // 1. Locate both elements via your stable CRDT data attributes
+                    const anchorElement = document.querySelector(`[data-dnode-id='${anchorId}']`);
+                    const focusElement = document.querySelector(`[data-dnode-id='${focusId}']`);
+
+                    if (!anchorElement) throw new Error(`Anchor node with ID '${anchorId}' not found in DOM.`);
+                    if (!focusElement) throw new Error(`Focus node with ID '${focusId}' not found in DOM.`);
+
+                    // 2. Safely claim browser focus inside the contenteditable root boundary
+                    const editableRoot = anchorElement.closest('[contenteditable]');
+                    if (editableRoot) editableRoot.focus();
+
+                    // Helper to resolve whether to target a text node or a structural empty block container
+                    const resolveTarget = (element, offset) => {
+                        const textNode = element.firstChild;
+                        if (!textNode || textNode.nodeType !== Node.TEXT_NODE) {
+                            return { node: element, offset: 0 };
+                        }
+                        const safeOffset = Math.min(offset, textNode.textContent.length);
+                        return { node: textNode, offset: safeOffset };
+                    };
+
+                    const anchorTarget = resolveTarget(anchorElement, anchorOffset);
+                    const focusTarget = resolveTarget(focusElement, focusOffset);
+
+                    // 3. Apply the selection directly to the window view layer
+                    const sel = window.getSelection();
+                    sel.removeAllRanges();
+                    
+                    // setBaseAndExtent natively establishes forward vs backward directions!
+                    sel.setBaseAndExtent(
+                        anchorTarget.node, 
+                        anchorTarget.offset, 
+                        focusTarget.node, 
+                        focusTarget.offset
+                    );
+                }
+                """, payload);
         }
     }
 }

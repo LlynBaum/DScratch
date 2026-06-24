@@ -26,7 +26,7 @@ public class InsertParagraphTests : PlaywrightTestBase
         await Editor.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("a");
         await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync("a");
-        await Page.SetCursorToOffsetAsync("Darki-2", 1);
+        await Page.SetCursorAsync("Darki-2", 1);
 
         await Page.EnterAsync();
         await Expect(Editor.Paragraph).ToHaveCountAsync(2);
@@ -46,7 +46,7 @@ public class InsertParagraphTests : PlaywrightTestBase
         await Editor.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("a");
         await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync("a");
-        await Page.SetCursorToOffsetAsync("Darki-2", 0);
+        await Page.SetCursorAsync("Darki-2", 0);
 
         await Page.EnterAsync();
         await Expect(Editor.Paragraph).ToHaveCountAsync(2);
@@ -66,7 +66,7 @@ public class InsertParagraphTests : PlaywrightTestBase
         await Editor.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("ab");
         await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync("ab");
-        await Page.SetCursorToOffsetAsync("Darki-2", 1);
+        await Page.SetCursorAsync("Darki-2", 1);
 
         await Page.EnterAsync();
         await Expect(Editor.Paragraph).ToHaveCountAsync(2);
