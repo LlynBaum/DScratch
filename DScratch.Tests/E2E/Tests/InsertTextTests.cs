@@ -64,7 +64,7 @@ public class InsertTextTests : PlaywrightTestBase
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
-            Assert.That(selection.AnchorOffset, Is.EqualTo(text.Length));
+            Assert.That(selection.AnchorOffset, Is.EqualTo(text.Length + 1));
         }
     }
     

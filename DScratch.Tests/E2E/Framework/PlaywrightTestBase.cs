@@ -1,3 +1,4 @@
+using System.Text.Json;
 using DScratch.Interactions;
 using Microsoft.Playwright;
 
@@ -21,6 +22,8 @@ public class PlaywrightTestBase : E2ETestsRunnerBase
 
     protected async Task<SelectionInfo> GetCursorPositionAsync()
     {
-        return await Page.EvaluateAsync<SelectionInfo>("getSelection()");
+        var selection = await Page.EvaluateAsync<JsonElement>("window.editor.getSelection()");
+        return selection.Deserialize<SelectionInfo>() // Use System.Text, so direction string can be deserialized
+               ?? throw new InvalidOperationException("Failed to deserialize SelectionInfo.");
     }
 }

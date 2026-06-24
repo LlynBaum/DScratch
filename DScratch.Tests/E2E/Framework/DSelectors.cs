@@ -17,7 +17,7 @@ public static class DSelectors
         {
             await page.Keyboard.TypeAsync(text, new() { Delay = 100 });
         }
-        
+
         public async Task SetCursorToOffsetAsync(string dataPathId, int offset)
         {
             await page.EvaluateAsync("""
