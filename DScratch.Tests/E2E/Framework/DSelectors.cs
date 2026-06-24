@@ -41,6 +41,11 @@ public static class DSelectors
                 await page.Keyboard.PressAsync("Delete");
             }
         }
+
+        public async Task EnterAsync()
+        {
+            await page.Keyboard.PressAsync("Enter");
+        }
         
         public async Task SetCursorToOffsetAsync(string dataPathId, int offset)
         {
