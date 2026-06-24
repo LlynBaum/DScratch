@@ -91,4 +91,6 @@ public class InsertTextTests : PlaywrightTestBase
             Assert.That(selection.AnchorOffset, Is.EqualTo(text.Length));
         }
     }
+    
+    // TODO: test with selection
 }
