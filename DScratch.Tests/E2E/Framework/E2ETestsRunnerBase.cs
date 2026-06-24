@@ -23,7 +23,7 @@ public class E2ETestsRunnerBase
     public async Task Setup()
     {
         Page = await browser.NewPageAsync();
-        await Page.GotoAsync(E2ETestFixture.BaseUrl);
+        await Page.GotoAsync(E2ETestFixture.BaseUrl); // TODO: sometimes this will cause Connection Refused. Idk why, but without parallel testing it doesn't happen.
     }
 
     [TearDown]
