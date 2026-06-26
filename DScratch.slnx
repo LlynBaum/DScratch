@@ -3,6 +3,7 @@
     <File Path="README.md" />
   </Folder>
   <Folder Name="/Tests/">
+    <Project Path="tests/DScratch.E2E/DScratch.E2E.csproj" />
     <Project Path="tests/DScratch.Tests/DScratch.Tests.csproj" />
   </Folder>
   <Folder Name="/Tools/">

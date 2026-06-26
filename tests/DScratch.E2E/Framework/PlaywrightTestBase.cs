@@ -2,7 +2,7 @@ using System.Text.Json;
 using DScratch.Interactions;
 using Microsoft.Playwright;
 
-namespace DScratch.Tests.E2E.Framework;
+namespace DScratch.E2E.Framework;
 
 [TestFixture]
 public class PlaywrightTestBase : E2ETestsRunnerBase

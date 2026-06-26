@@ -1,7 +1,7 @@
+using DScratch.E2E.Framework;
 using DScratch.Interactions;
-using DScratch.Tests.E2E.Framework;
 
-namespace DScratch.Tests.E2E.Tests;
+namespace DScratch.E2E.Tests;
 
 public class SwitchBlockTypeTests : PlaywrightTestBase
 {

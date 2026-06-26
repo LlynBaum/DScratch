@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace DScratch.Tests.E2E;
+namespace DScratch.E2E;
 
 [SetUpFixture]
 public class E2ETestFixture

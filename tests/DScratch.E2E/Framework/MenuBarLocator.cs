@@ -1,6 +1,6 @@
 using Microsoft.Playwright;
 
-namespace DScratch.Tests.E2E.Framework;
+namespace DScratch.E2E.Framework;
 
 public class MenuBarLocator(ILocator menuBar)
 {
