@@ -23,9 +23,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DScratch.Client\DScratch.Client.csproj" />
-      <ProjectReference Include="..\DScratch.TreeVisualizers\DScratch.TreeVisualizers.csproj" />
-      <ProjectReference Include="..\DScratch\DScratch.csproj" />
+      <ProjectReference Include="..\..\src\DScratch.Client\DScratch.Client.csproj" />
+      <ProjectReference Include="..\..\src\DScratch\DScratch.csproj" />
+      <ProjectReference Include="..\..\tools\DScratch.TreeVisualizers\DScratch.TreeVisualizers.csproj" />
     </ItemGroup>
 
 </Project>

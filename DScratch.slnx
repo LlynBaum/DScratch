@@ -1,7 +1,14 @@
 <Solution>
-  <Project Path="DScratch.Client\DScratch.Client.csproj" />
-  <Project Path="DScratch.Host\DScratch.Host.csproj" />
-  <Project Path="DScratch.Tests/DScratch.Tests.csproj" />
-  <Project Path="DScratch.TreeVisualizers/DScratch.TreeVisualizers.csproj" />
-  <Project Path="DScratch/DScratch.csproj" />
+  <Folder Name="/SolutionItems/">
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="tests/DScratch.Tests/DScratch.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Tools/">
+    <Project Path="tools/DScratch.TreeVisualizers/DScratch.TreeVisualizers.csproj" />
+  </Folder>
+  <Project Path="src/DScratch.Client\DScratch.Client.csproj" />
+  <Project Path="src/DScratch.Host\DScratch.Host.csproj" />
+  <Project Path="src/DScratch/DScratch.csproj" />
 </Solution>

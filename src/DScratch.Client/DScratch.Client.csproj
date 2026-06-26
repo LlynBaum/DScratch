@@ -21,20 +21,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DScratch.TreeVisualizers\DScratch.TreeVisualizers.csproj" />
+      <ProjectReference Include="..\..\tools\DScratch.TreeVisualizers\DScratch.TreeVisualizers.csproj" />
       <ProjectReference Include="..\DScratch\DScratch.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="Components\DocumentEditor.razor" />
-      <_ContentIncludedByDefault Remove="Components\EditorMenu.razor" />
-      <_ContentIncludedByDefault Remove="Components\RegisterEditor.razor" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <AdditionalFiles Include="Pages\Editor\Components\DocumentEditor.razor" />
-      <AdditionalFiles Include="Pages\Editor\Components\EditorMenu.razor" />
-      <AdditionalFiles Include="Pages\Editor\Components\RegisterEditor.razor" />
     </ItemGroup>
 
     <Target Name="BundleJS" BeforeTargets="Build">
