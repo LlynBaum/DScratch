@@ -26,13 +26,13 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
         var selection = await GetCursorPositionAsync();
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(selection.AnchorId, Is.EqualTo("Darki-3"));
-            Assert.That(selection.AnchorOffset, Is.EqualTo(0));
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
+            Assert.That(selection.AnchorOffset, Is.EqualTo(1));
         }
     }
 
     [Test]
-    public async Task HeadingButtons_SwitchesCurrentBlockToExpectedHeading()
+    public async Task ParagraphButtons_SwitchesCurrentBlockToParagraph()
     {
         await Editor.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("a");
@@ -47,7 +47,7 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
         var selection = await GetCursorPositionAsync();
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(selection.AnchorId, Is.EqualTo("Darki-4"));
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
             Assert.That(selection.AnchorOffset, Is.EqualTo(0));
         }
     }
@@ -72,7 +72,7 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
         {
             AnchorId = "Darki-2",
             AnchorOffset = 1,
-            FocusId = "Darki-4",
+            FocusId = "Darki-8",
             FocusOffset = 1
         });
 
@@ -95,7 +95,7 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
     }
 
     [Test]
-    public async Task HeadingButtons_SwitchesCurrentBlockToExpectedHeading_WithSelection()
+    public async Task ParagraphButtons_SwitchesCurrentBlockToParagraph_WithSelection()
     {
         await Editor.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("ab");
@@ -108,7 +108,7 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
         {
             AnchorId = "Darki-2",
             AnchorOffset = 1,
-            FocusId = "Darki-4",
+            FocusId = "Darki-8",
             FocusOffset = 1
         });
 

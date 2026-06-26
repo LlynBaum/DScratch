@@ -1,4 +1,5 @@
 using DScratch.E2E.Framework;
+using DScratch.Interactions;
 
 namespace DScratch.E2E.Tests;
 
@@ -208,5 +209,71 @@ public class DeleteTextTests : PlaywrightTestBase
         }
     }
     
-    // TODO: test with selection
+    [Test]
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task DeleteBackward_ReplaceTextSelectionWithTypedText_AndMergeParagraphs(bool ctrl)
+    {
+        await Editor.ClickAsync();
+        await Page.TypeAtCurrentCursorAsync("abcd");
+        await Page.EnterAsync();
+        await Page.TypeAtCurrentCursorAsync("wtf");
+        await Page.EnterAsync();
+        await Page.TypeAtCurrentCursorAsync("efgh");
+        
+        await Page.SetSelectionAsync(new SelectionInfo
+        {
+            AnchorId = "Darki-2",
+            AnchorOffset = 2,
+            FocusId = "Darki-11",
+            FocusOffset = 2
+        });
+
+        await Page.BackspaceAsync(ctrl);
+
+        await Expect(Editor.Paragraph).ToHaveCountAsync(1);
+        await Expect(Editor.Paragraph.TextSpan.First).ToHaveTextAsync("ab");
+        await Expect(Editor.Paragraph.TextSpan.Last).ToHaveTextAsync("gh");
+
+        var selection = await GetCursorPositionAsync();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
+            Assert.That(selection.AnchorOffset, Is.EqualTo(2));
+        }
+    }
+    
+    [Test]
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task DeleteForward_ReplaceTextSelectionWithTypedText_AndMergeParagraphs(bool ctrl)
+    {
+        await Editor.ClickAsync();
+        await Page.TypeAtCurrentCursorAsync("abcd");
+        await Page.EnterAsync();
+        await Page.TypeAtCurrentCursorAsync("wtf");
+        await Page.EnterAsync();
+        await Page.TypeAtCurrentCursorAsync("efgh");
+        
+        await Page.SetSelectionAsync(new SelectionInfo
+        {
+            AnchorId = "Darki-2",
+            AnchorOffset = 2,
+            FocusId = "Darki-11",
+            FocusOffset = 2
+        });
+
+        await Page.DelAsync(ctrl);
+
+        await Expect(Editor.Paragraph).ToHaveCountAsync(1);
+        await Expect(Editor.Paragraph.TextSpan.First).ToHaveTextAsync("ab");
+        await Expect(Editor.Paragraph.TextSpan.Last).ToHaveTextAsync("gh");
+
+        var selection = await GetCursorPositionAsync();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
+            Assert.That(selection.AnchorOffset, Is.EqualTo(2));
+        }
+    }
 }

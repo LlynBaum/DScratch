@@ -1,4 +1,5 @@
 using DScratch.E2E.Framework;
+using DScratch.Interactions;
 
 namespace DScratch.E2E.Tests;
 
@@ -15,7 +16,7 @@ public class InsertParagraphTests : PlaywrightTestBase
         var selection = await GetCursorPositionAsync();
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(selection.AnchorId, Is.EqualTo("Darki-3"));
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
             Assert.That(selection.AnchorOffset, Is.EqualTo(0));
         }
     }
@@ -55,7 +56,7 @@ public class InsertParagraphTests : PlaywrightTestBase
         var selection = await GetCursorPositionAsync();
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(selection.AnchorId, Is.EqualTo("Darki-3"));
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
             Assert.That(selection.AnchorOffset, Is.EqualTo(0));
         }
     }
@@ -81,5 +82,35 @@ public class InsertParagraphTests : PlaywrightTestBase
         }
     }
     
-    // TODO: test with selection
+    [Test]
+    public async Task InsertParagraph_DeleteSelection_AndCreatesParagraph()
+    {
+        await Editor.ClickAsync();
+        await Page.TypeAtCurrentCursorAsync("abcd");
+        await Page.EnterAsync();
+        await Page.TypeAtCurrentCursorAsync("wtf");
+        await Page.EnterAsync();
+        await Page.TypeAtCurrentCursorAsync("efgh");
+        
+        await Page.SetSelectionAsync(new SelectionInfo
+        {
+            AnchorId = "Darki-2",
+            AnchorOffset = 2,
+            FocusId = "Darki-11",
+            FocusOffset = 2
+        });
+
+        await Page.EnterAsync();
+
+        await Expect(Editor.Paragraph).ToHaveCountAsync(2);
+        await Expect(Editor.Paragraph.First.TextSpan.First).ToHaveTextAsync("ab");
+        await Expect(Editor.Paragraph.Last.TextSpan.Last).ToHaveTextAsync("gh");
+
+        var selection = await GetCursorPositionAsync();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-16"));
+            Assert.That(selection.AnchorOffset, Is.EqualTo(0));
+        }
+    }
 }
