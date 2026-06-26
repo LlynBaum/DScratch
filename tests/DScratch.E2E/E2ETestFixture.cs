@@ -15,7 +15,7 @@ public class E2ETestFixture
         var startInfo = new ProcessStartInfo
         {
             FileName = "dotnet",
-            Arguments = $"run --project ../../../../DScratch.Host/DScratch.Host.csproj --urls {BaseUrl}",
+            Arguments = $"run --project ../../../../../src/DScratch.Host/DScratch.Host.csproj --urls {BaseUrl}",
             UseShellExecute = false,
             CreateNoWindow = true,
             RedirectStandardOutput = true,

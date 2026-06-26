@@ -9,7 +9,6 @@ public class InsertTextTests : PlaywrightTestBase
     {
         const string text = "DScratch";
         
-        // Click into the empty contenteditable area to focus it
         await Editor.ClickAsync();
         
         await Page.TypeAtCurrentCursorAsync(text);
@@ -28,7 +27,6 @@ public class InsertTextTests : PlaywrightTestBase
     {
         const string text = "DScratch";
         
-        // Click into the empty contenteditable area to focus it
         await Editor.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("a");
 
@@ -45,13 +43,12 @@ public class InsertTextTests : PlaywrightTestBase
             Assert.That(selection.AnchorOffset, Is.EqualTo(text.Length));
         }
     }
-    
+
     [Test]
     public async Task WriteText_AtEndOfText_PrependsCharactersAndAdvancesCursor()
     {
         const string text = "DScratch";
         
-        // Click into the empty contenteditable area to focus it
         await Editor.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("a");
 
@@ -67,13 +64,12 @@ public class InsertTextTests : PlaywrightTestBase
             Assert.That(selection.AnchorOffset, Is.EqualTo(text.Length + 1));
         }
     }
-    
+
     [Test]
     public async Task WriteText_InMiddleOfText_PrependsCharactersAndAdvancesCursor()
     {
         const string text = "DScratch";
         
-        // Click into the empty contenteditable area to focus it
         await Editor.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("ab");
 

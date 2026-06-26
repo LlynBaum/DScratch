@@ -4,7 +4,6 @@ using Microsoft.Playwright;
 
 namespace DScratch.E2E.Framework;
 
-[TestFixture]
 public class PlaywrightTestBase : E2ETestsRunnerBase
 {
     protected ILocator Editor => Page.Locator("div[contenteditable]");

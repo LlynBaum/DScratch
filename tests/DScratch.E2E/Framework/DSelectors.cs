@@ -53,7 +53,7 @@ public static class DSelectors
                 await page.Keyboard.PressAsync("Backspace");
             }
         }
-        
+
         public async Task DelAsync(bool ctrl = false)
         {
             if (ctrl)
