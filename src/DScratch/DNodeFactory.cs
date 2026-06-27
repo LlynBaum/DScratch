@@ -18,12 +18,12 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
     {
         return new HeadingNode(headingLevel, nodeIdGenerator.GetNextId(), origin, rightOrigin);
     }
-    
+
     public HeadingNode HeadingFrom(DNode node, HeadingLevel headingLevel)
     {
         return new HeadingNode(headingLevel, node.Id, node.Origin, node.RightOrigin, [..node.ChildNodes]);
     }
-    
+
     public TextNode String(string value, DNode? origin, DNode? rightOrigin)
     {
         if (value.Length == 0)

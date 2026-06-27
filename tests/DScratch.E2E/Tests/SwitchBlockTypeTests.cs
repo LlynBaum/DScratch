@@ -48,7 +48,7 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
-            Assert.That(selection.AnchorOffset, Is.EqualTo(0));
+            Assert.That(selection.AnchorOffset, Is.EqualTo(1));
         }
     }
     
@@ -116,7 +116,7 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
         await MenuBar.ClickParagraph();
 
         await Expect(Editor.Heading(HeadingLevel.Level1)).ToHaveCountAsync(0);
-        await Expect(Editor.Paragraph).ToHaveCountAsync(1);
+        await Expect(Editor.Paragraph).ToHaveCountAsync(3);
         await Expect(Editor.Paragraph.Nth(0)).ToHaveTextAsync("ab");
         await Expect(Editor.Paragraph.Nth(1)).ToHaveTextAsync("cd");
         await Expect(Editor.Paragraph.Nth(2)).ToHaveTextAsync("ef");

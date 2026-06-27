@@ -18,20 +18,9 @@ public static class DSelectors
 
         public ILocator Heading(HeadingLevel level)
         {
-            var headingTag = level switch
-            { 
-                HeadingLevel.Level1 => "h1",
-                HeadingLevel.Level2 => "h2",
-                HeadingLevel.Level3 => "h3",
-                HeadingLevel.Level4 => "h4",
-                HeadingLevel.Level5 => "h5",
-                HeadingLevel.Level6 => "h6",
-                _ => throw new ArgumentOutOfRangeException(nameof(level), level, null)
-            };
-
-            return locator.Locator($"{headingTag}[data-dnode-id]");
+            return locator.Locator($"h{(int)level}[data-dnode-id]");
         }
-        
+
         public ILocator TextSpan => locator.Locator("span[data-dnode-id]");
     }
 

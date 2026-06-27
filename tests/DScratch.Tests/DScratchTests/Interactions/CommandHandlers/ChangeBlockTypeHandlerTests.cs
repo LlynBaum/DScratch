@@ -30,7 +30,7 @@ public class ChangeBlockTypeHandlerTests
         // Arrange
         DNode target = null!;
         builder.TestBlockElementNode();
-        builder.TestBlockElementNode(t => target = t.Text("abc"));
+        var blockNode = builder.TestBlockElementNode(t => target = t.Text("abc"));
         builder.TestBlockElementNode();
         
         var selection = new SelectionInfo
@@ -48,6 +48,9 @@ public class ChangeBlockTypeHandlerTests
         
         // Assert
         Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(3));
+        var newBlockNode = transaction.FindNode(blockNode.Id);
+        Assert.That(newBlockNode, Is.TypeOf<ParagraphNode>());
+        
         using (Assert.EnterMultipleScope())
         {
             Assert.That(builder.Root.ChildNodes[0], Is.TypeOf<TestBlockElementNode>());

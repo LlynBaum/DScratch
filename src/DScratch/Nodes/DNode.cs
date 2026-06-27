@@ -111,4 +111,12 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
 
         return current ?? throw new InvalidOperationException("Node does not have a Block Parent.");
     }
+
+    public void ClaimChildNodes()
+    {
+        foreach (var childNode in ChildNodes)
+        {
+            childNode.Parent = this;
+        }
+    }
 }
