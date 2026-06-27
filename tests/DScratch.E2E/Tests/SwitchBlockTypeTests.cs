@@ -89,7 +89,8 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
             Assert.That(selection.AnchorOffset, Is.EqualTo(1));
-            Assert.That(selection.FocusId, Is.EqualTo("Darki-4"));
+
+            Assert.That(selection.FocusId, Is.EqualTo("Darki-8"));
             Assert.That(selection.FocusOffset, Is.EqualTo(1));
         }
     }
@@ -126,7 +127,7 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
             Assert.That(selection.AnchorOffset, Is.EqualTo(1));
-            Assert.That(selection.FocusId, Is.EqualTo("Darki-4"));
+            Assert.That(selection.FocusId, Is.EqualTo("Darki-8"));
             Assert.That(selection.FocusOffset, Is.EqualTo(1));
         }
     }
