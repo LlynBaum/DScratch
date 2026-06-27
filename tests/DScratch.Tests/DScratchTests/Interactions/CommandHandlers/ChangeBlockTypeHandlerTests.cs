@@ -95,7 +95,7 @@ public class ChangeBlockTypeHandlerTests
             Assert.That(builder.Root.ChildNodes[3], Is.TypeOf<ParagraphNode>());
             Assert.That(builder.Root.ChildNodes[4], Is.TypeOf<TestBlockElementNode>());
         }
-        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, targetStart.Id, 2);
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, selection);
     }
     
     [Test]
@@ -133,6 +133,6 @@ public class ChangeBlockTypeHandlerTests
             Assert.That(builder.Root.ChildNodes[3], Is.TypeOf<ParagraphNode>());
             Assert.That(builder.Root.ChildNodes[4], Is.TypeOf<TestBlockElementNode>());
         }
-        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, targetEnd.Id, 2);
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, selection);
     }
 }

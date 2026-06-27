@@ -1,3 +1,4 @@
+using DScratch.Interactions;
 using DScratch.Nodes;
 using DScratch.Transactions;
 
@@ -44,6 +45,11 @@ public class TestTransactionFake : ITransaction, IRunningTransaction
     }
 
     public ITransaction AddCursorPosition(NodeId nodeId, int offset)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ITransaction AddCursorPosition(SelectionInfo selectionInfo)
     {
         throw new NotImplementedException();
     }

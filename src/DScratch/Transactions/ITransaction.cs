@@ -1,3 +1,4 @@
+using DScratch.Interactions;
 using DScratch.Nodes;
 
 namespace DScratch.Transactions;
@@ -21,6 +22,8 @@ public interface ITransaction
     ITransaction ReplaceNode(DNode node, Func<DNode, DNode> copyFactory);
     
     ITransaction AddCursorPosition(NodeId nodeId, int offset);
+    
+    ITransaction AddCursorPosition(SelectionInfo selectionInfo);
 
     DNode? FindNode(NodeId nodeId);
 

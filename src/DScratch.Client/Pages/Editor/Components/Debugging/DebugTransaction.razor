@@ -20,12 +20,21 @@ else
                 @if (LastTransaction.CursorPosition is not null)
                 {
                     <div class="selection-field">
-                        <span class="field-label">Parent Node ID</span>
-                        <span class="field-value monospace badge">@LastTransaction.CursorPosition.ParentId</span>
+                        <span class="field-label">Anchor Node ID</span>
+                        <span class="field-value monospace badge">@LastTransaction.CursorPosition.AnchorId</span>
                     </div>
                     <div class="selection-field">
-                        <span class="field-label">Offset</span>
-                        <span class="field-value monospace badge font-bold">@LastTransaction.CursorPosition.Offset</span>
+                        <span class="field-label">Anchor Offset</span>
+                        <span class="field-value monospace badge font-bold">@LastTransaction.CursorPosition.AnchorOffset</span>
+                    </div>
+                    
+                    <div class="selection-field">
+                        <span class="field-label">Focus Node ID</span>
+                        <span class="field-value monospace badge">@LastTransaction.CursorPosition.FocusId</span>
+                    </div>
+                    <div class="selection-field">
+                        <span class="field-label">Focus Offset</span>
+                        <span class="field-value monospace badge font-bold">@LastTransaction.CursorPosition.FocusOffset</span>
                     </div>
                 }
                 else

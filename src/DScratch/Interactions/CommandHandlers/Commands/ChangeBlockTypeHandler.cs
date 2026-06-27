@@ -21,10 +21,7 @@ public static class ChangeBlockTypeHandler
 
         var (originOffset, _) = selectionInfo.GetConvertedOffsets();
         var targetNode = selectedNodes.SelectMany(n => n.ActiveChildNodes).OfType<TextNode>().FirstOrDefault();
-        if (targetNode is not null)
-        {
-            transaction.AddCursorPosition(targetNode.Id, originOffset);
-        }
+        transaction.AddCursorPosition(selectionInfo);
         return;
         
         Func<DNode, DNode> GetFactory()

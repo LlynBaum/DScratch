@@ -3,11 +3,11 @@ import {findNode, findTextNodeAtOffset, getAbsolutOffset, getElementFromNode, ge
 export type SelectionDirection = "none" | "forward" | "backward"
 
 export interface SelectionInfo {
-    Direction: SelectionDirection;
-    AnchorId: string;
-    AnchorOffset: number;
-    FocusId: string | null;
-    FocusOffset: number | null;
+    direction: SelectionDirection;
+    anchorId: string;
+    anchorOffset: number;
+    focusId: string | null;
+    focusOffset: number | null;
 }
 
 interface SelectionSnapshot {
@@ -29,10 +29,10 @@ let currentSelection: CurrentSelectionInfo | null = null;
 export function snapshotSelection(selectionInfo: SelectionInfo) {
     snapshot = {
         selection: window.getSelection(),
-        absolutAnchorOffset: selectionInfo.AnchorOffset,
-        anchorId: selectionInfo.AnchorId,
-        absolutFocusOffset: selectionInfo.FocusOffset,
-        focusId: selectionInfo.FocusId
+        absolutAnchorOffset: selectionInfo.anchorOffset,
+        anchorId: selectionInfo.anchorId,
+        absolutFocusOffset: selectionInfo.focusOffset,
+        focusId: selectionInfo.focusId
     }
 }
 
@@ -65,15 +65,15 @@ export function getSelection(): SelectionInfo {
     const focusOffset = getAbsolutOffset(focusElement, selection?.focusNode!, selection?.focusOffset);
     
     return {
-        Direction: selection?.direction as SelectionDirection ?? "none",
-        AnchorId: anchorId,
-        AnchorOffset: anchorOffset,
-        FocusId: focusId,
-        FocusOffset: focusOffset
+        direction: selection?.direction as SelectionDirection ?? "none",
+        anchorId: anchorId,
+        anchorOffset: anchorOffset,
+        focusId: focusId,
+        focusOffset: focusOffset
     };
 }
 
-export function setSelection(parentId: string, offset: number) {
+export function setSelection(selection: SelectionInfo) {
     if (!currentSelection) {
         resetSnapshot();
         return;
@@ -88,7 +88,7 @@ export function setSelection(parentId: string, offset: number) {
     const currentFocusOffset = getAbsolutOffset(currentParent, currentSelection.focusNode!, currentSelection.focusOffset);*/
     
     if(!snapshot) {
-        setSelectionFrom(parentId, offset);
+        setSelectionFrom(selection);
         resetSnapshot();
         return;
     }
@@ -107,27 +107,64 @@ export function setSelection(parentId: string, offset: number) {
         return;
     }
 
-    setSelectionFrom(parentId, offset);
+    setSelectionFrom(selection);
     resetSnapshot();
 }
 
-function setSelectionFrom(parentId: string, offset: number) {
+function setSelectionFrom(selectionInfo: SelectionInfo) {
+    if (selectionInfo.direction === "none") {
+        setCursorPosition(selectionInfo.anchorId, selectionInfo.anchorOffset);
+    } else {
+        setCursorSelection(selectionInfo);
+    }
+}
+
+function setCursorPosition(parentId: string, offset: number) {
     const element = findNode(parentId);
     if (!element) return;
-    
+
     const { node, relativeOffset } = findTextNodeAtOffset(element, offset);
 
     const selection = window.getSelection();
     selection?.removeAllRanges();
-    
+
     const range = document.createRange();
-    
+
     if (node) {
         range.setStart(node, relativeOffset);
     } else {
         range.setStart(element, 0);
     }
-    
+
     range.collapse(true);
-    selection?.addRange(range)
+    selection?.addRange(range);
+}
+
+function setCursorSelection(selectionInfo: SelectionInfo) {
+    const anchorElement = findNode(selectionInfo.anchorId);
+    if (!anchorElement) return;
+
+    const focusElement = findNode(selectionInfo.focusId!);
+    if (!focusElement) return;
+    
+    const anchor = findTextNodeAtOffset(anchorElement, selectionInfo.anchorOffset);
+    const focus = findTextNodeAtOffset(focusElement, selectionInfo.focusOffset!);
+
+    const selection = window.getSelection();
+    selection?.removeAllRanges();
+
+    const range = document.createRange();
+
+    const { start, end } = asStartEnd(anchor, focus);
+    range.setStart(start.node!, start.relativeOffset);
+    range.setEnd(end.node!, end.relativeOffset);
+
+    range.collapse(true);
+    selection?.addRange(range);
+    
+    function asStartEnd(anchor: { node: Text | null; relativeOffset: number }, focus: { node: Text | null; relativeOffset: number }) {
+        return selectionInfo.direction === "forward" 
+            ? { start: anchor, end: focus }
+            : { start: focus, end: anchor };
+    }
 }

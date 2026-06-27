@@ -6,6 +6,11 @@ namespace DScratch.E2E.Framework;
 
 public class PlaywrightTestBase : E2ETestsRunnerBase
 {
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions
+    {
+        PropertyNameCaseInsensitive = true
+    };
+    
     protected ILocator Editor => Page.Locator("div[contenteditable]");
 
     protected MenuBarLocator MenuBar => new MenuBarLocator(Page.Locator("nav.menu"));
@@ -20,7 +25,7 @@ public class PlaywrightTestBase : E2ETestsRunnerBase
     protected async Task<SelectionInfo> GetCursorPositionAsync()
     {
         var selection = await Page.EvaluateAsync<JsonElement>("window.editor.getSelection()");
-        return selection.Deserialize<SelectionInfo>() // Use System.Text, so direction string can be deserialized
+        return selection.Deserialize<SelectionInfo>(JsonSerializerOptions) // Use System.Text, so direction string can be deserialized
                ?? throw new InvalidOperationException("Failed to deserialize SelectionInfo.");
     }
 }

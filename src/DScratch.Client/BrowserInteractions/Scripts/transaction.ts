@@ -1,4 +1,4 @@
-import {saveSelection, setSelection} from "./selection";
+import {saveSelection, SelectionInfo, setSelection} from "./selection";
 import {findTextNodeAtOffset} from "./nodeHelper";
 
 enum StepType {
@@ -9,14 +9,9 @@ enum StepType {
     move = "move",
 }
 
-interface CursorPosition {
-    parentId: string;
-    offset: number;
-}
-
 export interface TransactionResult {
     steps: Array<Step | null | undefined>;
-    cursorPosition: CursorPosition | null;
+    cursorPosition: SelectionInfo | null;
 }
 
 interface Step {
@@ -56,7 +51,7 @@ export function applyTransaction(transaction: TransactionResult){
     saveSelection();
     transaction.steps.map(handle);
     if (transaction.cursorPosition) {
-        setSelection(transaction.cursorPosition.parentId, transaction.cursorPosition.offset);
+        setSelection(transaction.cursorPosition);
     }
 
     function handle(step?: Step | null) {

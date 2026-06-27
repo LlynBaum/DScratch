@@ -4,6 +4,8 @@ namespace DScratch.E2E.Framework;
 
 public class E2ETestsRunnerBase
 {
+    private const int DefaultTimeoutSec = 2;
+    
     private IPlaywright playwright = null!;
     private IBrowser browser = null!;
     protected IPage Page { get; private set; } = null!;
@@ -23,6 +25,7 @@ public class E2ETestsRunnerBase
     public async Task Setup()
     {
         Page = await browser.NewPageAsync();
+        SetDefaultExpectTimeout(DefaultTimeoutSec * 1000);
         await Page.GotoAsync(E2ETestFixture.BaseUrl); // TODO: sometimes this will cause Connection Refused. Idk why, but without parallel testing it doesn't happen.
     }
 

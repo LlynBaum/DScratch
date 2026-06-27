@@ -31,7 +31,7 @@ export async function handleInput(event: InputEvent, bridgeReference: any) {
     try {
         await bridgeReference?.invokeMethodAsync("OnKeyPressCallbackAsync", payload);
     } catch (e) {
-        console.error(e, "Failed to send event with anchor ", selectionInfo.AnchorId);
+        console.error(e, "Failed to send event with anchor ", selectionInfo.anchorId);
     }
 }
 

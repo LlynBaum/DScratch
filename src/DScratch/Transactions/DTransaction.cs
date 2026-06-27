@@ -1,3 +1,4 @@
+using DScratch.Interactions;
 using DScratch.Nodes;
 using DScratch.Transactions.Steps;
 
@@ -11,7 +12,7 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
     
     private readonly List<DNode> modifiedNodes = [];
     private readonly List<DNode> addedNodes = [];
-    private CursorPosition? cursorPosition;
+    private SelectionInfo? cursorPosition;
 
     public IReadOnlyList<IStep> Steps => steps;
 
@@ -67,7 +68,20 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
 
     public ITransaction AddCursorPosition(NodeId nodeId, int offset)
     {
-        cursorPosition = new CursorPosition(nodeId.Value, offset);
+        cursorPosition = new SelectionInfo
+        {
+            Direction = SelectionDirection.None,
+            AnchorId = nodeId.Value,
+            AnchorOffset = offset,
+            FocusId = nodeId.Value,
+            FocusOffset = offset
+        };
+        return this;
+    }
+    
+    public ITransaction AddCursorPosition(SelectionInfo selectionInfo)
+    {
+        cursorPosition = selectionInfo;
         return this;
     }
 
@@ -112,11 +126,8 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
                     result.Add(node.ToDeleteSteps());
                 }
 
-                if (cursorPosition?.ParentId == node.Id.Value)
-                {
-                    cursorPosition = new CursorPosition(ParentId: originTextNode.Id.Value, Offset: originTextNode.Length + cursorPosition.Offset);
-                }
-                
+                cursorPosition = AdjustSelection(cursorPosition, node, originTextNode);
+
                 originTextNode.AddText(node.TextContent);
                 node.Remove();
                 document.RemoveNode(node);
@@ -134,10 +145,7 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
                     result.Add(rightOriginTextNode.ToDeleteSteps());
                 }
 
-                if (cursorPosition?.ParentId == rightOriginTextNode.Id.Value)
-                {
-                    cursorPosition = new CursorPosition(ParentId: node.Id.Value, Offset: rightOriginTextNode.Length + cursorPosition.Offset);
-                }
+                cursorPosition = AdjustSelection(cursorPosition, rightOriginTextNode, node);
                 
                 node.AddText(rightOriginTextNode.TextContent);
                 rightOriginTextNode.Remove();
@@ -146,5 +154,45 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
         }
 
         return result;
+    }
+
+    private static SelectionInfo? AdjustSelection(SelectionInfo? selectionInfo, TextNode oldNode, TextNode targetNode)
+    {
+        if (selectionInfo is null) return null;
+        
+        if (selectionInfo.AnchorId == oldNode.Id.Value && selectionInfo.FocusId == oldNode.Id.Value)
+        {
+            return new SelectionInfo
+            {
+                AnchorId = targetNode.Id.Value,
+                AnchorOffset = targetNode.Length + selectionInfo.AnchorOffset,
+                FocusId = targetNode.Id.Value,
+                FocusOffset = targetNode.Length + selectionInfo.AnchorOffset
+            };
+        }
+        
+        if (selectionInfo.AnchorId == oldNode.Id.Value && selectionInfo.FocusId != oldNode.Id.Value)
+        {
+            return new SelectionInfo
+            {
+                AnchorId = targetNode.Id.Value,
+                AnchorOffset = targetNode.Length + selectionInfo.AnchorOffset,
+                FocusId = selectionInfo.FocusId,
+                FocusOffset = selectionInfo.FocusOffset
+            };
+        }
+        
+        if (selectionInfo.AnchorId != oldNode.Id.Value && selectionInfo.FocusId == oldNode.Id.Value)
+        {
+            return new SelectionInfo
+            {
+                AnchorId = selectionInfo.AnchorId,
+                AnchorOffset = selectionInfo.AnchorOffset,
+                FocusId = targetNode.Id.Value,
+                FocusOffset = targetNode.Length + selectionInfo.AnchorOffset
+            };
+        }
+
+        return selectionInfo;
     }
 }
