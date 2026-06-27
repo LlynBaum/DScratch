@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
 namespace DScratch.Interactions;
@@ -6,12 +5,12 @@ namespace DScratch.Interactions;
 [JsonConverter(typeof(JsonStringEnumConverter<SelectionDirection>))]
 public enum SelectionDirection
 {
-    [EnumMember(Value = "none")]
+    [JsonStringEnumMemberName("none")]
     None,
     
-    [EnumMember(Value = "backward")]
+    [JsonStringEnumMemberName("backward")]
     Backward,
     
-    [EnumMember(Value = "forward")]
+    [JsonStringEnumMemberName("forward")]
     Forward
 }

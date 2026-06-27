@@ -3,7 +3,7 @@ namespace DScratch.Interactions;
 public class SelectionInfo
 {
     public SelectionDirection Direction { get; init; }
-        
+
     public required string AnchorId { get; init; }
 
     public NodeId AnchorNodeId => NodeId.FromString(AnchorId);

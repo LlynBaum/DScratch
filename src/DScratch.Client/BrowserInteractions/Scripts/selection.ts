@@ -158,8 +158,6 @@ function setCursorSelection(selectionInfo: SelectionInfo) {
     const { start, end } = asStartEnd(anchor, focus);
     range.setStart(start.node!, start.relativeOffset);
     range.setEnd(end.node!, end.relativeOffset);
-
-    range.collapse(true);
     selection?.addRange(range);
     
     function asStartEnd(anchor: { node: Text | null; relativeOffset: number }, focus: { node: Text | null; relativeOffset: number }) {
