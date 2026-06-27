@@ -16,9 +16,8 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
             return DNodeInfo.NotFound();
         }
 
-        var rightOrigin = transaction.SplitText(anchorTextNode, keyPressInfo.Selection.AnchorOffset);
-        var offset = rightOrigin is not null ? 0 : anchorTextNode.Length;
-        return new DNodeInfo(rightOrigin ?? anchorTextNode, offset);
+        transaction.SplitText(anchorTextNode, keyPressInfo.Selection.AnchorOffset);
+        return new DNodeInfo(anchorTextNode, anchorTextNode.Length);
     }
 
     protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)

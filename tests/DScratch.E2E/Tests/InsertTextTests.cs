@@ -84,7 +84,7 @@ public class InsertTextTests : PlaywrightTestBase
         var selection = await GetCursorPositionAsync();
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(selection.AnchorId, Is.EqualTo("Darki-3"));
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-5"));
             Assert.That(selection.AnchorOffset, Is.EqualTo(text.Length));
         }
     }

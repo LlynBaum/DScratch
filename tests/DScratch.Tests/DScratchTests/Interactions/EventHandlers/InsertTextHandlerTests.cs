@@ -181,6 +181,37 @@ public class InsertTextHandlerTests
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
+        
+        [Test]
+        public void Handle_CreatesExpectedChanges_WithInsertingBetweenOfNode()
+        {
+            // Arrange
+            TextNode textNode = null!;
+            var parent = builder.TestBlockElementNode(t =>
+            {
+                textNode = t.Text("ab");
+            });
+
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1));
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+
+                Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("a"));
+                
+                Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("abc"));
+                
+                Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("b"));
+            }
+
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
+        }
     }
 
     private class SelectionInsert : InsertTextHandlerTests
