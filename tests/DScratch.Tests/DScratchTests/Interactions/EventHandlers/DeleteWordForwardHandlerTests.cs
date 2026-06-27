@@ -49,7 +49,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
             }
             
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
         
         [Test]
@@ -58,7 +58,7 @@ public class DeleteWordForwardHandlerTests
             // Arrange
             TextNode text1 = null!;
             TextNode text2 = null!;
-            builder.TestBlockElementNode(t => 
+            var parent = builder.TestBlockElementNode(t => 
             {
                 text1 = t.Text("ab");
                 text2 = t.Text("c");
@@ -73,7 +73,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(text1.IsDeleted, Is.True);
                 Assert.That(text2.IsDeleted, Is.True);
             }
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text1.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
         
         [Test]
@@ -105,7 +105,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(tombstone.TextContent, Is.EqualTo(" ab"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.RightOrigin.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Id, 1);
         }
         
         [Test]
@@ -137,7 +137,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(remainingText.TextContent, Is.EqualTo(" "));
             }
             
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.RightOrigin.Id, 0);
         }
         
         [Test]
@@ -156,7 +156,7 @@ public class DeleteWordForwardHandlerTests
 
             // Assert
             Assert.That(text.IsDeleted, Is.True);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Origin!.Id, 1);
         }
         
         [Test]
@@ -175,7 +175,7 @@ public class DeleteWordForwardHandlerTests
 
             // Assert
             Assert.That(text.IsDeleted, Is.True);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Origin!.Id, 2);
         }
         
         [Test]
@@ -189,8 +189,10 @@ public class DeleteWordForwardHandlerTests
                 textNode = t.Text("def");
             });
 
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 3);
+            
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 3));
+            var result = handler.Handle(keyPressInfo);
         
             // Assert
             using (Assert.EnterMultipleScope())
@@ -199,7 +201,6 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
             
                 Assert.That(result.Steps, Has.Count.Zero);
-                Assert.That(result.CursorPosition, Is.Null);
             }
 
             using (Assert.EnterMultipleScope())
@@ -210,6 +211,8 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
                 Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
             }
+            
+            Assert.That(result.CursorPosition, Is.Null);
         }
     }
     

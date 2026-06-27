@@ -17,14 +17,14 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventW
         {
             transaction.AddCursorPosition(deletedNodeInfo.Node.Id, deletedNodeInfo.Offset);
         }
-        else if (!deletedNodeInfo.HasFoundNode && anchorTextNode.GetNearestBlock() is { RightOrigin: not null } parent)
+        else if (anchorTextNode.GetNearestBlock() is { RightOrigin: not null } parent)
         {
             transaction.AddCursorPosition(anchorTextNode.Id, anchorTextNode.Length); 
             transaction.MoveRange(parent.RightOrigin.FirstChild, null, parent, parent.LastChild);
             transaction.Delete(parent.RightOrigin);
         }
 
-        return deletedNodeInfo;
+        return DNodeInfo.NotFound();
     }
 
     protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
@@ -48,26 +48,24 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventW
         {
             walker.NextNode();
         }
-        
-        var result = DNodeInfo.From(walker.Node, 0);
-        
-        var remainingCharacterOffset = DeleteWord(transaction, walker);
-        if (walker.Node is not null)
-        {
-            transaction.SplitText(walker.Node, remainingCharacterOffset);
-            transaction.Delete(walker.Node);
-        }
-        
-        return result;
+
+        var beforeDelete = walker.Node?.Origin is not null 
+            ? SelectionHelper.NearestTextNode(walker.Node.Origin) 
+            : DNodeInfo.NotFound();
+
+        var afterDelete = DeleteWord(transaction, walker);
+        return beforeDelete.HasFoundNode ? beforeDelete : afterDelete;
     }
 
-    private static int DeleteWord(ITransaction transaction, TreeWalker<TextNode> walker)
+    private static DNodeInfo DeleteWord(ITransaction transaction, TreeWalker<TextNode> walker)
     {
+        var hasFoundNoe = false;
         var characterOffset = 0;
         while (walker.Node is not null && characterOffset < walker.Node.Length && char.IsWhiteSpace(walker.Node.TextContent[characterOffset]))
         {
             if (characterOffset == walker.Node.Length - 1)
             {
+                hasFoundNoe = true;
                 transaction.Delete(walker.Node);
                 walker.NextNode();
                 characterOffset = 0;
@@ -79,13 +77,23 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventW
         {
             if (characterOffset == walker.Node.Length - 1)
             {
+                hasFoundNoe = true;
                 transaction.Delete(walker.Node);
                 walker.NextNode();
                 characterOffset = 0;
             }
             characterOffset++;
         }
+        
+        var word = walker.Node is not null ? transaction.SplitText(walker.Node, characterOffset) : null;
+        if (!hasFoundNoe && word is null)
+        {
+            return DNodeInfo.NotFound();
+        }
 
-        return characterOffset;
+        if (walker.Node is not null) transaction.Delete(walker.Node);
+        return word is not null
+            ? new DNodeInfo(word, 0)
+            : new DNodeInfo(walker.Parent, 0);
     }
 }
