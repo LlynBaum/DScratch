@@ -607,5 +607,22 @@ public class DeleteWordForwardHandlerTests
             Assert.That(target.IsDeleted, Is.True);
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
+        
+        [Test]
+        public void Handle_DoesNothing_WhenNoOriginIsPresent()
+        {
+            // Arrange
+            var target = builder.TestBlockElementNode();
+
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0));
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(target.IsDeleted, Is.False);
+                Assert.That(result.IsEmpty, Is.True);
+            }
+        }
     }
 }

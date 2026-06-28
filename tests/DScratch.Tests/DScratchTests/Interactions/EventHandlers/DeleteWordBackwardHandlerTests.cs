@@ -3,7 +3,6 @@ using DScratch.Interactions.EventHandlers.Events;
 using DScratch.Nodes;
 using DScratch.Tests.DScratchTests.Interactions.Helpers;
 using DScratch.Tests.Helpers;
-using DScratch.TreeVisualizers;
 
 namespace DScratch.Tests.DScratchTests.Interactions.EventHandlers;
 
@@ -583,6 +582,23 @@ public class DeleteWordBackwardHandlerTests
             // Assert
             Assert.That(target.IsDeleted, Is.True);
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.FirstChild!.Id, 3);
+        }
+        
+        [Test]
+        public void Handle_DoesNothing_WhenNoOriginIsPresent()
+        {
+            // Arrange
+            var target = builder.TestBlockElementNode();
+
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0));
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(target.IsDeleted, Is.False);
+                Assert.That(result.IsEmpty, Is.True);
+            }
         }
     }
 }

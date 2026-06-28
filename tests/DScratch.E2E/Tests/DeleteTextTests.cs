@@ -25,8 +25,8 @@ public class DeleteTextTests : PlaywrightTestBase
     public async Task DeleteForward_DoesNothing_WithNoFollowedParagraph()
     {
         await Editor.ClickAsync();
-
         await Page.DelAsync();
+
         await Expect(Editor.Paragraph).ToBeVisibleAsync();
         
         var selection = await GetCursorPositionAsync();

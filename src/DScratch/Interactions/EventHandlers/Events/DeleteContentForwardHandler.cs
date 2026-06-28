@@ -28,6 +28,8 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : Eve
 
     protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
     {
+        if (anchorNode.RightOrigin is null) return;
+        
         transaction.Delete(anchorNode);
         var index = anchorNode.Parent?.IndexOf(anchorNode);
         var focusNode = index.HasValue ? anchorNode.Parent?.ChildAt(index.Value + 1) : null;
