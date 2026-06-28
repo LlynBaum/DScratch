@@ -167,7 +167,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Editor.ClickAsync();
         await Page.EnterAsync();
         await Page.TypeAtCurrentCursorAsync("a");
-        await Page.SetCursorAsync("Darki-2", 0);
+        await Page.SetCursorAsync("Darki-3", 0);
 
         await Page.BackspaceAsync(ctrl);
         await Expect(Editor.Paragraph).ToHaveCountAsync(1);
@@ -176,7 +176,7 @@ public class DeleteTextTests : PlaywrightTestBase
         var selection = await GetCursorPositionAsync();
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-3"));
             Assert.That(selection.AnchorOffset, Is.EqualTo(0));
         }
     }
@@ -214,7 +214,7 @@ public class DeleteTextTests : PlaywrightTestBase
         var selection = await GetCursorPositionAsync();
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(selection.AnchorId, Is.EqualTo("Darki-1"));
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
             Assert.That(selection.AnchorOffset, Is.EqualTo(0));
         }
     }
@@ -222,14 +222,14 @@ public class DeleteTextTests : PlaywrightTestBase
     [Test]
     [TestCase(false)]
     [TestCase(true)]
-    public async Task DeleteForward_AtStartOfParagraphWithText_DeletesParagraph(bool ctrl)
+    public async Task DeleteForward_AtEndOfParagraphWithText_DeletesParagraph(bool ctrl)
     {
         await Editor.ClickAsync();
         await Page.EnterAsync();
+        await Page.SetCursorAsync("Darki-1", 0);
         await Page.TypeAtCurrentCursorAsync("a");
-        await Page.SetCursorAsync("Darki-3", 0);
 
-        await Page.BackspaceAsync(ctrl);
+        await Page.DelAsync(ctrl);
         await Expect(Editor.Paragraph).ToHaveCountAsync(1);
         await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync("a");
 
@@ -237,7 +237,7 @@ public class DeleteTextTests : PlaywrightTestBase
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-3"));
-            Assert.That(selection.AnchorOffset, Is.EqualTo(0));
+            Assert.That(selection.AnchorOffset, Is.EqualTo(1));
         }
     }
     

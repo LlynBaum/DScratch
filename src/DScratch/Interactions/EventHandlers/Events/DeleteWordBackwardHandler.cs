@@ -29,14 +29,15 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : Event
     protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
     {
         if (anchorNode.Origin is null) return;
-        
+
         transaction.Delete(anchorNode);
-        var index = anchorNode.Parent?.IndexOf(anchorNode);
-        var focusNode = index.HasValue ? anchorNode.Parent?.ChildAt(index.Value - 1) : null;
-        
-        if (focusNode is not null && SelectionHelper.NearestTextNode(focusNode) is { HasFoundNode: true } nodeInfo)
+        if (SelectionHelper.NearestTextNode(anchorNode.Origin) is { HasFoundNode: true } nodeInfo)
         {
             transaction.AddCursorPosition(nodeInfo.Node.Id, nodeInfo.Offset);
+        }
+        else
+        {
+            transaction.AddCursorPosition(anchorNode.Origin.Id, 0);
         }
     }
 

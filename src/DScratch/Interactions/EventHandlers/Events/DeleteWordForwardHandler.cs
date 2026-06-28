@@ -32,9 +32,7 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventW
         if (anchorNode.RightOrigin is null) return;
         
         transaction.Delete(anchorNode);
-        var index = anchorNode.Parent?.IndexOf(anchorNode);
-        var focusNode = index.HasValue ? anchorNode.Parent?.ChildAt(index.Value + 1) : null;
-        if (focusNode is not null) transaction.AddCursorPosition(focusNode.Id, 0);
+        transaction.AddCursorPosition(anchorNode.RightOrigin.Id, 0);
     }
 
     private static DNodeInfo SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)

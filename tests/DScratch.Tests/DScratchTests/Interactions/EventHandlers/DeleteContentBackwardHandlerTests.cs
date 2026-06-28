@@ -584,6 +584,21 @@ public class DeleteContentBackwardHandlerTests
         }
         
         [Test]
+        public void Handle_FocusToOrigin_WhenNoTextNodeIsPresent()
+        {
+            // Arrange
+            var parent = builder.TestBlockElementNode();
+            var target = builder.TestBlockElementNode();
+
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0));
+
+            // Assert
+            Assert.That(target.IsDeleted, Is.True);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
+        }
+        
+        [Test]
         public void Handle_DoesNothing_WhenNoOriginIsPresent()
         {
             // Arrange
