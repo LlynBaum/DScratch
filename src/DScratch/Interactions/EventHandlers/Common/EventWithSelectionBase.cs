@@ -14,14 +14,17 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
         {
             throw new ArgumentException($"Node not found: {keyPressInfo.Selection.AnchorId}");
         }
-        
-        
+
         DNodeInfo nodeInfo;
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
             if (targetNode is TextNode targetTextNode)
             {
                 nodeInfo = HandleNoneSelection(keyPressInfo, transaction, targetTextNode);
+            }
+            else if (SearchTextNode(targetNode, keyPressInfo.Selection) is { } textNode)
+            {
+                nodeInfo = HandleNoneSelection(keyPressInfo, transaction, textNode);
             }
             else
             {
@@ -43,6 +46,27 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
         OnAfterSelection(keyPressInfo, transaction, targetNode, nodeInfo);
         
         return dScratchService.Apply(transaction);
+    }
+
+    private static TextNode? SearchTextNode(DNode targetNode, SelectionInfo selection)
+    {
+        var walker = new TreeWalker<TextNode>(targetNode);
+
+        var node = walker.NextNode();
+        var offset = 0;
+        while (walker.Node is not null)
+        {
+            if (walker.Node.TextContent.Length + offset >= selection.AnchorOffset)
+            {
+                node = walker.Node;
+                break;
+            }
+
+            offset += walker.Node.TextContent.Length;
+            walker.NextNode();
+        }
+
+        return node;
     }
 
     protected abstract DNodeInfo HandleNoneSelection(

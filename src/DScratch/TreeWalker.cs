@@ -148,8 +148,6 @@ public class TreeWalker<TFilter1, TFilter2>(DNode parent, bool includeDeleted = 
 
 public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
 {
-    private const bool EnableDebug = false;
-
     public readonly DNode Parent = parent;
     
     public DNode? Current { get; protected set; } = parent;
@@ -159,8 +157,12 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
         var firstChild = FirstChildOrDefault(current);
         if (firstChild is not null)
         {
-            if (EnableDebug) TreeWalkerVisualizer.TraceNextStep(current, firstChild);
             return NextIfDeleted(firstChild);
+        }
+        
+        if (current?.Id == Parent.Id)
+        {
+            return null;
         }
 
         var node = current;
@@ -173,14 +175,13 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
             }
 
             node = node.Parent;
-
-            if (node == Parent)
+            
+            if (node?.Id == Parent.Id)
             {
                 return null;
             }
         }
 
-        if (EnableDebug) TreeWalkerVisualizer.TraceNextStep(current, node);
         return NextIfDeleted(node);
     }
     
@@ -205,7 +206,6 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
             }
         }
         
-        if (EnableDebug) TreeWalkerVisualizer.TraceNextStep(current, node);
         return PreviousIfDeleted(node);
     }
 
@@ -235,46 +235,5 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
     private DNode? LastChildOrDefault(DNode? node)
     {
         return includeDeleted ? node?.ChildNodes.LastOrDefault() : node?.LastChild;
-    }
-}
-
-internal static class TreeWalkerVisualizer
-{
-    public static void TraceNextStep(DNode? current, DNode? next)
-    {
-        if (next is null)
-        {
-            Console.WriteLine("END OF TREE");
-            return;
-        }
-
-        var depth = GetDepth(next);
-        var indent = new string(' ', depth * 4); // 4 spaces per tree level
-        
-        // Determine the action that was taken
-        var action = "➡️ START";
-        if (current != null)
-        {
-            if (next == current.FirstChild) action = "⬇️ DOWN ";
-            else if (next == current.RightOrigin) action = "➡️ RIGHT";
-            else if (next == current.Origin) action = "➡️ LEFT";
-            else action = "⬆️ UP   "; // Backtracked to a parent's sibling
-        }
-
-        var nodeName = next.Id; 
-        
-        Console.WriteLine($"{indent}[{action}] -> {nodeName}");
-    }
-
-    private static int GetDepth(DNode node)
-    {
-        var depth = 0;
-        var p = node.Parent;
-        while (p is not null)
-        {
-            depth++;
-            p = p.Parent;
-        }
-        return depth;
     }
 }
