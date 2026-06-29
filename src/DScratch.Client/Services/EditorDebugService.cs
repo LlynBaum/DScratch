@@ -1,11 +1,12 @@
+using DScratch.Interactions;
 using DScratch.Transactions;
 
 namespace DScratch.Client.Services;
 
 public class EditorDebugService
 {
-    private readonly List<TransactionResult> transactions = [];
-    public IReadOnlyList<TransactionResult> Transactions => transactions;
+    private readonly List<TransactionInfo> transactions = [];
+    public IReadOnlyList<TransactionInfo> Transactions => transactions;
     
     public bool IsDebugEnabled
     {
@@ -23,9 +24,11 @@ public class EditorDebugService
     public event Action? DocumentChanged;
     public event Action? DebugModeChanged;
 
-    public void NotifyDocumentChanged(TransactionResult transactionResult)
+    public void NotifyDocumentChanged(TransactionInfo transactionResult)
     {
         transactions.Add(transactionResult);
         DocumentChanged?.Invoke();
     }
+
+    public record TransactionInfo(TransactionResult Result, KeyPressInfo KeyPressInfo);
 }

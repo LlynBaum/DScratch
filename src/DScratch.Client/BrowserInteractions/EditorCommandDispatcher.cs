@@ -1,3 +1,5 @@
+using DScratch.Client.Services;
+using DScratch.Interactions;
 using DScratch.Interactions.CommandHandlers;
 using DScratch.Interactions.CommandHandlers.Commands;
 
@@ -6,7 +8,7 @@ namespace DScratch.Client.BrowserInteractions;
 public class EditorCommandDispatcher(
     IDScratchService dScratchService, 
     DJsInvoker jsInvoker,
-    Services.EditorDebugService editorDebugService) : IEditorCommandDispatcher
+    EditorDebugService editorDebugService) : IEditorCommandDispatcher
 {
     public async Task ChangeBlockTypeAsync(BlockNodeType targetBlockNodeType)
     {
@@ -23,6 +25,11 @@ public class EditorCommandDispatcher(
         var result = dScratchService.Apply(transaction);
         await jsInvoker.ApplyTransaction(result);
         
-        editorDebugService.NotifyDocumentChanged(result);
+        editorDebugService.NotifyDocumentChanged(new EditorDebugService.TransactionInfo(result, new KeyPressInfo
+        {
+            InputType = "ChangeBlockType",
+            Data = null,
+            Selection = selectionInfo
+        }));
     }
 }

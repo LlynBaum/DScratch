@@ -1,3 +1,4 @@
+using DScratch.Client.Services;
 using DScratch.Interactions;
 using DScratch.Interactions.EventHandlers;
 using Microsoft.JSInterop;
@@ -7,7 +8,7 @@ namespace DScratch.Client.BrowserInteractions;
 public class InputEventHelper(
     DJsInvoker jsInvoker, 
     IDScratchService dScratchService,
-    Services.EditorDebugService editorDebugService,
+    EditorDebugService editorDebugService,
     IServiceProvider serviceProvider, 
     ILogger<InputEventHelper> logger)
 {
@@ -30,7 +31,7 @@ public class InputEventHelper(
 
             await jsInvoker.ApplyTransaction(result);
 
-            editorDebugService.NotifyDocumentChanged(result);
+            editorDebugService.NotifyDocumentChanged(new EditorDebugService.TransactionInfo(result, keyPressInfo));
 
             if (editorDebugService.IsDebugEnabled)
             {
