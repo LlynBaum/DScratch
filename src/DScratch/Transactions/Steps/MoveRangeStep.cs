@@ -68,7 +68,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     targetParent.InsertChild(current);
                     transaction.NotifyNodeChange(current);
                 }
-                
+
                 previousRightOrigin = current;
                 current = next;
             }

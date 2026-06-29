@@ -1,5 +1,6 @@
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
+using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 
 namespace DScratch.Tests.DScratchTests.Transactions.Steps;
@@ -45,7 +46,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text2, text4, newParent, newSibling);
-        step.Execute(transactionFake, null!);
+        var result = step.Execute(transactionFake, null!);
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -83,6 +84,11 @@ public class MoveRangeStepTests
         }
             
         Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text2, text3, text4]));
+        AssertHelper.ThatStepsEqualTo(result, expected: [
+            Is.TypeOf<StepDiff.MoveDiff>(),
+            Is.TypeOf<StepDiff.MoveDiff>(),
+            Is.TypeOf<StepDiff.MoveDiff>()
+        ]);
     }
     
     [Test]
@@ -116,7 +122,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text3, null, newParent, newSibling);
-        step.Execute(transactionFake, null!);
+        var result = step.Execute(transactionFake, null!);
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -154,6 +160,11 @@ public class MoveRangeStepTests
         }
             
         Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text3, text4, text5]));
+        AssertHelper.ThatStepsEqualTo(result, expected: [
+            Is.TypeOf<StepDiff.MoveDiff>(),
+            Is.TypeOf<StepDiff.MoveDiff>(),
+            Is.TypeOf<StepDiff.MoveDiff>()
+        ]);
     }
     
     [Test]
@@ -187,7 +198,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(null, text3, newParent, newSibling);
-        step.Execute(transactionFake, null!);
+        var result = step.Execute(transactionFake, null!);
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -225,6 +236,11 @@ public class MoveRangeStepTests
         }
             
         Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text1, text2, text3]));
+        AssertHelper.ThatStepsEqualTo(result, expected: [
+            Is.TypeOf<StepDiff.MoveDiff>(),
+            Is.TypeOf<StepDiff.MoveDiff>(),
+            Is.TypeOf<StepDiff.MoveDiff>()
+        ]);
     }
     
         [Test]
@@ -258,7 +274,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text2, text4, newParent, null);
-        step.Execute(transactionFake, null!);
+        var result = step.Execute(transactionFake, null!);
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -296,6 +312,11 @@ public class MoveRangeStepTests
         }
 
         Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text2, text3, text4]));
+        AssertHelper.ThatStepsEqualTo(result, expected: [
+            Is.TypeOf<StepDiff.MoveDiff>(),
+            Is.TypeOf<StepDiff.MoveDiff>(),
+            Is.TypeOf<StepDiff.MoveDiff>()
+        ]);
     }
     
     [Test]
@@ -317,7 +338,8 @@ public class MoveRangeStepTests
             text1 = t.Text("a");
             text2 = t.Text("b");
             text3 = t.Text("c");
-            text4 = t.Text("d"); 
+            text4 = t.Text("d");
+            text4.Delete();
             text5 = t.Text("e"); 
         });
         
@@ -329,7 +351,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text3, null, newParent, null);
-        step.Execute(transactionFake, null!);
+        var result = step.Execute(transactionFake, null!);
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -367,6 +389,10 @@ public class MoveRangeStepTests
         }
             
         Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text3, text4, text5]));
+        AssertHelper.ThatStepsEqualTo(result, expected: [
+            Is.TypeOf<StepDiff.MoveDiff>(),
+            Is.TypeOf<StepDiff.MoveDiff>()
+        ]);
     }
     
     [Test]
@@ -388,7 +414,8 @@ public class MoveRangeStepTests
             text1 = t.Text("a");
             text2 = t.Text("b");
             text3 = t.Text("c");
-            text4 = t.Text("d"); 
+            text4 = t.Text("d");
+            text4.Delete();
             text5 = t.Text("e"); 
         });
         
@@ -400,7 +427,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text3, null, newParent, sibling2);
-        step.Execute(transactionFake, null!);
+        var result = step.Execute(transactionFake, null!);
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -438,6 +465,10 @@ public class MoveRangeStepTests
         }
             
         Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text3, text4, text5]));
+        AssertHelper.ThatStepsEqualTo(result, expected: [
+            Is.TypeOf<StepDiff.MoveDiff>(),
+            Is.TypeOf<StepDiff.MoveDiff>()
+        ]);
     }
     
     [Test]
@@ -458,6 +489,7 @@ public class MoveRangeStepTests
         {
             text1 = t.Text("a");
             text2 = t.Text("b");
+            text2.Delete();
             text3 = t.Text("c");
             text4 = t.Text("d"); 
             text5 = t.Text("e"); 
@@ -471,7 +503,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(null, text3, newParent, null);
-        step.Execute(transactionFake, null!);
+        var result = step.Execute(transactionFake, null!);
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -509,5 +541,9 @@ public class MoveRangeStepTests
         }
 
         Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text1, text2, text3]));
+        AssertHelper.ThatStepsEqualTo(result, expected: [
+            Is.TypeOf<StepDiff.MoveDiff>(),
+            Is.TypeOf<StepDiff.MoveDiff>()
+        ]);
     }
 }

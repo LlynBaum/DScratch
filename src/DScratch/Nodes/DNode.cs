@@ -63,7 +63,7 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
         
         if (node.Origin is null)
         {
-            FirstChild?.Origin = node;
+            allChildNodes.FirstOrDefault()?.Origin = node;
             allChildNodes.Insert(0, node);
         }
         else
