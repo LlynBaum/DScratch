@@ -3,6 +3,7 @@ using System.Diagnostics;
 namespace DScratch.E2E;
 
 [SetUpFixture]
+[Parallelizable(ParallelScope.Fixtures)]
 public class E2ETestFixture
 {
     private static Process? serverProcess;
