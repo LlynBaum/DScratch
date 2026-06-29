@@ -46,7 +46,12 @@
   &lt;Project Location="/home/darki/Developement/DScratch/tests/DScratch.Tests" Presentation="&amp;lt;Tests&amp;gt;\&amp;lt;DScratch.Tests&amp;gt;" /&gt;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=45f98b7b_002Dba52_002D43d5_002D9299_002Dfdf78e02ef31/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from &amp;lt;Tests&amp;gt;\&amp;lt;DScratch.E2E&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;Project Location="/home/darki/Developement/DScratch/tests/DScratch.E2E" Presentation="&amp;lt;Tests&amp;gt;\&amp;lt;DScratch.E2E&amp;gt;" /&gt;
+  &lt;Or&gt;
+    &lt;Project Location="/home/darki/Developement/DScratch/tests/DScratch.E2E" Presentation="&amp;lt;Tests&amp;gt;\&amp;lt;DScratch.E2E&amp;gt;" /&gt;
+    &lt;TestAncestor&gt;
+      &lt;TestId&gt;NUnit3x::62FDA985-507E-376F-F3D6-191265DD9EC2::net10.0::DScratch.Tests.DScratchTests.Transactions.Steps.StepHelpersTests+ToInsert.TextElement_ReturnsExpectedSteps&lt;/TestId&gt;
+    &lt;/TestAncestor&gt;
+  &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String>
 	
 	

@@ -13,12 +13,12 @@ internal static class StepHelpers
             
             return node switch
             {
-                RootNode => [..node.ChildNodes.SelectMany(c => c.ToInsertSteps())],
+                RootNode => [..node.ActiveChildNodes.SelectMany(c => c.ToInsertSteps())],
                 TextNode textNode => InsertTextNode(textNode, parentId),
                 IElement => 
                 [
                     new StepDiff.InsertElementDiff(parentId.Value, node.GetFirstActiveOrigin()?.Id.Value, node.TagName, node.Id.Value),
-                    ..node.ChildNodes.SelectMany(c => c.ToInsertSteps())
+                    ..node.ActiveChildNodes.SelectMany(c => c.ToInsertSteps())
                 ],
                 _ => throw new ArgumentException("Node type is not an element, text or char node.")
             };

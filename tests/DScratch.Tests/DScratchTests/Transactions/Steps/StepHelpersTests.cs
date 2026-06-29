@@ -126,9 +126,10 @@ public class StepHelpersTests
                     p.TestInlineElementNode(te =>
                     {
                         te.Text("b"); // 5: TextNode
+                        te.Text("f").Delete();
                     });
                     
-                    p.Text("c"); // 6: TextNode
+                    p.Text("c"); // 7: TextNode
                 });
             });
             
@@ -188,10 +189,10 @@ public class StepHelpersTests
                 var insertRightTextSpan = (StepDiff.InsertElementDiff)result[6];
                 Assert.That(insertRightTextSpan.ParentId, Is.EqualTo("Test-2"));
                 Assert.That(insertRightTextSpan.PreviousSiblingId, Is.EqualTo("Test-4"));
-                Assert.That(insertRightTextSpan.NewNodeId, Is.EqualTo("Test-6"));
+                Assert.That(insertRightTextSpan.NewNodeId, Is.EqualTo("Test-7"));
                 
                 var insertRightText = (StepDiff.InsertTextDiff)result[7];
-                Assert.That(insertRightText.ParentId, Is.EqualTo("Test-6"));
+                Assert.That(insertRightText.ParentId, Is.EqualTo("Test-7"));
                 Assert.That(insertRightText.Offset, Is.EqualTo(0));
                 Assert.That(insertRightText.Text, Is.EqualTo("c"));
             }
