@@ -9,16 +9,23 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : EventWit
 {
     public const string EventName = "insertParagraph";
 
-    protected override DNodeInfo HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode anchorTextNode)
+    protected override DNodeSearchResult HandleNoneSelection(
+        KeyPressInfo keyPressInfo,
+        ITransaction transaction,
+        TextNode anchorTextNode)
     {
         if (keyPressInfo.Selection.AnchorOffset <= 0)
         {
             var parent = anchorTextNode.GetNearestBlock();
-            return DNodeInfo.From(parent.FirstChild, 0);
+            return new DNodeSearchResult(
+                Origin: DNodeInfo.NotFound(), 
+                RightOrigin: DNodeInfo.From(parent.FirstChild, 0));
         }
 
-        transaction.SplitText(anchorTextNode, keyPressInfo.Selection.AnchorOffset);
-        return DNodeInfo.From(anchorTextNode, 0);
+        var rightOrigin = transaction.SplitText(anchorTextNode, keyPressInfo.Selection.AnchorOffset);
+        return new DNodeSearchResult(
+            Origin: new DNodeInfo(anchorTextNode, anchorTextNode.Length), 
+            RightOrigin: DNodeInfo.From(rightOrigin, 0));
     }
     
     protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
@@ -33,14 +40,16 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : EventWit
         transaction.AddCursorPosition(paragraph.Id, 0);
     }
 
-    protected override void OnAfterSelection(
-        KeyPressInfo keyPressInfo,
+    protected override void OnAfterSelection(KeyPressInfo keyPressInfo,
         ITransaction transaction,
-        DNode? anchorNode,
-        DNodeInfo nodeInfo)
+        DNode anchorNode,
+        DNodeSearchResult nodeSearchResult)
     {
-        var siblingBlock = nodeInfo.Node?.GetNearestBlock() ?? anchorNode?.GetNearestBlock();
-        if (siblingBlock?.Parent is null)
+        var siblingBlock = nodeSearchResult.Origin.Node?.GetNearestBlock()
+                           ?? nodeSearchResult.RightOrigin.Node?.GetNearestBlock() 
+                           ?? anchorNode.GetNearestBlock();
+        
+        if (siblingBlock.Parent is null)
         {
             // Even blocks at least have to have root as a parent.
             throw new ArgumentException($"Expected an block at {keyPressInfo.Selection.AnchorId} with a parent node.");
@@ -51,15 +60,15 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : EventWit
 
         transaction.Insert(paragraph, siblingBlock.Parent!);
         
-        if (keyPressInfo.Selection.AnchorOffset > 0)
+        if (keyPressInfo.Selection.AnchorOffset > 0 && nodeSearchResult.Origin.HasFoundNode)
         {
-            transaction.MoveRange(nodeInfo.Node?.RightOrigin, null, paragraph, null);
+            transaction.MoveRange(nodeSearchResult.Origin.Node.RightOrigin, null, paragraph, null);
         }
         
         var cursorTarget = keyPressInfo.Selection.AnchorOffset > 0 ? paragraph : rightOrigin!;
         transaction.AddCursorPosition(cursorTarget.Id, 0);
     }
-
+    
     private static (DNode? origin, DNode? rightOrigin) GetOrigins(KeyPressInfo keyPressInfo, DNode sibling)
     {
         return keyPressInfo.Selection.AnchorOffset <= 0 ? (sibling.Origin, sibling) : (sibling, sibling.RightOrigin);

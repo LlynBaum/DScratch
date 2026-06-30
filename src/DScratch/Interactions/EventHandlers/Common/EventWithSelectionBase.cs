@@ -15,16 +15,16 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
             throw new ArgumentException($"Node not found: {keyPressInfo.Selection.AnchorId}");
         }
 
-        DNodeInfo nodeInfo;
+        DNodeSearchResult nodeSearchResult;
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
             if (targetNode is TextNode targetTextNode)
             {
-                nodeInfo = HandleNoneSelection(keyPressInfo, transaction, targetTextNode);
+                nodeSearchResult = HandleNoneSelection(keyPressInfo, transaction, targetTextNode);
             }
             else if (SearchTextNode(targetNode, keyPressInfo.Selection) is { } textNode)
             {
-                nodeInfo = HandleNoneSelection(keyPressInfo, transaction, textNode);
+                nodeSearchResult = HandleNoneSelection(keyPressInfo, transaction, textNode);
             }
             else
             {
@@ -34,16 +34,14 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
         }
         else
         {
-            var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction);
+            nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction);
             
             var cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent ?? 0;
             var cursorTarget = nodeSearchResult.Origin.Node ?? targetNode;
             transaction.AddCursorPosition(cursorTarget.Id, cursorPosition);
-
-            nodeInfo = nodeSearchResult.Origin;
         }
         
-        OnAfterSelection(keyPressInfo, transaction, targetNode, nodeInfo);
+        OnAfterSelection(keyPressInfo, transaction, targetNode, nodeSearchResult);
         
         return dScratchService.Apply(transaction);
     }
@@ -69,8 +67,7 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
         return node;
     }
 
-    protected abstract DNodeInfo HandleNoneSelection(
-        KeyPressInfo keyPressInfo,
+    protected abstract DNodeSearchResult HandleNoneSelection(KeyPressInfo keyPressInfo,
         ITransaction transaction,
         TextNode anchorTextNode);
 
@@ -79,9 +76,8 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
         ITransaction transaction,
         DNode anchorNode);
 
-    protected virtual void OnAfterSelection(
-        KeyPressInfo keyPressInfo,
+    protected virtual void OnAfterSelection(KeyPressInfo keyPressInfo,
         ITransaction transaction,
-        DNode? anchorNode,
-        DNodeInfo nodeInfo) { }
+        DNode anchorNode,
+        DNodeSearchResult nodeSearchResult) { }
 }

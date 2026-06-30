@@ -9,7 +9,8 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : Event
 {
     public const string EventName = "deleteWordBackward";
     
-    protected override DNodeInfo HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode anchorTextNode)
+    protected override DNodeSearchResult HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction,
+        TextNode anchorTextNode)
     {
         var targetSelection = SimpleDeleteBackwards(keyPressInfo, transaction, anchorTextNode);
         if (targetSelection.HasFoundNode)
@@ -23,7 +24,7 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : Event
             transaction.Delete(parent);
         }
 
-        return targetSelection;
+        return DNodeSearchResult.Empty;
     }
 
     protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)

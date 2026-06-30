@@ -9,15 +9,25 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
 {
     public const string EventName = "insertText";
 
-    protected override DNodeInfo HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode anchorTextNode)
+    protected override DNodeSearchResult HandleNoneSelection(
+        KeyPressInfo keyPressInfo,
+        ITransaction transaction,
+        TextNode anchorTextNode)
     {
-        if (keyPressInfo.Selection.AnchorOffset is 0 || string.IsNullOrEmpty(keyPressInfo.Data))
+        if (string.IsNullOrEmpty(keyPressInfo.Data))
         {
-            return DNodeInfo.NotFound();
+            return DNodeSearchResult.Empty;
         }
 
-        transaction.SplitText(anchorTextNode, keyPressInfo.Selection.AnchorOffset);
-        return new DNodeInfo(anchorTextNode, anchorTextNode.Length);
+        if (keyPressInfo.Selection.AnchorOffset is 0)
+        {
+            return new DNodeSearchResult(DNodeInfo.NotFound(), DNodeInfo.From(anchorTextNode, 0));
+        }
+        
+        var rightOrigin = transaction.SplitText(anchorTextNode, keyPressInfo.Selection.AnchorOffset);
+        return new DNodeSearchResult(
+            Origin: new DNodeInfo(anchorTextNode, anchorTextNode.Length), 
+            RightOrigin: DNodeInfo.From(rightOrigin, 0));
     }
 
     protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
@@ -34,25 +44,31 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
         transaction.AddCursorPosition(textNode.Id, textNode.Length);
     }
 
-    protected override void OnAfterSelection(
-        KeyPressInfo keyPressInfo,
+    protected override void OnAfterSelection(KeyPressInfo keyPressInfo,
         ITransaction transaction,
-        DNode? anchorNode,
-        DNodeInfo nodeInfo)
+        DNode anchorNode,
+        DNodeSearchResult nodeSearchResult)
     {
         if (string.IsNullOrEmpty(keyPressInfo.Data))
         {
             return;
         }
 
-        if (nodeInfo.HasFoundNode)
+        if (nodeSearchResult.Origin.HasFoundNode)
         {
-            var textNode = transaction.NodeFactory.String(keyPressInfo.Data, nodeInfo.Node, nodeInfo.Node.RightOrigin);
-            var parent = nodeInfo.Node.Parent;
+            var textNode = transaction.NodeFactory.String(keyPressInfo.Data, nodeSearchResult.Origin.Node, nodeSearchResult.Origin.Node.RightOrigin);
+            var parent = nodeSearchResult.Origin.Node.Parent;
             transaction.Insert(textNode, parent!);
             transaction.AddCursorPosition(textNode.Id, textNode.Length);
         }
-        else if (anchorNode?.Parent is not null)
+        else if (nodeSearchResult.RightOrigin.HasFoundNode)
+        {
+            var textNode = transaction.NodeFactory.String(keyPressInfo.Data, nodeSearchResult.RightOrigin.Node.Origin, nodeSearchResult.RightOrigin.Node);
+            var parent = nodeSearchResult.RightOrigin.Node.Parent;
+            transaction.Insert(textNode, parent!);
+            transaction.AddCursorPosition(textNode.Id, textNode.Length);
+        }
+        else if (anchorNode.Parent is not null)
         {
             var textNode = transaction.NodeFactory.String(keyPressInfo.Data, null, anchorNode.FirstChild);
             var parent = anchorNode.Parent;

@@ -9,7 +9,8 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventW
 {
     public const string EventName = "deleteWordForward";
     
-    protected override DNodeInfo HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode anchorTextNode)
+    protected override DNodeSearchResult HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction,
+        TextNode anchorTextNode)
     {
         var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, anchorTextNode);
             
@@ -24,7 +25,7 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventW
             transaction.Delete(parent.RightOrigin);
         }
 
-        return DNodeInfo.NotFound();
+        return DNodeSearchResult.Empty;
     }
 
     protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)

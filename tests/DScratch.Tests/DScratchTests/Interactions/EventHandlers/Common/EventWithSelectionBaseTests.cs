@@ -74,11 +74,12 @@ public class EventWithSelectionBaseTests
         private bool emptyBlockHandled;
         private DNode? emptyBlockAnchorNode;
         
-        protected override DNodeInfo HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode anchorTextNode)
+        protected override DNodeSearchResult HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction,
+            TextNode anchorTextNode)
         {
             noneSelectionHandled = true;
             noneSelectionTextNode = anchorTextNode;
-            return DNodeInfo.NotFound();
+            return DNodeSearchResult.Empty;
         }
 
         protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)

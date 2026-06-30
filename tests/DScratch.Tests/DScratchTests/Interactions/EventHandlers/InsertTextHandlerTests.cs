@@ -87,7 +87,8 @@ public class InsertTextHandlerTests
             TextNode textNode = null!;
             var parent = builder.TestBlockElementNode(t =>
             {
-                textNode = t.Text("a");
+                t.Text("a");
+                textNode = t.Text("b");
             });
 
             // Act
@@ -96,12 +97,12 @@ public class InsertTextHandlerTests
             // Assert
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
-                Assert.That(parent.FirstChild, Is.TypeOf<TextNode>());
-                Assert.That(((TextNode)parent.FirstChild!).TextContent, Is.EqualTo("abc"));
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+                Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("abc"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.FirstChild.Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
 
         [Test]

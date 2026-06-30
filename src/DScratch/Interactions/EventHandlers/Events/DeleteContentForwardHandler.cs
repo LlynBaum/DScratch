@@ -9,7 +9,8 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : Eve
 {
     public const string EventName = "deleteContentForward";
     
-    protected override DNodeInfo HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode anchorTextNode)
+    protected override DNodeSearchResult HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction,
+        TextNode anchorTextNode)
     {
         var targetSelection = SimpleDeleteForward(keyPressInfo, transaction, anchorTextNode);
         if (targetSelection.HasFoundNode)
@@ -23,7 +24,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : Eve
             transaction.Delete(parent.RightOrigin);
         }
 
-        return targetSelection;
+        return DNodeSearchResult.Empty;
     }
 
     protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
