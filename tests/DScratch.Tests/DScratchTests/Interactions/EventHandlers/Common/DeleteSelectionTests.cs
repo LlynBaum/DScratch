@@ -339,6 +339,4 @@ public class DeleteSelectionTests
             Assert.That(((TextNode)endParent.ChildNodes[1]).TextContent, Is.EqualTo("g"));
         }
     }
-    
-    // TODO: add support for Inline Elements
 }

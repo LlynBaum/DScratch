@@ -26,7 +26,7 @@ public class E2ETestsRunnerBase
     {
         Page = await browser.NewPageAsync();
         SetDefaultExpectTimeout(DefaultTimeoutSec * 1000);
-        await Page.GotoAsync(E2ETestFixture.BaseUrl); // TODO: sometimes this will cause Connection Refused. Idk why, but without parallel testing it doesn't happen.
+        await Page.GotoAsync(E2ETestFixture.BaseUrl);
     }
 
     [TearDown]

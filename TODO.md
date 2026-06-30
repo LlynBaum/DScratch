@@ -6,6 +6,9 @@
   - [ ] Bold
   - [ ] Italic
   - [ ] Color
+- [ ] Inline Elements
+  - For now just Links 
+  - Later maybe like Chapter References and co.
 - [ ] Auto Heading Numbering
   - This needs support for read-only text that is being displayed
 - [ ] Pages
