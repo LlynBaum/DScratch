@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/SolutionItems/">
     <File Path="README.md" />
+    <File Path="TODO.md" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="tests/DScratch.E2E/DScratch.E2E.csproj" />
