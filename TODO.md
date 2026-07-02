@@ -9,6 +9,9 @@
 - [ ] Inline Elements
   - For now just Links 
   - Later maybe like Chapter References and co.
+- [ ] Shortcut Keys
+  - Keybinds like CCTRL + B for Bold
+- [ ] History with Undo and Redu features
 - [ ] Auto Heading Numbering
   - This needs support for read-only text that is being displayed
 - [ ] Pages
