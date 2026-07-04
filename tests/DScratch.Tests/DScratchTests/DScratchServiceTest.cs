@@ -16,7 +16,7 @@ public class DScratchServiceTest
         transactionMock.Setup(t => t.Commit()).Returns(new TransactionResult([new TestStepDiff()]));
         
         // Act
-        var result = service.Apply(transactionMock.Object);
+        var result = service.ApplyAsync(transactionMock.Object);
         
         // Assert
         transactionMock.Verify(t => t.Commit(), Times.Once);

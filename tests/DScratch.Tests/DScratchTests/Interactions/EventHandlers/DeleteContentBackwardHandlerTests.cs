@@ -175,7 +175,7 @@ public class DeleteContentBackwardHandlerTests
                 Assert.That(parent.IsDeleted, Is.False);
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
             
-                Assert.That(result.Steps, Has.Count.Zero);
+                Assert.That(result.ModifiedNodes, Has.Count.Zero);
                 Assert.That(result.CursorPosition, Is.Null);
             }
 

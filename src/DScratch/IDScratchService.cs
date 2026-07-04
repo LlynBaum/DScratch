@@ -8,7 +8,7 @@ public interface IDScratchService
 
     ITransaction StartTransaction();
     
-    TransactionResult Apply(ITransaction transaction);
+    Task ApplyAsync(ITransaction transaction);
     
     TransactionResult InitialTransaction();
 }

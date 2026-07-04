@@ -58,19 +58,19 @@ public class DTransactionCleanUpTests
 
             if (!deleted)
             {
-                AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
+                AssertHelper.ThatStepsEqualTo(result.ModifiedNodes, expected: [
                     Is.TypeOf<StepDiff.InsertTextDiff>(),
                     Is.TypeOf<StepDiff.DeleteElementDiff>()
                 ]);
 
                 using (Assert.EnterMultipleScope())
                 {
-                    var insert = (StepDiff.InsertTextDiff)result.Steps[0]!;
+                    var insert = (StepDiff.InsertTextDiff)result.ModifiedNodes[0]!;
                     Assert.That(insert.ParentId, Is.EqualTo(node.Id.Value));
                     Assert.That(insert.Offset, Is.EqualTo(3));
                     Assert.That(insert.Text, Is.EqualTo("def"));
                 
-                    var delete = (StepDiff.DeleteElementDiff)result.Steps[1]!;
+                    var delete = (StepDiff.DeleteElementDiff)result.ModifiedNodes[1]!;
                     Assert.That(delete.TargetId, Is.EqualTo(modifiedNode.Id.Value));
                 }
             }
@@ -115,19 +115,19 @@ public class DTransactionCleanUpTests
 
             if (!deleted)
             {
-                AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
+                AssertHelper.ThatStepsEqualTo(result.ModifiedNodes, expected: [
                     Is.TypeOf<StepDiff.InsertTextDiff>(),
                     Is.TypeOf<StepDiff.DeleteElementDiff>()
                 ]);
                 
                 using (Assert.EnterMultipleScope())
                 {
-                    var insert = (StepDiff.InsertTextDiff)result.Steps[0]!;
+                    var insert = (StepDiff.InsertTextDiff)result.ModifiedNodes[0]!;
                     Assert.That(insert.ParentId, Is.EqualTo(modifiedNode.Id.Value));
                     Assert.That(insert.Offset, Is.EqualTo(3));
                     Assert.That(insert.Text, Is.EqualTo("def"));
                 
-                    var delete = (StepDiff.DeleteElementDiff)result.Steps[1]!;
+                    var delete = (StepDiff.DeleteElementDiff)result.ModifiedNodes[1]!;
                     Assert.That(delete.TargetId, Is.EqualTo(node.Id.Value));
                 }
             }

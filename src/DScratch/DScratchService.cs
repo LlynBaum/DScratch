@@ -1,20 +1,24 @@
+using DScratch.LayoutEngine;
 using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 
 namespace DScratch;
 
-public class DScratchService(INodeFactory nodeFactory, INodeIdGenerator nodeIdGenerator) : IDScratchService
+public class DScratchService(
+    INodeFactory nodeFactory,
+    INodeIdGenerator nodeIdGenerator,
+    ILayoutEngineService layoutEngineService) : IDScratchService
 {
     public DScratchDocument Document { get; } = new DScratchDocument(nodeIdGenerator.GetNextId());
 
     public bool DisableCleanUp { get; init; }
 
-    internal DScratchService(DScratchDocument document, INodeFactory nodeFactory, INodeIdGenerator nodeIdGenerator) 
-        : this(nodeFactory, nodeIdGenerator)
+    internal DScratchService(DScratchDocument document, INodeFactory nodeFactory, INodeIdGenerator nodeIdGenerator, ILayoutEngineService layoutEngineService) 
+        : this(nodeFactory, nodeIdGenerator, layoutEngineService)
     {
         Document = document;
     }
-    
+
     // TODO: history of past transaction, so things like ctrl-z can be possible.
     private readonly Stack<ITransaction> transactions = [];
 
@@ -23,10 +27,10 @@ public class DScratchService(INodeFactory nodeFactory, INodeIdGenerator nodeIdGe
         return new DTransaction(Document, nodeFactory, nodeIdGenerator, DisableCleanUp);
     }
     
-    public TransactionResult Apply(ITransaction transaction)
+    public async Task ApplyAsync(ITransaction transaction)
     {
         transactions.Push(transaction);
-        return transaction.Commit();
+        await layoutEngineService.LayoutAsync(transaction.Commit());
     }
 
     public TransactionResult InitialTransaction()

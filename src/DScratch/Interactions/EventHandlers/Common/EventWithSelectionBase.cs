@@ -29,7 +29,7 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
             else
             {
                 HandleEmptyBlock(keyPressInfo, transaction, targetNode);
-                return dScratchService.Apply(transaction);
+                return dScratchService.ApplyAsync(transaction);
             }
         }
         else
@@ -43,7 +43,7 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
         
         OnAfterSelection(keyPressInfo, transaction, targetNode, nodeSearchResult);
         
-        return dScratchService.Apply(transaction);
+        return dScratchService.ApplyAsync(transaction);
     }
 
     private static TextNode? SearchTextNode(DNode targetNode, SelectionInfo selection)

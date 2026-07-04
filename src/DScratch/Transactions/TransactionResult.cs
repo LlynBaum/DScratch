@@ -2,7 +2,7 @@ using DScratch.Interactions;
 
 namespace DScratch.Transactions;
 
-public sealed record TransactionResult(IReadOnlyList<StepDiff?> Steps, SelectionInfo? CursorPosition = null)
+internal sealed record TransactionResult(IReadOnlyList<ModifiedNode> ModifiedNodes, SelectionInfo? CursorPosition = null)
 {
-    public bool IsEmpty => !Steps.Any();
+    public bool IsEmpty => !ModifiedNodes.Any();
 }
