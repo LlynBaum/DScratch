@@ -86,7 +86,7 @@ public class TreeWalker<TFilter>(DNode parent, bool includeDeleted = false)
         return default;
     }
 
-    public static TreeWalker<T> StartFrom<T>(T node, DNode parent) where T : DNode, IDNode
+    public static TreeWalker<T> StartFrom<T>(T? node, DNode parent) where T : DNode, IDNode
     {
         return new TreeWalker<T>(parent)
         {

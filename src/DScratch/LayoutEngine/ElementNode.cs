@@ -1,15 +1,17 @@
+using DScratch.Nodes;
+
 namespace DScratch.LayoutEngine;
 
 public class ElementNode
 {
-    public ElementNode(string tag, string? textValue)
+    private ElementNode(string tag, string? textValue)
     {
         Tag = tag;
         TextValue = textValue;
         ChildNodes = null;
     }
     
-    public ElementNode(string tag, IReadOnlyList<ElementNode>? childNodes)
+    private ElementNode(string tag, List<ElementNode>? childNodes)
     {
         Tag = tag;
         TextValue = null;
@@ -20,7 +22,22 @@ public class ElementNode
     
     public string? TextValue { get; }
     
-    public IReadOnlyList<ElementNode>? ChildNodes { get; }
+    public List<ElementNode>? ChildNodes { get; }
 
-    public bool IsTextNode => TextValue is not null;
+    public bool HasChildNodes => ChildNodes is not null;
+
+    public static ElementNode Create(DNode node)
+    {
+        if (node is TextNode textNode)
+        {
+            return new ElementNode(node.TagName, textNode.TextContent);
+        }
+
+        return new ElementNode(node.TagName, []);
+    }
+
+    public static ElementNode Root(DNode documentRoot)
+    {
+        return new ElementNode("Root", []);
+    }
 }

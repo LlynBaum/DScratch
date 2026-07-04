@@ -6,5 +6,5 @@ internal sealed class DPage
 {
     public DNode LastNode { get; }
     
-    public int PageNumber { get; }
+    public required int PageNumber { get; init; }
 }

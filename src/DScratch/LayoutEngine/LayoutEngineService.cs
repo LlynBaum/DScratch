@@ -6,24 +6,54 @@ namespace DScratch.LayoutEngine;
 
 internal sealed class LayoutEngineService(IDScratchService dScratchService, ILayoutRenderer layoutRenderer) : ILayoutEngineService
 {
-    private List<DPage> pages = [];
-    private Dictionary<DNode, RenderInfo> nodes = new Dictionary<DNode, RenderInfo>();
+    private readonly List<DPage> pages = [new DPage { PageNumber = 1 }];
+    private readonly Dictionary<DNode, RenderInfo> nodes = new Dictionary<DNode, RenderInfo>();
 
     public async Task LayoutAsync(TransactionResult transactionResult)
     {
         if (transactionResult.IsEmpty) return;
 
         var modifiedPages = transactionResult.ModifiedNodes
-            .Select(m => this.nodes.GetValueOrDefault(m.Node)?.CurrentPage)
+            .Select(m => nodes.GetValueOrDefault(m.Node)?.CurrentPage)
             .Where(p => p is not null)
             .Cast<DPage>()
             .OrderBy(p => p.PageNumber)
             .ToHashSet();
 
-        List<ElementNode> nodes = [];
-        // TODO: layout
+        var firstPage = modifiedPages.MinBy(p => p.PageNumber)!;
+        var previousPageIndex = firstPage.PageNumber - 2;
+        var startNode = previousPageIndex >= 0 
+            ? pages[firstPage.PageNumber - 2].LastNode 
+            : null;
 
-        // TODO: build rerender model and render with razor in client project
-        await layoutRenderer.RenderAsync(nodes, transactionResult.CursorPosition);
+        var current = startNode?.RightOrigin ?? dScratchService.Document.Root.FirstChild;
+        var root = ElementNode.Root(dScratchService.Document.Root);
+        BuildLayout(root, current, firstPage);
+        await layoutRenderer.RenderAsync(root, transactionResult.CursorPosition);
+    }
+
+    private void BuildLayout(ElementNode parent, DNode? current, DPage currentPage)
+    {
+        var node = current;
+        while (node is not null)
+        {
+            var elementNode = ElementNode.Create(node);
+            parent.ChildNodes!.Add(elementNode);
+
+            if (!nodes.TryGetValue(node, out var info))
+            {
+                info = RenderInfo.Create(node, currentPage);
+                nodes.Add(node, info);
+            }
+
+            info.CurrentPage = currentPage;
+
+            if (node.FirstChild is not null && elementNode.HasChildNodes)
+            {
+                BuildLayout(elementNode, node.FirstChild, currentPage);
+            }
+
+            node = node.RightOrigin;
+        }
     }
 }
