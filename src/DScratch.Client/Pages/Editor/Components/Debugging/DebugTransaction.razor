@@ -105,14 +105,12 @@ else
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var step in LastTransaction.Steps)
+                        @foreach (var step in LastTransaction.ModifiedNodes)
                         {
-                            if (step is null) continue;
-
                             <tr>
                                 <td>
                                     <span class="step-badge @step.Type.ToLower()">
-                                        @step.Type
+                                        @step.Id.Value
                                     </span>
                                 </td>
                                 <td class="monospace cell-data">

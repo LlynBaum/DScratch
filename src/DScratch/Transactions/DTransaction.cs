@@ -8,7 +8,6 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
     : ITransaction, IRunningTransaction
 {
     private readonly List<IStep> steps = [];
-    private readonly List<StepDiff> additionalStepDiffs = [];
     
     private readonly List<DNode> modifiedNodes = [];
     private readonly List<DNode> addedNodes = [];
@@ -22,17 +21,18 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
 
     public TransactionResult Commit()
     {
-        var stepDiffs = steps.SelectMany(s => s.Execute(this, document)).ToList();
+        foreach (var step in steps)
+        {
+            step.Execute(this, document);
+        }
         
         addedNodes.ForEach(document.AddNode);
-        var cleanUpSteps = CleanupCode(modifiedNodes);
-        stepDiffs = [..additionalStepDiffs, ..stepDiffs, ..cleanUpSteps];
+        CleanupCode(modifiedNodes); // TODO: this might have an effect on modifiedNodes, so update the list somehow
         
         modifiedNodes.Clear();
         addedNodes.Clear();
-        additionalStepDiffs.Clear();
-        
-        return new TransactionResult(stepDiffs, cursorPosition);
+
+        return new TransactionResult(modifiedNodes, cursorPosition);
     }
     
     public ITransaction Insert(DNode node, DNode parent)
@@ -94,8 +94,6 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
         if (splitNode is not null && splitNode.Id != node.Id)
         {
             addedNodes.Add(splitNode);
-            additionalStepDiffs.Add(new StepDiff.DeleteTextDiff(node.Id.Value, offset, splitNode.Length));
-            additionalStepDiffs.AddRange(splitNode.ToInsertSteps());
         }
         
         return splitNode;
@@ -103,29 +101,17 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
 
     public void NotifyNodeChange(DNode node) => modifiedNodes.Add(node);
 
-    private List<StepDiff?> CleanupCode(IReadOnlyList<DNode> nodes)
+    private void CleanupCode(IReadOnlyList<DNode> nodes)
     {
-        List<StepDiff?> result = [];
         if(disableCleanUp)
         {
-            return result;
+            return;
         }
-        
+
         foreach (var node in nodes.OfType<TextNode>())
         {
             if (node.Origin is TextNode originTextNode && originTextNode.IsDeleted == node.IsDeleted && originTextNode.LastId.IsContinuesTo(node.Id))
             {
-                if (!originTextNode.IsDeleted)
-                {
-                    var textInsert = new StepDiff.InsertTextDiff(
-                        originTextNode.Id.Value,
-                        originTextNode.Length,
-                        node.TextContent);
-                
-                    result.Add(textInsert);
-                    result.Add(node.ToDeleteSteps());
-                }
-
                 cursorPosition = AdjustSelection(cursorPosition, node, originTextNode);
 
                 originTextNode.AddText(node.TextContent);
@@ -134,17 +120,6 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
             }
             else if (node.RightOrigin is TextNode rightOriginTextNode && rightOriginTextNode.IsDeleted == node.IsDeleted && node.LastId.IsContinuesTo(rightOriginTextNode.Id))
             {
-                if (!rightOriginTextNode.IsDeleted)
-                {
-                    var textInsert = new StepDiff.InsertTextDiff(
-                        node.Id.Value,
-                        node.Length,
-                        rightOriginTextNode.TextContent);
-                
-                    result.Add(textInsert);
-                    result.Add(rightOriginTextNode.ToDeleteSteps());
-                }
-
                 cursorPosition = AdjustSelection(cursorPosition, rightOriginTextNode, node);
                 
                 node.AddText(rightOriginTextNode.TextContent);
@@ -152,8 +127,6 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
                 document.RemoveNode(rightOriginTextNode);
             }
         }
-
-        return result;
     }
 
     private static SelectionInfo? AdjustSelection(SelectionInfo? selectionInfo, TextNode oldNode, TextNode targetNode)

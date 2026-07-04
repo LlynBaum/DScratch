@@ -2,7 +2,7 @@ using DScratch.Transactions;
 
 namespace DScratch.LayoutEngine;
 
-internal interface ILayoutEngineService
+public interface ILayoutEngineService
 {
     Task LayoutAsync(TransactionResult transactionResult);
 }

@@ -39,3 +39,9 @@ Here just build a little Tree with the ElementNodes and after that yeet it throu
 *Note:* The LastNode of a Page always has to be a BlockNode.
 
 Pages are only prep Work, so no need to add new Pages and all that. For now all on one page.
+
+**TODOs**
+- CleanUp in Transaction is a problem... see TODO Comment in code.
+- Actually render the thing with razor$
+- update tests and all that shit
+- update debugging view to something meaningful

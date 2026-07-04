@@ -6,7 +6,7 @@ namespace DScratch.Interactions.EventHandlers.Common;
 
 public abstract class EventWithSelectionBase(IDScratchService dScratchService) : IEditorEventHandler
 {
-    public TransactionResult Handle(KeyPressInfo keyPressInfo)
+    public void Handle(KeyPressInfo keyPressInfo)
     {
         var transaction = dScratchService.StartTransaction();
         var targetNode = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId);
@@ -29,7 +29,8 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
             else
             {
                 HandleEmptyBlock(keyPressInfo, transaction, targetNode);
-                return dScratchService.ApplyAsync(transaction);
+                dScratchService.ApplyAsync(transaction);
+                return;
             }
         }
         else
@@ -43,7 +44,7 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
         
         OnAfterSelection(keyPressInfo, transaction, targetNode, nodeSearchResult);
         
-        return dScratchService.ApplyAsync(transaction);
+        dScratchService.ApplyAsync(transaction);
     }
 
     private static TextNode? SearchTextNode(DNode targetNode, SelectionInfo selection)
