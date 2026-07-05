@@ -47,6 +47,7 @@ interface MoveStep extends Step {
     previousSiblingId: string | null;
 }
 
+// TODO: change this to the new thing, HTML swap
 export function applyTransaction(transaction: TransactionResult){
     saveSelection();
     transaction.steps.map(handle);

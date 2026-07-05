@@ -1,4 +1,3 @@
-import { applyTransaction, TransactionResult } from "./transaction";
 import { handleInput } from "./inputs";
 import { getSelection, SelectionInfo } from "./selection";
 
@@ -6,7 +5,6 @@ let bridgeReference: any = null;
 
 interface Editor {
     initialize: (dotNetRef: any) => void;
-    applyTransaction: (transaction: TransactionResult) => void;
     getSelection: () => SelectionInfo;
     node: HTMLElement | null;
 }
@@ -60,7 +58,6 @@ function setCursorToEnd(event: PointerEvent) {
 
 window.editor = {
     initialize: initEditor,
-    applyTransaction: applyTransaction,
     getSelection: getSelection,
     node: null,
 };
