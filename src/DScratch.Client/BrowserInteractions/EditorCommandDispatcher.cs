@@ -22,8 +22,7 @@ public class EditorCommandDispatcher(
         
         ChangeBlockTypeHandler.Execute(transaction, selectionInfo, targetBlockNodeType);
 
-        var result = dScratchService.ApplyAsync(transaction);
-        await jsInvoker.ApplyTransaction(result);
+        await dScratchService.ApplyAsync(transaction);
         
         editorDebugService.NotifyDocumentChanged(new EditorDebugService.TransactionInfo(result, new KeyPressInfo
         {

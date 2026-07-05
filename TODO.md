@@ -42,6 +42,6 @@ Pages are only prep Work, so no need to add new Pages and all that. For now all 
 
 **TODOs**
 - CleanUp in Transaction is a problem... see TODO Comment in code.
-- Actually render the thing with razor$
+- Actually render the thing with razor
 - update tests and all that shit
 - update debugging view to something meaningful

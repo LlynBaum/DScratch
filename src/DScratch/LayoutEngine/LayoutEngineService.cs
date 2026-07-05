@@ -9,7 +9,7 @@ internal sealed class LayoutEngineService(IDScratchService dScratchService, ILay
     private readonly List<DPage> pages = [new DPage { PageNumber = 1 }];
     private readonly Dictionary<DNode, RenderInfo> nodes = new Dictionary<DNode, RenderInfo>();
 
-    public async Task LayoutAsync(TransactionResult transactionResult)
+    public async Task RenderAsync(TransactionResult transactionResult)
     {
         if (transactionResult.IsEmpty) return;
 

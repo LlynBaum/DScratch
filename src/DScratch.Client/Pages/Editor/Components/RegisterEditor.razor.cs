@@ -14,8 +14,7 @@ public partial class RegisterEditor(
     {
         if (firstRender && RuntimeInformation.ProcessArchitecture == Architecture.Wasm)
         {
-            var initialTransaction = dScratchService.InitialTransaction();
-            await jsInvoker.ApplyTransaction(initialTransaction);
+            await dScratchService.InitialTransactionAsync();
             
             var dotNetRef = DotNetObjectReference.Create(inputEventHelper);
             await jsInvoker.InitializeEditor(dotNetRef);

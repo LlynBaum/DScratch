@@ -6,7 +6,6 @@ using Microsoft.JSInterop;
 namespace DScratch.Client.BrowserInteractions;
 
 public class InputEventHelper(
-    DJsInvoker jsInvoker, 
     IDScratchService dScratchService,
     EditorDebugService editorDebugService,
     IServiceProvider serviceProvider, 
@@ -23,13 +22,9 @@ public class InputEventHelper(
         var handler = serviceProvider.GetKeyedService<IEditorEventHandler>(keyPressInfo.InputType);
         if (handler is not null)
         {
-            var result = handler.Handle(keyPressInfo);
-            if (result.IsEmpty)
-            {
-                return;
-            }
-
-            await jsInvoker.ApplyTransaction(result);
+            var transaction = dScratchService.StartTransaction();
+            handler.Handle(keyPressInfo, transaction);
+            await dScratchService.ApplyAsync(transaction);
 
             editorDebugService.NotifyDocumentChanged(new EditorDebugService.TransactionInfo(result, keyPressInfo));
 

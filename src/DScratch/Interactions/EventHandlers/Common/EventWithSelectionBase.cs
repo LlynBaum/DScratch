@@ -6,9 +6,8 @@ namespace DScratch.Interactions.EventHandlers.Common;
 
 public abstract class EventWithSelectionBase(IDScratchService dScratchService) : IEditorEventHandler
 {
-    public void Handle(KeyPressInfo keyPressInfo)
+    public void Handle(KeyPressInfo keyPressInfo, ITransaction transaction)
     {
-        var transaction = dScratchService.StartTransaction();
         var targetNode = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId);
         if (targetNode is null)
         {
@@ -29,7 +28,6 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
             else
             {
                 HandleEmptyBlock(keyPressInfo, transaction, targetNode);
-                dScratchService.ApplyAsync(transaction);
                 return;
             }
         }

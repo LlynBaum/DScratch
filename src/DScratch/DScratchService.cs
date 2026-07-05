@@ -1,6 +1,5 @@
 using DScratch.LayoutEngine;
 using DScratch.Transactions;
-using DScratch.Transactions.Steps;
 
 namespace DScratch;
 
@@ -30,11 +29,12 @@ public class DScratchService(
     public async Task ApplyAsync(ITransaction transaction)
     {
         transactions.Push(transaction);
-        await layoutEngineService.LayoutAsync(transaction.Commit());
+        await layoutEngineService.RenderAsync(transaction.Commit());
     }
 
-    public TransactionResult InitialTransaction()
+    public async Task InitialTransactionAsync()
     { 
-        return new TransactionResult(Document.Root.ToInsertSteps());
+        var transactionResult = new TransactionResult([Document.Root]);
+        await layoutEngineService.RenderAsync(transactionResult);
     }
 }

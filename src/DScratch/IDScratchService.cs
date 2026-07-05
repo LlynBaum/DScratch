@@ -10,5 +10,5 @@ public interface IDScratchService
     
     Task ApplyAsync(ITransaction transaction);
     
-    TransactionResult InitialTransaction();
+    Task InitialTransactionAsync();
 }
