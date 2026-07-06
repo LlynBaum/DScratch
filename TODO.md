@@ -45,3 +45,8 @@ Pages are only prep Work, so no need to add new Pages and all that. For now all 
 - Actually render the thing with razor
 - update tests and all that shit
 - update debugging view to something meaningful
+
+### Scroll
+
+DOM swapping migh break the current scrole so it has to be stored by JS then swap and then reset back. But do this only
+in case the Browser can't figure it out on it's own.
