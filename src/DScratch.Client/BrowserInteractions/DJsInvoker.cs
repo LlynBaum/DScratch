@@ -21,4 +21,9 @@ public sealed class DJsInvoker(IJSRuntime jsRuntime)
     {
         await jsRuntime.InvokeVoidAsync(ScriptConstants.RenderPage, renderedPage);
     }
+    
+    public async Task SetSelectionAsync(SelectionInfo selectionInfo)
+    {
+        await jsRuntime.InvokeVoidAsync(ScriptConstants.SetSelection, selectionInfo);
+    }
 }

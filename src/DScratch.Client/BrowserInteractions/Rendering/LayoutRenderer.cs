@@ -29,5 +29,9 @@ public class LayoutRenderer(DJsInvoker jsInvoker, IServiceProvider serviceProvid
         };
         
         await jsInvoker.RenderPageAsync(renderedContent);
+        if (cursorPosition is not null)
+        {
+            await jsInvoker.SetSelectionAsync(cursorPosition);
+        }
     }
 }

@@ -1,11 +1,14 @@
 import { handleInput } from "./inputs";
-import { getSelection, SelectionInfo } from "./selection";
+import {getSelection, SelectionInfo, setSelection} from "./selection";
+import {RenderedPage, renderPage} from "./renderEngine";
 
 let bridgeReference: any = null;
 
 interface Editor {
     initialize: (dotNetRef: any) => void;
     getSelection: () => SelectionInfo;
+    renderPage: (page: RenderedPage) => void;
+    setSelection: (selection: SelectionInfo) => void;
     node: HTMLElement | null;
 }
 
@@ -25,9 +28,6 @@ function initEditor(dotNetRef: any) {
     
     editor?.addEventListener("click", setCursorToEnd);
     editor?.addEventListener("beforeinput", async event => await handleInput(event, bridgeReference));
-    
-    const rootNode = editor.querySelector<HTMLElement>("[data-dnode-id='Root']");
-    rootNode?.setAttribute("contenteditable", '');
     
     window.editor.node = editor;
     bridgeReference = dotNetRef;
@@ -59,5 +59,7 @@ function setCursorToEnd(event: PointerEvent) {
 window.editor = {
     initialize: initEditor,
     getSelection: getSelection,
+    renderPage: renderPage,
+    setSelection: setSelection,
     node: null,
 };

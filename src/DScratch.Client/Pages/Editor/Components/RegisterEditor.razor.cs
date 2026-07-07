@@ -14,10 +14,9 @@ public partial class RegisterEditor(
     {
         if (firstRender && RuntimeInformation.ProcessArchitecture == Architecture.Wasm)
         {
-            await dScratchService.InitialTransactionAsync();
-            
             var dotNetRef = DotNetObjectReference.Create(inputEventHelper);
             await jsInvoker.InitializeEditor(dotNetRef);
+            await dScratchService.InitialTransactionAsync();
         }
     }
 }
