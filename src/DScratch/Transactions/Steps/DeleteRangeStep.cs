@@ -7,14 +7,14 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
     public void Execute(IRunningTransaction transaction, DScratchDocument document)
     {
         if (start is null && end is null) return;
-        
+
         if (end is null)
         {
             var current = start;
             while (current is not null)
             {
                 current.Delete();
-                transaction.NotifyNodeChange(current);
+                transaction.NotifyNodeChange(new ModifiedNode(current, Modification.Delete));
                 current = current.RightOrigin;
             }
         }
@@ -24,7 +24,7 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
             while (current is not null)
             {
                 current.Delete();
-                transaction.NotifyNodeChange(current);
+                transaction.NotifyNodeChange(new ModifiedNode(current, Modification.Delete));
                 current = current.Origin;
             }
         }
@@ -34,14 +34,14 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
             while (current is not null && current.Id != end.Id)
             {
                 current.Delete();
-                transaction.NotifyNodeChange(current);
+                transaction.NotifyNodeChange(new ModifiedNode(current, Modification.Delete));
                 current = current.RightOrigin;
             }
 
             if (current is not null)
             {
                 current.Delete();
-                transaction.NotifyNodeChange(current);
+                transaction.NotifyNodeChange(new ModifiedNode(current, Modification.Delete));
             }
         }
     }

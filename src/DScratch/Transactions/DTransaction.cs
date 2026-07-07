@@ -9,7 +9,7 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
 {
     private readonly List<IStep> steps = [];
 
-    private readonly HashSet<DNode> modifiedNodes = [];
+    private readonly HashSet<ModifiedNode> modifiedNodes = [];
     private readonly List<DNode> addedNodes = [];
     private SelectionInfo? cursorPosition;
 
@@ -99,37 +99,55 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
         return splitNode;
     }
 
-    public void NotifyNodeChange(DNode node) => modifiedNodes.Add(node);
+    public void NotifyNodeChange(ModifiedNode modifiedNode) => modifiedNodes.Add(modifiedNode);
 
-    private void CleanupCode(IReadOnlySet<DNode> nodes)
+    private void CleanupCode(IReadOnlySet<ModifiedNode> modified)
     {
         if(disableCleanUp)
         {
             return;
         }
-        
-        // ToList is required here, it creates a copy of the original HashSet so we can safely add/remove items from the HashSet
-        foreach (var node in nodes.OfType<TextNode>().ToList())
-        {
-            if (node.Origin is TextNode originTextNode && originTextNode.IsDeleted == node.IsDeleted && originTextNode.LastId.IsContinuesTo(node.Id))
-            {
-                cursorPosition = AdjustSelection(cursorPosition, node, originTextNode);
 
-                originTextNode.AddText(node.TextContent);
-                node.Remove();
-                modifiedNodes.Remove(node);
-                modifiedNodes.Add(originTextNode);
-                document.RemoveNode(node);
-            }
-            else if (node.RightOrigin is TextNode rightOriginTextNode && rightOriginTextNode.IsDeleted == node.IsDeleted && node.LastId.IsContinuesTo(rightOriginTextNode.Id))
+        // ToList is required here, it creates a copy of the original HashSet so we can safely add/remove items from the HashSet
+        foreach (var modifiedNode in modified.Where(m => m.Node is TextNode).ToList())
+        {
+            var textNode = (TextNode)modifiedNode.Node;
+
+            if (modifiedNode.Node.Origin is TextNode originTextNode && originTextNode.IsDeleted == textNode.IsDeleted && originTextNode.LastId.IsContinuesTo(textNode.Id))
             {
-                cursorPosition = AdjustSelection(cursorPosition, rightOriginTextNode, node);
-                
-                node.AddText(rightOriginTextNode.TextContent);
+                cursorPosition = AdjustSelection(cursorPosition, textNode, originTextNode);
+
+                originTextNode.AddText(textNode.TextContent);
+                textNode.Remove();
+                document.RemoveNode(textNode);
+
+                // Modification must be deleted, so we just leave it, since merging here does not affect rendering in any way.
+                if (!modifiedNode.Node.IsDeleted)
+                {
+                    modifiedNodes.Remove(modifiedNode);
+                    if (modifiedNodes.All(m => m.Node != originTextNode))
+                    {
+                        modifiedNodes.Add(new ModifiedNode(originTextNode, Modification.Changed));
+                    }
+                }
+            }
+            else if (textNode.RightOrigin is TextNode rightOriginTextNode && rightOriginTextNode.IsDeleted == textNode.IsDeleted && textNode.LastId.IsContinuesTo(rightOriginTextNode.Id))
+            {
+                cursorPosition = AdjustSelection(cursorPosition, rightOriginTextNode, textNode);
+
+                textNode.AddText(rightOriginTextNode.TextContent);
                 rightOriginTextNode.Remove();
-                modifiedNodes.Remove(rightOriginTextNode);
-                modifiedNodes.Add(node);
                 document.RemoveNode(rightOriginTextNode);
+
+                // Modification must be deleted, so we just leave it, since merging here does not affect rendering in any way.
+                if (!modifiedNode.Node.IsDeleted)
+                {
+                    var existing = modifiedNodes.FirstOrDefault(m => m.Node == rightOriginTextNode);
+                    if (existing is not null)
+                    {
+                        modifiedNodes.Remove(existing);
+                    }
+                }
             }
         }
     }

@@ -26,7 +26,7 @@
 
 ## Layout Engine
 
-We have the modified node, then get the Pages. 
+We have the modified node, then get the Pages.
 
 For Inserting mark parent as Modified. For moving mark the moved node and the new Parent as modified.
 
@@ -41,9 +41,7 @@ Here just build a little Tree with the ElementNodes and after that yeet it throu
 Pages are only prep Work, so no need to add new Pages and all that. For now all on one page.
 
 **TODOs**
-- Actually render the thing with razor
 - update tests and all that shit
-- update debugging view to something meaningful
 
 ### Scroll
 

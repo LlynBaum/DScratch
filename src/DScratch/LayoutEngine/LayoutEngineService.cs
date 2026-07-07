@@ -13,15 +13,23 @@ internal sealed class LayoutEngineService(IDScratchService dScratchService, ILay
     {
         if (transactionResult.IsEmpty) return;
 
-        var modifiedPages = transactionResult.ModifiedNodes
-            .Select(n => nodes.GetValueOrDefault(n)?.CurrentPage)
-            .Where(p => p is not null)
-            .Cast<DPage>()
-            .OrderBy(p => p.PageNumber)
-            .ToHashSet();
+        HashSet<DPage> modifiedPages = [];
 
-        var firstPage = modifiedPages.MinBy(p => p.PageNumber) ??  pages[0];
-        var previousPageIndex = firstPage.PageNumber - 2;
+        foreach (var modifiedNode in transactionResult.ModifiedNodes)
+        {
+            var node = modifiedNode.Modification switch
+            {
+                Modification.Insert => modifiedNode.Node.Parent!,
+                Modification.Delete => modifiedNode.Node,
+                Modification.Changed => modifiedNode.Node,
+                _ => throw new ArgumentOutOfRangeException(nameof(transactionResult), "Unknown Modification type.")
+            };
+
+            modifiedPages.Add(nodes[node].CurrentPage);
+        }
+
+        var firstPage = modifiedPages.MinBy(p => p.PageNumber) ?? pages[0];
+        var previousPageIndex = firstPage.PageNumber - 2; // -1 for index and -1 for previous page
         var startNode = previousPageIndex >= 0 
             ? pages[firstPage.PageNumber - 2].LastNode 
             : null;
@@ -37,6 +45,13 @@ internal sealed class LayoutEngineService(IDScratchService dScratchService, ILay
         var node = current;
         while (node is not null)
         {
+            if (node.IsDeleted)
+            {
+                nodes.Remove(node);
+                node = node.RightOrigin;
+                continue;
+            }
+
             var elementNode = ElementNode.Create(node);
             parent.ChildNodes!.Add(elementNode);
 

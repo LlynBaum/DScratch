@@ -7,7 +7,7 @@ public class DeleteStep(DNode node) : IStep
     public void Execute(IRunningTransaction transaction, DScratchDocument document)
     {
         node.Delete();
-        transaction.NotifyNodeChange(node);
+        transaction.NotifyNodeChange(new ModifiedNode(node, Modification.Delete));
     }
 
     public void Revert(DScratchDocument document)

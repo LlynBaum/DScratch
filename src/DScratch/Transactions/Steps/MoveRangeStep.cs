@@ -24,7 +24,8 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     current.Origin = origin;
                     current.RightOrigin = origin?.RightOrigin ?? existingFirstChild;
                     targetParent.InsertChild(current);
-                    transaction.NotifyNodeChange(current);
+                    transaction.NotifyNodeChange(new ModifiedNode(current, Modification.Delete));
+                    transaction.NotifyNodeChange(new ModifiedNode(current.Parent!, Modification.Changed));
                 }
                 else
                 {
@@ -32,7 +33,8 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     current.Origin = origin;
                     current.RightOrigin = origin?.RightOrigin ?? existingFirstChild;
                     targetParent.InsertChild(current);
-                    transaction.NotifyNodeChange(current);
+                    transaction.NotifyNodeChange(new ModifiedNode(current, Modification.Delete));
+                    transaction.NotifyNodeChange(new ModifiedNode(current.Parent!, Modification.Changed));
                 }
                 
                 previousOrigin = current;
@@ -54,7 +56,8 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     current.RightOrigin = rightOrigin;
                     current.Origin = rightOrigin?.Origin;
                     targetParent.InsertChild(current);
-                    transaction.NotifyNodeChange(current);
+                    transaction.NotifyNodeChange(new ModifiedNode(current, Modification.Delete));
+                    transaction.NotifyNodeChange(new ModifiedNode(current.Parent!, Modification.Changed));
                 }
                 else
                 {
@@ -62,7 +65,8 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     current.RightOrigin = rightOrigin;
                     current.Origin = rightOrigin?.Origin;
                     targetParent.InsertChild(current);
-                    transaction.NotifyNodeChange(current);
+                    transaction.NotifyNodeChange(new ModifiedNode(current, Modification.Delete));
+                    transaction.NotifyNodeChange(new ModifiedNode(current.Parent!, Modification.Changed));
                 }
 
                 previousRightOrigin = current;
@@ -84,7 +88,8 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     current.Origin = origin;
                     current.RightOrigin = origin?.RightOrigin ?? existingFirstChild;
                     targetParent.InsertChild(current);
-                    transaction.NotifyNodeChange(current);
+                    transaction.NotifyNodeChange(new ModifiedNode(current, Modification.Delete));
+                    transaction.NotifyNodeChange(new ModifiedNode(current.Parent!, Modification.Changed));
                 }
                 else
                 {
@@ -92,7 +97,8 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     current.Origin = origin;
                     current.RightOrigin = origin?.RightOrigin ?? existingFirstChild;
                     targetParent.InsertChild(current);
-                    transaction.NotifyNodeChange(current);
+                    transaction.NotifyNodeChange(new ModifiedNode(current, Modification.Delete));
+                    transaction.NotifyNodeChange(new ModifiedNode(current.Parent!, Modification.Changed));
                 }
                 
                 previousOrigin = current;
@@ -107,7 +113,8 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     current.Origin = previousOrigin;
                     current.RightOrigin = previousOrigin?.RightOrigin ?? existingFirstChild;
                     targetParent.InsertChild(current);
-                    transaction.NotifyNodeChange(current);
+                    transaction.NotifyNodeChange(new ModifiedNode(current, Modification.Delete));
+                    transaction.NotifyNodeChange(new ModifiedNode(current.Parent!, Modification.Changed));
                 }
                 else
                 {
@@ -115,7 +122,8 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     current.Origin = previousOrigin;
                     current.RightOrigin = previousOrigin?.RightOrigin ?? existingFirstChild;
                     targetParent.InsertChild(current);
-                    transaction.NotifyNodeChange(current);
+                    transaction.NotifyNodeChange(new ModifiedNode(current, Modification.Delete));
+                    transaction.NotifyNodeChange(new ModifiedNode(current.Parent!, Modification.Changed));
                 }
             }
         }
