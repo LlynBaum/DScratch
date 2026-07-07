@@ -4,11 +4,9 @@ namespace DScratch.Transactions.Steps;
 
 public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin) : IStep
 {
-    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
+    public void Execute(IRunningTransaction transaction, DScratchDocument document)
     {
-        if (start is null && end is null) return [];
-        
-        var steps = new List<StepDiff?>();
+        if (start is null && end is null) return;
 
         var existingFirstChild = targetOrigin is null ? targetParent.FirstChild : null;
         
@@ -27,7 +25,6 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     current.RightOrigin = origin?.RightOrigin ?? existingFirstChild;
                     targetParent.InsertChild(current);
                     transaction.NotifyNodeChange(current);
-                    steps.Add(current.ToMoveStep());
                 }
                 else
                 {
@@ -58,7 +55,6 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     current.Origin = rightOrigin?.Origin;
                     targetParent.InsertChild(current);
                     transaction.NotifyNodeChange(current);
-                    steps.Add(current.ToMoveStep());
                 }
                 else
                 {
@@ -89,7 +85,6 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     current.RightOrigin = origin?.RightOrigin ?? existingFirstChild;
                     targetParent.InsertChild(current);
                     transaction.NotifyNodeChange(current);
-                    steps.Add(current.ToMoveStep());
                 }
                 else
                 {
@@ -113,7 +108,6 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     current.RightOrigin = previousOrigin?.RightOrigin ?? existingFirstChild;
                     targetParent.InsertChild(current);
                     transaction.NotifyNodeChange(current);
-                    steps.Add(current.ToMoveStep());
                 }
                 else
                 {
@@ -125,11 +119,9 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                 }
             }
         }
-        
-        return steps;
     }
 
-    public IReadOnlyList<StepDiff> Revert(DScratchDocument document)
+    public void Revert(DScratchDocument document)
     {
         throw new NotImplementedException();
     }

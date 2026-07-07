@@ -188,13 +188,13 @@ public class DTransactionTests
         public bool Executed;
         public bool Reverted;
         
-        public IReadOnlyList<StepDiff> Execute(IRunningTransaction transaction, DScratchDocument document)
+        public void Execute(IRunningTransaction transaction, DScratchDocument document)
         {
             Executed = true;
             return [new TestStepDiff()];
         }
 
-        public IReadOnlyList<StepDiff> Revert(DScratchDocument document)
+        public void Revert(DScratchDocument document)
         {
             Reverted = true;
             return [new TestStepDiff()];

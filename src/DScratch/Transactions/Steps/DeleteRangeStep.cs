@@ -4,11 +4,9 @@ namespace DScratch.Transactions.Steps;
 
 public class DeleteRangeStep(DNode? start, DNode? end) : IStep
 {
-    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
+    public void Execute(IRunningTransaction transaction, DScratchDocument document)
     {
-        if (start is null && end is null) return [];
-
-        var steps = new List<StepDiff?>();
+        if (start is null && end is null) return;
         
         if (end is null)
         {
@@ -17,7 +15,6 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
             {
                 current.Delete();
                 transaction.NotifyNodeChange(current);
-                steps.Add(current.ToDeleteSteps());
                 current = current.RightOrigin;
             }
         }
@@ -28,7 +25,6 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
             {
                 current.Delete();
                 transaction.NotifyNodeChange(current);
-                steps.Add(current.ToDeleteSteps());
                 current = current.Origin;
             }
         }
@@ -39,7 +35,6 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
             {
                 current.Delete();
                 transaction.NotifyNodeChange(current);
-                steps.Add(current.ToDeleteSteps());
                 current = current.RightOrigin;
             }
 
@@ -47,14 +42,11 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
             {
                 current.Delete();
                 transaction.NotifyNodeChange(current);
-                steps.Add(current.ToDeleteSteps());
             }
         }
-
-        return steps;
     }
 
-    public IReadOnlyList<StepDiff> Revert(DScratchDocument document)
+    public void Revert(DScratchDocument document)
     {
         throw new NotImplementedException();
     }
