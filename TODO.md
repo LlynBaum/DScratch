@@ -26,22 +26,14 @@
 
 ## Layout Engine
 
-We have the modified node, then get the Pages.
-
-For Inserting mark parent as Modified. For moving mark the moved node and the new Parent as modified.
-
-Then rerender the found Pages. While calculating the Layout, set the current Page to all visited DNodes.
-
-Basically what now has to happen is, take the Last DNode of the First **NOT** modified Page.
-Then if Node wraps over to next Page use it else go to the next node in the Tree. Then start layouting.
-Here just build a little Tree with the ElementNodes and after that yeet it through a razor renderer and all that.
-
-*Note:* The LastNode of a Page always has to be a BlockNode.
-
-Pages are only prep Work, so no need to add new Pages and all that. For now all on one page.
-
-**TODOs**
-- update tests and all that shit
+1. update unit tests
+   - correct Modified notifications and all that
+   - CleanUp update Modified notic correctly
+2. Add tests for layouting
+   - Layouting creates correct tree and all that (unit test)
+   - E2E Tests should still work (visually there shouldn't be any changes)
+3. Test manually
+4. Scroll?
 
 ### Scroll
 
