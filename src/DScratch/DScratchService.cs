@@ -1,4 +1,5 @@
 using DScratch.LayoutEngine;
+using DScratch.Nodes;
 using DScratch.Transactions;
 
 namespace DScratch;
@@ -34,7 +35,7 @@ public class DScratchService(
 
     public async Task InitialTransactionAsync()
     { 
-        var transactionResult = new TransactionResult([Document.Root]);
+        var transactionResult = new TransactionResult(new HashSet<DNode> { Document.Root });
         await layoutEngineService.RenderAsync(transactionResult);
     }
 }

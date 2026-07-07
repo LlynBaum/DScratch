@@ -8,8 +8,8 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
     : ITransaction, IRunningTransaction
 {
     private readonly List<IStep> steps = [];
-    
-    private readonly List<DNode> modifiedNodes = [];
+
+    private readonly HashSet<DNode> modifiedNodes = [];
     private readonly List<DNode> addedNodes = [];
     private SelectionInfo? cursorPosition;
 
@@ -27,7 +27,7 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
         }
         
         addedNodes.ForEach(document.AddNode);
-        CleanupCode(modifiedNodes); // TODO: this might have an effect on modifiedNodes, so update the list somehow
+        CleanupCode(modifiedNodes);
         
         modifiedNodes.Clear();
         addedNodes.Clear();
@@ -101,14 +101,15 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
 
     public void NotifyNodeChange(DNode node) => modifiedNodes.Add(node);
 
-    private void CleanupCode(IReadOnlyList<DNode> nodes)
+    private void CleanupCode(IReadOnlySet<DNode> nodes)
     {
         if(disableCleanUp)
         {
             return;
         }
-
-        foreach (var node in nodes.OfType<TextNode>())
+        
+        // ToList is required here, it creates a copy of the original HashSet so we can safely add/remove items from the HashSet
+        foreach (var node in nodes.OfType<TextNode>().ToList())
         {
             if (node.Origin is TextNode originTextNode && originTextNode.IsDeleted == node.IsDeleted && originTextNode.LastId.IsContinuesTo(node.Id))
             {
@@ -116,6 +117,8 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
 
                 originTextNode.AddText(node.TextContent);
                 node.Remove();
+                modifiedNodes.Remove(node);
+                modifiedNodes.Add(originTextNode);
                 document.RemoveNode(node);
             }
             else if (node.RightOrigin is TextNode rightOriginTextNode && rightOriginTextNode.IsDeleted == node.IsDeleted && node.LastId.IsContinuesTo(rightOriginTextNode.Id))
@@ -124,6 +127,8 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
                 
                 node.AddText(rightOriginTextNode.TextContent);
                 rightOriginTextNode.Remove();
+                modifiedNodes.Remove(rightOriginTextNode);
+                modifiedNodes.Add(node);
                 document.RemoveNode(rightOriginTextNode);
             }
         }
