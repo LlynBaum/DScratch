@@ -1,3 +1,4 @@
+using DScratch.Client.BrowserInteractions.Rendering;
 using DScratch.Interactions;
 using DScratch.Transactions;
 using Microsoft.JSInterop;
@@ -14,5 +15,10 @@ public sealed class DJsInvoker(IJSRuntime jsRuntime)
     public async Task<SelectionInfo> GetSelectionAsync()
     {
         return await jsRuntime.InvokeAsync<SelectionInfo>(ScriptConstants.GetSelectionJs);
+    }
+
+    public async Task RenderPageAsync(RenderedPage renderedPage)
+    {
+        await jsRuntime.InvokeVoidAsync(ScriptConstants.RenderPage, renderedPage);
     }
 }

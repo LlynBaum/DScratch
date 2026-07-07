@@ -24,11 +24,11 @@ public class EditorCommandDispatcher(
 
         await dScratchService.ApplyAsync(transaction);
         
-        editorDebugService.NotifyDocumentChanged(new EditorDebugService.TransactionInfo(result, new KeyPressInfo
+        editorDebugService.NotifyKeyPress(new KeyPressInfo
         {
             InputType = "ChangeBlockType",
             Data = null,
             Selection = selectionInfo
-        }));
+        });
     }
 }

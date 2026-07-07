@@ -26,7 +26,7 @@ public class InputEventHelper(
             handler.Handle(keyPressInfo, transaction);
             await dScratchService.ApplyAsync(transaction);
 
-            editorDebugService.NotifyDocumentChanged(new EditorDebugService.TransactionInfo(result, keyPressInfo));
+            editorDebugService.NotifyKeyPress(keyPressInfo);
 
             if (editorDebugService.IsDebugEnabled)
             {

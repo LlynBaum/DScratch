@@ -29,7 +29,7 @@ internal sealed class LayoutEngineService(IDScratchService dScratchService, ILay
         var current = startNode?.RightOrigin ?? dScratchService.Document.Root.FirstChild;
         var root = ElementNode.Root(dScratchService.Document.Root);
         BuildLayout(root, current, firstPage);
-        await layoutRenderer.RenderAsync(root, transactionResult.CursorPosition);
+        await layoutRenderer.RenderAsync(root, transactionResult.CursorPosition, firstPage.PageNumber);
     }
 
     private void BuildLayout(ElementNode parent, DNode? current, DPage currentPage)

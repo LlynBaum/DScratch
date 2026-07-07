@@ -13,13 +13,13 @@
         <EditorMenu />
     </div>
 
-    <div class="doc-editor">
-        <DocumentEditor />
-    </div>
+    <div class="doc-editor"></div>
 
     @{
-    #if DEBUG
+#if DEBUG
         <DebugPanel />
-    #endif
+#endif
     }
 </div>
+
+<RegisterEditor />

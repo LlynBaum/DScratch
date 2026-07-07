@@ -1,6 +1,4 @@
-@using DScratch.Transactions
-
-@if (LastTransaction is null)
+@if (LastKeyPressInfo is null)
 {
     <div class="empty-state">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
@@ -10,169 +8,43 @@
 else
 {
     <div class="transaction-container">
-        <!-- Key Press Info Card -->
-        @if (LastKeyPressInfo is not null)
-        {
-            <div class="info-card">
-                <div class="info-card-header">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="6" y1="8" x2="6.01" y2="8"></line><line x1="10" y1="8" x2="10.01" y2="8"></line><line x1="14" y1="8" x2="14.01" y2="8"></line><line x1="18" y1="8" x2="18.01" y2="8"></line><line x1="6" y1="12" x2="6.01" y2="12"></line><line x1="18" y1="12" x2="18.01" y2="12"></line><line x1="7" y1="16" x2="17" y2="16"></line><line x1="10" y1="12" x2="14" y2="12"></line></svg>
-                    <h4>Key Press / Input Info</h4>
-                </div>
-                <div class="info-card-body">
-                    <div class="selection-field">
-                        <span class="field-label">Input Type</span>
-                        <span class="field-value badge text-indigo-600 font-bold">@LastKeyPressInfo.InputType</span>
-                    </div>
-                    <div class="selection-field">
-                        <span class="field-label">Data</span>
-                        <span class="field-value monospace badge">@(LastKeyPressInfo.Data is null ? "null" : $"\"{LastKeyPressInfo.Data}\"")</span>
-                    </div>
-                    
-                    <div class="selection-field">
-                        <span class="field-label">Start Anchor ID</span>
-                        <span class="field-value monospace badge">@LastKeyPressInfo.Selection.AnchorId</span>
-                    </div>
-                    <div class="selection-field">
-                        <span class="field-label">Start Anchor Offset</span>
-                        <span class="field-value monospace badge font-bold">@LastKeyPressInfo.Selection.AnchorOffset</span>
-                    </div>
-
-                    <div class="selection-field">
-                        <span class="field-label">Start Focus ID</span>
-                        <span class="field-value monospace badge">@LastKeyPressInfo.Selection.FocusId</span>
-                    </div>
-                    <div class="selection-field">
-                        <span class="field-label">Start Focus Offset</span>
-                        <span class="field-value monospace badge font-bold">@LastKeyPressInfo.Selection.FocusOffset</span>
-                    </div>
-
-                    <div class="selection-field">
-                        <span class="field-label">Direction</span>
-                        <span class="field-value badge">@LastKeyPressInfo.Selection.Direction.ToString().ToLower()</span>
-                    </div>
-                </div>
-            </div>
-        }
-
-        <!-- Selection Info Card -->
         <div class="info-card">
             <div class="info-card-header">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"></path><path d="M9 21H3v-6"></path><path d="M21 3l-7 7"></path><path d="M3 21l7-7"></path></svg>
-                <h4>Selection / Cursor State</h4>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="6" y1="8" x2="6.01" y2="8"></line><line x1="10" y1="8" x2="10.01" y2="8"></line><line x1="14" y1="8" x2="14.01" y2="8"></line><line x1="18" y1="8" x2="18.01" y2="8"></line><line x1="6" y1="12" x2="6.01" y2="12"></line><line x1="18" y1="12" x2="18.01" y2="12"></line><line x1="7" y1="16" x2="17" y2="16"></line><line x1="10" y1="12" x2="14" y2="12"></line></svg>
+                <h4>Key Press / Input Info</h4>
             </div>
             <div class="info-card-body">
-                @if (LastTransaction.CursorPosition is not null)
-                {
-                    <div class="selection-field">
-                        <span class="field-label">Anchor Node ID</span>
-                        <span class="field-value monospace badge">@LastTransaction.CursorPosition.AnchorId</span>
-                    </div>
-                    <div class="selection-field">
-                        <span class="field-label">Anchor Offset</span>
-                        <span class="field-value monospace badge font-bold">@LastTransaction.CursorPosition.AnchorOffset</span>
-                    </div>
-                    
-                    <div class="selection-field">
-                        <span class="field-label">Focus Node ID</span>
-                        <span class="field-value monospace badge">@LastTransaction.CursorPosition.FocusId</span>
-                    </div>
-                    <div class="selection-field">
-                        <span class="field-label">Focus Offset</span>
-                        <span class="field-value monospace badge font-bold">@LastTransaction.CursorPosition.FocusOffset</span>
-                    </div>
-                }
-                else
-                {
-                    <div class="no-selection">
-                        <span>No cursor position captured for this transaction.</span>
-                    </div>
-                }
-            </div>
-        </div>
-        
-        <!-- Steps Table -->
-        <div class="table-card">
-            <div class="table-card-header">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-                <h4>Transaction Steps Diff</h4>
-            </div>
-            <div class="table-wrapper">
-                <table class="transaction-table">
-                    <thead>
-                        <tr>
-                            <th class="col-type">Type</th>
-                            <th class="col-data">Data Diffs</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var step in LastTransaction.ModifiedNodes)
-                        {
-                            <tr>
-                                <td>
-                                    <span class="step-badge @step.Type.ToLower()">
-                                        @step.Id.Value
-                                    </span>
-                                </td>
-                                <td class="monospace cell-data">
-                                    @switch (step.Type)
-                                    {
-                                        case StepDiff.InsertText:
-                                            var insertText = (StepDiff.InsertTextDiff)step;
-                                            <div class="diff-data-line">
-                                                <span class="data-label">Parent ID:</span> <span class="data-value font-bold">@insertText.ParentId</span>
-                                                <span class="data-separator">|</span>
-                                                <span class="data-label">Offset:</span> <span class="data-value">@insertText.Offset</span>
-                                                <span class="data-separator">|</span>
-                                                <span class="data-label">Text:</span> <span class="data-text">"@insertText.Text"</span>
-                                            </div>
-                                            break;
-                                        case StepDiff.DeleteText:
-                                            var deleteText = (StepDiff.DeleteTextDiff)step;
-                                            <div class="diff-data-line">
-                                                <span class="data-label">Parent ID:</span> <span class="data-value font-bold">@deleteText.ParentId</span>
-                                                <span class="data-separator">|</span>
-                                                <span class="data-label">Offset:</span> <span class="data-value">@deleteText.Offset</span>
-                                                <span class="data-separator">|</span>
-                                                <span class="data-label">Len:</span> <span class="data-value text-red-600">@deleteText.Length</span>
-                                            </div>
-                                            break;
-                                        case StepDiff.InsertElement:
-                                            var insertElement = (StepDiff.InsertElementDiff)step;
-                                            <div class="diff-data-line">
-                                                <span class="data-label">Parent:</span> <span class="data-value font-bold">@insertElement.ParentId</span>
-                                                <span class="data-separator">|</span>
-                                                <span class="data-label">Prev:</span> <span class="data-value">@insertElement.PreviousSiblingId</span>
-                                                <span class="data-separator">|</span>
-                                                <span class="data-label">New:</span> <span class="data-value text-indigo-600">@insertElement.NewNodeId</span>
-                                                <span class="data-separator">|</span>
-                                                <span class="data-tag">&lt;@insertElement.TagName&gt;</span>
-                                            </div>
-                                            break;
-                                        case StepDiff.DeleteElement:
-                                            var deleteElement = (StepDiff.DeleteElementDiff)step;
-                                            <div class="diff-data-line">
-                                                <span class="data-label">Target ID:</span> <span class="data-value text-red-600 font-bold">@deleteElement.TargetId</span>
-                                            </div>
-                                            break;
-                                        case StepDiff.Move:
-                                            var move = (StepDiff.MoveDiff)step;
-                                            <div class="diff-data-line">
-                                                <span class="data-label">Target:</span> <span class="data-value font-bold">@move.TargetNodeId</span>
-                                                <span class="data-separator">→</span>
-                                                <span class="data-label">Parent:</span> <span class="data-value">@move.TargetParentId</span>
-                                                <span class="data-separator">|</span>
-                                                <span class="data-label">Prev:</span> <span class="data-value">@move.PreviousSiblingId</span>
-                                            </div>
-                                            break;
-                                        default:
-                                            <span class="text-slate-400">@step.ToString()</span>
-                                            break;
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                <div class="selection-field">
+                    <span class="field-label">Input Type</span>
+                    <span class="field-value badge text-indigo-600 font-bold">@LastKeyPressInfo.InputType</span>
+                </div>
+                <div class="selection-field">
+                    <span class="field-label">Data</span>
+                    <span class="field-value monospace badge">@(LastKeyPressInfo.Data is null ? "null" : $"\"{LastKeyPressInfo.Data}\"")</span>
+                </div>
+                
+                <div class="selection-field">
+                    <span class="field-label">Start Anchor ID</span>
+                    <span class="field-value monospace badge">@LastKeyPressInfo.Selection.AnchorId</span>
+                </div>
+                <div class="selection-field">
+                    <span class="field-label">Start Anchor Offset</span>
+                    <span class="field-value monospace badge font-bold">@LastKeyPressInfo.Selection.AnchorOffset</span>
+                </div>
+
+                <div class="selection-field">
+                    <span class="field-label">Start Focus ID</span>
+                    <span class="field-value monospace badge">@LastKeyPressInfo.Selection.FocusId</span>
+                </div>
+                <div class="selection-field">
+                    <span class="field-label">Start Focus Offset</span>
+                    <span class="field-value monospace badge font-bold">@LastKeyPressInfo.Selection.FocusOffset</span>
+                </div>
+
+                <div class="selection-field">
+                    <span class="field-label">Direction</span>
+                    <span class="field-value badge">@LastKeyPressInfo.Selection.Direction.ToString().ToLower()</span>
+                </div>
             </div>
         </div>
     </div>

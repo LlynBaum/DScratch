@@ -1,4 +1,5 @@
 using DScratch.Client.BrowserInteractions;
+using DScratch.Client.BrowserInteractions.Rendering;
 using DScratch.Client.Services;
 using DScratch.Interactions.CommandHandlers;
 using DScratch.Interactions.EventHandlers;
@@ -15,7 +16,7 @@ public static class ClientServiceRegistration
         services.AddScoped<InputEventHelper>();
         services.AddScoped<DJsInvoker>();
         services.AddScoped<INodeIdGenerator, NodeIdGenerator>();
-        services.AddScoped<ILayoutRenderer>(); // TODO: add implementation
+        services.AddScoped<ILayoutRenderer, LayoutRenderer>();
         
 #if DEBUG // TODO replace by checking env. Do that everywhere
         services.AddScoped<EditorDebugService>();

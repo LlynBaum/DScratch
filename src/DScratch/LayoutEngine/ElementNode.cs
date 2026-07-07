@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using DScratch.Nodes;
 
 namespace DScratch.LayoutEngine;
@@ -17,6 +18,8 @@ public class ElementNode
         TextValue = null;
         ChildNodes = childNodes;
     }
+    
+    public NodeId Id { get; set; }
 
     public string Tag { get; }
     
@@ -24,6 +27,8 @@ public class ElementNode
     
     public List<ElementNode>? ChildNodes { get; }
 
+    [MemberNotNullWhen(true, nameof(ChildNodes))]
+    [MemberNotNullWhen(false, nameof(TextValue))]
     public bool HasChildNodes => ChildNodes is not null;
 
     public static ElementNode Create(DNode node)
