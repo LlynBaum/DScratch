@@ -90,12 +90,13 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
     public TextNode? SplitText(TextNode node, int offset)
     {
         var splitNode = node.Split(offset, nodeIdGenerator.GetNextId);
-        
+
         if (splitNode is not null && splitNode.Id != node.Id)
         {
             addedNodes.Add(splitNode);
+            modifiedNodes.Add(new ModifiedNode(splitNode, Modification.Insert));
         }
-        
+
         return splitNode;
     }
 

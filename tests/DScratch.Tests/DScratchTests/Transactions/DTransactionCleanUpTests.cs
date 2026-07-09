@@ -22,9 +22,9 @@ public class DTransactionCleanUpTests
     private class MergeContinuesTextNodes : DTransactionCleanUpTests
     {
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public void Notify_SecondNode(bool deleted)
+        [TestCase(true, Modification.Insert)]
+        [TestCase(false, Modification.Delete)]
+        public void Notify_SecondNode(bool deleted, Modification modification)
         {
             // Arrange
             TextNode node = null!;
@@ -44,7 +44,7 @@ public class DTransactionCleanUpTests
             Transaction.AddCursorPosition(modifiedNode.Id, 2);
         
             // Act
-            Transaction.NotifyNodeChange(modifiedNode);
+            Transaction.NotifyNodeChange(new ModifiedNode(modifiedNode, modification));
             var result = Transaction.Commit();
 
             // Assert
@@ -55,33 +55,24 @@ public class DTransactionCleanUpTests
                 Assert.That(modifiedNode.RightOrigin, Is.Null);
                 Assert.That(node.TextContent, Is.EqualTo("abcdef"));
             }
-
-            if (!deleted)
+            
+            Assert.That(result.ModifiedNodes, Has.Count.EqualTo(1));
+            var modifiedNodes = result.ModifiedNodes.Single();
+            using (Assert.EnterMultipleScope())
             {
-                AssertHelper.ThatStepsEqualTo(result.ModifiedNodes, expected: [
-                    Is.TypeOf<StepDiff.InsertTextDiff>(),
-                    Is.TypeOf<StepDiff.DeleteElementDiff>()
-                ]);
+                Assert.That(modifiedNodes.Node, Is.EqualTo(node));
 
-                using (Assert.EnterMultipleScope())
-                {
-                    var insert = (StepDiff.InsertTextDiff)result.ModifiedNodes[0]!;
-                    Assert.That(insert.ParentId, Is.EqualTo(node.Id.Value));
-                    Assert.That(insert.Offset, Is.EqualTo(3));
-                    Assert.That(insert.Text, Is.EqualTo("def"));
-                
-                    var delete = (StepDiff.DeleteElementDiff)result.ModifiedNodes[1]!;
-                    Assert.That(delete.TargetId, Is.EqualTo(modifiedNode.Id.Value));
-                }
+                var expected = deleted ? Modification.Delete : Modification.Changed;
+                Assert.That(modifiedNodes.Modification, Is.EqualTo(expected));
             }
             
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, node.Id, 5);
         }
     
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public void Notify_FirstNode(bool deleted)
+        [TestCase(true, Modification.Insert)]
+        [TestCase(false, Modification.Delete)]
+        public void Notify_FirstNode(bool deleted, Modification modification)
         {
             // Arrange
             TextNode node = null!;
@@ -101,7 +92,7 @@ public class DTransactionCleanUpTests
             Transaction.AddCursorPosition(node.Id, 2);
         
             // Act
-            Transaction.NotifyNodeChange(modifiedNode);
+            Transaction.NotifyNodeChange(new ModifiedNode(modifiedNode, modification));
             var result = Transaction.Commit();
 
             // Assert
@@ -112,24 +103,13 @@ public class DTransactionCleanUpTests
                 Assert.That(node.RightOrigin, Is.Null);
                 Assert.That(modifiedNode.TextContent, Is.EqualTo("abcdef"));
             }
-
-            if (!deleted)
+            
+            Assert.That(result.ModifiedNodes, Has.Count.EqualTo(1));
+            var modifiedNodes = result.ModifiedNodes.Single();
+            using (Assert.EnterMultipleScope())
             {
-                AssertHelper.ThatStepsEqualTo(result.ModifiedNodes, expected: [
-                    Is.TypeOf<StepDiff.InsertTextDiff>(),
-                    Is.TypeOf<StepDiff.DeleteElementDiff>()
-                ]);
-                
-                using (Assert.EnterMultipleScope())
-                {
-                    var insert = (StepDiff.InsertTextDiff)result.ModifiedNodes[0]!;
-                    Assert.That(insert.ParentId, Is.EqualTo(modifiedNode.Id.Value));
-                    Assert.That(insert.Offset, Is.EqualTo(3));
-                    Assert.That(insert.Text, Is.EqualTo("def"));
-                
-                    var delete = (StepDiff.DeleteElementDiff)result.ModifiedNodes[1]!;
-                    Assert.That(delete.TargetId, Is.EqualTo(node.Id.Value));
-                }
+                Assert.That(modifiedNodes.Node, Is.EqualTo(modifiedNode));
+                Assert.That(modifiedNodes.Modification, Is.EqualTo(modification));
             }
             
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, modifiedNode.Id, 5);
@@ -150,7 +130,7 @@ public class DTransactionCleanUpTests
             });
         
             // Act
-            Transaction.NotifyNodeChange(modifiedNode);
+            Transaction.NotifyNodeChange(new ModifiedNode(modifiedNode, Modification.Insert));
             Transaction.Commit();
 
             // Assert
@@ -164,12 +144,12 @@ public class DTransactionCleanUpTests
             TextNode modifiedNode = null!;
             var parent = TreeBuilder.Paragraph(t =>
             {
-                t.Text("abc").Delete();
-                modifiedNode = t.Text("def");
+                modifiedNode = t.Text("abc");
+                t.Text("def").Delete();
             });
         
             // Act
-            Transaction.NotifyNodeChange(modifiedNode);
+            Transaction.NotifyNodeChange(new ModifiedNode(modifiedNode, Modification.Insert));
             Transaction.Commit();
 
             // Assert
@@ -192,7 +172,7 @@ public class DTransactionCleanUpTests
             });
         
             // Act
-            Transaction.NotifyNodeChange(modifiedNode);
+            Transaction.NotifyNodeChange(new ModifiedNode(modifiedNode, Modification.Insert));
             Transaction.Commit();
 
             // Assert
@@ -212,7 +192,7 @@ public class DTransactionCleanUpTests
             });
         
             // Act
-            Transaction.NotifyNodeChange(modifiedNode);
+            Transaction.NotifyNodeChange(new ModifiedNode(modifiedNode, Modification.Insert));
             Transaction.Commit();
 
             // Assert

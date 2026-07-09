@@ -32,10 +32,15 @@ public class DeleteStepTests
         // Act
         var step = new DeleteStep(node3);
         step.Execute(transactionFake, null!);
-            
+
         // Assert
-        Assert.That(node3.IsDeleted, Is.True);
-        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node3]));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(node3.IsDeleted, Is.True);
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+                new ModifiedNode(node3, Modification.Delete),
+        ]));
+        }
     }
     
     [Test]
@@ -56,16 +61,16 @@ public class DeleteStepTests
         
         // Act
         var steps = new DeleteStep(textNode);
-        var diffs = steps.Execute(transactionFake, null!);
-        
+        steps.Execute(transactionFake, null!);
+
         // Assert
-        Assert.That(parent.ActiveChildNodes.Count(), Is.EqualTo(2));
-        Assert.That(textNode.IsDeleted, Is.True);
-        Assert.That(diffs, Has.Count.EqualTo(1));
-        Assert.That(diffs.Single(), Is.TypeOf<StepDiff.DeleteElementDiff>());
-        
-        var step = (StepDiff.DeleteElementDiff)diffs.Single();
-        Assert.That(step.TargetId, Is.EqualTo(textNode.Id.Value));
-        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([textNode]));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ActiveChildNodes.Count(), Is.EqualTo(2));
+            Assert.That(textNode.IsDeleted, Is.True);
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+                new ModifiedNode(textNode, Modification.Delete),
+            ]));
+        }
     }
 }

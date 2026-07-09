@@ -1,6 +1,7 @@
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
 using DScratch.Tests.Helpers.TestNodes;
+using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 
 namespace DScratch.Tests.DScratchTests.Transactions.Steps;
@@ -45,7 +46,9 @@ public class InsertStepTests
             Assert.That(node3.RightOrigin!.Id.Clock, Is.EqualTo(-1));
             Assert.That(node4.Origin?.Id.Clock, Is.EqualTo(-1));
             
-            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+                new ModifiedNode(node, Modification.Insert),
+            ]));
         }
     }
     
@@ -75,7 +78,9 @@ public class InsertStepTests
             Assert.That(node2.ChildNodes[2].Id.Clock, Is.EqualTo(-1));
             Assert.That(node4.RightOrigin!.Id.Clock, Is.EqualTo(-1));
             
-            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+                new ModifiedNode(node, Modification.Insert),
+            ]));
         }
     }
 
@@ -105,7 +110,9 @@ public class InsertStepTests
             Assert.That(node.Parent?.Id.Clock, Is.EqualTo(4));
             Assert.That(node5.ChildNodes[0].Id.Clock, Is.EqualTo(-1));
             
-            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+                new ModifiedNode(node, Modification.Insert),
+            ]));
         }
     }
     
@@ -133,7 +140,9 @@ public class InsertStepTests
             Assert.That(node4.TextContent, Is.EqualTo("ab"));
             Assert.That(node4.RightOrigin!.Id.Clock, Is.EqualTo(4));
             
-            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+                new ModifiedNode(node, Modification.Insert),
+            ]));
         }
     }
     
@@ -161,7 +170,9 @@ public class InsertStepTests
             Assert.That(node4.TextContent, Is.EqualTo("ab"));
             Assert.That(node4.RightOrigin!.Id.Clock, Is.EqualTo(3));
             
-            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+                new ModifiedNode(node, Modification.Insert),
+            ]));
         }
     }
     
@@ -189,7 +200,9 @@ public class InsertStepTests
             Assert.That(node4.TextContent, Is.EqualTo("ab"));
             Assert.That(node4.Origin!.Id.Clock, Is.EqualTo(3));
             
-            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+                new ModifiedNode(node, Modification.Insert),
+            ]));
         }
     }
 }

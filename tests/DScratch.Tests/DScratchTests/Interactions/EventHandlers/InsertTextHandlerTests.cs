@@ -3,12 +3,14 @@ using DScratch.Interactions.EventHandlers.Events;
 using DScratch.Nodes;
 using DScratch.Tests.DScratchTests.Interactions.Helpers;
 using DScratch.Tests.Helpers;
+using DScratch.Transactions;
 
 namespace DScratch.Tests.DScratchTests.Interactions.EventHandlers;
 
 [TestFixture]
 public class InsertTextHandlerTests
 {
+    private TestLayoutEngineFake layoutEngineFake;
     private DScratchDocument document = null!;
     private IDScratchService service;
 
@@ -16,15 +18,19 @@ public class InsertTextHandlerTests
     private TestNodeIdGenerator idGenerator;
 
     private TreeBuilder builder;
+    private ITransaction transaction;
 
     [SetUp]
     public void SetUp()
     {
+        layoutEngineFake = new TestLayoutEngineFake();
         idGenerator = new TestNodeIdGenerator();
         builder = new TreeBuilder(idGenerator);
         document = builder.CreateDocument();
-        service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator) { DisableCleanUp = true };
+        
+        service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator, layoutEngineFake) { DisableCleanUp = true };
         handler = new InsertTextHandler(service);
+        transaction = service.StartTransaction();
     }
 
     private class SimpleInsert : InsertTextHandlerTests
@@ -40,7 +46,7 @@ public class InsertTextHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1));
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1), transaction);
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -52,7 +58,7 @@ public class InsertTextHandlerTests
                 Assert.That(((TextNode)parent.LastChild!).TextContent, Is.EqualTo("abc"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.LastChild.Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.LastChild.Id, 3);
         }
         
         [Test]
@@ -67,7 +73,7 @@ public class InsertTextHandlerTests
             idGenerator.TakeIds(1);
             
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1));
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1), transaction);
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -77,7 +83,7 @@ public class InsertTextHandlerTests
                 Assert.That(((TextNode)parent.LastChild!).TextContent, Is.EqualTo("abc"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.LastChild.Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.LastChild.Id, 3);
         }
 
         [Test]
@@ -92,7 +98,7 @@ public class InsertTextHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0));
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0), transaction);
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -102,7 +108,7 @@ public class InsertTextHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("abc"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
 
         [Test]
@@ -117,7 +123,7 @@ public class InsertTextHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1));
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1), transaction);
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -129,7 +135,7 @@ public class InsertTextHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("abc"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[2].Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.ChildNodes[2].Id, 3);
         }
         
         [Test]
@@ -145,7 +151,7 @@ public class InsertTextHandlerTests
             idGenerator.TakeIds(1);
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1));
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1), transaction);
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -155,7 +161,7 @@ public class InsertTextHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("abc"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[2].Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.ChildNodes[2].Id, 3);
         }
 
         [Test]
@@ -170,7 +176,7 @@ public class InsertTextHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1));
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1), transaction);
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -180,7 +186,7 @@ public class InsertTextHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("abc"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
         
         [Test]
@@ -194,7 +200,7 @@ public class InsertTextHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1));
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1), transaction);
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -211,7 +217,7 @@ public class InsertTextHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("b"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
     }
 
@@ -238,7 +244,7 @@ public class InsertTextHandlerTests
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(startNodeId, 2, endNodeId, 2, direction);
 
             // Act
-            var result = handler.Handle(keyPressInfo);
+            handler.Handle(keyPressInfo, transaction);
             
             // Assert
             using (Assert.EnterMultipleScope())
@@ -264,7 +270,7 @@ public class InsertTextHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[5]).TextContent, Is.EqualTo("ghi"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
 
         [Test]
@@ -282,7 +288,7 @@ public class InsertTextHandlerTests
             });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end));
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end), transaction);
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -299,7 +305,7 @@ public class InsertTextHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("ghi"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
 
         [Test]
@@ -312,7 +318,7 @@ public class InsertTextHandlerTests
             var parent = builder.TestBlockElementNode(t => { textNode = t.Text("abcdef"); });
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end));
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end), transaction);
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -329,7 +335,7 @@ public class InsertTextHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("ef"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
 
         [Test]
@@ -353,7 +359,7 @@ public class InsertTextHandlerTests
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(startNodeId, 3, endNodeId, 3, direction);
             
             // Act
-            var result = handler.Handle(keyPressInfo);
+            handler.Handle(keyPressInfo, transaction);
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -370,7 +376,7 @@ public class InsertTextHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("xyz"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[2].Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.ChildNodes[2].Id, 3);
         }
     }
     
@@ -392,7 +398,7 @@ public class InsertTextHandlerTests
                 focusOffset: 1);
             
             // Act
-            var result = handler.Handle(keyPressInfo);
+            handler.Handle(keyPressInfo, transaction);
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -414,7 +420,7 @@ public class InsertTextHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("ef"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
         
         [Test]
@@ -434,7 +440,7 @@ public class InsertTextHandlerTests
                 direction: SelectionDirection.Backward);
             
             // Act
-            var result = handler.Handle(keyPressInfo);
+            handler.Handle(keyPressInfo, transaction);
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -456,7 +462,7 @@ public class InsertTextHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("ef"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
 
         [Test]
@@ -476,7 +482,7 @@ public class InsertTextHandlerTests
                 focusOffset: 1);
             
             // Act
-            var result = handler.Handle(keyPressInfo);
+            handler.Handle(keyPressInfo, transaction);
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -500,7 +506,7 @@ public class InsertTextHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("hi"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
         
         [Test]
@@ -521,7 +527,7 @@ public class InsertTextHandlerTests
                 direction: SelectionDirection.Backward);
             
             // Act
-            var result = handler.Handle(keyPressInfo);
+            handler.Handle(keyPressInfo, transaction);
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -545,7 +551,7 @@ public class InsertTextHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("hi"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
     }
 
@@ -558,7 +564,7 @@ public class InsertTextHandlerTests
             var parent = builder.TestBlockElementNode();
 
             // Act
-            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 0));
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 0), transaction);
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -568,7 +574,7 @@ public class InsertTextHandlerTests
                 Assert.That(((TextNode)parent.FirstChild!).TextContent, Is.EqualTo("abc"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.FirstChild.Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.FirstChild.Id, 3);
         }
     }
 }

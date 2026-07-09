@@ -1,4 +1,5 @@
-using DScratch.Tests.Helpers;
+using DScratch.LayoutEngine;
+using DScratch.Tests.Helpers.TestNodes;
 using DScratch.Transactions;
 using Moq;
 
@@ -7,20 +8,26 @@ namespace DScratch.Tests.DScratchTests;
 public class DScratchServiceTest
 {
     [Test]
-    public void Apply_ReturnsTransactionResult()
+    public async Task Apply_ReturnsTransactionResult()
     {
         // Arrange
         var transactionMock = new Mock<ITransaction>();
-        var service = new DScratchService(Mock.Of<INodeFactory>(), Mock.Of<INodeIdGenerator>());
+        var layoutMock = new Mock<ILayoutEngineService>();
+        var service = new DScratchService(Mock.Of<INodeFactory>(), Mock.Of<INodeIdGenerator>(), layoutMock.Object);
 
-        transactionMock.Setup(t => t.Commit()).Returns(new TransactionResult([new TestStepDiff()]));
+        var modifiedNode = new ModifiedNode(TestNode.Empty(), Modification.Insert);
+        
+        transactionMock.Setup(t => t.Commit()).Returns(new TransactionResult(new HashSet<ModifiedNode>
+        {
+            modifiedNode
+        }));
         
         // Act
-        var result = service.ApplyAsync(transactionMock.Object);
+        await service.ApplyAsync(transactionMock.Object);
         
         // Assert
         transactionMock.Verify(t => t.Commit(), Times.Once);
-        Assert.That(result.Steps, Has.Count.EqualTo(1));
-        Assert.That(result.Steps.Single(), Is.EqualTo(new TestStepDiff()));
+        layoutMock.Verify(l => l.RenderAsync(It.Is<TransactionResult>(m 
+            => modifiedNode == m.ModifiedNodes.Single())), Times.Once);
     }
 }

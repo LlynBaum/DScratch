@@ -3,7 +3,7 @@ using DScratch.Interactions.EventHandlers.Events;
 
 namespace DScratch.Tests.DScratchTests.Interactions.Helpers;
 
-public class KeyPressInfoHelper
+public static class KeyPressInfoHelper
 {
     public static KeyPressInfo GetKeyPressInfoDirectionNone(NodeId nodeId, int anchorOffset)
     {

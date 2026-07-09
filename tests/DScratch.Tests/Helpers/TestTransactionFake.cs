@@ -6,9 +6,9 @@ namespace DScratch.Tests.Helpers;
 
 public class TestTransactionFake : ITransaction, IRunningTransaction
 {
-    public List<DNode> ChangedNodes => changedNodes;
+    public IReadOnlyList<ModifiedNode> ChangedNodes => changedNodes;
 
-    private readonly List<DNode> changedNodes = [];
+    private readonly List<ModifiedNode> changedNodes = [];
 
     public DNode Root { get; } = null!;
 
@@ -64,8 +64,8 @@ public class TestTransactionFake : ITransaction, IRunningTransaction
         throw new NotImplementedException();
     }
 
-    public void NotifyNodeChange(DNode node)
+    public void NotifyNodeChange(ModifiedNode modifiedNode)
     {
-        changedNodes.Add(node);
+        changedNodes.Add(modifiedNode);
     }
 }

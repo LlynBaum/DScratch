@@ -1,5 +1,6 @@
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
+using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 
 namespace DScratch.Tests.DScratchTests.Transactions.Steps;
@@ -19,10 +20,9 @@ public class DeleteRangeStepTests
     {
         // Act
         var step = new DeleteRangeStep(null, null);
-        var result = step.Execute(transactionFake, null!);
+        step.Execute(transactionFake, null!);
             
         // Assert
-        Assert.That(result, Has.Count.Zero);
         Assert.That(transactionFake.ChangedNodes, Has.Count.Zero);
     }
     
@@ -57,8 +57,12 @@ public class DeleteRangeStepTests
             Assert.That(node3.IsDeleted, Is.True);
             Assert.That(node4.IsDeleted, Is.True);
             Assert.That(node5.IsDeleted, Is.False);
-            
-            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node2, node3, node4]));
+
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+                new ModifiedNode(node2, Modification.Delete),
+                new ModifiedNode(node3, Modification.Delete),
+                new ModifiedNode(node4, Modification.Delete),
+            ]));
         }
     }
     
@@ -93,8 +97,13 @@ public class DeleteRangeStepTests
             Assert.That(node3.IsDeleted, Is.True);
             Assert.That(node4.IsDeleted, Is.True);
             Assert.That(node5.IsDeleted, Is.True);
-            
-            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node2, node3, node4, node5]));
+
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+                new ModifiedNode(node2, Modification.Delete),
+                new ModifiedNode(node3, Modification.Delete),
+                new ModifiedNode(node4, Modification.Delete),
+                new ModifiedNode(node5, Modification.Delete),
+            ]));
         }
     }
     
@@ -129,8 +138,12 @@ public class DeleteRangeStepTests
             Assert.That(node3.IsDeleted, Is.True);
             Assert.That(node4.IsDeleted, Is.False);
             Assert.That(node5.IsDeleted, Is.False);
-            
-            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node1, node2, node3]));
+
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+                new ModifiedNode(node1, Modification.Delete),
+                new ModifiedNode(node2, Modification.Delete),
+                new ModifiedNode(node3, Modification.Delete),
+            ]));
         }
     }
 }

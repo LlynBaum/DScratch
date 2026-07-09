@@ -36,10 +36,8 @@ public class DTransactionTests
             Assert.That(testStep.Reverted, Is.False);
 
             Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
+            Assert.That(result.ModifiedNodes, Has.Count.EqualTo(1));
         }
-        
-        Assert.That(result.ModifiedNodes, Has.Count.EqualTo(1));
-        Assert.That(result.ModifiedNodes.Single(), Is.TypeOf<TestStepDiff>());
     }
     
     [Test]
@@ -159,27 +157,15 @@ public class DTransactionTests
             
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.TextContent, Is.EqualTo("c"));
-        AssertHelper.ThatStepsEqualTo(transactionResult.ModifiedNodes, expected: [
-            Is.TypeOf<StepDiff.DeleteTextDiff>(),
-            Is.TypeOf<StepDiff.InsertElementDiff>(),
-            Is.TypeOf<StepDiff.InsertTextDiff>()
-        ]);
+        Assert.That(transactionResult.ModifiedNodes, Has.Count.EqualTo(1));
 
+        var modifiedNode = transactionResult.ModifiedNodes.Single();
         using (Assert.EnterMultipleScope())
         {
-            var deleteText = (StepDiff.DeleteTextDiff)transactionResult.ModifiedNodes[0]!;
-            Assert.That(deleteText.ParentId, Is.EqualTo(node.Id.Value));
-            Assert.That(deleteText.Offset, Is.EqualTo(2));
-            Assert.That(deleteText.Length, Is.EqualTo(1));
-        
-            var insertElement = (StepDiff.InsertElementDiff)transactionResult.ModifiedNodes[1]!;
-            Assert.That(insertElement.ParentId, Is.EqualTo("Root"));
-            Assert.That(insertElement.PreviousSiblingId, Is.EqualTo(node.Id.Value));
-        
-            var insertText = (StepDiff.InsertTextDiff)transactionResult.ModifiedNodes[2]!;
-            Assert.That(insertText.ParentId, Is.EqualTo(insertElement.NewNodeId));
-            Assert.That(insertText.Text, Is.EqualTo("c"));
+            Assert.That(result.TextContent, Is.EqualTo("c"));
+            
+            Assert.That(modifiedNode.Node, Is.EqualTo(result));
+            Assert.That(modifiedNode.Modification, Is.EqualTo(Modification.Insert));
         }
     }
 
@@ -191,13 +177,12 @@ public class DTransactionTests
         public void Execute(IRunningTransaction transaction, DScratchDocument document)
         {
             Executed = true;
-            return [new TestStepDiff()];
+            transaction.NotifyNodeChange(new ModifiedNode(TestNode.Empty(), Modification.Insert));
         }
 
         public void Revert(DScratchDocument document)
         {
             Reverted = true;
-            return [new TestStepDiff()];
         }
     }
 }
