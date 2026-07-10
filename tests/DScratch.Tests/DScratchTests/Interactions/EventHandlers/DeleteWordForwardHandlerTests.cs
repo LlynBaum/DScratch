@@ -35,6 +35,26 @@ public class DeleteWordForwardHandlerTests
     private class SimpleDelete : DeleteWordForwardHandlerTests
     {
         [Test]
+        public void Handle_DoesNothing_WhenNodesDoesNotExist()
+        {
+            // Arrange
+            TextNode node = null!;
+            builder.TestBlockElementNode(t => node = t.Text("a"));
+
+            // Act
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1), transaction);
+            var result = transaction.Commit();
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(node.IsDeleted, Is.False);
+                Assert.That(result.IsEmpty, Is.True);
+                Assert.That(result.CursorPosition, Is.Null);
+            }
+        }
+
+        [Test]
         public void Handle_CreatesExpectedChanges()
         {
             // Arrange
@@ -46,7 +66,7 @@ public class DeleteWordForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(text.Id, 0), transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -55,7 +75,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
             }
             
-            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
         
         [Test]
@@ -72,7 +92,7 @@ public class DeleteWordForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(text1.Id, 0), transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -80,7 +100,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(text1.IsDeleted, Is.True);
                 Assert.That(text2.IsDeleted, Is.True);
             }
-            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
         
         [Test]
@@ -95,7 +115,7 @@ public class DeleteWordForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(text.Id, 1), transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -113,7 +133,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(tombstone.TextContent, Is.EqualTo(" ab"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, text.Id, 1);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Id, 1);
         }
         
         [Test]
@@ -128,7 +148,7 @@ public class DeleteWordForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(text.Id, 0), transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -146,7 +166,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(remainingText.TextContent, Is.EqualTo(" "));
             }
             
-            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, text.RightOrigin.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.RightOrigin.Id, 0);
         }
         
         [Test]
@@ -162,11 +182,11 @@ public class DeleteWordForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(text.Id, 0), transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             Assert.That(text.IsDeleted, Is.True);
-            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, text.Origin!.Id, 1);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Origin!.Id, 1);
         }
         
         [Test]
@@ -182,11 +202,11 @@ public class DeleteWordForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(text.Id, 0), transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             Assert.That(text.IsDeleted, Is.True);
-            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, text.Origin!.Id, 2);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Origin!.Id, 2);
         }
         
         [Test]
@@ -204,7 +224,7 @@ public class DeleteWordForwardHandlerTests
             
             // Act
             handler.Handle(keyPressInfo, transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
         
             // Assert
             using (Assert.EnterMultipleScope())
@@ -212,7 +232,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(parent.IsDeleted, Is.False);
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
             
-                Assert.That(layoutEngineFake.TransactionResult?.ModifiedNodes, Has.Count.Zero);
+                Assert.That(result.ModifiedNodes, Has.Count.Zero);
             }
 
             using (Assert.EnterMultipleScope())
@@ -224,7 +244,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
             }
             
-            Assert.That(layoutEngineFake.TransactionResult?.CursorPosition, Is.Null);
+            Assert.That(result.CursorPosition, Is.Null);
         }
     }
     
@@ -252,7 +272,7 @@ public class DeleteWordForwardHandlerTests
 
             // Act
             handler.Handle(keyPressInfo, transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -268,7 +288,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(parent.ChildNodes[4], Is.TypeOf<TextNode>());
                 Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("ghi"));
 
-                AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, startNode.Id, 2);
+                AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, startNode.Id, 2);
             }
         }
 
@@ -288,7 +308,7 @@ public class DeleteWordForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end), transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -302,7 +322,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ghi"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, textNode.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 0);
         }
 
         [Test]
@@ -316,7 +336,7 @@ public class DeleteWordForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end), transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -330,7 +350,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ef"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, textNode.Id, 2);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 2);
         }
 
         [Test]
@@ -355,7 +375,7 @@ public class DeleteWordForwardHandlerTests
 
             // Act
             handler.Handle(keyPressInfo, transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -369,7 +389,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, startNode.Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, startNode.Id, 3);
         }
     }
     
@@ -392,7 +412,7 @@ public class DeleteWordForwardHandlerTests
             
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(oldTextNode.Id, 3), transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
         
             // Assert
             using (Assert.EnterMultipleScope())
@@ -414,7 +434,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ghi"));
             }
         
-            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, oldTextNode.Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, oldTextNode.Id, 3);
         }
         
         [Test]
@@ -440,7 +460,7 @@ public class DeleteWordForwardHandlerTests
 
             // Act
             handler.Handle(keyPressInfo, transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -459,7 +479,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ef"));
             }
             
-            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, startNode.Id, 2);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, startNode.Id, 2);
         }
         
         [Test]
@@ -486,7 +506,7 @@ public class DeleteWordForwardHandlerTests
 
             // Act
             handler.Handle(keyPressInfo, transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -505,7 +525,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ef"));
             }
             
-            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, endNode.Id, 2);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, endNode.Id, 2);
         }
         
         [Test]
@@ -535,7 +555,7 @@ public class DeleteWordForwardHandlerTests
 
             // Act
             handler.Handle(keyPressInfo, transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -556,7 +576,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("hi"));
             }
             
-            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, startNode.Id, 2);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, startNode.Id, 2);
         }
         
         [Test]
@@ -587,7 +607,7 @@ public class DeleteWordForwardHandlerTests
 
             // Act
             handler.Handle(keyPressInfo, transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -608,7 +628,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("hi"));
             }
             
-            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, endNode.Id, 2);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, endNode.Id, 2);
         }
     }
     
@@ -623,11 +643,11 @@ public class DeleteWordForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0), transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             Assert.That(target.IsDeleted, Is.True);
-            AssertHelper.ThatCursorPositionEqualTo(layoutEngineFake.TransactionResult?.CursorPosition, parent.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
         
         [Test]
@@ -638,13 +658,13 @@ public class DeleteWordForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0), transaction);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(target.IsDeleted, Is.False);
-                Assert.That(layoutEngineFake.TransactionResult?.IsEmpty, Is.True);
+                Assert.That(result.IsEmpty, Is.True);
             }
         }
     }
