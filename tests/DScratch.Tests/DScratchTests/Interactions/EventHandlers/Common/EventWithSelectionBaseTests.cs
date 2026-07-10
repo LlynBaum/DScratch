@@ -11,14 +11,20 @@ namespace DScratch.Tests.DScratchTests.Interactions.EventHandlers.Common;
 [TestFixture]
 public class EventWithSelectionBaseTests
 {
+    private TestLayoutEngineFake layoutEngineFake;
     private Testee testee;
     private TreeBuilder builder;
     
     [SetUp]
     public void SetUp()
     {
+        layoutEngineFake = new TestLayoutEngineFake();
         builder = new TreeBuilder();
-        testee = new Testee(new DScratchService(builder.CreateDocument(), new DNodeFactory(builder.IdGenerator), builder.IdGenerator));
+        testee = new Testee(new DScratchService(
+            builder.CreateDocument(), 
+            new DNodeFactory(builder.IdGenerator), 
+            builder.IdGenerator, 
+            layoutEngineFake) { DisableCleanUp = true });
     }
 
     [Test]
@@ -29,7 +35,7 @@ public class EventWithSelectionBaseTests
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(paragraph.FirstChild!.Id, 0);
         
         // Act
-        testee.Handle(keyPressInfo);
+        testee.TestHandle(keyPressInfo);
         
         // Arrange
         testee.AssertNoneSelectionHandled(paragraph.FirstChild);
@@ -46,7 +52,7 @@ public class EventWithSelectionBaseTests
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(paragraph.Id, offset);
         
         // Act
-        testee.Handle(keyPressInfo);
+        testee.TestHandle(keyPressInfo);
         
         // Arrange
         testee.AssertNoneSelectionHandled(paragraph.FirstChild!);
@@ -60,7 +66,7 @@ public class EventWithSelectionBaseTests
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(paragraph.Id, 0);
         
         // Act
-        testee.Handle(keyPressInfo);
+        testee.TestHandle(keyPressInfo);
         
         // Arrange
         testee.AssertEmptyBlockHandled(paragraph);
@@ -68,11 +74,18 @@ public class EventWithSelectionBaseTests
 
     private class Testee(IDScratchService dScratchService) : EventWithSelectionBase(dScratchService)
     {
+        private readonly IDScratchService dScratchService = dScratchService;
+        
         private bool noneSelectionHandled;
         private TextNode? noneSelectionTextNode;
         
         private bool emptyBlockHandled;
         private DNode? emptyBlockAnchorNode;
+
+        public void TestHandle(KeyPressInfo keyPressInfo)
+        {
+            Handle(keyPressInfo, dScratchService.StartTransaction());
+        }
         
         protected override DNodeSearchResult HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction,
             TextNode anchorTextNode)
