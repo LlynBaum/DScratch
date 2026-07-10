@@ -1,7 +1,5 @@
 # TODOs
 
-- [ ] Layout Engine **MVP**
-  - Get to work what is currently working
 - [ ] Marks
   - [ ] Bold
   - [ ] Italic
