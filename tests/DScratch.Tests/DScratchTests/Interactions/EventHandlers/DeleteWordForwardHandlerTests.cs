@@ -12,7 +12,6 @@ public class DeleteWordForwardHandlerTests
 {
     private TestLayoutEngineFake layoutEngineFake;
     private DScratchDocument document = null!;
-    private IDScratchService service;
 
     private DeleteWordForwardHandler handler;
     private TestNodeIdGenerator idGenerator;
@@ -23,12 +22,13 @@ public class DeleteWordForwardHandlerTests
     [SetUp]
     public void SetUp()
     {
+        handler = new DeleteWordForwardHandler();
         layoutEngineFake = new TestLayoutEngineFake();
         idGenerator = new TestNodeIdGenerator();
         builder = new TreeBuilder(idGenerator);
         document = builder.CreateDocument();
-        service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator, layoutEngineFake) { DisableCleanUp = true };
-        handler = new DeleteWordForwardHandler(service);
+        
+        var service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator, layoutEngineFake) { DisableCleanUp = true };
         transaction = service.StartTransaction();
     }
     

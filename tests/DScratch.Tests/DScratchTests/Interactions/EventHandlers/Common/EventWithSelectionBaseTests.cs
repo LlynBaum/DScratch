@@ -72,10 +72,8 @@ public class EventWithSelectionBaseTests
         testee.AssertEmptyBlockHandled(paragraph);
     }
 
-    private class Testee(IDScratchService dScratchService) : EventWithSelectionBase(dScratchService)
+    private class Testee(IDScratchService dScratchService) : EventWithSelectionBase
     {
-        private readonly IDScratchService dScratchService = dScratchService;
-        
         private bool noneSelectionHandled;
         private TextNode? noneSelectionTextNode;
         

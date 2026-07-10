@@ -5,7 +5,7 @@ using DScratch.Transactions;
 
 namespace DScratch.Interactions.EventHandlers.Events;
 
-public class DeleteWordBackwardHandler(IDScratchService dScratchService) : EventWithSelectionBase(dScratchService)
+public class DeleteWordBackwardHandler : EventWithSelectionBase
 {
     public const string EventName = "deleteWordBackward";
     

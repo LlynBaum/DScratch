@@ -5,7 +5,7 @@ using DScratch.Transactions;
 
 namespace DScratch.Interactions.EventHandlers.Events;
 
-public class InsertParagraphHandler(IDScratchService dScratchService) : EventWithSelectionBase(dScratchService)
+public class InsertParagraphHandler : EventWithSelectionBase
 {
     public const string EventName = "insertParagraph";
 

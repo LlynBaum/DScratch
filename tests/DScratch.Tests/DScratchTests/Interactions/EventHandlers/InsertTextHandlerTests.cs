@@ -12,7 +12,6 @@ public class InsertTextHandlerTests
 {
     private TestLayoutEngineFake layoutEngineFake;
     private DScratchDocument document = null!;
-    private IDScratchService service;
 
     private InsertTextHandler handler;
     private TestNodeIdGenerator idGenerator;
@@ -23,13 +22,13 @@ public class InsertTextHandlerTests
     [SetUp]
     public void SetUp()
     {
+        handler = new InsertTextHandler();
         layoutEngineFake = new TestLayoutEngineFake();
         idGenerator = new TestNodeIdGenerator();
         builder = new TreeBuilder(idGenerator);
         document = builder.CreateDocument();
         
-        service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator, layoutEngineFake) { DisableCleanUp = true };
-        handler = new InsertTextHandler(service);
+        var service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator, layoutEngineFake) { DisableCleanUp = true };
         transaction = service.StartTransaction();
     }
 

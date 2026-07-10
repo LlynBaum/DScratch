@@ -4,7 +4,7 @@ using DScratch.Transactions;
 
 namespace DScratch.Interactions.EventHandlers.Common;
 
-public abstract class EventWithSelectionBase(IDScratchService dScratchService) : IEditorEventHandler
+public abstract class EventWithSelectionBase : IEditorEventHandler
 {
     public void Handle(KeyPressInfo keyPressInfo, ITransaction transaction)
     {
@@ -41,8 +41,6 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
         }
         
         OnAfterSelection(keyPressInfo, transaction, targetNode, nodeSearchResult);
-        
-        dScratchService.ApplyAsync(transaction);
     }
 
     private static TextNode? SearchTextNode(DNode targetNode, SelectionInfo selection)
