@@ -33,10 +33,11 @@ public class DScratchService(
     }
 
     public async Task InitialTransactionAsync()
-    { 
+    {
+        layoutEngineService.AddRoot(Document.Root);
         var transactionResult = new TransactionResult(new HashSet<ModifiedNode>
         {
-            new ModifiedNode(Document.Root, Modification.Insert)
+            new ModifiedNode(Document.Root.FirstChild!, Modification.Insert)
         });
         await layoutEngineService.RenderAsync(Document, transactionResult);
     }

@@ -1,5 +1,26 @@
 ﻿<div class="paper" data-page-number="@PageNumber">
     <div data-dnode-id="Root">
-        <DElementNode ElementNode="RootElement" />
+        @BuildChildren()
     </div>
 </div>
+
+@code {
+
+        private RenderFragment BuildChildren()
+        {
+            return @<text>
+                        @foreach (var child in RootElement.ChildNodes!)
+                        {
+                            if (child.HasChildNodes)
+                            {
+                                <DElementNode ElementNode="child" />
+                            }
+                            else
+                            {
+                                <DTextNode TextElement="child" />
+                            }
+                        }
+                    </text>;
+        }
+
+}

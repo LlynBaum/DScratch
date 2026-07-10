@@ -11,23 +11,26 @@ public class LayoutRenderer(DJsInvoker jsInvoker, IServiceProvider serviceProvid
     public async Task RenderAsync(ElementNode rootElement, SelectionInfo? cursorPosition, int pageNumber)
     {
         await using var htmlRenderer = new HtmlRenderer(serviceProvider, loggerFactory);
-        
+
         var parameterDictionary = new Dictionary<string, object?>
         {
             { nameof(DPage.RootElement), rootElement },
             { nameof(DPage.PageNumber), pageNumber }
         };
-        
+
         var parameters = ParameterView.FromDictionary(parameterDictionary);
-        var output = await htmlRenderer.RenderComponentAsync<DPage>(parameters);
-        var htmlString = output.ToHtmlString();
+        var htmlString = await htmlRenderer.Dispatcher.InvokeAsync(async () =>
+        {
+            var output = await htmlRenderer.RenderComponentAsync<DPage>(parameters);
+            return output.ToHtmlString();
+        });
 
         var renderedContent = new RenderedPage
         {
             HtmlString = htmlString,
             PageNumber = pageNumber
         };
-        
+
         await jsInvoker.RenderPageAsync(renderedContent);
         if (cursorPosition is not null)
         {

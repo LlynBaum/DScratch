@@ -6,8 +6,21 @@ namespace DScratch.LayoutEngine;
 
 internal sealed class LayoutEngineService(ILayoutRenderer layoutRenderer) : ILayoutEngineService
 {
-    private readonly List<DPage> pages = [new DPage { PageNumber = 1 }];
+    private readonly List<DPage> pages = [];
     private readonly Dictionary<DNode, RenderInfo> nodes = new Dictionary<DNode, RenderInfo>();
+
+    public void AddRoot(DNode documentRoot)
+    {
+        var page = new DPage
+        {
+            PageNumber = 1,
+            LastNode = documentRoot.LastChild ??
+                       throw new InvalidOperationException("Document must have at least one paragraph to start with.")
+        };
+        
+        pages.Add(page);
+        nodes[documentRoot] = RenderInfo.Create(documentRoot, page);
+    }
 
     public async Task RenderAsync(DScratchDocument document, TransactionResult transactionResult)
     {
