@@ -18,6 +18,7 @@ public class InsertParagraphHandlerTests
 
     private TreeBuilder builder;
     private ITransaction transaction;
+    private DScratchService service;
 
     [SetUp]
     public void SetUp()
@@ -28,7 +29,7 @@ public class InsertParagraphHandlerTests
         builder = new TreeBuilder(idGenerator);
         document = builder.CreateDocument();
         
-        var service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator, layoutEngineFake) { DisableCleanUp = true };
+        service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator, layoutEngineFake) { DisableCleanUp = true };
         transaction = service.StartTransaction();
     }
 
@@ -161,6 +162,8 @@ public class InsertParagraphHandlerTests
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode1.Id, 1), transaction);
             var result1 = transaction.Commit();
+
+            transaction = service.StartTransaction();
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode2.Id, 1), transaction);
             var result2 = transaction.Commit();
 
