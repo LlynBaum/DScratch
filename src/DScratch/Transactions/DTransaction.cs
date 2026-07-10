@@ -28,11 +28,13 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
         
         addedNodes.ForEach(document.AddNode);
         CleanupCode(modifiedNodes);
+
+        var result = new TransactionResult(modifiedNodes.ToHashSet(), cursorPosition);
         
         modifiedNodes.Clear();
         addedNodes.Clear();
-
-        return new TransactionResult(modifiedNodes, cursorPosition);
+        
+        return result;
     }
     
     public ITransaction Insert(DNode node, DNode parent)

@@ -43,6 +43,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -66,6 +67,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0), transaction);
+            transaction.Commit();
 
             // Assert
             Assert.That(textNode.IsDeleted, Is.True);
@@ -86,6 +88,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1), transaction);
+            transaction.Commit();
 
             // Assert
             Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
@@ -111,6 +114,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1), transaction);
+            transaction.Commit();
 
             // Assert
             Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
@@ -142,6 +146,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0), transaction);
+            transaction.Commit();
 
             // Assert
             Assert.That(textNode.IsDeleted, Is.True);
@@ -161,6 +166,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 3), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -207,6 +213,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             handler.Handle(keyPressInfo, transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -242,6 +249,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -269,6 +277,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -307,6 +316,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             handler.Handle(keyPressInfo, transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -343,6 +353,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(targetText.Id, 3), transaction);
+            transaction.Commit();
             
             // Assert
             using (Assert.EnterMultipleScope())
@@ -390,6 +401,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             handler.Handle(keyPressInfo, transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -435,6 +447,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             handler.Handle(keyPressInfo, transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -483,6 +496,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             handler.Handle(keyPressInfo, transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -534,6 +548,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             handler.Handle(keyPressInfo, transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -569,6 +584,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0), transaction);
+            transaction.Commit();
 
             // Assert
             Assert.That(target.IsDeleted, Is.True);
@@ -583,6 +599,7 @@ public class DeleteContentForwardHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())

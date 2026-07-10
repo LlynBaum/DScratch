@@ -43,6 +43,7 @@ public class InsertParagraphHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0), transaction);
+            transaction.Commit();
 
             // Assert
             Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
@@ -67,6 +68,7 @@ public class InsertParagraphHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 3), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -91,6 +93,7 @@ public class InsertParagraphHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -121,6 +124,7 @@ public class InsertParagraphHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -156,8 +160,10 @@ public class InsertParagraphHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode1.Id, 1), transaction);
+            transaction.Commit();
             var transactionResult1 = layoutEngineFake.TransactionResult;
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode2.Id, 1), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -189,6 +195,7 @@ public class InsertParagraphHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, 1, 4), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -233,6 +240,7 @@ public class InsertParagraphHandlerTests
 
             // Act
             handler.Handle(keyPressInfo, transaction);
+            transaction.Commit();
             
             // Assert
             using (Assert.EnterMultipleScope())
@@ -278,6 +286,7 @@ public class InsertParagraphHandlerTests
 
             // Act
             handler.Handle(keyPressInfo, transaction);
+            transaction.Commit();
             
             // Assert
             using (Assert.EnterMultipleScope())
@@ -333,6 +342,7 @@ public class InsertParagraphHandlerTests
             
             // Act
             handler.Handle(keyPressInfo, transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -384,6 +394,7 @@ public class InsertParagraphHandlerTests
 
             // Act
             handler.Handle(keyPressInfo, transaction);
+            transaction.Commit();
             
             // Assert
             using (Assert.EnterMultipleScope()) 
@@ -427,6 +438,7 @@ public class InsertParagraphHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 0), transaction);
+            transaction.Commit();
 
             // Assert
             Assert.That(parent.RightOrigin, Is.TypeOf<ParagraphNode>());

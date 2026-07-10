@@ -22,8 +22,8 @@ public class DTransactionCleanUpTests
     private class MergeContinuesTextNodes : DTransactionCleanUpTests
     {
         [Test]
-        [TestCase(true, Modification.Insert)]
-        [TestCase(false, Modification.Delete)]
+        [TestCase(true, Modification.Delete)]
+        [TestCase(false, Modification.Insert)]
         public void Notify_SecondNode(bool deleted, Modification modification)
         {
             // Arrange
@@ -60,7 +60,8 @@ public class DTransactionCleanUpTests
             var modifiedNodes = result.ModifiedNodes.Single();
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(modifiedNodes.Node, Is.EqualTo(node));
+                var expectedNode = deleted ? modifiedNode : node;
+                Assert.That(modifiedNodes.Node, Is.EqualTo(expectedNode));
 
                 var expected = deleted ? Modification.Delete : Modification.Changed;
                 Assert.That(modifiedNodes.Modification, Is.EqualTo(expected));
@@ -70,8 +71,8 @@ public class DTransactionCleanUpTests
         }
     
         [Test]
-        [TestCase(true, Modification.Insert)]
-        [TestCase(false, Modification.Delete)]
+        [TestCase(true, Modification.Delete)]
+        [TestCase(false, Modification.Insert)]
         public void Notify_FirstNode(bool deleted, Modification modification)
         {
             // Arrange

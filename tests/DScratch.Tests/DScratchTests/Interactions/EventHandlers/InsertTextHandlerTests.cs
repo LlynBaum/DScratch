@@ -47,6 +47,7 @@ public class InsertTextHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -74,6 +75,7 @@ public class InsertTextHandlerTests
             
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -124,6 +126,7 @@ public class InsertTextHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -152,6 +155,7 @@ public class InsertTextHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -177,6 +181,7 @@ public class InsertTextHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -201,6 +206,7 @@ public class InsertTextHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 1), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -245,6 +251,7 @@ public class InsertTextHandlerTests
 
             // Act
             handler.Handle(keyPressInfo, transaction);
+            transaction.Commit();
             
             // Assert
             using (Assert.EnterMultipleScope())
@@ -289,6 +296,7 @@ public class InsertTextHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -319,6 +327,7 @@ public class InsertTextHandlerTests
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -360,6 +369,7 @@ public class InsertTextHandlerTests
             
             // Act
             handler.Handle(keyPressInfo, transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -399,6 +409,7 @@ public class InsertTextHandlerTests
             
             // Act
             handler.Handle(keyPressInfo, transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -441,6 +452,7 @@ public class InsertTextHandlerTests
             
             // Act
             handler.Handle(keyPressInfo, transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -483,6 +495,7 @@ public class InsertTextHandlerTests
             
             // Act
             handler.Handle(keyPressInfo, transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -528,6 +541,7 @@ public class InsertTextHandlerTests
             
             // Act
             handler.Handle(keyPressInfo, transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -561,10 +575,11 @@ public class InsertTextHandlerTests
         public void Handle_CreatesExpectedChanges()
         {
             // Arrange
-            var parent = builder.TestBlockElementNode();
+            var parent = builder.Paragraph();
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 0), transaction);
+            transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
