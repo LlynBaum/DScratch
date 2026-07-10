@@ -5,7 +5,7 @@ namespace DScratch.Tests.Helpers;
 
 public class TestLayoutEngineFake : ILayoutEngineService
 {
-    public Task RenderAsync(TransactionResult transactionResult)
+    public Task RenderAsync(DScratchDocument document, TransactionResult transactionResult)
     {
         return Task.CompletedTask;
     }

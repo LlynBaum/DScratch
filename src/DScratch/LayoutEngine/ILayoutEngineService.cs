@@ -4,5 +4,5 @@ namespace DScratch.LayoutEngine;
 
 public interface ILayoutEngineService
 {
-    Task RenderAsync(TransactionResult transactionResult);
+    Task RenderAsync(DScratchDocument document, TransactionResult transactionResult);
 }

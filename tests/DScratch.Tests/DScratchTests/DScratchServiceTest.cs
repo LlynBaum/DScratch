@@ -27,7 +27,8 @@ public class DScratchServiceTest
         
         // Assert
         transactionMock.Verify(t => t.Commit(), Times.Once);
-        layoutMock.Verify(l => l.RenderAsync(It.Is<TransactionResult>(m 
-            => modifiedNode == m.ModifiedNodes.Single())), Times.Once);
+        layoutMock.Verify(l => l.RenderAsync(
+            It.IsAny<DScratchDocument>(),
+            It.Is<TransactionResult>(m => modifiedNode == m.ModifiedNodes.Single())), Times.Once);
     }
 }

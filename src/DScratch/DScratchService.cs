@@ -29,7 +29,7 @@ public class DScratchService(
     public async Task ApplyAsync(ITransaction transaction)
     {
         transactions.Push(transaction);
-        await layoutEngineService.RenderAsync(transaction.Commit());
+        await layoutEngineService.RenderAsync(Document, transaction.Commit());
     }
 
     public async Task InitialTransactionAsync()
@@ -38,6 +38,6 @@ public class DScratchService(
         {
             new ModifiedNode(Document.Root, Modification.Insert)
         });
-        await layoutEngineService.RenderAsync(transactionResult);
+        await layoutEngineService.RenderAsync(Document, transactionResult);
     }
 }

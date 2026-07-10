@@ -4,12 +4,12 @@ using DScratch.Transactions;
 
 namespace DScratch.LayoutEngine;
 
-internal sealed class LayoutEngineService(IDScratchService dScratchService, ILayoutRenderer layoutRenderer) : ILayoutEngineService
+internal sealed class LayoutEngineService(ILayoutRenderer layoutRenderer) : ILayoutEngineService
 {
     private readonly List<DPage> pages = [new DPage { PageNumber = 1 }];
     private readonly Dictionary<DNode, RenderInfo> nodes = new Dictionary<DNode, RenderInfo>();
 
-    public async Task RenderAsync(TransactionResult transactionResult)
+    public async Task RenderAsync(DScratchDocument document, TransactionResult transactionResult)
     {
         if (transactionResult.IsEmpty) return;
 
@@ -34,8 +34,8 @@ internal sealed class LayoutEngineService(IDScratchService dScratchService, ILay
             ? pages[firstPage.PageNumber - 2].LastNode 
             : null;
 
-        var current = startNode?.RightOrigin ?? dScratchService.Document.Root.FirstChild;
-        var root = ElementNode.Root(dScratchService.Document.Root);
+        var current = startNode?.RightOrigin ?? document.Root.FirstChild;
+        var root = ElementNode.Root(document.Root);
         BuildLayout(root, current, firstPage);
         await layoutRenderer.RenderAsync(root, transactionResult.CursorPosition, firstPage.PageNumber);
     }
