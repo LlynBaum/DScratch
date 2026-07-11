@@ -48,6 +48,7 @@ public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string conte
 
         TextContent = remainingText;
         
+        // TODO: copy over marks
         var newNode = new TextNode(nextId.Invoke(), this, RightOrigin)
         {
             TextContent = otherText

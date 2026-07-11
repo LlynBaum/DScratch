@@ -19,8 +19,6 @@ public static class ChangeBlockTypeHandler
             transaction.ReplaceNode(selectedNode, factory);
         }
 
-        var (originOffset, _) = selectionInfo.GetConvertedOffsets();
-        var targetNode = selectedNodes.SelectMany(n => n.ActiveChildNodes).OfType<TextNode>().FirstOrDefault();
         transaction.AddCursorPosition(selectionInfo);
         return;
         
