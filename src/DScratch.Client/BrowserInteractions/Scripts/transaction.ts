@@ -7,6 +7,7 @@ enum StepType {
     insertElement = "insertElement",
     deleteElement = "deleteElement",
     move = "move",
+    updateMarks = "updateMarks"
 }
 
 export interface TransactionResult {
@@ -47,6 +48,11 @@ interface MoveStep extends Step {
     previousSiblingId: string | null;
 }
 
+interface UpdateMarksStep extends Step {
+    nodeId: string;
+    marks: { [key:string] : string; };
+}
+
 export function applyTransaction(transaction: TransactionResult){
     saveSelection();
     transaction.steps.map(handle);
@@ -71,6 +77,9 @@ export function applyTransaction(transaction: TransactionResult){
                 break;
             case StepType.move:
                 handleMoveBlockStep(step as MoveStep);
+                break;
+            case StepType.updateMarks:
+                handleUpdateMarksStep(step as UpdateMarksStep);
                 break;
         }
     }
@@ -129,6 +138,17 @@ function handleMoveBlockStep(step: MoveStep) {
     if (element && newParent) {
         const previousSibling = step.previousSiblingId ? findNode(step.previousSiblingId) : null;
         insertElementBlock(element, newParent, previousSibling);
+    }
+}
+
+function handleUpdateMarksStep(step: UpdateMarksStep) {
+    const element = findNode(step.nodeId);
+    if(!element) return;
+    
+    element.style = '';
+    for (let marksKey in step.marks) {
+        // @ts-ignore / we trust C# to send valid CSS properties
+        element.style[marksKey] = step.marks[marksKey];
     }
 }
 
