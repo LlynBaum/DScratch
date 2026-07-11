@@ -1,9 +1,10 @@
 using DScratch.Nodes;
 using DScratch.Nodes.NodeTypes;
+using DScratch.Transactions;
 
-namespace DScratch.Transactions.Steps;
+namespace DScratch.Rendering;
 
-internal static class StepHelpers
+internal static class NodeRenderExtensions
 {
     extension(DNode node)
     {

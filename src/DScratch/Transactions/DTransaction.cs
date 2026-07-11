@@ -1,6 +1,9 @@
 using DScratch.Interactions;
 using DScratch.Nodes;
+using DScratch.Nodes.Marks;
+using DScratch.Rendering;
 using DScratch.Transactions.Steps;
+using DScratch.Transactions.Steps.Marks;
 
 namespace DScratch.Transactions;
 
@@ -35,38 +38,43 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
         return new TransactionResult(stepDiffs, cursorPosition);
     }
     
-    public ITransaction Insert(DNode node, DNode parent)
+    public void Insert(DNode node, DNode parent)
     {
         steps.Add(new InsertStep(node, parent));
         addedNodes.Add(node);
-        return this;
     }
     
-    public ITransaction Delete(DNode node)
+    public void Delete(DNode node)
     {
         steps.Add(new DeleteStep(node));
-        return this;
     }
     
-    public ITransaction DeleteRange(DNode? start, DNode? end)
+    public void DeleteRange(DNode? start, DNode? end)
     {
         steps.Add(new DeleteRangeStep(start, end));
-        return this;
     }
     
-    public ITransaction MoveRange(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin)
+    public void MoveRange(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin)
     {
         steps.Add(new MoveRangeStep(start, end, targetParent, targetOrigin));
-        return this;
     }
     
-    public ITransaction ReplaceNode(DNode node, Func<DNode, DNode> copyFactory)
+    public void ReplaceNode(DNode node, Func<DNode, DNode> copyFactory)
     {
         steps.Add(new ReplaceNodeStep(node, copyFactory));
-        return this;
     }
 
-    public ITransaction AddCursorPosition(NodeId nodeId, int offset)
+    public void AddMark(TextNode node, Mark mark)
+    {
+        steps.Add(new AddMarkStep(node, mark));
+    }
+
+    public void RemoveMark(TextNode node, MarkKey key)
+    {
+        steps.Add(new RemoveMarkStep(node, key));
+    }
+
+    public void AddCursorPosition(NodeId nodeId, int offset)
     {
         cursorPosition = new SelectionInfo
         {
@@ -76,13 +84,11 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
             FocusId = nodeId.Value,
             FocusOffset = offset
         };
-        return this;
     }
     
-    public ITransaction AddCursorPosition(SelectionInfo selectionInfo)
+    public void AddCursorPosition(SelectionInfo selectionInfo)
     {
         cursorPosition = selectionInfo;
-        return this;
     }
 
     public DNode? FindNode(NodeId nodeId) => document.FindNode(nodeId);

@@ -1,13 +1,13 @@
 using DScratch.Nodes;
+using DScratch.Rendering;
 using DScratch.Tests.Helpers;
 using DScratch.Tests.Helpers.TestNodes;
 using DScratch.Transactions;
-using DScratch.Transactions.Steps;
 
-namespace DScratch.Tests.DScratchTests.Transactions.Steps;
+namespace DScratch.Tests.DScratchTests.Rendering;
 
 [TestFixture]
-public class StepHelpersTests
+public class NodeRenderExtensionsTests
 {
     private class ToInsert
     {

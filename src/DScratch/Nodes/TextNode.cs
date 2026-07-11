@@ -1,3 +1,5 @@
+using DScratch.Nodes.Marks;
+
 namespace DScratch.Nodes;
 
 public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string content = "") 
@@ -29,6 +31,11 @@ public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string conte
     {
         marks.Remove(mark);
         marks.Add(mark);
+    }
+
+    internal void RemoveMark(MarkKey key)
+    {
+        marks.Remove(new Mark(key, string.Empty));
     }
 
     internal TextNode? Split(int offset, Func<NodeId> nextId)

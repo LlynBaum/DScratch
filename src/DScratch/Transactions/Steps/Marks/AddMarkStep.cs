@@ -1,18 +1,19 @@
 using DScratch.Nodes;
+using DScratch.Nodes.Marks;
 using DScratch.Rendering;
 
-namespace DScratch.Transactions.Steps;
+namespace DScratch.Transactions.Steps.Marks;
 
-internal class InsertStep(DNode node, DNode parent) : IStep
+public class AddMarkStep(TextNode node, Mark mark) : IStep
 {
     public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
     {
-        parent.InsertChild(node);
+        node.SetMark(mark);
         transaction.NotifyNodeChange(node);
-        return node.ToInsertSteps();
+        return node.ToMarkUpdate();
     }
 
-    public IReadOnlyList<StepDiff> Revert(DScratchDocument document)
+    public IReadOnlyList<StepDiff?> Revert(DScratchDocument document)
     {
         throw new NotImplementedException();
     }

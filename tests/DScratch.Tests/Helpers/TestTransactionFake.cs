@@ -1,12 +1,13 @@
 using DScratch.Interactions;
 using DScratch.Nodes;
+using DScratch.Nodes.Marks;
 using DScratch.Transactions;
 
 namespace DScratch.Tests.Helpers;
 
 public class TestTransactionFake : ITransaction, IRunningTransaction
 {
-    public List<DNode> ChangedNodes => changedNodes;
+    public IReadOnlyList<DNode> ChangedNodes => changedNodes;
 
     private readonly List<DNode> changedNodes = [];
 
@@ -19,37 +20,47 @@ public class TestTransactionFake : ITransaction, IRunningTransaction
         throw new NotImplementedException();
     }
 
-    public ITransaction Insert(DNode node, DNode parent)
+    public void Insert(DNode node, DNode parent)
     {
         throw new NotImplementedException();
     }
 
-    public ITransaction Delete(DNode node)
+    public void Delete(DNode node)
     {
         throw new NotImplementedException();
     }
 
-    public ITransaction DeleteRange(DNode? start, DNode? end)
+    public void DeleteRange(DNode? start, DNode? end)
     {
         throw new NotImplementedException();
     }
 
-    public ITransaction MoveRange(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin)
+    public void MoveRange(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin)
     {
         throw new NotImplementedException();
     }
 
-    public ITransaction ReplaceNode(DNode node, Func<DNode, DNode> copyFactory)
+    public void ReplaceNode(DNode node, Func<DNode, DNode> copyFactory)
     {
         throw new NotImplementedException();
     }
 
-    public ITransaction AddCursorPosition(NodeId nodeId, int offset)
+    public void AddMark(TextNode node, Mark mark)
     {
         throw new NotImplementedException();
     }
 
-    public ITransaction AddCursorPosition(SelectionInfo selectionInfo)
+    public void RemoveMark(TextNode node, MarkKey key)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void AddCursorPosition(NodeId nodeId, int offset)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void AddCursorPosition(SelectionInfo selectionInfo)
     {
         throw new NotImplementedException();
     }

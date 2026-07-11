@@ -1,5 +1,6 @@
 using DScratch.Interactions;
 using DScratch.Nodes;
+using DScratch.Nodes.Marks;
 
 namespace DScratch.Transactions;
 
@@ -11,19 +12,23 @@ public interface ITransaction
     
     internal TransactionResult Commit();
 
-    ITransaction Insert(DNode node, DNode parent);
+    void Insert(DNode node, DNode parent);
 
-    ITransaction Delete(DNode node);
+    void Delete(DNode node);
     
-    ITransaction DeleteRange(DNode? start, DNode? end);
+    void DeleteRange(DNode? start, DNode? end);
     
-    ITransaction MoveRange(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin);
+    void MoveRange(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin);
 
-    ITransaction ReplaceNode(DNode node, Func<DNode, DNode> copyFactory);
+    void ReplaceNode(DNode node, Func<DNode, DNode> copyFactory);
     
-    ITransaction AddCursorPosition(NodeId nodeId, int offset);
+    void AddMark(TextNode node, Mark mark);
     
-    ITransaction AddCursorPosition(SelectionInfo selectionInfo);
+    void RemoveMark(TextNode node, MarkKey key);
+    
+    void AddCursorPosition(NodeId nodeId, int offset);
+    
+    void AddCursorPosition(SelectionInfo selectionInfo);
 
     DNode? FindNode(NodeId nodeId);
 

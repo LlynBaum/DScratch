@@ -1,6 +1,6 @@
-namespace DScratch.Nodes;
+namespace DScratch.Nodes.Marks;
 
-public readonly record struct Mark(string Key, string Value)
+public readonly record struct Mark(MarkKey Key, string? Value = null)
 {
     public class MarkTable : IEqualityComparer<Mark>
     {

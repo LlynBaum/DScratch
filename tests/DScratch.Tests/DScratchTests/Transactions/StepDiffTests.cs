@@ -38,4 +38,11 @@ public class StepDiffTests
         var step = new StepDiff.MoveDiff("", "", null);
         Assert.That(step.Type, Is.EqualTo("move"));
     }
+    
+    [Test]
+    public void ExpectedType_UpdateMarksDiff()
+    {
+        var step = new StepDiff.UpdateMarksDiff("", new Dictionary<string, string>());
+        Assert.That(step.Type, Is.EqualTo("updateMarks"));
+    }
 }

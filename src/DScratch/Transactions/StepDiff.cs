@@ -7,6 +7,7 @@ namespace DScratch.Transactions;
 [JsonDerivedType(typeof(InsertElementDiff))]
 [JsonDerivedType(typeof(DeleteElementDiff))]
 [JsonDerivedType(typeof(MoveDiff))]
+[JsonDerivedType(typeof(UpdateMarksDiff))]
 // ReSharper disable NotAccessedPositionalProperty.Global / is deserialized to be used in JS.
 public abstract record StepDiff(string Type)
 {
@@ -15,6 +16,7 @@ public abstract record StepDiff(string Type)
     public const string InsertElement = "insertElement";
     public const string DeleteElement = "deleteElement";
     public const string Move = "move";
+    public const string UpdateMarks = "updateMarks";
     
     /// <summary>
     /// Insert text in the DOM.
@@ -62,4 +64,11 @@ public abstract record StepDiff(string Type)
     /// If null, it will be the first child of the parent.
     /// </param>
     public record MoveDiff(string TargetNodeId, string TargetParentId, string? PreviousSiblingId) : StepDiff(Move);
+
+    /// <summary>
+    /// Removes all current marks from given node and adds the new list of marks onto the node.
+    /// </summary>
+    /// <param name="NodeId">The target node</param>
+    /// <param name="Marks">The list of marks</param>
+    public record UpdateMarksDiff(string NodeId, Dictionary<string, string> Marks) : StepDiff(UpdateMarks);
 }

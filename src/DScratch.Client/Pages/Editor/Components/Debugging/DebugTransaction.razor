@@ -166,6 +166,14 @@ else
                                                 <span class="data-label">Prev:</span> <span class="data-value">@move.PreviousSiblingId</span>
                                             </div>
                                             break;
+                                        case StepDiff.UpdateMarks:
+                                            var updateMark = (StepDiff.UpdateMarksDiff)step;
+                                            <div class="diff-data-line">
+                                                <span class="data-label">Target:</span> <span class="data-value font-bold">@updateMark.NodeId</span>
+                                                <span class="data-separator">|</span>
+                                                <span class="data-label">Parent:</span> <span class="data-value">@updateMark.Marks</span>
+                                            </div>
+                                            break;
                                         default:
                                             <span class="text-slate-400">@step.ToString()</span>
                                             break;
