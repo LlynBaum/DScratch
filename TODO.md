@@ -1,9 +1,9 @@
 # TODOs
 
-- [ ] Marks
-  - [ ] Bold
-  - [ ] Italic
-  - [ ] Color
+- [x] Marks
+  - [x] Bold
+  - [x] Italic
+  - [x] Color
 - [ ] Make marks continues when Typing
   - Typing
   - New Block, what then?

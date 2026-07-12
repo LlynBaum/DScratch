@@ -1,4 +1,5 @@
 using DScratch.Nodes;
+using DScratch.Nodes.Marks;
 
 namespace DScratch;
 
@@ -12,5 +13,5 @@ public interface INodeFactory
 
     HeadingNode HeadingFrom(DNode node, HeadingLevel headingLevel);
     
-    TextNode String(string value, DNode? origin, DNode? rightOrigin);
+    TextNode String(string value, DNode? origin, DNode? rightOrigin, IReadOnlySet<Mark>? initMarks = null);
 }

@@ -1,4 +1,5 @@
 using DScratch.Nodes;
+using DScratch.Nodes.Marks;
 
 namespace DScratch;
 
@@ -24,7 +25,7 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
         return new HeadingNode(headingLevel, node.Id, node.Origin, node.RightOrigin, [..node.ChildNodes]);
     }
 
-    public TextNode String(string value, DNode? origin, DNode? rightOrigin)
+    public TextNode String(string value, DNode? origin, DNode? rightOrigin, IReadOnlySet<Mark>? initMarks = null)
     {
         if (value.Length == 0)
         {
@@ -34,6 +35,7 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
         var nodeId = nodeIdGenerator.TakeIds(value.Length);
         var textNode = new TextNode(nodeId, origin, rightOrigin);
         textNode.AddText(value);
+        if(initMarks is not null) textNode.CopyMarks(initMarks);
         return textNode;
     }
 }

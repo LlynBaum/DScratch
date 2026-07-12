@@ -36,7 +36,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
         {
             return;
         }
-        
+
         // When we get a block element as anchor, we assume there are no TextNode within the block. So we just insert the text.
         // To prevent any broken Trees we insert it before the FirstChild, in case there are child nodes.
         var textNode = transaction.NodeFactory.String(keyPressInfo.Data, anchorNode.FirstChild, null);
@@ -56,21 +56,39 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
 
         if (nodeSearchResult.Origin.HasFoundNode)
         {
-            var textNode = transaction.NodeFactory.String(keyPressInfo.Data, nodeSearchResult.Origin.Node, nodeSearchResult.Origin.Node.RightOrigin);
+            var marks = nodeSearchResult.Origin.Node is TextNode t ? t.Marks : null; // TODO: test
+            var textNode = transaction.NodeFactory.String(
+                value: keyPressInfo.Data,
+                origin: nodeSearchResult.Origin.Node,
+                rightOrigin: nodeSearchResult.Origin.Node.RightOrigin,
+                initMarks: marks);
+
             var parent = nodeSearchResult.Origin.Node.Parent;
             transaction.Insert(textNode, parent!);
             transaction.AddCursorPosition(textNode.Id, textNode.Length);
         }
         else if (nodeSearchResult.RightOrigin.HasFoundNode)
         {
-            var textNode = transaction.NodeFactory.String(keyPressInfo.Data, nodeSearchResult.RightOrigin.Node.Origin, nodeSearchResult.RightOrigin.Node);
+            var marks = nodeSearchResult.RightOrigin.Node is TextNode t ? t.Marks : null;
+            var textNode = transaction.NodeFactory.String(
+                value: keyPressInfo.Data,
+                origin: nodeSearchResult.RightOrigin.Node.Origin,
+                rightOrigin: nodeSearchResult.RightOrigin.Node,
+                initMarks: marks);
+
             var parent = nodeSearchResult.RightOrigin.Node.Parent;
             transaction.Insert(textNode, parent!);
             transaction.AddCursorPosition(textNode.Id, textNode.Length);
         }
         else if (anchorNode.Parent is not null)
         {
-            var textNode = transaction.NodeFactory.String(keyPressInfo.Data, null, anchorNode.FirstChild);
+            var marks = anchorNode.FirstChild is TextNode t ? t.Marks : null;
+            var textNode = transaction.NodeFactory.String(
+                value: keyPressInfo.Data, 
+                origin: null, 
+                rightOrigin: anchorNode.FirstChild,
+                initMarks: marks);
+
             var parent = anchorNode.Parent;
             transaction.Insert(textNode, parent);
             transaction.AddCursorPosition(textNode.Id, textNode.Length);
