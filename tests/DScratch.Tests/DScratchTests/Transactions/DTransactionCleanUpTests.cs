@@ -1,4 +1,5 @@
 using DScratch.Nodes;
+using DScratch.Nodes.Marks;
 using DScratch.Tests.Helpers;
 using DScratch.Transactions;
 
@@ -216,6 +217,77 @@ public class DTransactionCleanUpTests
             Transaction.Commit();
 
             // Assert
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+        }
+    }
+
+    private class DoNotMergeWithDifferentMarks : DTransactionCleanUpTests
+    {
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Notify_SecondNode(bool deleted)
+        {
+            // Arrange
+            TextNode node = null!;
+            TextNode modifiedNode = null!;
+            var parent = TreeBuilder.Paragraph(t =>
+            {
+                node = t.Text("abc");
+                modifiedNode = t.Text("def");
+            });
+
+            if (deleted)
+            {
+                node.Delete();
+                modifiedNode.Delete();
+            }
+            
+            node.SetMark(new Mark(MarkKey.Color, "a"));
+            modifiedNode.SetMark(new Mark(MarkKey.Color, "b"));
+
+            Transaction.AddCursorPosition(modifiedNode.Id, 2);
+        
+            // Act
+            Transaction.NotifyNodeChange(modifiedNode);
+            var result = Transaction.Commit();
+
+            // Assert
+            Assert.That(result.IsEmpty, Is.True);
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+        }
+    
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Notify_FirstNode(bool deleted)
+        {
+            // Arrange
+            TextNode node = null!;
+            TextNode modifiedNode = null!;
+            var parent = TreeBuilder.Paragraph(t =>
+            {
+                modifiedNode = t.Text("abc");
+                node = t.Text("def");
+            });
+            
+            if (deleted)
+            {
+                node.Delete();
+                modifiedNode.Delete();
+            }
+            
+            node.SetMark(new Mark(MarkKey.Color, "a"));
+            modifiedNode.SetMark(new Mark(MarkKey.Color, "b"));
+            
+            Transaction.AddCursorPosition(node.Id, 2);
+        
+            // Act
+            Transaction.NotifyNodeChange(modifiedNode);
+            var result = Transaction.Commit();
+
+            // Assert
+            Assert.That(result.IsEmpty, Is.True);
             Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
         }
     }

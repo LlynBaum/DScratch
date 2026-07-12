@@ -28,7 +28,7 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
         var stepDiffs = steps.SelectMany(s => s.Execute(this, document)).ToList();
         
         addedNodes.ForEach(document.AddNode);
-        var cleanUpSteps = CleanupCode(modifiedNodes);
+        var cleanUpSteps = CleanupTree(modifiedNodes);
         stepDiffs = [..additionalStepDiffs, ..stepDiffs, ..cleanUpSteps];
         
         modifiedNodes.Clear();
@@ -65,7 +65,7 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
     }
 
     public void AddMark(TextNode node, Mark mark)
-    {
+    { 
         steps.Add(new AddMarkStep(node, mark));
     }
 
@@ -109,7 +109,7 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
 
     public void NotifyNodeChange(DNode node) => modifiedNodes.Add(node);
 
-    private List<StepDiff?> CleanupCode(IReadOnlyList<DNode> nodes)
+    private List<StepDiff?> CleanupTree(IReadOnlyList<DNode> nodes)
     {
         List<StepDiff?> result = [];
         if(disableCleanUp)
@@ -119,86 +119,46 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
         
         foreach (var node in nodes.OfType<TextNode>())
         {
-            if (node.Origin is TextNode originTextNode && originTextNode.IsDeleted == node.IsDeleted && originTextNode.LastId.IsContinuesTo(node.Id))
+            if (CleanUpHelper.CanMergeWithOrigin(node, out var origin))
             {
-                if (!originTextNode.IsDeleted)
+                if (!origin.IsDeleted)
                 {
                     var textInsert = new StepDiff.InsertTextDiff(
-                        originTextNode.Id.Value,
-                        originTextNode.Length,
+                        origin.Id.Value,
+                        origin.Length,
                         node.TextContent);
                 
                     result.Add(textInsert);
                     result.Add(node.ToDeleteSteps());
                 }
 
-                cursorPosition = AdjustSelection(cursorPosition, node, originTextNode);
+                cursorPosition = CleanUpHelper.AdjustSelection(cursorPosition, node, origin);
 
-                originTextNode.AddText(node.TextContent);
+                origin.AddText(node.TextContent);
                 node.Remove();
                 document.RemoveNode(node);
             }
-            else if (node.RightOrigin is TextNode rightOriginTextNode && rightOriginTextNode.IsDeleted == node.IsDeleted && node.LastId.IsContinuesTo(rightOriginTextNode.Id))
+            else if (CleanUpHelper.CanMergeWithRightOrigin(node, out var rightOrigin))
             {
-                if (!rightOriginTextNode.IsDeleted)
+                if (!rightOrigin.IsDeleted)
                 {
                     var textInsert = new StepDiff.InsertTextDiff(
                         node.Id.Value,
                         node.Length,
-                        rightOriginTextNode.TextContent);
-                
+                        rightOrigin.TextContent);
+
                     result.Add(textInsert);
-                    result.Add(rightOriginTextNode.ToDeleteSteps());
+                    result.Add(rightOrigin.ToDeleteSteps());
                 }
 
-                cursorPosition = AdjustSelection(cursorPosition, rightOriginTextNode, node);
+                cursorPosition = CleanUpHelper.AdjustSelection(cursorPosition, rightOrigin, node);
                 
-                node.AddText(rightOriginTextNode.TextContent);
-                rightOriginTextNode.Remove();
-                document.RemoveNode(rightOriginTextNode);
+                node.AddText(rightOrigin.TextContent);
+                rightOrigin.Remove();
+                document.RemoveNode(rightOrigin);
             }
         }
 
         return result;
-    }
-
-    private static SelectionInfo? AdjustSelection(SelectionInfo? selectionInfo, TextNode oldNode, TextNode targetNode)
-    {
-        if (selectionInfo is null) return null;
-        
-        if (selectionInfo.AnchorId == oldNode.Id.Value && selectionInfo.FocusId == oldNode.Id.Value)
-        {
-            return new SelectionInfo
-            {
-                AnchorId = targetNode.Id.Value,
-                AnchorOffset = targetNode.Length + selectionInfo.AnchorOffset,
-                FocusId = targetNode.Id.Value,
-                FocusOffset = targetNode.Length + selectionInfo.AnchorOffset
-            };
-        }
-        
-        if (selectionInfo.AnchorId == oldNode.Id.Value && selectionInfo.FocusId != oldNode.Id.Value)
-        {
-            return new SelectionInfo
-            {
-                AnchorId = targetNode.Id.Value,
-                AnchorOffset = targetNode.Length + selectionInfo.AnchorOffset,
-                FocusId = selectionInfo.FocusId,
-                FocusOffset = selectionInfo.FocusOffset
-            };
-        }
-        
-        if (selectionInfo.AnchorId != oldNode.Id.Value && selectionInfo.FocusId == oldNode.Id.Value)
-        {
-            return new SelectionInfo
-            {
-                AnchorId = selectionInfo.AnchorId,
-                AnchorOffset = selectionInfo.AnchorOffset,
-                FocusId = targetNode.Id.Value,
-                FocusOffset = targetNode.Length + selectionInfo.AnchorOffset
-            };
-        }
-
-        return selectionInfo;
     }
 }
