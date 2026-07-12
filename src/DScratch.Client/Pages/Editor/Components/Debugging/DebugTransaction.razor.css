@@ -239,3 +239,38 @@
 .text-indigo-600 {
     color: #4f46e5;
 }
+
+.step-badge.updatemarks {
+    background-color: #f3e8ff;
+    border-color: #e9d5ff;
+    color: #6b21a8;
+}
+
+.marks-list {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    vertical-align: middle;
+}
+
+.mark-pill {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    background-color: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    padding: 1px 6px;
+    line-height: 1.2;
+}
+
+.mark-key {
+    color: #4b5563;
+    font-weight: 600;
+}
+
+.mark-val {
+    color: #2563eb;
+    margin-left: 3px;
+    font-weight: 500;
+}

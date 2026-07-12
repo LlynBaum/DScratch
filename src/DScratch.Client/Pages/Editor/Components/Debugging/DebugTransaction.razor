@@ -171,7 +171,22 @@ else
                                             <div class="diff-data-line">
                                                 <span class="data-label">Target:</span> <span class="data-value font-bold">@updateMark.NodeId</span>
                                                 <span class="data-separator">|</span>
-                                                <span class="data-label">Parent:</span> <span class="data-value">@updateMark.Marks</span>
+                                                <span class="data-label">Marks:</span>
+                                                @if (updateMark.Marks.Count > 0)
+                                                {
+                                                    <div class="marks-list">
+                                                        @foreach (var (key, value) in updateMark.Marks)
+                                                        {
+                                                            <span class="mark-pill">
+                                                                <span class="mark-key">@key</span>: <span class="mark-val">@value</span>
+                                                            </span>
+                                                        }
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-slate-400 italic">none</span>
+                                                }
                                             </div>
                                             break;
                                         default:
