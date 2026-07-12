@@ -47,8 +47,20 @@ public static class UpdateMarkHandler
             default:
                 throw new ArgumentOutOfRangeException(nameof(action), action, null);
         }
+
+        if (selectedNodes.Any())
+        {
+            transaction.AddCursorPosition(new SelectionInfo
+            {
+                Direction = selectionInfo.Direction,
+                AnchorId = selectedNodes.First().Id.Value,
+                AnchorOffset = 0,
+                FocusId = selectedNodes.Last().Id.Value,
+                FocusOffset = selectedNodes.Last().TextContent.Length,
+            });
+        }
     }
-    
+
     private static IReadOnlyList<TextNode> GetSelectedNodes(ITransaction transaction, SelectionInfo selectionInfo)
     {
         if (selectionInfo.Direction is SelectionDirection.None)
@@ -82,15 +94,21 @@ public static class UpdateMarkHandler
             walker.NextNode();
         }
 
-        while (walker.Node is not null && walker.Node.Id != rightOrigin.Id)
+        if (selectionInfo.AnchorId != selectionInfo.FocusId)
         {
-            result.Add(walker.Node);
-            walker.NextNode();
+            while (walker.Node is not null && walker.Node.Id != rightOrigin.Id)
+            {
+                result.Add(walker.Node);
+                walker.NextNode();
+            }
         }
 
         if (walker.Node is not null && rightOriginOffset > 0)
         {
-            transaction.SplitText(walker.Node, rightOriginOffset);
+            var offset = selectionInfo.AnchorId != selectionInfo.FocusId
+                ? rightOriginOffset
+                : rightOriginOffset - originOffset;
+            transaction.SplitText(walker.Node, offset);
             result.Add(walker.Node);
         }
         return result;

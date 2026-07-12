@@ -18,16 +18,6 @@ public partial class EditorMenu(IEditorCommandDispatcher editorCommandDispatcher
         await editorCommandDispatcher.UpdateMarkAsync(new Mark(MarkKey.Italic), UpdateMarkAction.Toggle);
     }
     
-    private async Task CodeAsync()
-    {
-        
-    }
-
-    private async Task BlockquoteAsync() 
-    {
-        
-    }
-    
     private async Task ParagraphAsync()
     {
         await editorCommandDispatcher.ChangeBlockTypeAsync(BlockNodeType.Paragraph);

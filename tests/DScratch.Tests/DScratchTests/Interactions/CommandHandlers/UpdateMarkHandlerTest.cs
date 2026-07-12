@@ -1,3 +1,4 @@
+using DScratch.Interactions;
 using DScratch.Interactions.CommandHandlers.Commands;
 using DScratch.Nodes;
 using DScratch.Nodes.Marks;
@@ -40,13 +41,14 @@ public class UpdateMarkHandlerTest
             
             // Act
             UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Toggle);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(parent1.ChildNodes, Has.Count.EqualTo(1));
                 Assert.That(start.Marks, Has.Count.Zero);
+                Assert.That(result.CursorPosition, Is.Null);
             }
         }
         
@@ -75,7 +77,7 @@ public class UpdateMarkHandlerTest
             
             // Act
             UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Toggle);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -98,6 +100,14 @@ public class UpdateMarkHandlerTest
                 Assert.That(end.Marks, Is.Empty);
                 Assert.That(((TextNode)end.RightOrigin!).Marks, Is.Empty);
             }
+            
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = start.RightOrigin.Id.Value,
+                AnchorOffset = 0,
+                FocusId = end.Id.Value,
+                FocusOffset = 1
+            });
         }
         
         [Test]
@@ -124,7 +134,7 @@ public class UpdateMarkHandlerTest
             
             // Act
             UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Toggle);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -147,6 +157,14 @@ public class UpdateMarkHandlerTest
                 Assert.That(end.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
                 Assert.That(((TextNode)end.RightOrigin!).Marks, Is.Empty);
             }
+            
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = start.RightOrigin.Id.Value,
+                AnchorOffset = 0,
+                FocusId = end.Id.Value,
+                FocusOffset = 1
+            });
         }
     }
 
@@ -166,13 +184,14 @@ public class UpdateMarkHandlerTest
             
             // Act
             UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Add);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(parent1.ChildNodes, Has.Count.EqualTo(1));
                 Assert.That(start.Marks, Has.Count.Zero);
+                Assert.That(result.CursorPosition, Is.Null);
             }
         }
         
@@ -201,7 +220,7 @@ public class UpdateMarkHandlerTest
             
             // Act
             UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Add);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -224,6 +243,14 @@ public class UpdateMarkHandlerTest
                 Assert.That(end.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
                 Assert.That(((TextNode)end.RightOrigin!).Marks, Is.Empty);
             }
+            
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = start.RightOrigin.Id.Value,
+                AnchorOffset = 0,
+                FocusId = end.Id.Value,
+                FocusOffset = 1
+            });
         }
         
         [Test]
@@ -250,7 +277,7 @@ public class UpdateMarkHandlerTest
             
             // Act
             UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Add);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -273,6 +300,14 @@ public class UpdateMarkHandlerTest
                 Assert.That(end.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
                 Assert.That(((TextNode)end.RightOrigin!).Marks, Is.Empty);
             }
+            
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = start.RightOrigin.Id.Value,
+                AnchorOffset = 0,
+                FocusId = end.Id.Value,
+                FocusOffset = 1
+            });
         }
     }
     
@@ -294,13 +329,14 @@ public class UpdateMarkHandlerTest
             
             // Act
             UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Remove);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(parent1.ChildNodes, Has.Count.EqualTo(1));
                 Assert.That(start.Marks, Has.Count.EqualTo(1));
+                Assert.That(result.CursorPosition, Is.Null);
             }
         }
         
@@ -331,7 +367,7 @@ public class UpdateMarkHandlerTest
             
             // Act
             UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Remove);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -354,6 +390,14 @@ public class UpdateMarkHandlerTest
                 Assert.That(end.Marks, Is.Empty);
                 Assert.That(((TextNode)end.RightOrigin!).Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
             }
+            
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = start.RightOrigin.Id.Value,
+                AnchorOffset = 0,
+                FocusId = end.Id.Value,
+                FocusOffset = 1
+            });
         }
         
         [Test]
@@ -381,7 +425,7 @@ public class UpdateMarkHandlerTest
             
             // Act
             UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Remove);
-            transaction.Commit();
+            var result = transaction.Commit();
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -404,6 +448,14 @@ public class UpdateMarkHandlerTest
                 Assert.That(end.Marks, Is.Empty);
                 Assert.That(((TextNode)end.RightOrigin!).Marks, Is.Empty);
             }
+            
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = start.RightOrigin.Id.Value,
+                AnchorOffset = 0,
+                FocusId = end.Id.Value,
+                FocusOffset = 1
+            });
         }
     }
 }

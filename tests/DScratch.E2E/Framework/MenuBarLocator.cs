@@ -4,6 +4,16 @@ namespace DScratch.E2E.Framework;
 
 public class MenuBarLocator(ILocator menuBar)
 {
+    public async Task ClickBold()
+    {
+        await menuBar.GetByText("Bold").ClickAsync();
+    }
+    
+    public async Task ClickItalic()
+    {
+        await menuBar.GetByText("Italic").ClickAsync();
+    }
+    
     public async Task ClickParagraph()
     {
         await menuBar.GetByText("Paragraph").ClickAsync();
