@@ -27,6 +27,15 @@ public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string conte
         TextContent += value;
     }
 
+    internal void CopyMarks(IEnumerable<Mark> initMarks)
+    {
+        marks.Clear();
+        foreach (var initMark in initMarks)
+        {
+            marks.Add(initMark);
+        }
+    }
+    
     internal void SetMark(Mark mark)
     {
         marks.Remove(mark);
@@ -48,11 +57,11 @@ public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string conte
 
         TextContent = remainingText;
         
-        // TODO: copy over marks
         var newNode = new TextNode(nextId.Invoke(), this, RightOrigin)
         {
             TextContent = otherText
         };
+        newNode.CopyMarks(marks);
         
         Parent?.InsertChild(newNode);
         return newNode;

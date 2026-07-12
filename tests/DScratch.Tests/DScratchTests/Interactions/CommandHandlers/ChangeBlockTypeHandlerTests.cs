@@ -21,7 +21,7 @@ public class ChangeBlockTypeHandlerTests
             document: builder.CreateDocument(), 
             nodeFactory: new DNodeFactory(builder.IdGenerator),
             nodeIdGenerator: builder.IdGenerator, 
-            disableCleanUp: false);
+            disableCleanUp: true);
     }
 
     [Test]

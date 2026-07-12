@@ -58,6 +58,7 @@ public class TextNodeTests
             });
         
         var textNode = (TextNode)testNode.ChildNodes[1];
+        textNode.SetMark(new Mark(MarkKey.Bold));
         
         // Act
         var result = textNode.Split(1, () => new NodeId("Test", -1));
@@ -88,6 +89,8 @@ public class TextNodeTests
             
             Assert.That(testNode.LastChild!.Origin, Is.EqualTo(result));
             Assert.That(testNode.LastChild.RightOrigin, Is.Null);
+            
+            Assert.That(textNode.Marks, Is.EqualTo(result.Marks));
         }
     }
     

@@ -5,6 +5,8 @@
   - [ ] Italic
   - [ ] Color
 - [ ] Make marks continues when Typing
+  - Typing
+  - New Block, what then?
 - [ ] Inline Elements
   - For now just Links 
   - Later maybe like Chapter References and co.
@@ -34,3 +36,6 @@ When pressing "Bold" or so in the UI with no selection, user would expect that w
 However I don't actually do anything with no selection and toggling mark. 
 Sooooo, what we could to is just remember that the user pressed bold, for as long as the user does not move it's cursor.
 If start typing the first char add mark, rest will work out.
+
+
+Then there is also the problem with new Blocks, they should keep that mark as well.

@@ -17,9 +17,12 @@ public static class UpdateMarkHandler
         switch (action)
         {
             case UpdateMarkAction.Toggle:
+                var (originId, _) = selectionInfo.GetConvertedNodeIds();
+                var origin = (TextNode)transaction.FindNode(originId)!;
+                var hasMark = origin.Marks.Contains(mark);
                 foreach (var selectedNode in selectedNodes)
                 {
-                    if (selectedNode.Marks.Contains(mark)) // TODO actually wrong, check the Anchor Node for the mark, the rest wil be added/removed based on the anchor
+                    if (hasMark)
                     {
                         transaction.RemoveMark(selectedNode, mark.Key);
                     }
@@ -73,8 +76,9 @@ public static class UpdateMarkHandler
         var walker = TreeWalker<TextNode>.StartFrom(originText, transaction.Root);
         
         var (originOffset, rightOriginOffset) = selectionInfo.GetConvertedOffsets();
-        if (transaction.SplitText(originText, originOffset) is null)
+        if (originOffset > 0)
         {
+            transaction.SplitText(originText, originOffset);
             walker.NextNode();
         }
 
