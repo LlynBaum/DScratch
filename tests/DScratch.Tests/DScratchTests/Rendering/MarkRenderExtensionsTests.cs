@@ -36,8 +36,8 @@ public class MarkRenderExtensionsTests
         var result = textNode.ToMarkUpdate();
         
         // Assert
-        Assert.That(result, Has.Length.EqualTo(1));
-        var step = (StepDiff.UpdateMarksDiff)result.Single();
+        Assert.That(result, Is.TypeOf<StepDiff.UpdateMarksDiff>());
+        var step = (StepDiff.UpdateMarksDiff)result;
         
         Assert.That(step.NodeId, Is.EqualTo(nodeId.Value));
         AssertMarks(step);

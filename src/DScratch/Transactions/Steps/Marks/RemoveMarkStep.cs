@@ -10,7 +10,7 @@ public class RemoveMarkStep(TextNode node, MarkKey key) : IStep
     {
         node.RemoveMark(key);
         transaction.NotifyNodeChange(node);
-        return node.ToMarkUpdate();
+        return [node.ToMarkUpdate()];
     }
 
     public IReadOnlyList<StepDiff?> Revert(DScratchDocument document)

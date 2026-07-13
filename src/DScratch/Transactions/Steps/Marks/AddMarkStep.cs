@@ -10,7 +10,7 @@ public class AddMarkStep(TextNode node, Mark mark) : IStep
     {
         node.SetMark(mark);
         transaction.NotifyNodeChange(node);
-        return node.ToMarkUpdate();
+        return [node.ToMarkUpdate()];
     }
 
     public IReadOnlyList<StepDiff?> Revert(DScratchDocument document)

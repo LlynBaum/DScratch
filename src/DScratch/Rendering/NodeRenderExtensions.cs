@@ -46,7 +46,7 @@ internal static class NodeRenderExtensions
             };
         }
     }
-    
+
     private static StepDiff[] InsertTextNode(TextNode textNode, NodeId parentId)
     {
         return [
@@ -58,7 +58,8 @@ internal static class NodeRenderExtensions
             new StepDiff.InsertTextDiff(
                 ParentId: textNode.Id.Value,
                 Offset: 0,
-                Text: textNode.TextContent)
+                Text: textNode.TextContent),
+            textNode.ToMarkUpdate(),
         ];
     }
 }

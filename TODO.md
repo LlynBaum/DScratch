@@ -5,13 +5,13 @@
   - [x] Italic
   - [x] Color
 - [ ] Make marks continues when Typing
-  - Typing
-  - New Block, what then?
+  - [x] Typing
+  - [ ] New Block, what then?
 - [ ] Inline Elements
   - For now just Links 
   - Later maybe like Chapter References and co.
 - [ ] Shortcut Keys
-  - Keybinds like CCTRL + B for Bold
+  - Keybinds like CTRL + B for Bold
 - [ ] History with Undo and Redu features
 - [ ] Auto Heading Numbering
   - This needs support for read-only text that is being displayed
@@ -27,9 +27,6 @@
 
 # Continues Marks
 
-This could work automatically with inserting text with the merging. However, not all the time,
-so best would be to check the previous node for a continues mark, and copy it over.
-
 Maybe Marks can even be continues or not, so like a flag. But idk for now not needed.
 
 When pressing "Bold" or so in the UI with no selection, user would expect that when start typing this marks will be added.
@@ -39,3 +36,7 @@ If start typing the first char add mark, rest will work out.
 
 
 Then there is also the problem with new Blocks, they should keep that mark as well.
+
+## Bugs
+
+When having text like: **ab***cd* and you select "bc" and press Bold, it breaks everything lmao
