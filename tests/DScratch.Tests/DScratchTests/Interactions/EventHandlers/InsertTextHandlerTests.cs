@@ -1,6 +1,7 @@
 using DScratch.Interactions;
 using DScratch.Interactions.EventHandlers.Events;
 using DScratch.Nodes;
+using DScratch.Nodes.Marks;
 using DScratch.Tests.DScratchTests.Interactions.Helpers;
 using DScratch.Tests.Helpers;
 
@@ -569,6 +570,86 @@ public class InsertTextHandlerTests
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.FirstChild.Id, 3);
+        }
+    }
+
+    private class Marks : InsertTextHandlerTests
+    {
+        [Test]
+        public void CopyMarks_FromOrigin()
+        {
+            // Arrange
+            TextNode node = null!;
+            builder.Paragraph(t =>
+            {
+                node = t.Text("a");
+            });
+
+            node.SetMark(new Mark(MarkKey.Bold));
+
+            // Act
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1));
+            
+            // Assert
+            Assert.That(node.RightOrigin, Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)node.RightOrigin).Marks, Is.EquivalentTo(node.Marks));
+        }
+        
+        [Test]
+        public void CopyMarks_FromOrigin_IgnoresRightOrigin()
+        {
+            // Arrange
+            TextNode node = null!;
+            TextNode right = null!;
+            builder.Paragraph(t =>
+            {
+                node = t.Text("a");
+                right = t.Text("a");
+            });
+
+            node.SetMark(new Mark(MarkKey.Bold));
+            right.SetMark(new Mark(MarkKey.Italic));
+
+            // Act
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1));
+            
+            // Assert
+            Assert.That(node.RightOrigin, Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)node.RightOrigin).Marks, Is.EquivalentTo(node.Marks));
+        }
+
+        [Test]
+        public void NoMarks_WhenInsertAsFirstChild()
+        {
+            // Arrange
+            TextNode node = null!;
+            builder.Paragraph(t =>
+            {
+                node = t.Text("a");
+            });
+
+            node.SetMark(new Mark(MarkKey.Bold));
+
+            // Act
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 0));
+            
+            // Assert
+            Assert.That(node.Origin, Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)node.Origin).Marks, Is.Empty);
+        }
+        
+        [Test]
+        public void NoMarks_WhenInsertIntoEmptyBlock()
+        {
+            // Arrange
+            var node = builder.Paragraph();
+
+            // Act
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 0));
+            
+            // Assert
+            Assert.That(node.FirstChild, Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)node.FirstChild).Marks, Is.Empty);
         }
     }
 }

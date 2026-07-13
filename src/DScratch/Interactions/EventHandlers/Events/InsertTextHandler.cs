@@ -56,7 +56,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
 
         if (nodeSearchResult.Origin.HasFoundNode)
         {
-            var marks = nodeSearchResult.Origin.Node is TextNode t ? t.Marks : null; // TODO: test
+            var marks = nodeSearchResult.Origin.Node is TextNode t ? t.Marks : null;
             var textNode = transaction.NodeFactory.String(
                 value: keyPressInfo.Data,
                 origin: nodeSearchResult.Origin.Node,
@@ -69,7 +69,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
         }
         else if (nodeSearchResult.RightOrigin.HasFoundNode)
         {
-            var marks = nodeSearchResult.RightOrigin.Node is TextNode t ? t.Marks : null;
+            var marks = nodeSearchResult.RightOrigin.Node.Origin is TextNode t ? t.Marks : null;
             var textNode = transaction.NodeFactory.String(
                 value: keyPressInfo.Data,
                 origin: nodeSearchResult.RightOrigin.Node.Origin,
@@ -82,12 +82,10 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
         }
         else if (anchorNode.Parent is not null)
         {
-            var marks = anchorNode.FirstChild is TextNode t ? t.Marks : null;
             var textNode = transaction.NodeFactory.String(
                 value: keyPressInfo.Data, 
                 origin: null, 
-                rightOrigin: anchorNode.FirstChild,
-                initMarks: marks);
+                rightOrigin: anchorNode.FirstChild);
 
             var parent = anchorNode.Parent;
             transaction.Insert(textNode, parent);
