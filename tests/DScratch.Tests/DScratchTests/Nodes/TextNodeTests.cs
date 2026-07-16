@@ -61,7 +61,7 @@ public class TextNodeTests
         textNode.SetMark(new Mark(MarkKey.Bold));
         
         // Act
-        var result = textNode.Split(1, () => new NodeId("Test", -1));
+        var result = textNode.Split(1, _ => new NodeId("Test", -1));
 
         // Assert
         Assert.That(testNode.ChildNodes, Has.Count.EqualTo(4));
@@ -109,7 +109,7 @@ public class TextNodeTests
         var textNode = (TextNode)testNode.ChildNodes[1];
         
         // Act
-        var result = textNode.Split(0, () => new NodeId("Test", -1));
+        var result = textNode.Split(0, _ => new NodeId("Test", -1));
 
         // Assert
         Assert.That(testNode.ChildNodes, Has.Count.EqualTo(3));
@@ -134,7 +134,7 @@ public class TextNodeTests
             });
         
         // Act
-        var result = textNode.Split(3, () => new NodeId("Test", -1));
+        var result = textNode.Split(3, _ => new NodeId("Test", -1));
 
         // Assert
         Assert.That(testNode.ChildNodes, Has.Count.EqualTo(3));

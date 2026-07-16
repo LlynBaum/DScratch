@@ -422,7 +422,7 @@ public class UpdateMarkHandlerTest
                 Assert.That(node1.TextContent, Is.EqualTo("ab"));
                 Assert.That(node2.TextContent, Is.EqualTo("cd"));
                 Assert.That(node3.TextContent, Is.EqualTo("ef"));
-                
+
                 Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
                 Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold), new Mark(MarkKey.Italic)]));
                 Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));

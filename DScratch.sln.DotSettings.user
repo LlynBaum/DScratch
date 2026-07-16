@@ -48,6 +48,7 @@
     &lt;Project Location="/home/darki/Developement/DScratch/tests/DScratch.E2E" Presentation="&amp;lt;Tests&amp;gt;\&amp;lt;DScratch.E2E&amp;gt;" /&gt;
     &lt;TestAncestor&gt;
       &lt;TestId&gt;NUnit3x::62FDA985-507E-376F-F3D6-191265DD9EC2::net10.0::DScratch.Tests.DScratchTests.Interactions.CommandHandlers.UpdateMarkHandlerTest+ToggleAction.AddsMark_ToSelection_WhenSelectingOverNodesWithMiddleHasMarks&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::62FDA985-507E-376F-F3D6-191265DD9EC2::net10.0::DScratch.Tests.DScratchTests.Transactions.DTransactionTests.SplitText_GeneratesExpectedSteps_WhenSplitting&lt;/TestId&gt;
     &lt;/TestAncestor&gt;
   &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String>

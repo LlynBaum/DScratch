@@ -198,7 +198,7 @@ public class MarksTests : PlaywrightTestBase
         {
             AnchorId = "Darki-2",
             AnchorOffset = 0,
-            FocusId = "Darki-9",
+            FocusId = "Darki-12",
             FocusOffset = 2
         });
         await MenuBar.ClickItalic();
@@ -220,7 +220,7 @@ public class MarksTests : PlaywrightTestBase
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
             Assert.That(selection.AnchorOffset, Is.EqualTo(0));
-            Assert.That(selection.FocusId, Is.EqualTo("Darki-9"));
+            Assert.That(selection.FocusId, Is.EqualTo("Darki-12"));
             Assert.That(selection.FocusOffset, Is.EqualTo(2));
         }
     }

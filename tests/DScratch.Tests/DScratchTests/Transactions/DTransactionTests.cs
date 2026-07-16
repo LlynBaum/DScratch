@@ -176,15 +176,19 @@ public class DTransactionTests
     public void SplitText_GeneratesExpectedSteps_WhenSplitting()
     {
         // Arrange
-        var node = TreeBuilder.Text("abc");
-            
+        var node = TreeBuilder.Text("abcd");
+
+        var currentId = TreeBuilder.IdGenerator.CurrentId;
+        
         // Act
         var result = Transaction.SplitText(node, 2);
         var transactionResult = Transaction.Commit();
             
         // Assert
+        Assert.That(TreeBuilder.IdGenerator.CurrentId, Is.EqualTo(currentId + 2));
+        
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.TextContent, Is.EqualTo("c"));
+        Assert.That(result.TextContent, Is.EqualTo("cd"));
         AssertHelper.ThatStepsEqualTo(transactionResult.Steps, expected: [
             Is.TypeOf<StepDiff.DeleteTextDiff>(),
             Is.TypeOf<StepDiff.InsertElementDiff>(),
@@ -197,7 +201,7 @@ public class DTransactionTests
             var deleteText = (StepDiff.DeleteTextDiff)transactionResult.Steps[0]!;
             Assert.That(deleteText.ParentId, Is.EqualTo(node.Id.Value));
             Assert.That(deleteText.Offset, Is.EqualTo(2));
-            Assert.That(deleteText.Length, Is.EqualTo(1));
+            Assert.That(deleteText.Length, Is.EqualTo(2));
         
             var insertElement = (StepDiff.InsertElementDiff)transactionResult.Steps[1]!;
             Assert.That(insertElement.ParentId, Is.EqualTo("Root"));
@@ -205,7 +209,7 @@ public class DTransactionTests
         
             var insertText = (StepDiff.InsertTextDiff)transactionResult.Steps[2]!;
             Assert.That(insertText.ParentId, Is.EqualTo(insertElement.NewNodeId));
-            Assert.That(insertText.Text, Is.EqualTo("c"));
+            Assert.That(insertText.Text, Is.EqualTo("cd"));
         }
     }
 

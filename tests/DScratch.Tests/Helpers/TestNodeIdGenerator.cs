@@ -3,6 +3,8 @@ namespace DScratch.Tests.Helpers;
 public class TestNodeIdGenerator : INodeIdGenerator
 {
     private int currentId;
+
+    public int CurrentId => currentId;
     
     public NodeId GetNextId()
     {
