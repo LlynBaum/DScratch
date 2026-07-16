@@ -384,6 +384,58 @@ public class UpdateMarkHandlerTest
                 Direction = SelectionDirection.Backward
             });
         }
+        
+        [Test]
+        public void AddsMark_ToSelection_WhenSelectingOverNodesWithMiddleHasMarks()
+        {
+            // Arrange
+            TextNode start = null!;
+            TextNode mid = null!;
+            TextNode end = null!;
+            var parent = builder.Paragraph(t =>
+            {
+                start = t.Text("ab");
+                mid = t.Text("cd");
+                end = t.Text("ef");
+            });
+
+            mid.SetMark(new Mark(MarkKey.Bold));
+
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 0, end.Id, 2);
+
+            // Act
+            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Italic), UpdateMarkAction.Toggle);
+            var result = transaction.Commit();
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+            }
+
+            var node1 = (TextNode)parent.ChildAt(0)!;
+            var node2 = (TextNode)parent.ChildAt(1)!;
+            var node3 = (TextNode)parent.ChildAt(2)!;
+
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(node1.TextContent, Is.EqualTo("ab"));
+                Assert.That(node2.TextContent, Is.EqualTo("cd"));
+                Assert.That(node3.TextContent, Is.EqualTo("ef"));
+                
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold), new Mark(MarkKey.Italic)]));
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+            }
+
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = node1.Id.Value,
+                AnchorOffset = 0,
+                FocusId = node3.Id.Value,
+                FocusOffset = 2
+            });
+        }
     }
 
     private class AddAction : UpdateMarkHandlerTest
