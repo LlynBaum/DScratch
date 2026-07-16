@@ -7,12 +7,13 @@ public static class SelectionHelper
 {
     public static DNodeInfo NearestTextNode(DNode target)
     {
-        while (target is not null)
+        var current = target;
+        while (current is not null)
         {
-            if (target is TextNode textNode) return new DNodeInfo(target, textNode.Length);
-            target = target.LastChild;
+            if (current is TextNode textNode) return new DNodeInfo(current, textNode.Length);
+            current = current.LastChild;
         }
         
-        return new DNodeInfo(target, 0);
+        return new DNodeInfo(current, 0);
     }
 }

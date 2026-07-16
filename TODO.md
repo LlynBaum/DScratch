@@ -36,7 +36,3 @@ If start typing the first char add mark, rest will work out.
 
 
 Then there is also the problem with new Blocks, they should keep that mark as well.
-
-## Bugs
-
-When having text like: **ab***cd* and you select "bc" and press Bold, it breaks everything lmao

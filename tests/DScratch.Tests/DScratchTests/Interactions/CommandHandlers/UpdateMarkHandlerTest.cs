@@ -166,6 +166,224 @@ public class UpdateMarkHandlerTest
                 FocusOffset = 1
             });
         }
+        
+        [Test]
+        public void AddsMark_ToSelection_WhenSelectingOverNodesWithDifferentMarks()
+        {
+            // Arrange
+            TextNode start = null!;
+            TextNode end = null!;
+            var parent = builder.Paragraph(t =>
+            {
+                start = t.Text("ab");
+                end = t.Text("cd");
+            });
+
+            start.SetMark(new Mark(MarkKey.Bold));
+            end.SetMark(new Mark(MarkKey.Italic));
+
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
+
+            // Act
+            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Italic), UpdateMarkAction.Toggle);
+            var result = transaction.Commit();
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            }
+
+            var node1 = (TextNode)parent.ChildAt(0)!;
+            var node2 = (TextNode)parent.ChildAt(1)!;
+            var node3 = (TextNode)parent.ChildAt(2)!;
+            var node4 = (TextNode)parent.ChildAt(3)!;
+
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(node1.TextContent, Is.EqualTo("a"));
+                Assert.That(node2.TextContent, Is.EqualTo("b"));
+                Assert.That(node3.TextContent, Is.EqualTo("c"));
+                Assert.That(node4.TextContent, Is.EqualTo("d"));
+                
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold), new Mark(MarkKey.Italic)]));
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+            }
+
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = node2.Id.Value,
+                AnchorOffset = 0,
+                FocusId = node3.Id.Value,
+                FocusOffset = 1
+            });
+        }
+        
+        [Test]
+        public void AddsMark_ToSelection_WhenSelectingOverNodesWithDifferentMarks_Backwards()
+        {
+            // Arrange
+            TextNode start = null!;
+            TextNode end = null!;
+            var parent = builder.Paragraph(t =>
+            {
+                start = t.Text("ab");
+                end = t.Text("cd");
+            });
+
+            start.SetMark(new Mark(MarkKey.Bold));
+            end.SetMark(new Mark(MarkKey.Italic));
+
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
+
+            // Act
+            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Toggle);
+            var result = transaction.Commit();
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            }
+
+            var node1 = (TextNode)parent.ChildAt(0)!;
+            var node2 = (TextNode)parent.ChildAt(1)!;
+            var node3 = (TextNode)parent.ChildAt(2)!;
+            var node4 = (TextNode)parent.ChildAt(3)!;
+
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(node1.TextContent, Is.EqualTo("a"));
+                Assert.That(node2.TextContent, Is.EqualTo("b"));
+                Assert.That(node3.TextContent, Is.EqualTo("c"));
+                Assert.That(node4.TextContent, Is.EqualTo("d"));
+                
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic), new Mark(MarkKey.Bold)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+            }
+            
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = node3.Id.Value,
+                AnchorOffset = 1,
+                FocusId = node2.Id.Value,
+                FocusOffset = 0,
+                Direction = SelectionDirection.Backward
+            });
+        }
+        
+        [Test]
+        public void RemovesMark_ToSelection_WhenSelectingOverNodesWithDifferentMarks()
+        {
+            // Arrange
+            TextNode start = null!;
+            TextNode end = null!;
+            var parent = builder.Paragraph(t =>
+            {
+                start = t.Text("ab");
+                end = t.Text("cd");
+            });
+
+            start.SetMark(new Mark(MarkKey.Bold));
+            end.SetMark(new Mark(MarkKey.Italic));
+
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
+
+            // Act
+            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Toggle);
+            var result = transaction.Commit();
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            }
+
+            var node1 = (TextNode)parent.ChildAt(0)!;
+            var node2 = (TextNode)parent.ChildAt(1)!;
+            var node3 = (TextNode)parent.ChildAt(2)!;
+            var node4 = (TextNode)parent.ChildAt(3)!;
+
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(node1.TextContent, Is.EqualTo("a"));
+                Assert.That(node2.TextContent, Is.EqualTo("b"));
+                Assert.That(node3.TextContent, Is.EqualTo("c"));
+                Assert.That(node4.TextContent, Is.EqualTo("d"));
+                
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node2.Marks, Is.Empty);
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+            }
+
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = node2.Id.Value,
+                AnchorOffset = 0,
+                FocusId = node3.Id.Value,
+                FocusOffset = 1
+            });
+        }
+        
+        [Test]
+        public void RemovesMark_ToSelection_WhenSelectingOverNodesWithDifferentMarks_Backwards()
+        {
+            // Arrange
+            TextNode start = null!;
+            TextNode end = null!;
+            var parent = builder.Paragraph(t =>
+            {
+                start = t.Text("ab");
+                end = t.Text("cd");
+            });
+
+            start.SetMark(new Mark(MarkKey.Bold));
+            end.SetMark(new Mark(MarkKey.Italic));
+
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
+
+            // Act
+            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Italic), UpdateMarkAction.Toggle);
+            var result = transaction.Commit();
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            }
+
+            var node1 = (TextNode)parent.ChildAt(0)!;
+            var node2 = (TextNode)parent.ChildAt(1)!;
+            var node3 = (TextNode)parent.ChildAt(2)!;
+            var node4 = (TextNode)parent.ChildAt(3)!;
+
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(node1.TextContent, Is.EqualTo("a"));
+                Assert.That(node2.TextContent, Is.EqualTo("b"));
+                Assert.That(node3.TextContent, Is.EqualTo("c"));
+                Assert.That(node4.TextContent, Is.EqualTo("d"));
+                
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node3.Marks, Is.Empty);
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+            }
+
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = node3.Id.Value,
+                AnchorOffset = 1,
+                FocusId = node2.Id.Value,
+                FocusOffset = 0,
+                Direction = SelectionDirection.Backward
+            });
+        }
     }
 
     private class AddAction : UpdateMarkHandlerTest
@@ -307,6 +525,224 @@ public class UpdateMarkHandlerTest
                 AnchorOffset = 0,
                 FocusId = end.Id.Value,
                 FocusOffset = 1
+            });
+        }
+        
+        [Test]
+        public void AddsMark_ToSelection_WhenSelectingOverNodesWithDifferentMarks()
+        {
+            // Arrange
+            TextNode start = null!;
+            TextNode end = null!;
+            var parent = builder.Paragraph(t =>
+            {
+                start = t.Text("ab");
+                end = t.Text("cd");
+            });
+
+            start.SetMark(new Mark(MarkKey.Bold));
+            end.SetMark(new Mark(MarkKey.Italic));
+
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
+
+            // Act
+            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Italic), UpdateMarkAction.Add);
+            var result = transaction.Commit();
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            }
+
+            var node1 = (TextNode)parent.ChildAt(0)!;
+            var node2 = (TextNode)parent.ChildAt(1)!;
+            var node3 = (TextNode)parent.ChildAt(2)!;
+            var node4 = (TextNode)parent.ChildAt(3)!;
+
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(node1.TextContent, Is.EqualTo("a"));
+                Assert.That(node2.TextContent, Is.EqualTo("b"));
+                Assert.That(node3.TextContent, Is.EqualTo("c"));
+                Assert.That(node4.TextContent, Is.EqualTo("d"));
+                
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold), new Mark(MarkKey.Italic)]));
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+            }
+
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = node2.Id.Value,
+                AnchorOffset = 0,
+                FocusId = node3.Id.Value,
+                FocusOffset = 1
+            });
+        }
+        
+        [Test]
+        public void AddsMark_ToSelection_WhenSelectingOverNodesWithDifferentMarks_Backwards()
+        {
+            // Arrange
+            TextNode start = null!;
+            TextNode end = null!;
+            var parent = builder.Paragraph(t =>
+            {
+                start = t.Text("ab");
+                end = t.Text("cd");
+            });
+
+            start.SetMark(new Mark(MarkKey.Bold));
+            end.SetMark(new Mark(MarkKey.Italic));
+
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
+
+            // Act
+            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Add);
+            var result = transaction.Commit();
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            }
+
+            var node1 = (TextNode)parent.ChildAt(0)!;
+            var node2 = (TextNode)parent.ChildAt(1)!;
+            var node3 = (TextNode)parent.ChildAt(2)!;
+            var node4 = (TextNode)parent.ChildAt(3)!;
+
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(node1.TextContent, Is.EqualTo("a"));
+                Assert.That(node2.TextContent, Is.EqualTo("b"));
+                Assert.That(node3.TextContent, Is.EqualTo("c"));
+                Assert.That(node4.TextContent, Is.EqualTo("d"));
+                
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic), new Mark(MarkKey.Bold)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+            }
+            
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = node3.Id.Value,
+                AnchorOffset = 1,
+                FocusId = node2.Id.Value,
+                FocusOffset = 0,
+                Direction = SelectionDirection.Backward
+            });
+        }
+        
+        [Test]
+        public void AddsMark_ToSelectionStartingWithSameMark_WhenSelectingOverNodesWithDifferentMarks()
+        {
+            // Arrange
+            TextNode start = null!;
+            TextNode end = null!;
+            var parent = builder.Paragraph(t =>
+            {
+                start = t.Text("ab");
+                end = t.Text("cd");
+            });
+
+            start.SetMark(new Mark(MarkKey.Bold));
+            end.SetMark(new Mark(MarkKey.Italic));
+
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
+
+            // Act
+            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Add);
+            var result = transaction.Commit();
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            }
+
+            var node1 = (TextNode)parent.ChildAt(0)!;
+            var node2 = (TextNode)parent.ChildAt(1)!;
+            var node3 = (TextNode)parent.ChildAt(2)!;
+            var node4 = (TextNode)parent.ChildAt(3)!;
+
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(node1.TextContent, Is.EqualTo("a"));
+                Assert.That(node2.TextContent, Is.EqualTo("b"));
+                Assert.That(node3.TextContent, Is.EqualTo("c"));
+                Assert.That(node4.TextContent, Is.EqualTo("d"));
+                
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic), new Mark(MarkKey.Bold)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+            }
+
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = node2.Id.Value,
+                AnchorOffset = 0,
+                FocusId = node3.Id.Value,
+                FocusOffset = 1
+            });
+        }
+        
+        [Test]
+        public void AddsMark_ToSelectionStartingWithSameMark_WhenSelectingOverNodesWithDifferentMarks_Backwards()
+        {
+            // Arrange
+            TextNode start = null!;
+            TextNode end = null!;
+            var parent = builder.Paragraph(t =>
+            {
+                start = t.Text("ab");
+                end = t.Text("cd");
+            });
+
+            start.SetMark(new Mark(MarkKey.Bold));
+            end.SetMark(new Mark(MarkKey.Italic));
+
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
+
+            // Act
+            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Italic), UpdateMarkAction.Add);
+            var result = transaction.Commit();
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            }
+
+            var node1 = (TextNode)parent.ChildAt(0)!;
+            var node2 = (TextNode)parent.ChildAt(1)!;
+            var node3 = (TextNode)parent.ChildAt(2)!;
+            var node4 = (TextNode)parent.ChildAt(3)!;
+
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(node1.TextContent, Is.EqualTo("a"));
+                Assert.That(node2.TextContent, Is.EqualTo("b"));
+                Assert.That(node3.TextContent, Is.EqualTo("c"));
+                Assert.That(node4.TextContent, Is.EqualTo("d"));
+                
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold), new Mark(MarkKey.Italic)]));
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+            }
+
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = node3.Id.Value,
+                AnchorOffset = 1,
+                FocusId = node2.Id.Value,
+                FocusOffset = 0,
+                Direction = SelectionDirection.Backward
             });
         }
     }
@@ -455,6 +891,224 @@ public class UpdateMarkHandlerTest
                 AnchorOffset = 0,
                 FocusId = end.Id.Value,
                 FocusOffset = 1
+            });
+        }
+        
+        [Test]
+        public void RemovesMark_ToSelection_WhenSelectingOverNodesWithDifferentMarks()
+        {
+            // Arrange
+            TextNode start = null!;
+            TextNode end = null!;
+            var parent = builder.Paragraph(t =>
+            {
+                start = t.Text("ab");
+                end = t.Text("cd");
+            });
+
+            start.SetMark(new Mark(MarkKey.Bold));
+            end.SetMark(new Mark(MarkKey.Italic));
+
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
+
+            // Act
+            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Italic), UpdateMarkAction.Remove);
+            var result = transaction.Commit();
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            }
+
+            var node1 = (TextNode)parent.ChildAt(0)!;
+            var node2 = (TextNode)parent.ChildAt(1)!;
+            var node3 = (TextNode)parent.ChildAt(2)!;
+            var node4 = (TextNode)parent.ChildAt(3)!;
+
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(node1.TextContent, Is.EqualTo("a"));
+                Assert.That(node2.TextContent, Is.EqualTo("b"));
+                Assert.That(node3.TextContent, Is.EqualTo("c"));
+                Assert.That(node4.TextContent, Is.EqualTo("d"));
+                
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node3.Marks, Is.Empty);
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+            }
+
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = node2.Id.Value,
+                AnchorOffset = 0,
+                FocusId = node3.Id.Value,
+                FocusOffset = 1
+            });
+        }
+        
+        [Test]
+        public void RemovesMark_ToSelection_WhenSelectingOverNodesWithDifferentMarks_Backwards()
+        {
+            // Arrange
+            TextNode start = null!;
+            TextNode end = null!;
+            var parent = builder.Paragraph(t =>
+            {
+                start = t.Text("ab");
+                end = t.Text("cd");
+            });
+
+            start.SetMark(new Mark(MarkKey.Bold));
+            end.SetMark(new Mark(MarkKey.Italic));
+
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
+
+            // Act
+            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Remove);
+            var result = transaction.Commit();
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            }
+
+            var node1 = (TextNode)parent.ChildAt(0)!;
+            var node2 = (TextNode)parent.ChildAt(1)!;
+            var node3 = (TextNode)parent.ChildAt(2)!;
+            var node4 = (TextNode)parent.ChildAt(3)!;
+
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(node1.TextContent, Is.EqualTo("a"));
+                Assert.That(node2.TextContent, Is.EqualTo("b"));
+                Assert.That(node3.TextContent, Is.EqualTo("c"));
+                Assert.That(node4.TextContent, Is.EqualTo("d"));
+                
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node2.Marks, Is.Empty);
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+            }
+            
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = node3.Id.Value,
+                AnchorOffset = 1,
+                FocusId = node2.Id.Value,
+                FocusOffset = 0,
+                Direction = SelectionDirection.Backward
+            });
+        }
+        
+        [Test]
+        public void RemovesMark_ToSelectionStartingWithSameMark_WhenSelectingOverNodesWithDifferentMarks()
+        {
+            // Arrange
+            TextNode start = null!;
+            TextNode end = null!;
+            var parent = builder.Paragraph(t =>
+            {
+                start = t.Text("ab");
+                end = t.Text("cd");
+            });
+
+            start.SetMark(new Mark(MarkKey.Bold));
+            end.SetMark(new Mark(MarkKey.Italic));
+
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
+
+            // Act
+            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Remove);
+            var result = transaction.Commit();
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            }
+
+            var node1 = (TextNode)parent.ChildAt(0)!;
+            var node2 = (TextNode)parent.ChildAt(1)!;
+            var node3 = (TextNode)parent.ChildAt(2)!;
+            var node4 = (TextNode)parent.ChildAt(3)!;
+
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(node1.TextContent, Is.EqualTo("a"));
+                Assert.That(node2.TextContent, Is.EqualTo("b"));
+                Assert.That(node3.TextContent, Is.EqualTo("c"));
+                Assert.That(node4.TextContent, Is.EqualTo("d"));
+                
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node2.Marks, Is.Empty);
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+            }
+
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = node2.Id.Value,
+                AnchorOffset = 0,
+                FocusId = node3.Id.Value,
+                FocusOffset = 1
+            });
+        }
+        
+        [Test]
+        public void RemovesMark_ToSelectionStartingWithSameMark_WhenSelectingOverNodesWithDifferentMarks_Backwards()
+        {
+            // Arrange
+            TextNode start = null!;
+            TextNode end = null!;
+            var parent = builder.Paragraph(t =>
+            {
+                start = t.Text("ab");
+                end = t.Text("cd");
+            });
+
+            start.SetMark(new Mark(MarkKey.Bold));
+            end.SetMark(new Mark(MarkKey.Italic));
+
+            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
+
+            // Act
+            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Italic), UpdateMarkAction.Remove);
+            var result = transaction.Commit();
+
+            // Assert
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
+            }
+
+            var node1 = (TextNode)parent.ChildAt(0)!;
+            var node2 = (TextNode)parent.ChildAt(1)!;
+            var node3 = (TextNode)parent.ChildAt(2)!;
+            var node4 = (TextNode)parent.ChildAt(3)!;
+
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(node1.TextContent, Is.EqualTo("a"));
+                Assert.That(node2.TextContent, Is.EqualTo("b"));
+                Assert.That(node3.TextContent, Is.EqualTo("c"));
+                Assert.That(node4.TextContent, Is.EqualTo("d"));
+                
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node3.Marks, Is.Empty);
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+            }
+
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+            {
+                AnchorId = node3.Id.Value,
+                AnchorOffset = 1,
+                FocusId = node2.Id.Value,
+                FocusOffset = 0,
+                Direction = SelectionDirection.Backward
             });
         }
     }

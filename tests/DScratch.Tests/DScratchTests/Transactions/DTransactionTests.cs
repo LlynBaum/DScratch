@@ -188,7 +188,8 @@ public class DTransactionTests
         AssertHelper.ThatStepsEqualTo(transactionResult.Steps, expected: [
             Is.TypeOf<StepDiff.DeleteTextDiff>(),
             Is.TypeOf<StepDiff.InsertElementDiff>(),
-            Is.TypeOf<StepDiff.InsertTextDiff>()
+            Is.TypeOf<StepDiff.InsertTextDiff>(),
+            Is.TypeOf<StepDiff.UpdateMarksDiff>()
         ]);
 
         using (Assert.EnterMultipleScope())

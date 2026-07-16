@@ -76,12 +76,13 @@ public class NodeRenderExtensionsTests
             var result = paragraph.ToInsertSteps();
             
             // Assert
-            Assert.That(result, Has.Length.EqualTo(3));
+            Assert.That(result, Has.Length.EqualTo(4));
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(result[0], Is.TypeOf<StepDiff.InsertElementDiff>());
                 Assert.That(result[1], Is.TypeOf<StepDiff.InsertElementDiff>());
                 Assert.That(result[2], Is.TypeOf<StepDiff.InsertTextDiff>());
+                Assert.That(result[3], Is.TypeOf<StepDiff.UpdateMarksDiff>());
             }
             
             using (Assert.EnterMultipleScope())
@@ -102,6 +103,10 @@ public class NodeRenderExtensionsTests
                 Assert.That(insertText.ParentId, Is.EqualTo("Test-3"));
                 Assert.That(insertText.Offset, Is.EqualTo(0));
                 Assert.That(insertText.Text, Is.EqualTo("a"));
+                
+                var updateMarkLeftText = (StepDiff.UpdateMarksDiff)result[3];
+                Assert.That(updateMarkLeftText.NodeId, Is.EqualTo("Test-3"));
+                Assert.That(updateMarkLeftText.Marks, Is.Empty);
             }
         }
         
@@ -137,21 +142,24 @@ public class NodeRenderExtensionsTests
             var result = paragraph.ToInsertSteps();
 
             // Assert
-            Assert.That(result, Has.Length.EqualTo(8));
+            Assert.That(result, Has.Length.EqualTo(11));
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(result[0], Is.TypeOf<StepDiff.InsertElementDiff>());
                 
                 Assert.That(result[1], Is.TypeOf<StepDiff.InsertElementDiff>());
                 Assert.That(result[2], Is.TypeOf<StepDiff.InsertTextDiff>());
-                
-                Assert.That(result[3], Is.TypeOf<StepDiff.InsertElementDiff>());
+                Assert.That(result[3], Is.TypeOf<StepDiff.UpdateMarksDiff>());
                 
                 Assert.That(result[4], Is.TypeOf<StepDiff.InsertElementDiff>());
-                Assert.That(result[5], Is.TypeOf<StepDiff.InsertTextDiff>());
                 
-                Assert.That(result[6], Is.TypeOf<StepDiff.InsertElementDiff>());
-                Assert.That(result[7], Is.TypeOf<StepDiff.InsertTextDiff>());
+                Assert.That(result[5], Is.TypeOf<StepDiff.InsertElementDiff>());
+                Assert.That(result[6], Is.TypeOf<StepDiff.InsertTextDiff>());
+                Assert.That(result[7], Is.TypeOf<StepDiff.UpdateMarksDiff>());
+                
+                Assert.That(result[8], Is.TypeOf<StepDiff.InsertElementDiff>());
+                Assert.That(result[9], Is.TypeOf<StepDiff.InsertTextDiff>());
+                Assert.That(result[10], Is.TypeOf<StepDiff.UpdateMarksDiff>());
             }
             
             using (Assert.EnterMultipleScope())
@@ -171,30 +179,42 @@ public class NodeRenderExtensionsTests
                 Assert.That(insertLeftText.Offset, Is.EqualTo(0));
                 Assert.That(insertLeftText.Text, Is.EqualTo("a"));
                 
-                var insertTestElement = (StepDiff.InsertElementDiff)result[3];
+                var updateMarkLeftText = (StepDiff.UpdateMarksDiff)result[3];
+                Assert.That(updateMarkLeftText.NodeId, Is.EqualTo("Test-3"));
+                Assert.That(updateMarkLeftText.Marks, Is.Empty);
+
+                var insertTestElement = (StepDiff.InsertElementDiff)result[4];
                 Assert.That(insertTestElement.ParentId, Is.EqualTo("Test-2"));
                 Assert.That(insertTestElement.PreviousSiblingId, Is.EqualTo("Test-3"));
                 Assert.That(insertTestElement.NewNodeId, Is.EqualTo("Test-4"));
                 
-                var innerTextSpan = (StepDiff.InsertElementDiff)result[4];
+                var innerTextSpan = (StepDiff.InsertElementDiff)result[5];
                 Assert.That(innerTextSpan.ParentId, Is.EqualTo("Test-4"));
                 Assert.That(innerTextSpan.PreviousSiblingId, Is.Null);
                 Assert.That(innerTextSpan.NewNodeId, Is.EqualTo("Test-5"));
                 
-                var insertText = (StepDiff.InsertTextDiff)result[5];
+                var insertText = (StepDiff.InsertTextDiff)result[6];
                 Assert.That(insertText.ParentId, Is.EqualTo("Test-5"));
                 Assert.That(insertText.Offset, Is.EqualTo(0));
                 Assert.That(insertText.Text, Is.EqualTo("b"));
                 
-                var insertRightTextSpan = (StepDiff.InsertElementDiff)result[6];
+                var updateMarkText = (StepDiff.UpdateMarksDiff)result[7];
+                Assert.That(updateMarkText.NodeId, Is.EqualTo("Test-5"));
+                Assert.That(updateMarkText.Marks, Is.Empty);
+                
+                var insertRightTextSpan = (StepDiff.InsertElementDiff)result[8];
                 Assert.That(insertRightTextSpan.ParentId, Is.EqualTo("Test-2"));
                 Assert.That(insertRightTextSpan.PreviousSiblingId, Is.EqualTo("Test-4"));
                 Assert.That(insertRightTextSpan.NewNodeId, Is.EqualTo("Test-7"));
                 
-                var insertRightText = (StepDiff.InsertTextDiff)result[7];
+                var insertRightText = (StepDiff.InsertTextDiff)result[9];
                 Assert.That(insertRightText.ParentId, Is.EqualTo("Test-7"));
                 Assert.That(insertRightText.Offset, Is.EqualTo(0));
                 Assert.That(insertRightText.Text, Is.EqualTo("c"));
+                
+                var updateMarkRightText = (StepDiff.UpdateMarksDiff)result[10];
+                Assert.That(updateMarkRightText.NodeId, Is.EqualTo("Test-7"));
+                Assert.That(updateMarkRightText.Marks, Is.Empty);
             }
         }
         
