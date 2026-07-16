@@ -172,7 +172,7 @@ public class MarksTests : PlaywrightTestBase
         var selection = await GetCursorPositionAsync();
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(selection.AnchorId, Is.EqualTo("Darki-7"));
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-8"));
             Assert.That(selection.AnchorOffset, Is.EqualTo(0));
             Assert.That(selection.FocusId, Is.EqualTo("Darki-6"));
             Assert.That(selection.FocusOffset, Is.EqualTo(1));
