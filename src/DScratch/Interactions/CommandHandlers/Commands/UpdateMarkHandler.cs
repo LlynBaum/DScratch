@@ -17,9 +17,8 @@ public static class UpdateMarkHandler
         switch (action)
         {
             case UpdateMarkAction.Toggle:
-                var (originId, _) = selectionInfo.GetConvertedNodeIds();
-                var origin = (TextNode)transaction.FindNode(originId)!;
-                var hasMark = origin.Marks.Contains(mark);
+                var anchor = (TextNode)transaction.FindNode(selectionInfo.AnchorNodeId)!;
+                var hasMark = anchor.Marks.Contains(mark);
                 foreach (var selectedNode in selectedNodes)
                 {
                     if (hasMark)
@@ -50,13 +49,14 @@ public static class UpdateMarkHandler
 
         if (selectedNodes.Any())
         {
+            var isBackward = selectionInfo.Direction == SelectionDirection.Backward;
             transaction.AddCursorPosition(new SelectionInfo
             {
                 Direction = selectionInfo.Direction,
-                AnchorId = selectedNodes.First().Id.Value,
-                AnchorOffset = 0,
-                FocusId = selectedNodes.Last().Id.Value,
-                FocusOffset = selectedNodes.Last().TextContent.Length,
+                AnchorId = isBackward ? selectedNodes.Last().Id.Value : selectedNodes.First().Id.Value,
+                AnchorOffset = isBackward ? selectedNodes.Last().TextContent.Length : 0,
+                FocusId = isBackward ? selectedNodes.First().Id.Value : selectedNodes.Last().Id.Value,
+                FocusOffset = isBackward ? 0 : selectedNodes.Last().TextContent.Length,
             });
         }
     }
