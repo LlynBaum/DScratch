@@ -1,3 +1,4 @@
+using DScratch.Client.BrowserInteractions.Metadata;
 using DScratch.Interactions;
 using DScratch.Transactions;
 using Microsoft.JSInterop;
@@ -19,5 +20,10 @@ public sealed class DJsInvoker(IJSRuntime jsRuntime)
     public async Task<SelectionInfo> GetSelectionAsync()
     {
         return await jsRuntime.InvokeAsync<SelectionInfo>(ScriptConstants.GetSelectionJs);
+    }
+
+    public async Task AddMetadataAsync(MetadataEntry metadata)
+    {
+        await jsRuntime.InvokeVoidAsync(ScriptConstants.AddMetadata, metadata);
     }
 }
