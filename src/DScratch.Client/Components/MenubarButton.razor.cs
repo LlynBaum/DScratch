@@ -10,4 +10,7 @@ public partial class MenubarButton : ComponentBase
     
     [Parameter]
     public EventCallback OnClick { get; set; }
+
+    [Parameter]
+    public bool IsActive { get; set; }
 }

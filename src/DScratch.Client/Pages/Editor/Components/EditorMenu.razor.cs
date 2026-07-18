@@ -55,6 +55,7 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
             IsItalicActive = userStateService.CheckMark(MarkKey.Italic, out _),
             ActiveColor = userStateService.CheckMark(MarkKey.Color, out var color) ? color : DefaultTextColor,
         };
+        StateHasChanged();
     }
 
     public void Dispose()

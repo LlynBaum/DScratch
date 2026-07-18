@@ -3,8 +3,8 @@
 @rendermode InteractiveWebAssembly
 
 <nav class="menu">
-    <MenubarButton OnClick="@BoldAsync">Bold</MenubarButton>
-    <MenubarButton OnClick="@ItalicAsync">Italic</MenubarButton>
+    <MenubarButton OnClick="@BoldAsync" IsActive="@viewModel.IsBoldActive">Bold</MenubarButton>
+    <MenubarButton OnClick="@ItalicAsync" IsActive="@viewModel.IsItalicActive">Italic</MenubarButton>
     
     <MenuDivider />
     

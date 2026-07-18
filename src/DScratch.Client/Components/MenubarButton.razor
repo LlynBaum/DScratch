@@ -1,4 +1,5 @@
 <button
+    class="@(IsActive ? "active" : "")"
     @onmousedown:preventDefault
     @onclick="OnClick">
     @ChildContent
