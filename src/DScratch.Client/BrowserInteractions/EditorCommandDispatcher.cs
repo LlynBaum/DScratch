@@ -48,13 +48,18 @@ public class EditorCommandDispatcher(
 
         if (selectionInfo.Direction is SelectionDirection.None)
         {
+            if(action is UpdateMarkAction.Remove) return; // TODO: delete it in JS
             var node = transaction.FindNode(selectionInfo.AnchorNodeId);
-            var metadataAction = action is UpdateMarkAction.Remove ? "remove" : "add";
-            var data = node is IBlockElement
-                ? new MetadataEntry(new BlockMetadata(node.Id, mark))
-                : new MetadataEntry(new PositionMetadata(mark));
-            
-            await jsInvoker.UpdateMetadataAsync(data, metadataAction);
+
+            if (node is IBlockElement)
+            {
+                await jsInvoker.AddMetadataAsync(new MetadataEntry(new BlockMetadata(node.Id, mark)));
+            }
+            else
+            {
+                await jsInvoker.AddMetadataAsync(new MetadataEntry(new PositionMetadata(mark)));
+            }
+
             return;
         }
 

@@ -1,7 +1,7 @@
 import { applyTransaction, TransactionResult } from "./transaction";
 import { handleInput } from "./inputs";
 import { getSelection, SelectionInfo } from "./selection";
-import { initMetadataController, metadataController, MetadataEntry} from "./metatada";
+import {initMetadataController, metadataController, MetadataEntry} from "./metatada";
 
 let bridgeReference: any = null;
 
@@ -9,7 +9,7 @@ interface Editor {
     initialize: (dotNetRef: any) => void;
     applyTransaction: (transaction: TransactionResult) => void;
     getSelection: () => SelectionInfo;
-    addMetadata: (metadata: MetadataEntry, action: string) => void;
+    addMetadata: (metadata: MetadataEntry) => void;
     node: HTMLElement | null;
 }
 
