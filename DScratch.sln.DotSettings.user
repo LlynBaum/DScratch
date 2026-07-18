@@ -49,6 +49,7 @@
     &lt;TestId&gt;NUnit3x::62FDA985-507E-376F-F3D6-191265DD9EC2::net10.0::DScratch.Tests.DScratchTests.Interactions.EventHandlers.InsertTextHandlerTests+Marks.PendingMarks_AreAppliedToText&lt;/TestId&gt;
     &lt;TestId&gt;NUnit3x::62FDA985-507E-376F-F3D6-191265DD9EC2::net10.0::DScratch.Tests.DScratchTests.Interactions.EventHandlers.InsertTextHandlerTests+Marks.PendingMarks_AreAppliedAlongsideMarksFromOrigin&lt;/TestId&gt;
     &lt;TestId&gt;NUnit3x::62FDA985-507E-376F-F3D6-191265DD9EC2::net10.0::DScratch.Tests.DScratchTests.Interactions.EventHandlers.InsertTextHandlerTests+Marks.PendingMarks_OverridesMarksFromOriginWithSameKey&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::62FDA985-507E-376F-F3D6-191265DD9EC2::net10.0::DScratch.Tests.DScratchTests.Interactions.UserStates.UserStateServiceTest&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	

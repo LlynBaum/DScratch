@@ -6,9 +6,12 @@ namespace DScratch.Interactions.UserStates;
 public class UserStateService : IUserStateService
 {
     private readonly HashSet<Mark> pendingMarks = new HashSet<Mark>(new Mark.MarkTable());
+    private HashSet<Mark> activeMarks = new HashSet<Mark>(new Mark.MarkTable());
+
+    public IReadOnlySet<Mark> PendingMarks => pendingMarks;
+    public IReadOnlySet<Mark> ActiveMarks => activeMarks;
 
     public event Action? OnStateChange;
-    public IReadOnlySet<Mark> ActiveMarks { get; private set; } = new HashSet<Mark>();
 
     public void AddPendingMark(Mark mark)
     {
@@ -21,13 +24,26 @@ public class UserStateService : IUserStateService
         pendingMarks.Remove(mark);
     }
 
-    public void DiscardPending()
+    public bool CheckMark(MarkKey key, out string? value)
     {
-        pendingMarks.Clear();
+        var mark = new Mark(key);
+        if (pendingMarks.TryGetValue(mark, out var v))
+        {
+            value = v.Value;
+            return true;
+        }
+        if (activeMarks.TryGetValue(mark, out v))
+        {
+            value = v.Value;
+            return true;
+        }
+
+        value = null;
+        return false;
     }
 
-    public IReadOnlySet<Mark> PopPending()
-    {
+    public IReadOnlySet<Mark> PopPending()      
+    {                                       
         var result = pendingMarks.ToHashSet();
         pendingMarks.Clear();
         return result;
@@ -35,8 +51,8 @@ public class UserStateService : IUserStateService
 
     public void UpdateState(DNode? selectedNode)
     {
-        DiscardPending();
-        ActiveMarks = selectedNode is TextNode textNode ? textNode.Marks : new HashSet<Mark>();
+        pendingMarks.Clear();
+        activeMarks = selectedNode is TextNode textNode ? textNode.Marks.ToHashSet() : [];
         OnStateChange?.Invoke();
     }
 }

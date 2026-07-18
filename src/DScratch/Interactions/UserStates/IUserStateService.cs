@@ -7,13 +7,11 @@ public interface IUserStateService
 {
     event Action OnStateChange;
     
-    IReadOnlySet<Mark> ActiveMarks { get; }
-    
     void AddPendingMark(Mark mark);
     
     void RemovePendingMark(Mark mark);
 
-    void DiscardPending();
+    bool CheckMark(MarkKey key, out string? value);
 
     IReadOnlySet<Mark> PopPending();
 
