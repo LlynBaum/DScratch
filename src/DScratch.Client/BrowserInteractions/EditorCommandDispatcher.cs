@@ -42,14 +42,7 @@ public class EditorCommandDispatcher(
 
         if (selectionInfo.Direction is SelectionDirection.None)
         {
-            if (action is UpdateMarkAction.Remove)
-            {
-                userStateService.RemovePendingMark(mark);
-            }
-            else
-            {
-                userStateService.AddPendingMark(mark);
-            }
+            UpdatePendingMarks(mark, action, selectionInfo);
             return;
         }
         
@@ -70,5 +63,32 @@ public class EditorCommandDispatcher(
             Data = null,
             Selection = selectionInfo
         }));
+    }
+
+    private void UpdatePendingMarks(Mark mark, UpdateMarkAction action, SelectionInfo selectionInfo)
+    {
+        switch (action)
+        {
+            case UpdateMarkAction.Remove:
+                userStateService.RemovePendingMark(mark);
+                break;
+            case UpdateMarkAction.Add:
+                userStateService.AddPendingMark(mark);
+                break;
+            case UpdateMarkAction.Toggle:
+                if (userStateService.CheckMark(mark.Key, out _))
+                {
+                    userStateService.RemovePendingMark(mark);
+                }
+                else
+                {
+                    userStateService.AddPendingMark(mark);
+                }
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(action), action, null);
+        }
+
+        editorDebugService.NotifySelectionChange(selectionInfo);
     }
 }

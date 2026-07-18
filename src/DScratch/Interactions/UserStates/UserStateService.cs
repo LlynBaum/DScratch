@@ -22,6 +22,7 @@ public class UserStateService : IUserStateService
     public void RemovePendingMark(Mark mark)
     {
         pendingMarks.Remove(mark);
+        // TODO: if mark is in active marks present, it should be shadowed by something like "removed marks", so when typing the Mark is not applied.
     }
 
     public bool CheckMark(MarkKey key, out string? value)

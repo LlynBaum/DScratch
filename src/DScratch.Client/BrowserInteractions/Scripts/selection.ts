@@ -27,7 +27,7 @@ let snapshot: SelectionSnapshot | null = null;
 let currentSelection: CurrentSelectionInfo | null = null;
 
 export function registerSelection() {
-    window.editor.node?.addEventListener("selectionchange", handleSelectionChange);
+    document.addEventListener("selectionchange", handleSelectionChange);
 }
 
 export function snapshotSelection(selectionInfo: SelectionInfo) {
