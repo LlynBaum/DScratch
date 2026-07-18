@@ -12,17 +12,17 @@
     box-sizing: border-box;
     flex-grow: 1;
     width: 100%;
-    background-color: #f1f5f9;
+    background-color: var(--editor-bg-app);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .editor-menu {
-    height: 48px;
+    height: var(--editor-menu-height);
     width: 100%;
-    background-color: #ffffff;
-    border-bottom: 1px solid #cbd5e1;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    background-color: var(--editor-bg-surface);
+    border-bottom: 1px solid var(--editor-border-muted);
+    box-shadow: var(--editor-shadow-md);
     z-index: 1; /* Ensure shadow is visible over doc-editor */
 }

@@ -1,0 +1,69 @@
+:root {
+    /* Color Palette - Neutrals (Slate/Zinc) */
+    --editor-color-neutral-50: #f8fafc;
+    --editor-color-neutral-100: #f1f5f9;
+    --editor-color-neutral-200: #e2e8f0;
+    --editor-color-neutral-300: #cbd5e1;
+    --editor-color-neutral-400: #94a3b8;
+    --editor-color-neutral-500: #64748b;
+    --editor-color-neutral-600: #475569;
+    --editor-color-neutral-700: #334155;
+    --editor-color-neutral-800: #1e293b;
+    --editor-color-neutral-900: #0f172a;
+
+    /* Color Palette - Accents & States */
+    --editor-color-primary-light: #eff6ff;
+    --editor-color-primary: #2563eb;
+    --editor-color-primary-hover: #1d4ed8;
+    
+    --editor-color-success: #10b981;
+    --editor-color-success-light: #ecfdf5;
+    --editor-color-success-dark: #047857;
+
+    --editor-color-danger: #ef4444;
+    --editor-color-danger-light: #fef2f2;
+    --editor-color-danger-border: #fca5a5;
+    --editor-color-danger-dark: #dc2626;
+
+    /* Semantic Mappings for Editor UI */
+    --editor-bg-app: var(--editor-color-neutral-100);
+    --editor-bg-surface: #ffffff;
+    --editor-bg-hover: var(--editor-color-neutral-100);
+    --editor-bg-active: var(--editor-color-neutral-200);
+    --editor-border-color: var(--editor-color-neutral-200);
+    --editor-border-muted: var(--editor-color-neutral-300);
+    --editor-border-focus: var(--editor-color-neutral-500);
+
+    --editor-text-primary: var(--editor-color-neutral-900);
+    --editor-text-secondary: var(--editor-color-neutral-700);
+    --editor-text-muted: var(--editor-color-neutral-500);
+
+    /* Layout & Sizing */
+    --editor-menu-height: 48px;
+    --editor-spacing-xs: 4px;
+    --editor-spacing-sm: 8px;
+    --editor-spacing-md: 12px;
+    --editor-spacing-lg: 16px;
+    --editor-spacing-xl: 24px;
+
+    /* Typography */
+    --editor-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --editor-font-size-xs: 11px;
+    --editor-font-size-sm: 13px;
+    --editor-font-size-base: 14px;
+    
+    /* Borders & Shadows */
+    --editor-radius-sm: 4px;
+    --editor-radius-md: 6px;
+    --editor-radius-lg: 8px;
+    --editor-radius-circle: 50%;
+    
+    --editor-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --editor-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    --editor-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --editor-shadow-drawer: -4px 0 20px rgba(0, 0, 0, 0.08);
+
+    /* Transitions */
+    --editor-transition-fast: all 0.12s ease-in-out;
+    --editor-transition-normal: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}

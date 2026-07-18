@@ -23,20 +23,18 @@ When asked to create a new debugging panel or visualizer:
 
 ## 2. UI Styling & Theme Guidelines
 When designing or styling any component:
-*   **Reference Baseline**: Align styles with the clean, minimalist look of the document editor (refer to [DocumentEditor.razor.css](file:///home/darki/Developement/DScratch/src/DScratch.Client/Pages/Editor/Components/DocumentEditor.razor.css) and [EditorMenu.razor.css](file:///home/darki/Developement/DScratch/src/DScratch.Client/Pages/Editor/Components/EditorMenu.razor.css)).
-*   **CSS Isolation**: Prefer CSS isolation via `.razor.css` files instead of global stylesheets or inline styles.
-*   **Color Palette**: Use the neutral slate and cool gray palette:
-    *   Backgrounds: `#ffffff` (white), `#f8fafc` (slate-50), `#f1f5f9` (slate-100), `#e2e8f0` (slate-200).
-    *   Borders: `#cbd5e1` (slate-300), `#94a3b8` (slate-400).
-    *   Text: `#0f172a` (slate-900 / primary), `#334155` (slate-700 / secondary), `#64748b` (slate-500 / muted).
-    *   Accents: `#2563eb` (blue-600 / primary active), `#10b981` (emerald-500 / success state).
-*   **Typography**:
-    ```css
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    ```
-*   **Interactive States**: Add smooth transitions and subtle hover/active offsets:
-    ```css
-    transition: all 0.12s ease-in-out;
-    ```
-    *   Hover: Shift background slightly darker (e.g. white to `#f1f5f9`), borders to `#94a3b8`, and text to `#0f172a`.
-    *   Active/Pressed: Shift background to `#e2e8f0` and remove shadow offset.
+*   **Strict Separation of Concerns**: 
+    *   **Document Content styling** is scoped via [document-styles.css](file:///home/darki/Developement/DScratch/src/DScratch.Client/wwwroot/document-styles.css) and [document-tokens.css](file:///home/darki/Developement/DScratch/src/DScratch.Client/wwwroot/document-tokens.css).
+    *   **Editor UI styling** must ONLY use design tokens from [editor-tokens.css](file:///home/darki/Developement/DScratch/src/DScratch.Client/wwwroot/editor-tokens.css).
+*   **CSS Isolation**: Use component CSS isolation via `.razor.css` files instead of global stylesheets or inline styles.
+*   **Use Design Tokens (CSS Variables)**: Hardcoded hex colors, padding/margin dimensions, transitions, or typography definitions are forbidden in component `.razor.css` files. Always reference the variables from `editor-tokens.css`:
+    *   Backgrounds: `var(--editor-bg-app)`, `var(--editor-bg-surface)`, `var(--editor-bg-hover)`, `var(--editor-bg-active)`.
+    *   Borders: `var(--editor-border-color)`, `var(--editor-border-muted)`, `var(--editor-border-focus)`.
+    *   Text: `var(--editor-text-primary)`, `var(--editor-text-secondary)`, `var(--editor-text-muted)`.
+    *   Accents/States: `var(--editor-color-primary)`, `var(--editor-color-success)`, `var(--editor-color-danger)`.
+    *   Typography: `var(--editor-font-family)`, font sizes like `var(--editor-font-size-sm)`.
+    *   Spacing: `var(--editor-spacing-sm)`, `var(--editor-spacing-md)`, etc.
+*   **Interactive States**: Add smooth transitions and subtle hover/active states utilizing variables:
+    *   Transitions: `transition: var(--editor-transition-fast);`.
+    *   Hover: Use `var(--editor-bg-hover)`, border `var(--editor-border-focus)`, text `var(--editor-text-primary)`.
+    *   Active: Use `var(--editor-bg-active)`.

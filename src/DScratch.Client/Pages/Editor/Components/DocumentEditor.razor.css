@@ -1,9 +1,9 @@
 .paper {
-    background-color: white;
+    background-color: var(--editor-bg-surface);
     height: 80%;
     width: min-content;
     aspect-ratio: 210 / 297; /* A4 Aspect Ratio */
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--editor-border-color);
 }
 
 .paper > div {
