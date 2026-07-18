@@ -1,6 +1,7 @@
 using DScratch.Interactions;
 using DScratch.Interactions.CommandHandlers;
 using DScratch.Interactions.CommandHandlers.Commands;
+using DScratch.Interactions.UserStates;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
 using DScratch.Tests.Helpers.TestNodes;
@@ -20,7 +21,7 @@ public class ChangeBlockTypeHandlerTests
         transaction = new DTransaction(
             document: builder.CreateDocument(), 
             nodeFactory: new DNodeFactory(builder.IdGenerator),
-            nodeIdGenerator: builder.IdGenerator, 
+            userStateService: new UserStateService(), 
             disableCleanUp: true);
     }
 
@@ -48,7 +49,7 @@ public class ChangeBlockTypeHandlerTests
         
         // Assert
         Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(3));
-        var newBlockNode = transaction.FindNode(blockNode.Id);
+        var newBlockNode = transaction.Document.FindNode(blockNode.Id);
         Assert.That(newBlockNode, Is.TypeOf<ParagraphNode>());
         
         using (Assert.EnterMultipleScope())

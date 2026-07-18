@@ -1,6 +1,7 @@
 using DScratch.Interactions;
 using DScratch.Interactions.EventHandlers.Common;
 using DScratch.Interactions.EventHandlers.Models;
+using DScratch.Interactions.UserStates;
 using DScratch.Nodes;
 using DScratch.Tests.DScratchTests.Interactions.Helpers;
 using DScratch.Tests.Helpers;
@@ -18,7 +19,7 @@ public class EventWithSelectionBaseTests
     public void SetUp()
     {
         builder = new TreeBuilder();
-        testee = new Testee(new DScratchService(builder.CreateDocument(), new DNodeFactory(builder.IdGenerator), builder.IdGenerator));
+        testee = new Testee(new DScratchService(builder.CreateDocument(), new DNodeFactory(builder.IdGenerator), new UserStateService()));
     }
 
     [Test]

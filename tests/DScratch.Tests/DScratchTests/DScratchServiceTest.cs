@@ -12,7 +12,11 @@ public class DScratchServiceTest
     {
         // Arrange
         var transactionMock = new Mock<ITransaction>();
-        var service = new DScratchService(Mock.Of<INodeFactory>(), Mock.Of<IUserStateService>());
+        var nodeFactory = new DNodeFactory(new TestNodeIdGenerator());
+        var service = new DScratchService(nodeFactory, Mock.Of<IUserStateService>())
+        {
+            DisableCleanUp = true
+        };
 
         transactionMock.Setup(t => t.Commit()).Returns(new TransactionResult([new TestStepDiff()]));
         

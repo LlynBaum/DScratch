@@ -1,5 +1,6 @@
 using DScratch.Interactions;
 using DScratch.Interactions.EventHandlers.Events;
+using DScratch.Interactions.UserStates;
 using DScratch.Nodes;
 using DScratch.Nodes.Marks;
 using DScratch.Tests.DScratchTests.Interactions.Helpers;
@@ -10,21 +11,21 @@ namespace DScratch.Tests.DScratchTests.Interactions.EventHandlers;
 [TestFixture]
 public class InsertTextHandlerTests
 {
-    private DScratchDocument document = null!;
-    private IDScratchService service;
-
+    private TreeBuilder builder;
     private InsertTextHandler handler;
     private TestNodeIdGenerator idGenerator;
-
-    private TreeBuilder builder;
+    private UserStateService userStateService;
 
     [SetUp]
     public void SetUp()
     {
         idGenerator = new TestNodeIdGenerator();
         builder = new TreeBuilder(idGenerator);
-        document = builder.CreateDocument();
-        service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator) { DisableCleanUp = true };
+        userStateService = new UserStateService();
+        
+        var document = builder.CreateDocument();
+        var service = new DScratchService(document, new DNodeFactory(idGenerator), userStateService) { DisableCleanUp = true };
+        
         handler = new InsertTextHandler(service);
     }
 

@@ -1,5 +1,6 @@
 using DScratch.Interactions;
 using DScratch.Interactions.EventHandlers.Common;
+using DScratch.Interactions.UserStates;
 using DScratch.Nodes;
 using DScratch.Tests.DScratchTests.Interactions.Helpers;
 using DScratch.Tests.Helpers;
@@ -19,7 +20,7 @@ public class DeleteSelectionTests
         transaction = new DTransaction(
             document: builder.CreateDocument(), 
             nodeFactory: new DNodeFactory(builder.IdGenerator),
-            nodeIdGenerator: builder.IdGenerator, 
+            userStateService: new UserStateService(), 
             disableCleanUp: true);
     }
 

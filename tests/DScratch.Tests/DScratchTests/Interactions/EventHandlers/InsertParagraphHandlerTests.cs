@@ -1,5 +1,6 @@
 using DScratch.Interactions;
 using DScratch.Interactions.EventHandlers.Events;
+using DScratch.Interactions.UserStates;
 using DScratch.Nodes;
 using DScratch.Tests.DScratchTests.Interactions.Helpers;
 using DScratch.Tests.Helpers;
@@ -23,7 +24,7 @@ public class InsertParagraphHandlerTests
         idGenerator = new TestNodeIdGenerator();
         builder = new TreeBuilder(idGenerator);
         document = builder.CreateDocument();
-        service = new DScratchService(document, new DNodeFactory(idGenerator), idGenerator) { DisableCleanUp = true };
+        service = new DScratchService(document, new DNodeFactory(idGenerator), new UserStateService()) { DisableCleanUp = true };
         handler = new InsertParagraphHandler(service);
     }
 

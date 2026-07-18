@@ -1,5 +1,6 @@
 using DScratch.Interactions;
 using DScratch.Interactions.CommandHandlers.Commands;
+using DScratch.Interactions.UserStates;
 using DScratch.Nodes;
 using DScratch.Nodes.Marks;
 using DScratch.Tests.DScratchTests.Interactions.Helpers;
@@ -21,7 +22,7 @@ public class UpdateMarkHandlerTest
         transaction = new DTransaction(
             document: builder.CreateDocument(), 
             nodeFactory: new DNodeFactory(builder.IdGenerator),
-            nodeIdGenerator: builder.IdGenerator, 
+            userStateService: new UserStateService(), 
             disableCleanUp: true);
     }
 

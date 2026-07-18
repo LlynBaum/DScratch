@@ -9,12 +9,14 @@
   - [ ] Pending Marks
   - [ ] Persist pending Marks for empty blocks
   - [ ] carry over mark to new block
+- [ ] MenuBar shows active marks
+  - Also add this to the debug viewer.
 - [ ] Inline Elements
   - For now just Links 
   - Later maybe like Chapter References and co.
 - [ ] Shortcut Keys
   - Keybinds like CTRL + B for Bold
-- [ ] History with Undo and Redu features
+- [ ] History with Undo and Redo features
 - [ ] Auto Heading Numbering
   - This needs support for read-only text that is being displayed
 - [ ] Pages
