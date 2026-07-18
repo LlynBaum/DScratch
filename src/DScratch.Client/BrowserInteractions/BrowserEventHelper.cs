@@ -1,16 +1,18 @@
 using DScratch.Client.Services;
 using DScratch.Interactions;
 using DScratch.Interactions.EventHandlers;
+using DScratch.Interactions.UserStates;
 using Microsoft.JSInterop;
 
 namespace DScratch.Client.BrowserInteractions;
 
-public class InputEventHelper(
+public class BrowserEventHelper(
     DJsInvoker jsInvoker, 
     IDScratchService dScratchService,
+    IUserStateService userStateService,
     EditorDebugService editorDebugService,
     IServiceProvider serviceProvider, 
-    ILogger<InputEventHelper> logger)
+    ILogger<BrowserEventHelper> logger)
 {
     [JSInvokable]
     public async Task OnKeyPressCallbackAsync(KeyPressInfo keyPressInfo)
@@ -43,5 +45,12 @@ public class InputEventHelper(
         {
             logger.LogWarning("No handler registered for input type: {InputType}", keyPressInfo.InputType);
         }
+    }
+
+    [JSInvokable]
+    public void OnSelectionChange(SelectionInfo selectionInfo)
+    {
+        var node = dScratchService.Document.FindNode(selectionInfo.AnchorNodeId);
+        userStateService.UpdateState(node);
     }
 }

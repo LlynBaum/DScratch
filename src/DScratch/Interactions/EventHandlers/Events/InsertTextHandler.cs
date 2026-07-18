@@ -1,6 +1,7 @@
 using DScratch.Interactions.EventHandlers.Common;
 using DScratch.Interactions.EventHandlers.Models;
 using DScratch.Nodes;
+using DScratch.Nodes.Marks;
 using DScratch.Transactions;
 
 namespace DScratch.Interactions.EventHandlers.Events;
@@ -37,9 +38,10 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
             return;
         }
 
+        var marks = transaction.PopPendingMarks();
         // When we get a block element as anchor, we assume there are no TextNode within the block. So we just insert the text.
         // To prevent any broken Trees we insert it before the FirstChild, in case there are child nodes.
-        var textNode = transaction.NodeFactory.String(keyPressInfo.Data, anchorNode.FirstChild, null);
+        var textNode = transaction.NodeFactory.String(keyPressInfo.Data, anchorNode.FirstChild, null, marks);
         transaction.Insert(textNode, anchorNode);
         transaction.AddCursorPosition(textNode.Id, textNode.Length);
     }
@@ -54,9 +56,14 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
             return;
         }
 
+        var pendingMarks = transaction.PopPendingMarks();
+        
         if (nodeSearchResult.Origin.HasFoundNode)
         {
-            var marks = nodeSearchResult.Origin.Node is TextNode t ? t.Marks : null;
+            var marks = nodeSearchResult.Origin.Node is TextNode t 
+                ? t.Marks.Concat(pendingMarks).ToHashSet(new Mark.MarkTable())
+                : pendingMarks;
+
             var textNode = transaction.NodeFactory.String(
                 value: keyPressInfo.Data,
                 origin: nodeSearchResult.Origin.Node,
@@ -69,7 +76,10 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
         }
         else if (nodeSearchResult.RightOrigin.HasFoundNode)
         {
-            var marks = nodeSearchResult.RightOrigin.Node.Origin is TextNode t ? t.Marks : null;
+            var marks = nodeSearchResult.RightOrigin.Node.Origin is TextNode t 
+                ? t.Marks.Concat(pendingMarks).ToHashSet(new Mark.MarkTable())
+                : pendingMarks;
+            
             var textNode = transaction.NodeFactory.String(
                 value: keyPressInfo.Data,
                 origin: nodeSearchResult.RightOrigin.Node.Origin,
@@ -85,7 +95,8 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
             var textNode = transaction.NodeFactory.String(
                 value: keyPressInfo.Data, 
                 origin: null, 
-                rightOrigin: anchorNode.FirstChild);
+                rightOrigin: anchorNode.FirstChild,
+                initMarks: pendingMarks);
 
             var parent = anchorNode.Parent;
             transaction.Insert(textNode, parent);

@@ -5,6 +5,8 @@ namespace DScratch;
 
 internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
 {
+    public INodeIdGenerator NodeIdGenerator => nodeIdGenerator;
+    
     public ParagraphNode Paragraph(DNode? origin, DNode? rightOrigin)
     {
         return new ParagraphNode(nodeIdGenerator.GetNextId(), origin, rightOrigin);

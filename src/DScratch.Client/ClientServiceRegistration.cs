@@ -11,7 +11,7 @@ public static class ClientServiceRegistration
     { 
         EventHandlerRegistration.Register(services);
         services.AddScoped<IEditorCommandDispatcher, EditorCommandDispatcher>();
-        services.AddScoped<InputEventHelper>();
+        services.AddScoped<BrowserEventHelper>();
         services.AddScoped<DJsInvoker>();
         services.AddScoped<INodeIdGenerator, NodeIdGenerator>();
 #if DEBUG // TODO replace by checking env. Do that everywhere

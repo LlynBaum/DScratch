@@ -6,7 +6,7 @@ using Microsoft.JSInterop;
 namespace DScratch.Client.Pages.Editor.Components;
 
 public partial class RegisterEditor(
-    InputEventHelper inputEventHelper,
+    BrowserEventHelper browserEventHelper,
     IDScratchService dScratchService,
     DJsInvoker jsInvoker) : ComponentBase
 {
@@ -17,7 +17,7 @@ public partial class RegisterEditor(
             var initialTransaction = dScratchService.InitialTransaction();
             await jsInvoker.ApplyTransaction(initialTransaction);
             
-            var dotNetRef = DotNetObjectReference.Create(inputEventHelper);
+            var dotNetRef = DotNetObjectReference.Create(browserEventHelper);
             await jsInvoker.InitializeEditor(dotNetRef);
         }
     }

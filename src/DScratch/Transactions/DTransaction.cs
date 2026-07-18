@@ -1,4 +1,5 @@
 using DScratch.Interactions;
+using DScratch.Interactions.UserStates;
 using DScratch.Nodes;
 using DScratch.Nodes.Marks;
 using DScratch.Rendering;
@@ -7,7 +8,11 @@ using DScratch.Transactions.Steps.Marks;
 
 namespace DScratch.Transactions;
 
-internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory, INodeIdGenerator nodeIdGenerator, bool disableCleanUp) 
+internal class DTransaction(
+    DScratchDocument document,
+    INodeFactory nodeFactory,
+    IUserStateService userStateService,
+    bool disableCleanUp) 
     : ITransaction, IRunningTransaction
 {
     private readonly List<IStep> steps = [];
@@ -19,6 +24,8 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
 
     public IReadOnlyList<IStep> Steps => steps;
 
+    public DScratchDocument Document => document;
+    
     public DNode Root => document.Root;
 
     public INodeFactory NodeFactory => nodeFactory;
@@ -90,12 +97,10 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
     {
         cursorPosition = selectionInfo;
     }
-
-    public DNode? FindNode(NodeId nodeId) => document.FindNode(nodeId);
-
+    
     public TextNode? SplitText(TextNode node, int offset)
     {
-        var splitNode = node.Split(offset, nodeIdGenerator.TakeIds);
+        var splitNode = node.Split(offset, nodeFactory.NodeIdGenerator.TakeIds);
         
         if (splitNode is not null && splitNode.Id != node.Id)
         {
@@ -106,6 +111,8 @@ internal class DTransaction(DScratchDocument document, INodeFactory nodeFactory,
         
         return splitNode;
     }
+
+    public IReadOnlySet<Mark> PopPendingMarks() => userStateService.PopPending();
 
     public void NotifyNodeChange(DNode node) => modifiedNodes.Add(node);
 

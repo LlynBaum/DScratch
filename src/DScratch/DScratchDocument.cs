@@ -25,7 +25,7 @@ public class DScratchDocument
         AddNode(Root);
     }
     
-    internal DNode? FindNode(NodeId nodeId) => nodeLookup.LookUp(nodeId);
+    public DNode? FindNode(NodeId nodeId) => nodeLookup.LookUp(nodeId);
 
     internal void AddNode(DNode node) => nodeLookup.Add(node);
     

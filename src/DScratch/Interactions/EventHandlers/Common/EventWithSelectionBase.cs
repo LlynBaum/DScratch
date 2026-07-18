@@ -9,7 +9,7 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
     public TransactionResult Handle(KeyPressInfo keyPressInfo)
     {
         var transaction = dScratchService.StartTransaction();
-        var targetNode = transaction.FindNode(keyPressInfo.Selection.AnchorNodeId);
+        var targetNode = transaction.Document.FindNode(keyPressInfo.Selection.AnchorNodeId);
         if (targetNode is null)
         {
             throw new ArgumentException($"Node not found: {keyPressInfo.Selection.AnchorId}");

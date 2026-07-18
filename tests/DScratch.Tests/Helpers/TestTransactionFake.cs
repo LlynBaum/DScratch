@@ -11,6 +11,8 @@ public class TestTransactionFake : ITransaction, IRunningTransaction
 
     private readonly List<DNode> changedNodes = [];
 
+    public DScratchDocument Document { get; } = null!;
+    
     public DNode Root { get; } = null!;
 
     public INodeFactory NodeFactory { get; } = null!;
@@ -71,6 +73,11 @@ public class TestTransactionFake : ITransaction, IRunningTransaction
     }
 
     public TextNode? SplitText(TextNode node, int offset)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IReadOnlySet<Mark> PopPendingMarks()
     {
         throw new NotImplementedException();
     }

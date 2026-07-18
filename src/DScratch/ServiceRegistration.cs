@@ -1,3 +1,4 @@
+using DScratch.Interactions.UserStates;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DScratch;
@@ -8,5 +9,6 @@ public static class DScratchServiceRegistration
     {
         serviceCollection.AddScoped<INodeFactory, DNodeFactory>();
         serviceCollection.AddScoped<IDScratchService, DScratchService>();
+        serviceCollection.AddScoped<IUserStateService, UserStateService>();
     }
 }

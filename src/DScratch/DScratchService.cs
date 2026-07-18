@@ -1,16 +1,22 @@
+using DScratch.Interactions.UserStates;
 using DScratch.Rendering;
 using DScratch.Transactions;
 
 namespace DScratch;
 
-public class DScratchService(INodeFactory nodeFactory, INodeIdGenerator nodeIdGenerator) : IDScratchService
+public class DScratchService(
+    INodeFactory nodeFactory, 
+    IUserStateService userStateService) : IDScratchService
 {
-    public DScratchDocument Document { get; } = new DScratchDocument(nodeIdGenerator.GetNextId());
+    public DScratchDocument Document { get; } = new DScratchDocument(nodeFactory.NodeIdGenerator.GetNextId());
 
     public bool DisableCleanUp { get; init; }
 
-    internal DScratchService(DScratchDocument document, INodeFactory nodeFactory, INodeIdGenerator nodeIdGenerator) 
-        : this(nodeFactory, nodeIdGenerator)
+    internal DScratchService(
+        DScratchDocument document, 
+        INodeFactory nodeFactory, 
+        IUserStateService userStateService) 
+        : this(nodeFactory, userStateService)
     {
         Document = document;
     }
@@ -20,7 +26,7 @@ public class DScratchService(INodeFactory nodeFactory, INodeIdGenerator nodeIdGe
 
     public ITransaction StartTransaction()
     {
-        return new DTransaction(Document, nodeFactory, nodeIdGenerator, DisableCleanUp);
+        return new DTransaction(Document, nodeFactory, userStateService, DisableCleanUp);
     }
     
     public TransactionResult Apply(ITransaction transaction)

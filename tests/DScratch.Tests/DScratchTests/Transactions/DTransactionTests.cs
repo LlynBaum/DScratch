@@ -1,3 +1,4 @@
+using DScratch.Interactions.UserStates;
 using DScratch.Nodes;
 using DScratch.Nodes.Marks;
 using DScratch.Tests.Helpers;
@@ -10,16 +11,18 @@ namespace DScratch.Tests.DScratchTests.Transactions;
 
 public class DTransactionTests
 {
-    private DScratchDocument Document { get; set; }
-    private DTransaction Transaction { get; set; }
     private TreeBuilder TreeBuilder { get; set; }
+    private DScratchDocument Document { get; set; }
+    private UserStateService UserStateService { get; set; }
+    private DTransaction Transaction { get; set; }
 
     [SetUp]
     public void SetUp()
     {
         TreeBuilder = new TreeBuilder();
         Document = TreeBuilder.CreateDocument();
-        Transaction = new DTransaction(Document, new DNodeFactory(TreeBuilder.IdGenerator), TreeBuilder.IdGenerator, true);
+        UserStateService = new UserStateService();
+        Transaction = new DTransaction(Document, new DNodeFactory(TreeBuilder.IdGenerator), UserStateService, true);
     }
 
     [Test]

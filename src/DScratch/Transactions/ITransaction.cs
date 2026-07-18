@@ -6,10 +6,12 @@ namespace DScratch.Transactions;
 
 public interface ITransaction
 {
+    DScratchDocument Document { get; }
+    
     DNode Root { get; }
     
     INodeFactory NodeFactory { get; }
-    
+
     internal TransactionResult Commit();
 
     void Insert(DNode node, DNode parent);
@@ -30,7 +32,7 @@ public interface ITransaction
     
     void AddCursorPosition(SelectionInfo selectionInfo);
 
-    DNode? FindNode(NodeId nodeId);
-
     TextNode? SplitText(TextNode node, int offset);
+
+    IReadOnlySet<Mark> PopPendingMarks();
 }

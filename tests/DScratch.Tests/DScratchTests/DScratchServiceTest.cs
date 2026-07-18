@@ -1,3 +1,4 @@
+using DScratch.Interactions.UserStates;
 using DScratch.Tests.Helpers;
 using DScratch.Transactions;
 using Moq;
@@ -11,7 +12,7 @@ public class DScratchServiceTest
     {
         // Arrange
         var transactionMock = new Mock<ITransaction>();
-        var service = new DScratchService(Mock.Of<INodeFactory>(), Mock.Of<INodeIdGenerator>());
+        var service = new DScratchService(Mock.Of<INodeFactory>(), Mock.Of<IUserStateService>());
 
         transactionMock.Setup(t => t.Commit()).Returns(new TransactionResult([new TestStepDiff()]));
         

@@ -6,7 +6,7 @@ namespace DScratch.Client.BrowserInteractions;
 
 public sealed class DJsInvoker(IJSRuntime jsRuntime)
 {
-    public async Task InitializeEditor(DotNetObjectReference<InputEventHelper> dotNetRef)
+    public async Task InitializeEditor(DotNetObjectReference<BrowserEventHelper> dotNetRef)
     {
         await jsRuntime.InvokeVoidAsync(ScriptConstants.EditorInitialize, dotNetRef);
     }

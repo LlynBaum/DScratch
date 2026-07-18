@@ -18,8 +18,8 @@ public static class DeleteSelection
     {
         var (originOffset, rightOriginOffset) = keyPressInfo.Selection.GetConvertedOffsets();
         var (originId, rightOriginId) = keyPressInfo.Selection.GetConvertedNodeIds();
-        var origin = transaction.FindNode(originId);
-        var rightOrigin = transaction.FindNode(rightOriginId);
+        var origin = transaction.Document.FindNode(originId);
+        var rightOrigin = transaction.Document.FindNode(rightOriginId);
 
         if (origin is not TextNode originTextNode || rightOrigin is not TextNode rightOriginTextNode)
         {

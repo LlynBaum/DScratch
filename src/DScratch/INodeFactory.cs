@@ -5,6 +5,8 @@ namespace DScratch;
 
 public interface INodeFactory
 {
+    INodeIdGenerator NodeIdGenerator { get; }
+    
     ParagraphNode Paragraph(DNode? origin, DNode? rightOrigin);
 
     ParagraphNode ParagraphFrom(DNode node);

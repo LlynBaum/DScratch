@@ -17,7 +17,7 @@ public static class UpdateMarkHandler
         switch (action)
         {
             case UpdateMarkAction.Toggle:
-                var anchor = (TextNode)transaction.FindNode(selectionInfo.AnchorNodeId)!;
+                var anchor = (TextNode)transaction.Document.FindNode(selectionInfo.AnchorNodeId)!;
                 var hasMark = anchor.Marks.Contains(mark);
                 foreach (var selectedNode in selectedNodes)
                 {
@@ -71,8 +71,8 @@ public static class UpdateMarkHandler
 
         var (originId, rightOriginId) = selectionInfo.GetConvertedNodeIds();
         
-        var origin = transaction.FindNode(originId);
-        var rightOrigin = transaction.FindNode(rightOriginId);
+        var origin = transaction.Document.FindNode(originId);
+        var rightOrigin = transaction.Document.FindNode(rightOriginId);
         
         if (origin is null || rightOrigin is null)
         {
