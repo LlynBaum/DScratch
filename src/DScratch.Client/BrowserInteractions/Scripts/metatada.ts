@@ -1,11 +1,22 @@
-export interface MetadataEntry {
+type IMetadata = BlockMetadata | PositionMetadata;
+
+export interface MetadataEntry<T extends IMetadata = IMetadata> {
     metadataDelete: "onSelectionChange" | "onTyping";
-    data: any; // TODO: maybe make interfaces for type safety
+    data: T;
+}
+
+interface BlockMetadata {
+    id: string;
+    mark: any;
+}
+
+interface PositionMetadata {
+    mark: any;
 }
 
 export class MetadataController {
-    private typingEntries: Array<MetadataEntry>;
-    private selectionEntries: Array<MetadataEntry>;
+    private typingEntries: Array<MetadataEntry<BlockMetadata>>;
+    private selectionEntries: Array<MetadataEntry<PositionMetadata>>;
 
     constructor() {
         this.typingEntries = [];
@@ -15,19 +26,23 @@ export class MetadataController {
     public getActive(id: string) {
         return {
             fromSelection: this.selectionEntries,
-            fromId: this.typingEntries
+            fromId: this.typingEntries.filter(t => t.data.id === id)
         };
     }
 
-    public add(entry: MetadataEntry) {
+    public add(entry: MetadataEntry, action: string) {
         if(entry.metadataDelete === "onTyping") {
-            this.typingEntries.push(entry);
+            action === "remove"
+            ? this.typingEntries.splice(this.typingEntries.findIndex(t => t.data === entry.data), 1)
+            : this.typingEntries.push(entry as MetadataEntry<BlockMetadata>);
         } else if (entry.metadataDelete === "onSelectionChange") {
-            this.selectionEntries.push(entry);
+            action === "remove"
+                ? this.selectionEntries.splice(this.selectionEntries.findIndex(t => t.data === entry.data), 1)
+                : this.selectionEntries.push(entry as MetadataEntry<PositionMetadata>);
         }
     }
 
-    public discard(entries: Array<MetadataEntry>) {
+    public discard(entries: Array<MetadataEntry<BlockMetadata>>) {
         this.typingEntries = this.typingEntries.filter(e => !entries.includes(e));
     }
 

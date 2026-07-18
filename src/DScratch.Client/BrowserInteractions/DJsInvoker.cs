@@ -22,8 +22,8 @@ public sealed class DJsInvoker(IJSRuntime jsRuntime)
         return await jsRuntime.InvokeAsync<SelectionInfo>(ScriptConstants.GetSelectionJs);
     }
 
-    public async Task AddMetadataAsync(MetadataEntry metadata)
+    public async Task UpdateMetadataAsync(MetadataEntry metadata, string action)
     {
-        await jsRuntime.InvokeVoidAsync(ScriptConstants.AddMetadata, metadata);
+        await jsRuntime.InvokeVoidAsync(ScriptConstants.AddMetadata, metadata, action);
     }
 }
