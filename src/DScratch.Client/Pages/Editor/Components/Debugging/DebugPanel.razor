@@ -32,6 +32,7 @@
     <div class="debug-tabs">
         <button class="tab-btn @(currentTab == nameof(DebugTreePanel) ? "active" : "")" @onclick="@(() => SwitchTab(nameof(DebugTreePanel)))">Tree</button>
         <button class="tab-btn @(currentTab == nameof(DebugTransaction) ? "active" : "")" @onclick="@(() => SwitchTab(nameof(DebugTransaction)))">Transaction</button>
+        <button class="tab-btn @(currentTab == nameof(DebugSelection) ? "active" : "")" @onclick="@(() => SwitchTab(nameof(DebugSelection)))">Selection</button>
     </div>
 
     <div class="debug-content">
@@ -42,6 +43,9 @@
                 break;
             case nameof(DebugTransaction):
                 <DebugTransaction />
+                break;
+            case nameof(DebugSelection):
+                <DebugSelection />
                 break;
         }
     </div>

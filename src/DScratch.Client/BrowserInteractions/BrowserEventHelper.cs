@@ -34,7 +34,6 @@ public class BrowserEventHelper(
             await jsInvoker.ApplyTransaction(result);
 
             editorDebugService.NotifyDocumentChanged(new EditorDebugService.TransactionInfo(result, keyPressInfo));
-
             if (editorDebugService.IsDebugEnabled)
             {
                 var visualizer = new TreeVisualizers.DocumentVisualizer(dScratchService.Document);
@@ -52,5 +51,7 @@ public class BrowserEventHelper(
     {
         var node = dScratchService.Document.FindNode(selectionInfo.AnchorNodeId);
         userStateService.UpdateState(node);
+
+        editorDebugService.NotifySelectionChange(selectionInfo);
     }
 }

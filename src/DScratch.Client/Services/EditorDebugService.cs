@@ -8,6 +8,8 @@ public class EditorDebugService
     private readonly List<TransactionInfo> transactions = [];
     public IReadOnlyList<TransactionInfo> Transactions => transactions;
     
+    public SelectionInfo? CurrentClientSelection { get; private set; }
+    
     public bool IsDebugEnabled
     {
         get;
@@ -22,6 +24,7 @@ public class EditorDebugService
     }
     
     public event Action? DocumentChanged;
+    public event Action? SelectionChanged;
     public event Action? DebugModeChanged;
 
     public void NotifyDocumentChanged(TransactionInfo transactionResult)
@@ -31,4 +34,10 @@ public class EditorDebugService
     }
 
     public record TransactionInfo(TransactionResult Result, KeyPressInfo KeyPressInfo);
+
+    public void NotifySelectionChange(SelectionInfo selectionInfo)
+    {
+        CurrentClientSelection = selectionInfo;
+        SelectionChanged?.Invoke();
+    }
 }

@@ -1,0 +1,106 @@
+<div class="selection-container">
+    <!-- Selection Info Card -->
+    <div class="info-card">
+        <div class="info-card-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"></path><path d="M9 21H3v-6"></path><path d="M21 3l-7 7"></path><path d="M3 21l7-7"></path></svg>
+            <h4>Current Client Selection</h4>
+        </div>
+        <div class="info-card-body">
+            @if (CurrentSelection is not null)
+            {
+                <div class="selection-field">
+                    <span class="field-label">Anchor Node ID</span>
+                    <span class="field-value monospace badge">@CurrentSelection.AnchorId</span>
+                </div>
+                <div class="selection-field">
+                    <span class="field-label">Anchor Offset</span>
+                    <span class="field-value monospace badge font-bold">@CurrentSelection.AnchorOffset</span>
+                </div>
+                
+                <div class="selection-field">
+                    <span class="field-label">Focus Node ID</span>
+                    <span class="field-value monospace badge">@CurrentSelection.FocusId</span>
+                </div>
+                <div class="selection-field">
+                    <span class="field-label">Focus Offset</span>
+                    <span class="field-value monospace badge font-bold">@CurrentSelection.FocusOffset</span>
+                </div>
+
+                <div class="selection-field">
+                    <span class="field-label">Direction</span>
+                    <span class="field-value badge">@CurrentSelection.Direction.ToString().ToLower()</span>
+                </div>
+            }
+            else
+            {
+                <div class="no-selection">
+                    <span>No active selection info. Click or type in the editor.</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Active Marks Card -->
+    <div class="info-card">
+        <div class="info-card-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <h4>Active Marks</h4>
+        </div>
+        <div class="info-card-body">
+            @if (ActiveMarks.Count > 0)
+            {
+                <div class="marks-list">
+                    @foreach (var mark in ActiveMarks)
+                    {
+                        <span class="mark-pill">
+                            <span class="mark-key">@mark.Key</span>
+                            @if (!string.IsNullOrEmpty(mark.Value))
+                            {
+                                <span class="mark-val-sep">:</span>
+                                <span class="mark-val">@mark.Value</span>
+                            }
+                        </span>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="no-selection">
+                    <span>No active marks.</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Pending Marks Card -->
+    <div class="info-card">
+        <div class="info-card-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <h4>Pending Marks</h4>
+        </div>
+        <div class="info-card-body">
+            @if (PendingMarks.Count > 0)
+            {
+                <div class="marks-list">
+                    @foreach (var mark in PendingMarks)
+                    {
+                        <span class="mark-pill pending">
+                            <span class="mark-key">@mark.Key</span>
+                            @if (!string.IsNullOrEmpty(mark.Value))
+                            {
+                                <span class="mark-val-sep">:</span>
+                                <span class="mark-val">@mark.Value</span>
+                            }
+                        </span>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="no-selection">
+                    <span>No pending marks.</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>

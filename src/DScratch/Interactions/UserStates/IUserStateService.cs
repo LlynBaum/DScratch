@@ -5,6 +5,9 @@ namespace DScratch.Interactions.UserStates;
 
 public interface IUserStateService
 {
+    IReadOnlySet<Mark> PendingMarks { get; }
+    IReadOnlySet<Mark> ActiveMarks { get; }
+
     event Action OnStateChange;
     
     void AddPendingMark(Mark mark);
