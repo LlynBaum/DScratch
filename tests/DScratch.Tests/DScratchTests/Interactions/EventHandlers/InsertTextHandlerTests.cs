@@ -652,5 +652,71 @@ public class InsertTextHandlerTests
             Assert.That(node.FirstChild, Is.TypeOf<TextNode>());
             Assert.That(((TextNode)node.FirstChild).Marks, Is.Empty);
         }
+
+        [Test]
+        [TestCase(0)]
+        [TestCase(1)]
+        public void PendingMarks_AreAppliedToText(int offset)
+        {
+            // Arrange
+            TextNode node = null!;
+            var parent = builder.Paragraph(t =>
+            {
+                node = t.Text("a");
+            });
+
+            userStateService.AddPendingMark(new Mark(MarkKey.Bold));
+            
+            // Act
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, offset));
+            
+            // Assert
+            var newNode = parent.ActiveChildNodes.ElementAt(offset);
+            
+            Assert.That(newNode, Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)newNode).Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+        }
+        
+        [Test]
+        public void PendingMarks_AreAppliedAlongsideMarksFromOrigin()
+        {
+            // Arrange
+            TextNode node = null!;
+            builder.Paragraph(t =>
+            {
+                node = t.Text("a");
+            });
+
+            node.SetMark(new Mark(MarkKey.Italic));
+            userStateService.AddPendingMark(new Mark(MarkKey.Bold));
+            
+            // Act
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1));
+            
+            // Assert
+            Assert.That(node.RightOrigin, Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)node.RightOrigin).Marks, Is.EquivalentTo([new Mark(MarkKey.Italic), new Mark(MarkKey.Bold)]));
+        }
+        
+        [Test]
+        public void PendingMarks_OverridesMarksFromOriginWithSameKey()
+        {
+            // Arrange
+            TextNode node = null!;
+            builder.Paragraph(t =>
+            {
+                node = t.Text("a");
+            });
+
+            node.SetMark(new Mark(MarkKey.Color, "a"));
+            userStateService.AddPendingMark(new Mark(MarkKey.Color, "b"));
+            
+            // Act
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1));
+            
+            // Assert
+            Assert.That(node.RightOrigin, Is.TypeOf<TextNode>());
+            Assert.That(((TextNode)node.RightOrigin).Marks, Is.EquivalentTo([new Mark(MarkKey.Color, "b")]));
+        }
     }
 }

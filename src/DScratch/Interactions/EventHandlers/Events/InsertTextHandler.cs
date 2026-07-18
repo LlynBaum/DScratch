@@ -61,7 +61,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
         if (nodeSearchResult.Origin.HasFoundNode)
         {
             var marks = nodeSearchResult.Origin.Node is TextNode t 
-                ? t.Marks.Concat(pendingMarks).ToHashSet(new Mark.MarkTable())
+                ? pendingMarks.Concat(t.Marks).ToHashSet(new Mark.MarkTable())
                 : pendingMarks;
 
             var textNode = transaction.NodeFactory.String(
@@ -77,7 +77,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
         else if (nodeSearchResult.RightOrigin.HasFoundNode)
         {
             var marks = nodeSearchResult.RightOrigin.Node.Origin is TextNode t 
-                ? t.Marks.Concat(pendingMarks).ToHashSet(new Mark.MarkTable())
+                ? pendingMarks.Concat(t.Marks).ToHashSet(new Mark.MarkTable())
                 : pendingMarks;
             
             var textNode = transaction.NodeFactory.String(
