@@ -1,10 +1,9 @@
 import { applyTransaction, TransactionResult } from "./transaction";
-import { handleInput } from "./inputs";
-import { getSelection, SelectionInfo } from "./selection";
-
-let bridgeReference: any = null;
+import { registerInput } from "./inputs";
+import {getSelection, registerSelection, SelectionInfo} from "./selection";
 
 interface Editor {
+    bridgeReference: any;
     initialize: (dotNetRef: any) => void;
     applyTransaction: (transaction: TransactionResult) => void;
     getSelection: () => SelectionInfo;
@@ -19,6 +18,8 @@ declare global {
 
 function initEditor(dotNetRef: any) {
     const editor = document.getElementById("editor");
+    window.editor.node = editor;
+    window.editor.bridgeReference = dotNetRef;
     
     if (!editor) {
         console.error("There is no editor node.");
@@ -26,13 +27,12 @@ function initEditor(dotNetRef: any) {
     }
     
     editor?.addEventListener("click", setCursorToEnd);
-    editor?.addEventListener("beforeinput", async event => await handleInput(event, bridgeReference));
+    registerInput();
+    registerSelection();
     
     const rootNode = editor.querySelector<HTMLElement>("[data-dnode-id='Root']");
     rootNode?.setAttribute("contenteditable", '');
-    
-    window.editor.node = editor;
-    bridgeReference = dotNetRef;
+
     console.info("editor ready!");
 }
 
@@ -59,6 +59,7 @@ function setCursorToEnd(event: PointerEvent) {
 }
 
 window.editor = {
+    bridgeReference: null,
     initialize: initEditor,
     applyTransaction: applyTransaction,
     getSelection: getSelection,

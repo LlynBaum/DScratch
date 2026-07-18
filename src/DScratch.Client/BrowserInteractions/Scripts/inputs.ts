@@ -9,7 +9,12 @@ const handledTypes = [
     "deleteWordForward"
 ];
 
-export async function handleInput(event: InputEvent, bridgeReference: any) {
+export function registerInput() {
+    window.editor.node?.addEventListener("beforeinput", async event => await handleInput(event));
+
+}
+
+async function handleInput(event: InputEvent) {
     if (!handledTypes.includes(event.inputType)) {
         return; // Let the browser handle unsupported inputs natively for now
     }
@@ -29,7 +34,7 @@ export async function handleInput(event: InputEvent, bridgeReference: any) {
     snapshotSelection(selectionInfo);
     
     try {
-        await bridgeReference?.invokeMethodAsync("OnKeyPressCallbackAsync", payload);
+        await window.editor.bridgeReference?.invokeMethodAsync("OnKeyPressCallbackAsync", payload);
     } catch (e) {
         console.error(e, "Failed to send event with anchor ", selectionInfo.anchorId);
     }

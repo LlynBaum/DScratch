@@ -26,6 +26,10 @@ interface CurrentSelectionInfo {
 let snapshot: SelectionSnapshot | null = null;
 let currentSelection: CurrentSelectionInfo | null = null;
 
+export function registerSelection() {
+    window.editor.node?.addEventListener("selectionchange", handleSelectionChange);
+}
+
 export function snapshotSelection(selectionInfo: SelectionInfo) {
     snapshot = {
         selection: window.getSelection(),
@@ -165,4 +169,13 @@ function setCursorSelection(selectionInfo: SelectionInfo) {
             ? { start: anchor, end: focus }
             : { start: focus, end: anchor };
     }
+}
+
+let timeout: any;
+function handleSelectionChange() {
+    clearTimeout(timeout);
+    timeout = setTimeout(async () => {
+        const selection = getSelection();
+        await window.editor.bridgeReference?.invokeMethodAsync("OnSelectionChange", selection);
+    }, 100);
 }
