@@ -25,6 +25,20 @@
       <ProjectReference Include="..\DScratch\DScratch.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\icons\format_bold.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\icons\format_color_fill.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\icons\format_color_reset.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\icons\format_h1.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\icons\format_h2.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\icons\format_h3.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\icons\format_h4.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\icons\format_h5.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\icons\format_h6.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\icons\format_italic.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\icons\format_paragraph.svg" />
+    </ItemGroup>
+
     <Target Name="BundleJS" BeforeTargets="Build">
         <Exec Command="npm install" WorkingDirectory="BrowserInteractions/Scripts" />
         <Exec Command="npx esbuild editor.ts --bundle --outfile=../../wwwroot/js/editor.bundle.js" WorkingDirectory="BrowserInteractions/Scripts" />

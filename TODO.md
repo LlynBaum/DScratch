@@ -6,7 +6,7 @@
   - [x] Color
 - [ ] Make marks continues when Typing
   - [x] Typing
-  - [ ] Pending Marks
+  - [x] Pending Marks
   - [ ] Persist pending Marks for empty blocks
   - [ ] carry over mark to new block
 - [ ] MenuBar shows active marks
@@ -28,3 +28,13 @@
 - [ ] Default Formating for Block type settings
   - Things like text spacing and so on are done here. Do not support as mark for now
 - [ ] Auto Gen "Table of Contents"
+
+# Current
+
+- Check if Pending Marks actually work. Make E2E tests.
+- Fix Bugs below
+- Still not happy with the Frontend. Everything a bit of an AI mess I created here xD
+
+# Bugs
+
+- Color Picker doesn't update when updating ActiveMarks

@@ -1,3 +1,4 @@
+using DScratch.Client.Components.Icons;
 using Microsoft.AspNetCore.Components;
 
 namespace DScratch.Client.Components;
@@ -5,8 +6,10 @@ namespace DScratch.Client.Components;
 public partial class IconButton : ComponentBase
 {
     [Parameter]
-    [EditorRequired]
-    public RenderFragment ChildContent { get; set; } = default!;
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public EditorIcon? Icon { get; set; }
 
     [Parameter]
     public EventCallback OnClick { get; set; }
@@ -19,4 +22,9 @@ public partial class IconButton : ComponentBase
 
     [Parameter]
     public string? Title { get; set; }
+
+    private string GetIconSvg(EditorIcon icon)
+    {
+        return IconProvider.GetSvg(icon);
+    }
 }

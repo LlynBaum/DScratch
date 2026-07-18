@@ -1,20 +1,21 @@
 @using DScratch.Client.Components
+@using DScratch.Client.Components.Icons
 @using DScratch.Interactions.CommandHandlers
 @rendermode InteractiveWebAssembly
 
 <nav class="menu">
-    <MenubarButton OnClick="@BoldAsync" IsActive="@viewModel.IsBoldActive">Bold</MenubarButton>
-    <MenubarButton OnClick="@ItalicAsync" IsActive="@viewModel.IsItalicActive">Italic</MenubarButton>
+    <IconButton OnClick="@BoldAsync" IsActive="@viewModel.IsBoldActive" Icon="EditorIcon.Bold" Title="Bold" />
+    <IconButton OnClick="@ItalicAsync" IsActive="@viewModel.IsItalicActive" Icon="EditorIcon.Italic" Title="Italic" />
     
     <MenuDivider />
     
-    <MenubarButton OnClick="@ParagraphAsync">Paragraph</MenubarButton>
-    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading1))">Heading 1</MenubarButton>
-    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading2))">Heading 2</MenubarButton>
-    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading3))">Heading 3</MenubarButton>
-    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading4))">Heading 4</MenubarButton>
-    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading5))">Heading 5</MenubarButton>
-    <MenubarButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading6))">Heading 6</MenubarButton>
+    <IconButton OnClick="@ParagraphAsync" Icon="EditorIcon.Paragraph" Title="Paragraph" />
+    <IconButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading1))" Icon="EditorIcon.Heading1" Title="Heading 1" />
+    <IconButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading2))" Icon="EditorIcon.Heading2" Title="Heading 2" />
+    <IconButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading3))" Icon="EditorIcon.Heading3" Title="Heading 3" />
+    <IconButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading4))" Icon="EditorIcon.Heading4" Title="Heading 4" />
+    <IconButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading5))" Icon="EditorIcon.Heading5" Title="Heading 5" />
+    <IconButton OnClick="@(async () => await HeadingAsync(BlockNodeType.Heading6))" Icon="EditorIcon.Heading6" Title="Heading 6" />
     
     <MenuDivider />
     

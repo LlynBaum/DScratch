@@ -4,5 +4,12 @@
     @onclick="OnClick"
     title="@Title"
     disabled="@Disabled">
-    @ChildContent
+    @if (Icon.HasValue)
+    {
+        @((MarkupString)GetIconSvg(Icon.Value))
+    }
+    else
+    {
+        @ChildContent
+    }
 </button>
