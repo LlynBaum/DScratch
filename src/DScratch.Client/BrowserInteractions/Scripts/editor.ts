@@ -1,7 +1,6 @@
 import { applyTransaction, TransactionResult } from "./transaction";
 import { handleInput } from "./inputs";
 import { getSelection, SelectionInfo } from "./selection";
-import {initMetadataController, metadataController, MetadataEntry} from "./metatada";
 
 let bridgeReference: any = null;
 
@@ -9,7 +8,6 @@ interface Editor {
     initialize: (dotNetRef: any) => void;
     applyTransaction: (transaction: TransactionResult) => void;
     getSelection: () => SelectionInfo;
-    addMetadata: (metadata: MetadataEntry) => void;
     node: HTMLElement | null;
 }
 
@@ -32,8 +30,6 @@ function initEditor(dotNetRef: any) {
     
     const rootNode = editor.querySelector<HTMLElement>("[data-dnode-id='Root']");
     rootNode?.setAttribute("contenteditable", '');
-    
-    initMetadataController();
     
     window.editor.node = editor;
     bridgeReference = dotNetRef;
@@ -66,6 +62,5 @@ window.editor = {
     initialize: initEditor,
     applyTransaction: applyTransaction,
     getSelection: getSelection,
-    addMetadata: metadataController.add,
     node: null,
 };

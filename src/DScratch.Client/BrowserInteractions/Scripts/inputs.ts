@@ -1,5 +1,4 @@
 import {getSelection, snapshotSelection} from "./selection";
-import {metadataController} from "./metatada";
 
 const handledTypes = [
     "insertText",
@@ -21,26 +20,18 @@ export async function handleInput(event: InputEvent, bridgeReference: any) {
     }
 
     const selectionInfo = getSelection();
-    snapshotSelection(selectionInfo);
-    
-    const metadata = metadataController.getActive(selectionInfo.anchorId);
-    
     const payload = {
         InputType: event.inputType,
         Data: event.data,
-        Selection: selectionInfo,
-        Metadata: [...metadata.fromSelection, ...metadata.fromId] // TODO: C# has to get that and use it if possible.
+        Selection: selectionInfo
     };
+    
+    snapshotSelection(selectionInfo);
     
     try {
         await bridgeReference?.invokeMethodAsync("OnKeyPressCallbackAsync", payload);
     } catch (e) {
         console.error(e, "Failed to send event with anchor ", selectionInfo.anchorId);
-    }
-    
-    if (event.inputType !== "insertParagraph") {
-        metadataController.discardOnSelectionChange();
-        metadataController.discard(metadata.fromId);
     }
 }
 

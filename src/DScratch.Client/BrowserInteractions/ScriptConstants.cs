@@ -7,6 +7,4 @@ public static class ScriptConstants
     public const string ApplyTransactionJs = "editor.applyTransaction";
 
     public const string GetSelectionJs = "editor.getSelection";
-    
-    public const string AddMetadata = "editor.addMetadata";
 }

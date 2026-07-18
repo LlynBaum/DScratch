@@ -12,11 +12,6 @@ public static class UpdateMarkHandler
         Mark mark,
         UpdateMarkAction action)
     {
-        if (selectionInfo.Direction is SelectionDirection.None)
-        {
-            return;
-        }
-        
         var selectedNodes = GetSelectedNodes(transaction, selectionInfo);
 
         switch (action)
@@ -68,6 +63,12 @@ public static class UpdateMarkHandler
 
     private static IReadOnlyList<TextNode> GetSelectedNodes(ITransaction transaction, SelectionInfo selectionInfo)
     {
+        if (selectionInfo.Direction is SelectionDirection.None)
+        {
+            // Currently there is no mark that would actually do anything with no selection.
+            return [];
+        }
+
         var (originId, rightOriginId) = selectionInfo.GetConvertedNodeIds();
         
         var origin = transaction.FindNode(originId);
