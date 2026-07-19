@@ -13,7 +13,7 @@ public class PlaywrightTestBase : E2ETestsRunnerBase
     
     protected ILocator Editor => Page.Locator("div[contenteditable]");
 
-    protected MenuBarLocator MenuBar => new MenuBarLocator(Page.Locator("nav.menu"));
+    protected EditorMenuLocator EditorMenu => new EditorMenuLocator(Page.Locator("nav.menu"));
     
     [SetUp]
     public async Task NavigateToEditor()

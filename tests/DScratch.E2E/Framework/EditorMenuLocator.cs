@@ -2,21 +2,25 @@ using Microsoft.Playwright;
 
 namespace DScratch.E2E.Framework;
 
-public class MenuBarLocator(ILocator menuBar)
+public class EditorMenuLocator(ILocator editorMenu)
 {
+    public ILocator Bold => editorMenu.GetByTitle("Bold");
+    public ILocator Italic => editorMenu.GetByTitle("Italic");
+    public ILocator Paragraph => editorMenu.GetByTitle("Paragraph");
+    
     public async Task ClickBold()
     {
-        await menuBar.GetByText("Bold").ClickAsync();
+        await Bold.ClickAsync();
     }
     
     public async Task ClickItalic()
     {
-        await menuBar.GetByText("Italic").ClickAsync();
+        await Italic.ClickAsync();
     }
     
     public async Task ClickParagraph()
     {
-        await menuBar.GetByText("Paragraph").ClickAsync();
+        await Paragraph.ClickAsync();
     }
     
     public async Task ClickHeading(HeadingLevel level)
@@ -32,6 +36,6 @@ public class MenuBarLocator(ILocator menuBar)
             _ => throw new ArgumentOutOfRangeException(nameof(level), level, null)
         };
 
-        await menuBar.GetByText(headingName).ClickAsync();
+        await editorMenu.GetByTitle(headingName).ClickAsync();
     }
 }

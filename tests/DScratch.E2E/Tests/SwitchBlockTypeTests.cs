@@ -17,7 +17,7 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
         await Editor.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("a");
 
-        await MenuBar.ClickHeading(level);
+        await EditorMenu.ClickHeading(level);
 
         await Expect(Editor.Paragraph).ToHaveCountAsync(0);
         await Expect(Editor.Heading(level)).ToHaveCountAsync(1);
@@ -37,8 +37,8 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
         await Editor.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("a");
 
-        await MenuBar.ClickHeading(HeadingLevel.Level1);
-        await MenuBar.ClickParagraph();
+        await EditorMenu.ClickHeading(HeadingLevel.Level1);
+        await EditorMenu.ClickParagraph();
 
         await Expect(Editor.Heading(HeadingLevel.Level1)).ToHaveCountAsync(0);
         await Expect(Editor.Paragraph).ToHaveCountAsync(1);
@@ -76,7 +76,7 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
             FocusOffset = 1
         });
 
-        await MenuBar.ClickHeading(level);
+        await EditorMenu.ClickHeading(level);
 
         await Expect(Editor.Paragraph).ToHaveCountAsync(0);
         await Expect(Editor.Heading(level)).ToHaveCountAsync(3);
@@ -113,8 +113,8 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
             FocusOffset = 1
         });
 
-        await MenuBar.ClickHeading(HeadingLevel.Level1);
-        await MenuBar.ClickParagraph();
+        await EditorMenu.ClickHeading(HeadingLevel.Level1);
+        await EditorMenu.ClickParagraph();
 
         await Expect(Editor.Heading(HeadingLevel.Level1)).ToHaveCountAsync(0);
         await Expect(Editor.Paragraph).ToHaveCountAsync(3);

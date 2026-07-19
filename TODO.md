@@ -31,7 +31,7 @@
 
 # Current
 
-- Check if Pending Marks actually work. Make E2E tests.
+- A way to set pending removing marks
 - Fix Bugs below
 - Still not happy with the Frontend. Everything a bit of an AI mess I created here xD
 

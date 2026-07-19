@@ -21,7 +21,7 @@ public class MarksTests : PlaywrightTestBase
             FocusOffset = 2,
         });
         
-        await MenuBar.ClickBold();
+        await EditorMenu.ClickBold();
 
         await Expect(Editor.Paragraph.First.TextSpan.Nth(0)).ToHaveTextAsync("te");
         await Expect(Editor.Paragraph.First.TextSpan.Nth(0)).Not.ToHaveCSSAsync("font-weight", "700");
@@ -59,7 +59,7 @@ public class MarksTests : PlaywrightTestBase
             FocusOffset = 2,
         });
         
-        await MenuBar.ClickItalic();
+        await EditorMenu.ClickItalic();
 
         await Expect(Editor.Paragraph.First.TextSpan.Nth(0)).ToHaveTextAsync("te");
         await Expect(Editor.Paragraph.First.TextSpan.Nth(0)).Not.ToHaveCSSAsync("font-style", "italic");
@@ -95,8 +95,8 @@ public class MarksTests : PlaywrightTestBase
             FocusOffset = 3
         });
         
-        await MenuBar.ClickItalic();
-        await MenuBar.ClickBold();
+        await EditorMenu.ClickItalic();
+        await EditorMenu.ClickBold();
 
         await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("t");
         await Expect(Editor.Paragraph.TextSpan.Nth(0)).Not.ToHaveCSSAsync("font-style", "italic");
@@ -133,7 +133,7 @@ public class MarksTests : PlaywrightTestBase
             FocusId = "Darki-2",
             FocusOffset = 2
         });
-        await MenuBar.ClickItalic();
+        await EditorMenu.ClickItalic();
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
@@ -142,7 +142,7 @@ public class MarksTests : PlaywrightTestBase
             FocusId = "Darki-6",
             FocusOffset = 2
         });
-        await MenuBar.ClickBold();
+        await EditorMenu.ClickBold();
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
@@ -151,7 +151,7 @@ public class MarksTests : PlaywrightTestBase
             FocusId = "Darki-6",
             FocusOffset = 1
         });
-        await MenuBar.ClickBold();
+        await EditorMenu.ClickBold();
         
         await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("a");
         await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-style", "italic");
@@ -192,7 +192,7 @@ public class MarksTests : PlaywrightTestBase
             FocusId = "Darki-2",
             FocusOffset = 4
         });
-        await MenuBar.ClickBold();
+        await EditorMenu.ClickBold();
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
@@ -201,7 +201,7 @@ public class MarksTests : PlaywrightTestBase
             FocusId = "Darki-12",
             FocusOffset = 2
         });
-        await MenuBar.ClickItalic();
+        await EditorMenu.ClickItalic();
 
         await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("ab");
         await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-style", "italic");
@@ -222,6 +222,80 @@ public class MarksTests : PlaywrightTestBase
             Assert.That(selection.AnchorOffset, Is.EqualTo(0));
             Assert.That(selection.FocusId, Is.EqualTo("Darki-12"));
             Assert.That(selection.FocusOffset, Is.EqualTo(2));
+        }
+    }
+    
+    [Test]
+    public async Task BoldButtons_SetsPendingMark()
+    {
+        await Editor.ClickAsync();
+        await Page.TypeAtCurrentCursorAsync("tet");
+
+        await Page.SetSelectionAsync(new SelectionInfo
+        {
+            AnchorId = "Darki-2",
+            AnchorOffset = 2,
+            FocusId = "Darki-2",
+            FocusOffset = 2,
+        });
+        
+        await Expect(EditorMenu.Bold).Not.ToContainClassAsync("active");
+        await EditorMenu.ClickBold();
+        await Expect(EditorMenu.Bold).ToContainClassAsync("active");
+        
+        await Page.TypeAtCurrentCursorAsync("s");
+
+        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("te");
+        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-weight", "400");
+        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("s");
+        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-weight", "700");
+        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("t");
+        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-weight", "400");
+
+        var selection = await GetCursorPositionAsync();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-6"));
+            Assert.That(selection.AnchorOffset, Is.EqualTo(1));
+            Assert.That(selection.FocusId, Is.EqualTo("Darki-6"));
+            Assert.That(selection.FocusOffset, Is.EqualTo(1));
+        }
+    }
+    
+    [Test]
+    public async Task ItalicButtons_SetsPendingMark()
+    {
+        await Editor.ClickAsync();
+        await Page.TypeAtCurrentCursorAsync("tet");
+
+        await Page.SetSelectionAsync(new SelectionInfo
+        {
+            AnchorId = "Darki-2",
+            AnchorOffset = 2,
+            FocusId = "Darki-2",
+            FocusOffset = 2,
+        });
+        
+        await Expect(EditorMenu.Italic).Not.ToContainClassAsync("active");
+        await EditorMenu.ClickItalic();
+        await Expect(EditorMenu.Italic).ToContainClassAsync("active");
+        
+        await Page.TypeAtCurrentCursorAsync("s");
+
+        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("te");
+        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-style", "normal");
+        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("s");
+        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-style", "italic");
+        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("t");
+        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-style", "normal");
+
+        var selection = await GetCursorPositionAsync();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-6"));
+            Assert.That(selection.AnchorOffset, Is.EqualTo(1));
+            Assert.That(selection.FocusId, Is.EqualTo("Darki-6"));
+            Assert.That(selection.FocusOffset, Is.EqualTo(1));
         }
     }
 }
