@@ -19,5 +19,7 @@ public interface IUserStateService
 
     IReadOnlySet<Mark> PopPending();
 
+    IReadOnlySet<MarkKey> PopPendingRemovals();
+
     void UpdateState(DNode? selectedNode);
 }

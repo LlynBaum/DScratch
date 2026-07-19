@@ -31,7 +31,6 @@
 
 # Current
 
-- A way to set pending removing marks
 - Fix Bugs below
 - Still not happy with the Frontend. Everything a bit of an AI mess I created here xD
 

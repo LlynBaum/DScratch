@@ -112,7 +112,13 @@ internal class DTransaction(
         return splitNode;
     }
 
-    public IReadOnlySet<Mark> PopPendingMarks() => userStateService.PopPending();
+    public IReadOnlySet<Mark> CalculateMarks(IReadOnlySet<Mark> activeMarks)
+    {
+        return userStateService.PopPending()
+            .Concat(activeMarks)
+            .ExceptBy(userStateService.PopPendingRemovals(), m => m.Key)
+            .ToHashSet();
+    }
 
     public void NotifyNodeChange(DNode node) => modifiedNodes.Add(node);
 

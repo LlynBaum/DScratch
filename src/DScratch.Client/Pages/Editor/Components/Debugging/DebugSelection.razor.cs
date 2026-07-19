@@ -10,6 +10,7 @@ public partial class DebugSelection(IEditorDebugService editorDebugService, IUse
     private SelectionInfo? CurrentSelection => editorDebugService.CurrentClientSelection;
     private IReadOnlySet<Mark> ActiveMarks => userStateService.ActiveMarks;
     private IReadOnlySet<Mark> PendingMarks => userStateService.PendingMarks;
+    private IReadOnlySet<MarkKey> PendingMarkRemovals => userStateService.PendingMarkRemovals;
 
     protected override void OnInitialized()
     {

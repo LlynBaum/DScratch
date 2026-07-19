@@ -110,6 +110,12 @@
     color: #92400e;
 }
 
+.mark-pill.removing {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
 .mark-key {
     font-weight: 600;
 }

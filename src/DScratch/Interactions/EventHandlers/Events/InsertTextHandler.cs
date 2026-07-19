@@ -38,7 +38,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
             return;
         }
 
-        var marks = transaction.PopPendingMarks();
+        var marks = transaction.CalculateMarks(new HashSet<Mark>());
         // When we get a block element as anchor, we assume there are no TextNode within the block. So we just insert the text.
         // To prevent any broken Trees we insert it before the FirstChild, in case there are child nodes.
         var textNode = transaction.NodeFactory.String(keyPressInfo.Data, anchorNode.FirstChild, null, marks);
@@ -55,15 +55,10 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
         {
             return;
         }
-
-        var pendingMarks = transaction.PopPendingMarks();
         
         if (nodeSearchResult.Origin.HasFoundNode)
         {
-            var marks = nodeSearchResult.Origin.Node is TextNode t 
-                ? pendingMarks.Concat(t.Marks).ToHashSet(new Mark.MarkTable())
-                : pendingMarks;
-
+            var marks = GetMarksFrom(nodeSearchResult.Origin.Node);
             var textNode = transaction.NodeFactory.String(
                 value: keyPressInfo.Data,
                 origin: nodeSearchResult.Origin.Node,
@@ -76,10 +71,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
         }
         else if (nodeSearchResult.RightOrigin.HasFoundNode)
         {
-            var marks = nodeSearchResult.RightOrigin.Node.Origin is TextNode t 
-                ? pendingMarks.Concat(t.Marks).ToHashSet(new Mark.MarkTable())
-                : pendingMarks;
-            
+            var marks = GetMarksFrom(nodeSearchResult.RightOrigin.Node.Origin);
             var textNode = transaction.NodeFactory.String(
                 value: keyPressInfo.Data,
                 origin: nodeSearchResult.RightOrigin.Node.Origin,
@@ -92,15 +84,23 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
         }
         else if (anchorNode.Parent is not null)
         {
+            var marks = GetMarksFrom(null);
             var textNode = transaction.NodeFactory.String(
                 value: keyPressInfo.Data, 
                 origin: null, 
                 rightOrigin: anchorNode.FirstChild,
-                initMarks: pendingMarks);
+                initMarks: marks);
 
             var parent = anchorNode.Parent;
             transaction.Insert(textNode, parent);
             transaction.AddCursorPosition(textNode.Id, textNode.Length);
+        }
+        return;
+        
+        IReadOnlySet<Mark> GetMarksFrom(DNode? node)
+        {
+            var activeMarks = node is TextNode t ? t.Marks : new HashSet<Mark>();
+            return transaction.CalculateMarks(activeMarks);
         }
     }
 }

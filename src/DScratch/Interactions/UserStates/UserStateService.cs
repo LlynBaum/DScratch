@@ -60,9 +60,17 @@ public class UserStateService : IUserStateService
         return result;
     }
 
+    public IReadOnlySet<MarkKey> PopPendingRemovals()
+    {
+        var result = pendingMarkRemovals.ToHashSet();
+        pendingMarkRemovals.Clear();
+        return result;
+    }
+
     public void UpdateState(DNode? selectedNode)
     {
         pendingMarks.Clear();
+        pendingMarkRemovals.Clear();
         activeMarks = selectedNode is TextNode textNode ? textNode.Marks.ToHashSet() : [];
         OnStateChange?.Invoke();
     }

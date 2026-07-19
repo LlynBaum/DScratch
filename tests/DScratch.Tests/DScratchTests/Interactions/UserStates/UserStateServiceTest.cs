@@ -71,6 +71,7 @@ public class UserStateServiceTest
         var isCalled = false;
         service.OnStateChange += () => isCalled = true;
         ((HashSet<Mark>)service.PendingMarks).Add(new Mark(MarkKey.Bold));
+        ((HashSet<MarkKey>)service.PendingMarkRemovals).Add(MarkKey.Italic);
 
         var node = new TextNode(new NodeId(), null, null);
         node.SetMark(new Mark(MarkKey.Italic));
@@ -83,6 +84,7 @@ public class UserStateServiceTest
         {
             Assert.That(isCalled, Is.True);
             Assert.That(service.PendingMarks, Has.Count.Zero);
+            Assert.That(service.PendingMarkRemovals, Has.Count.Zero);
             Assert.That(service.ActiveMarks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
         }
     }
@@ -121,6 +123,23 @@ public class UserStateServiceTest
         {
             Assert.That(marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
             Assert.That(service.PendingMarks, Has.Count.Zero);
+        }
+    }
+    
+    [Test]
+    public void PopPendingRemovals_ReturnsPendingRemovingMarks_AndClearsPending()
+    {
+        // Arrange
+        ((HashSet<MarkKey>)service.PendingMarkRemovals).Add(MarkKey.Bold);
+        
+        // Act
+        var marks = service.PopPendingRemovals();
+        
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(marks, Is.EquivalentTo([MarkKey.Bold]));
+            Assert.That(service.PendingMarkRemovals, Has.Count.Zero);
         }
     }
 

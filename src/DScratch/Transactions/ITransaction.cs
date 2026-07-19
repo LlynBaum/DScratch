@@ -34,5 +34,5 @@ public interface ITransaction
 
     TextNode? SplitText(TextNode node, int offset);
 
-    IReadOnlySet<Mark> PopPendingMarks();
+    IReadOnlySet<Mark> CalculateMarks(IReadOnlySet<Mark> activeMarks);
 }
