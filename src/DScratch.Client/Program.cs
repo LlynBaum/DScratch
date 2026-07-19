@@ -5,6 +5,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 DScratchServiceRegistration.RegisterServices(builder.Services);
-ClientServiceRegistration.RegisterServices(builder.Services);
+ClientServiceRegistration.RegisterServices(builder.Services, builder.HostEnvironment.IsDevelopment());
 
 await builder.Build().RunAsync();

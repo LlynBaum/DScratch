@@ -3,7 +3,7 @@ using DScratch.Nodes;
 
 namespace DScratch.Client.Pages.Editor.Components.Debugging;
 
-public partial class DebugTreePanel(EditorDebugService debugService, IDScratchService dScratchService) : IDisposable
+public partial class DebugTreePanel(IEditorDebugService debugService, IDScratchService dScratchService) : IDisposable
 {
     private List<TreeNodeViewModel> treeNodes = [];
     

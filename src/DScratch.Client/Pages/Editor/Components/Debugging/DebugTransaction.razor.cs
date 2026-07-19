@@ -4,9 +4,9 @@ using DScratch.Interactions;
 
 namespace DScratch.Client.Pages.Editor.Components.Debugging;
 
-public partial class DebugTransaction(EditorDebugService editorDebugService) : IDisposable
+public partial class DebugTransaction(IEditorDebugService editorDebugService) : IDisposable
 {
-     private EditorDebugService.TransactionInfo? LastTransactionInfo => editorDebugService.Transactions.LastOrDefault();
+     private DebugTransactionInfo? LastTransactionInfo => editorDebugService.Transactions.LastOrDefault();
      private TransactionResult? LastTransaction => LastTransactionInfo?.Result;
      private KeyPressInfo? LastKeyPressInfo => LastTransactionInfo?.KeyPressInfo;
 

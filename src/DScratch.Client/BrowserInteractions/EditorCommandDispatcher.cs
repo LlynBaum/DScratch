@@ -11,7 +11,7 @@ public class EditorCommandDispatcher(
     IDScratchService dScratchService, 
     IUserStateService userStateService,
     DJsInvoker jsInvoker,
-    EditorDebugService editorDebugService) : IEditorCommandDispatcher
+    IEditorDebugService editorDebugService) : IEditorCommandDispatcher
 {
     public async Task ChangeBlockTypeAsync(BlockNodeType targetBlockNodeType)
     {
@@ -28,7 +28,7 @@ public class EditorCommandDispatcher(
         var result = dScratchService.Apply(transaction);
         await jsInvoker.ApplyTransaction(result);
         
-        editorDebugService.NotifyDocumentChanged(new EditorDebugService.TransactionInfo(result, new KeyPressInfo
+        editorDebugService.NotifyDocumentChanged(new DebugTransactionInfo(result, new KeyPressInfo
         {
             InputType = "ChangeBlockType",
             Data = null,
@@ -57,12 +57,18 @@ public class EditorCommandDispatcher(
         var result = dScratchService.Apply(transaction);
         await jsInvoker.ApplyTransaction(result);
         
-        editorDebugService.NotifyDocumentChanged(new EditorDebugService.TransactionInfo(result, new KeyPressInfo
+        editorDebugService.NotifyDocumentChanged(new DebugTransactionInfo(result, new KeyPressInfo
         {
             InputType = "UpdateMark",
             Data = null,
             Selection = selectionInfo
         }));
+        
+        if (editorDebugService.IsDebugEnabled)
+        {
+            var visualizer = new TreeVisualizers.DocumentVisualizer(dScratchService.Document);
+            visualizer.Print();
+        }
     }
 
     private void UpdatePendingMarks(Mark mark, UpdateMarkAction action, SelectionInfo selectionInfo)

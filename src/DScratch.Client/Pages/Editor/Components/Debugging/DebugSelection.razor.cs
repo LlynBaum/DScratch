@@ -5,7 +5,7 @@ using DScratch.Nodes.Marks;
 
 namespace DScratch.Client.Pages.Editor.Components.Debugging;
 
-public partial class DebugSelection(EditorDebugService editorDebugService, IUserStateService userStateService) : IDisposable
+public partial class DebugSelection(IEditorDebugService editorDebugService, IUserStateService userStateService) : IDisposable
 {
     private SelectionInfo? CurrentSelection => editorDebugService.CurrentClientSelection;
     private IReadOnlySet<Mark> ActiveMarks => userStateService.ActiveMarks;

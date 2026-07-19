@@ -7,15 +7,21 @@ namespace DScratch.Client;
 
 public static class ClientServiceRegistration
 {
-    public static void RegisterServices(IServiceCollection services)
+    public static void RegisterServices(IServiceCollection services, bool isDevelopment)
     { 
         EventHandlerRegistration.Register(services);
         services.AddScoped<IEditorCommandDispatcher, EditorCommandDispatcher>();
         services.AddScoped<BrowserEventHelper>();
         services.AddScoped<DJsInvoker>();
         services.AddScoped<INodeIdGenerator, NodeIdGenerator>();
-#if DEBUG // TODO replace by checking env. Do that everywhere
-        services.AddScoped<EditorDebugService>();
-#endif
+
+        if (isDevelopment)
+        {
+            services.AddScoped<IEditorDebugService, EditorDebugService>();
+        }
+        else
+        {
+            services.AddScoped<IEditorDebugService, EditorDebugFake>();
+        }
     }
 }

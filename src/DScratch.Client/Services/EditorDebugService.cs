@@ -1,12 +1,11 @@
 using DScratch.Interactions;
-using DScratch.Transactions;
 
 namespace DScratch.Client.Services;
 
-public class EditorDebugService
+public class EditorDebugService : IEditorDebugService
 {
-    private readonly List<TransactionInfo> transactions = [];
-    public IReadOnlyList<TransactionInfo> Transactions => transactions;
+    private readonly List<DebugTransactionInfo> transactions = [];
+    public IReadOnlyList<DebugTransactionInfo> Transactions => transactions;
     
     public SelectionInfo? CurrentClientSelection { get; private set; }
     
@@ -27,13 +26,11 @@ public class EditorDebugService
     public event Action? SelectionChanged;
     public event Action? DebugModeChanged;
 
-    public void NotifyDocumentChanged(TransactionInfo transactionResult)
+    public void NotifyDocumentChanged(DebugTransactionInfo debugTransactionResult)
     {
-        transactions.Add(transactionResult);
+        transactions.Add(debugTransactionResult);
         DocumentChanged?.Invoke();
     }
-
-    public record TransactionInfo(TransactionResult Result, KeyPressInfo KeyPressInfo);
 
     public void NotifySelectionChange(SelectionInfo selectionInfo)
     {

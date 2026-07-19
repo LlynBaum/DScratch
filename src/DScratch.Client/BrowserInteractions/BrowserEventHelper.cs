@@ -10,7 +10,7 @@ public class BrowserEventHelper(
     DJsInvoker jsInvoker, 
     IDScratchService dScratchService,
     IUserStateService userStateService,
-    EditorDebugService editorDebugService,
+    IEditorDebugService editorDebugService,
     IServiceProvider serviceProvider, 
     ILogger<BrowserEventHelper> logger)
 {
@@ -33,7 +33,7 @@ public class BrowserEventHelper(
 
             await jsInvoker.ApplyTransaction(result);
 
-            editorDebugService.NotifyDocumentChanged(new EditorDebugService.TransactionInfo(result, keyPressInfo));
+            editorDebugService.NotifyDocumentChanged(new DebugTransactionInfo(result, keyPressInfo));
             if (editorDebugService.IsDebugEnabled)
             {
                 var visualizer = new TreeVisualizers.DocumentVisualizer(dScratchService.Document);

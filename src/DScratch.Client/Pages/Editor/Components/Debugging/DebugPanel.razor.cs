@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace DScratch.Client.Pages.Editor.Components.Debugging;
 
-public partial class DebugPanel(EditorDebugService debugService)
+public partial class DebugPanel(IEditorDebugService debugService)
 {
     [Parameter]
     public bool IsOpen { get; set; }
