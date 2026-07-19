@@ -5,12 +5,14 @@ namespace DScratch.Interactions.UserStates;
 
 public class UserStateService : IUserStateService
 {
-    private readonly HashSet<Mark> pendingMarks = new HashSet<Mark>(new Mark.MarkTable());
     private HashSet<Mark> activeMarks = new HashSet<Mark>(new Mark.MarkTable());
+    private readonly HashSet<Mark> pendingMarks = new HashSet<Mark>(new Mark.MarkTable());
+    private readonly HashSet<MarkKey> pendingMarkRemovals = new HashSet<MarkKey>();
 
-    public IReadOnlySet<Mark> PendingMarks => pendingMarks;
     public IReadOnlySet<Mark> ActiveMarks => activeMarks;
-
+    public IReadOnlySet<Mark> PendingMarks => pendingMarks;
+    public IReadOnlySet<MarkKey> PendingMarkRemovals => pendingMarkRemovals;
+    
     public event Action? OnStateChange;
 
     public void AddPendingMark(Mark mark)
@@ -21,12 +23,20 @@ public class UserStateService : IUserStateService
 
     public void RemovePendingMark(Mark mark)
     {
-        pendingMarks.Remove(mark);
-        // TODO: if mark is in active marks present, it should be shadowed by something like "removed marks", so when typing the Mark is not applied.
+        if (!pendingMarks.Remove(mark))
+        {
+            pendingMarkRemovals.Add(mark.Key);
+        }
     }
 
     public bool CheckMark(MarkKey key, out string? value)
     {
+        if (pendingMarkRemovals.Contains(key))
+        {
+            value = null;
+            return false;
+        }
+
         var mark = new Mark(key);
         if (pendingMarks.TryGetValue(mark, out var v))
         {

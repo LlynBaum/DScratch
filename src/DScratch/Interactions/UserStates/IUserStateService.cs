@@ -5,8 +5,9 @@ namespace DScratch.Interactions.UserStates;
 
 public interface IUserStateService
 {
-    IReadOnlySet<Mark> PendingMarks { get; }
     IReadOnlySet<Mark> ActiveMarks { get; }
+    IReadOnlySet<Mark> PendingMarks { get; }
+    IReadOnlySet<MarkKey> PendingMarkRemovals { get; }
 
     event Action OnStateChange;
     

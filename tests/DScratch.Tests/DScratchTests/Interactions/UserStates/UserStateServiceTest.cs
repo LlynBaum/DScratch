@@ -54,6 +54,17 @@ public class UserStateServiceTest
     }
     
     [Test]
+    public void RemovePendingMark_AddsMarkToPendingRemovals_WhenMarkIsNotPending()
+    {
+        // Act
+        service.RemovePendingMark(new Mark(MarkKey.Bold));
+
+        // Assert
+        Assert.That(service.PendingMarkRemovals, Has.Count.EqualTo(1));
+        Assert.That(service.PendingMarkRemovals.Single(), Is.EqualTo(MarkKey.Bold));
+    }
+    
+    [Test]
     public void UpdateState_MakesExpectedChanges_AndCallsOnStateChange()
     {
         // Arrange
@@ -146,6 +157,21 @@ public class UserStateServiceTest
     {
         // Act
         var found = service.CheckMark(MarkKey.Color, out var value);
+        
+        // Assert
+        Assert.That(found, Is.False);
+        Assert.That(value, Is.Null);
+    }
+    
+    [Test]
+    public void CheckMark_ReturnsFalse_WhenPendingMarkRemovalIsSet()
+    {
+        // Arrange
+        ((HashSet<Mark>)service.ActiveMarks).Add(new Mark(MarkKey.Bold));
+        ((HashSet<MarkKey>)service.PendingMarkRemovals).Add(MarkKey.Bold);
+        
+        // Act
+        var found = service.CheckMark(MarkKey.Bold, out var value);
         
         // Assert
         Assert.That(found, Is.False);
