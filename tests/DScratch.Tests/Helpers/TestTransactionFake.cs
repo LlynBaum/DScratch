@@ -77,7 +77,7 @@ public class TestTransactionFake : ITransaction, IRunningTransaction
         throw new NotImplementedException();
     }
 
-    public IReadOnlySet<Mark> PopPendingMarks()
+    public IReadOnlySet<Mark> CalculateMarks(IReadOnlySet<Mark> activeMarks)
     {
         throw new NotImplementedException();
     }

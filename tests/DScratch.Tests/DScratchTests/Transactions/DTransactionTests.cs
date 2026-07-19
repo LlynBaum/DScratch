@@ -6,6 +6,7 @@ using DScratch.Tests.Helpers.TestNodes;
 using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 using DScratch.Transactions.Steps.Marks;
+using NUnit.Framework.Legacy;
 
 namespace DScratch.Tests.DScratchTests.Transactions;
 
@@ -214,6 +215,29 @@ public class DTransactionTests
             Assert.That(insertText.ParentId, Is.EqualTo(insertElement.NewNodeId));
             Assert.That(insertText.Text, Is.EqualTo("cd"));
         }
+    }
+
+    [Test]
+    public void CalculateMarks_ReturnsExpectedMarks()
+    {
+        // Arrange
+        UserStateService.AddPendingMark(new Mark(MarkKey.Color, "b"));
+        UserStateService.RemovePendingMark(new Mark(MarkKey.Italic));
+        
+        // Act
+        var actual = Transaction.CalculateMarks(new HashSet<Mark>
+        {
+            new Mark(MarkKey.Color, "a"),
+            new Mark(MarkKey.Italic),
+            new Mark(MarkKey.Bold)
+        });
+
+        // Assert
+        Assert.That(actual, Is.EquivalentTo(new HashSet<Mark>
+        {
+            new Mark(MarkKey.Color, "b"),
+            new Mark(MarkKey.Bold)
+        }));
     }
 
     private class TestStep : IStep
