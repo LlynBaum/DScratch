@@ -298,4 +298,96 @@ public class MarksTests : PlaywrightTestBase
             Assert.That(selection.FocusOffset, Is.EqualTo(1));
         }
     }
+    
+        [Test]
+    public async Task BoldButtons_SetsPendingRemoval()
+    {
+        await Editor.ClickAsync();
+        await Page.TypeAtCurrentCursorAsync("tet");
+
+        await Page.SetSelectionAsync(new SelectionInfo
+        {
+            AnchorId = "Darki-2",
+            AnchorOffset = 0,
+            FocusId = "Darki-2",
+            FocusOffset = 3,
+        });
+        await EditorMenu.ClickBold();
+        
+        await Page.SetSelectionAsync(new SelectionInfo
+        {
+            AnchorId = "Darki-2",
+            AnchorOffset = 2,
+            FocusId = "Darki-2",
+            FocusOffset = 2,
+        });
+        
+        await Expect(EditorMenu.Bold).ToContainClassAsync("active");
+        await EditorMenu.ClickBold();
+        await Expect(EditorMenu.Bold).Not.ToContainClassAsync("active");
+        
+        await Page.TypeAtCurrentCursorAsync("s");
+
+        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("te");
+        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-weight", "700");
+        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("s");
+        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-weight", "400");
+        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("t");
+        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-weight", "700");
+
+        var selection = await GetCursorPositionAsync();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-6"));
+            Assert.That(selection.AnchorOffset, Is.EqualTo(1));
+            Assert.That(selection.FocusId, Is.EqualTo("Darki-6"));
+            Assert.That(selection.FocusOffset, Is.EqualTo(1));
+        }
+    }
+    
+    [Test]
+    public async Task ItalicButtons_SetsPendingRemoval()
+    {
+        await Editor.ClickAsync();
+        await Page.TypeAtCurrentCursorAsync("tet");
+        
+        await Page.SetSelectionAsync(new SelectionInfo
+        {
+            AnchorId = "Darki-2",
+            AnchorOffset = 0,
+            FocusId = "Darki-2",
+            FocusOffset = 3,
+        });
+        await EditorMenu.ClickItalic();
+
+        await Page.SetSelectionAsync(new SelectionInfo
+        {
+            AnchorId = "Darki-2",
+            AnchorOffset = 2,
+            FocusId = "Darki-2",
+            FocusOffset = 2,
+        });
+        
+        await Expect(EditorMenu.Italic).ToContainClassAsync("active");
+        await EditorMenu.ClickItalic();
+        await Expect(EditorMenu.Italic).Not.ToContainClassAsync("active");
+        
+        await Page.TypeAtCurrentCursorAsync("s");
+
+        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("te");
+        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-style", "italic");
+        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("s");
+        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-style", "normal");
+        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("t");
+        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-style", "italic");
+
+        var selection = await GetCursorPositionAsync();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-6"));
+            Assert.That(selection.AnchorOffset, Is.EqualTo(1));
+            Assert.That(selection.FocusId, Is.EqualTo("Darki-6"));
+            Assert.That(selection.FocusOffset, Is.EqualTo(1));
+        }
+    }
 }
