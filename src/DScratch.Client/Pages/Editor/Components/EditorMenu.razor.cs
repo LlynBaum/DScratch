@@ -34,7 +34,9 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
     }
 
     private async Task ParagraphAsync() => await dispatcher.ChangeBlockTypeAsync(BlockNodeType.Paragraph);
+    
     private async Task HeadingAsync(BlockNodeType blockNodeType) => await dispatcher.ChangeBlockTypeAsync(blockNodeType);
+    
     private async Task OnColorChangeAsync()
     {
         await dispatcher.UpdateMarkAsync(new Mark(MarkKey.Color, viewModel.ActiveColor), UpdateMarkAction.Add);

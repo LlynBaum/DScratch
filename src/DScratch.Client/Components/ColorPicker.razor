@@ -1,5 +1,5 @@
 @using DScratch.Client.Components.Icons
 <div class="color-picker-container">
     <input type="color" value="@Value" @onchange="OnColorInputChanged" />
-    <IconButton OnClick="OnClearColor" Title="Clear Color" Icon="EditorIcon.FormatColorReset" />
+    <IconButton OnClick="@OnClearColor" Title="Clear Color" Icon="EditorIcon.FormatColorReset" />
 </div>

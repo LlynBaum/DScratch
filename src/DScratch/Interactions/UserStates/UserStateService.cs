@@ -71,7 +71,7 @@ public class UserStateService : IUserStateService
     {
         pendingMarks.Clear();
         pendingMarkRemovals.Clear();
-        activeMarks = selectedNode is TextNode textNode ? textNode.Marks.ToHashSet() : [];
+        activeMarks = selectedNode is TextNode textNode ? textNode.Marks.ToHashSet(new Mark.MarkTable()) : [];
         OnStateChange?.Invoke();
     }
 }

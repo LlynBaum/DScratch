@@ -30,10 +30,5 @@
 - [ ] Auto Gen "Table of Contents"
 
 # Current
-
-- Fix Bugs below
 - Still not happy with the Frontend. Everything a bit of an AI mess I created here xD
-
-# Bugs
-
-- Color Picker doesn't update when updating ActiveMarks
+- Color picker is not that nice to use. The cursor is not set anymore when clicking away. So you have to remember where you were
