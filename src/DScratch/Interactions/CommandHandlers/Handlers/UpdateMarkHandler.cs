@@ -1,14 +1,37 @@
+using DScratch.Interactions.CommandHandlers.Commands;
+using DScratch.Interactions.UserStates;
 using DScratch.Nodes;
 using DScratch.Nodes.Marks;
+using DScratch.Nodes.NodeTypes;
 using DScratch.Transactions;
 
-namespace DScratch.Interactions.CommandHandlers.Commands;
+namespace DScratch.Interactions.CommandHandlers.Handlers;
 
-public static class UpdateMarkHandler
+public class UpdateMarkHandler(IDScratchService dScratchService, IUserStateService userStateService) : CommandBase<UpdateMarkCommand>(dScratchService)
 {
-    public static void Execute(
-        ITransaction transaction, 
-        SelectionInfo selectionInfo, 
+    protected override void Handle(ITransaction transaction, SelectionInfo selectionInfo, UpdateMarkCommand command)
+    {
+        if (selectionInfo.Direction is SelectionDirection.None)
+        {
+            var anchorNode = transaction.Document.FindNode(selectionInfo.AnchorNodeId);
+            if (anchorNode is IBlockElement blockElement)
+            {
+                //blockElement.SetMark(command.Mark);
+            }
+            else
+            {
+                UpdatePendingMarks(command.Mark, command.Action, selectionInfo);                    
+            }
+        }
+        else
+        {
+            HandleSelection(transaction, selectionInfo, command.Mark, command.Action);
+        }
+    }
+
+    private static void HandleSelection(
+        ITransaction transaction,
+        SelectionInfo selectionInfo,
         Mark mark,
         UpdateMarkAction action)
     {
@@ -112,6 +135,31 @@ public static class UpdateMarkHandler
             result.Add(walker.Node);
         }
         return result;
+    }
+    
+    private void UpdatePendingMarks(Mark mark, UpdateMarkAction action, SelectionInfo selectionInfo)
+    {
+        switch (action)
+        {
+            case UpdateMarkAction.Remove:
+                userStateService.RemovePendingMark(mark);
+                break;
+            case UpdateMarkAction.Add:
+                userStateService.AddPendingMark(mark);
+                break;
+            case UpdateMarkAction.Toggle:
+                if (userStateService.CheckMark(mark.Key, out _))
+                {
+                    userStateService.RemovePendingMark(mark);
+                }
+                else
+                {
+                    userStateService.AddPendingMark(mark);
+                }
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(action), action, null);
+        }
     }
 }
 

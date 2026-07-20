@@ -1,11 +1,12 @@
+using DScratch.Interactions.CommandHandlers.Commands;
 using DScratch.Nodes;
 using DScratch.Transactions;
 
-namespace DScratch.Interactions.CommandHandlers.Commands;
+namespace DScratch.Interactions.CommandHandlers.Handlers;
 
-public static class ChangeBlockTypeHandler
+public class ChangeBlockTypeHandler(IDScratchService dScratchService) : CommandBase<ChangeBlockTypeCommand>(dScratchService)
 {
-    public static void Execute(ITransaction transaction, SelectionInfo selectionInfo, BlockNodeType targetBlockNodeType)
+    protected override void Handle(ITransaction transaction, SelectionInfo selectionInfo, ChangeBlockTypeCommand command)
     {
         var selectedNodes = GetSelectedNodes(transaction, selectionInfo);
         if (!selectedNodes.Any())
@@ -24,7 +25,7 @@ public static class ChangeBlockTypeHandler
         
         Func<DNode, DNode> GetFactory()
         {
-            return targetBlockNodeType switch
+            return command.TargetBlockNodeType switch
             {
                 BlockNodeType.Paragraph => transaction.NodeFactory.ParagraphFrom,
                 BlockNodeType.Heading1 => n => transaction.NodeFactory.HeadingFrom(n ,HeadingLevel.Level1),
@@ -33,7 +34,7 @@ public static class ChangeBlockTypeHandler
                 BlockNodeType.Heading4 => n => transaction.NodeFactory.HeadingFrom(n ,HeadingLevel.Level4),
                 BlockNodeType.Heading5 => n => transaction.NodeFactory.HeadingFrom(n ,HeadingLevel.Level5),
                 BlockNodeType.Heading6 => n => transaction.NodeFactory.HeadingFrom(n ,HeadingLevel.Level6),
-                _ => throw new ArgumentOutOfRangeException(nameof(targetBlockNodeType))
+                _ => throw new ArgumentOutOfRangeException(nameof(command.TargetBlockNodeType))
             };
         }
     }

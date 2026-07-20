@@ -1,28 +1,30 @@
 using DScratch.Interactions;
 using DScratch.Interactions.CommandHandlers;
 using DScratch.Interactions.CommandHandlers.Commands;
+using DScratch.Interactions.CommandHandlers.Handlers;
 using DScratch.Interactions.UserStates;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
 using DScratch.Tests.Helpers.TestNodes;
-using DScratch.Transactions;
 
 namespace DScratch.Tests.DScratchTests.Interactions.CommandHandlers;
 
 public class ChangeBlockTypeHandlerTests
 {
     private TreeBuilder builder;
-    private ITransaction transaction;
+    private DScratchService dScratchService;
+    private ChangeBlockTypeHandler handler;
     
     [SetUp]
     public void SetUp()
     {
         builder = new TreeBuilder();
-        transaction = new DTransaction(
+        dScratchService = new DScratchService(
             document: builder.CreateDocument(), 
-            nodeFactory: new DNodeFactory(builder.IdGenerator),
-            userStateService: new UserStateService(), 
-            disableCleanUp: true);
+            nodeFactory: new DNodeFactory(builder.IdGenerator), 
+            userStateService: new UserStateService()) { DisableCleanUp = true };
+        
+        handler = new ChangeBlockTypeHandler(dScratchService);
     }
 
     [Test]
@@ -44,12 +46,11 @@ public class ChangeBlockTypeHandlerTests
         };
         
         // Act
-        ChangeBlockTypeHandler.Execute(transaction, selection, BlockNodeType.Paragraph);
-        var result = transaction.Commit();
+        var result = handler.Execute(selection, new ChangeBlockTypeCommand(BlockNodeType.Paragraph));
         
         // Assert
         Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(3));
-        var newBlockNode = transaction.Document.FindNode(blockNode.Id);
+        var newBlockNode =  dScratchService.Document.FindNode(blockNode.Id);
         Assert.That(newBlockNode, Is.TypeOf<ParagraphNode>());
         
         using (Assert.EnterMultipleScope())
@@ -83,8 +84,7 @@ public class ChangeBlockTypeHandlerTests
         };
         
         // Act
-        ChangeBlockTypeHandler.Execute(transaction, selection, BlockNodeType.Paragraph);
-        var result = transaction.Commit();
+        var result = handler.Execute(selection, new ChangeBlockTypeCommand(BlockNodeType.Paragraph));
         
         // Assert
         Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(5));
@@ -121,8 +121,7 @@ public class ChangeBlockTypeHandlerTests
         };
         
         // Act
-        ChangeBlockTypeHandler.Execute(transaction, selection, BlockNodeType.Paragraph);
-        var result = transaction.Commit();
+        var result = handler.Execute(selection, new ChangeBlockTypeCommand(BlockNodeType.Paragraph));
         
         // Assert
         Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(5));

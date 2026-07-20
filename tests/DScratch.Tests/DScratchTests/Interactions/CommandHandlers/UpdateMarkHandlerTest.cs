@@ -1,11 +1,11 @@
 using DScratch.Interactions;
 using DScratch.Interactions.CommandHandlers.Commands;
+using DScratch.Interactions.CommandHandlers.Handlers;
 using DScratch.Interactions.UserStates;
 using DScratch.Nodes;
 using DScratch.Nodes.Marks;
 using DScratch.Tests.DScratchTests.Interactions.Helpers;
 using DScratch.Tests.Helpers;
-using DScratch.Transactions;
 
 namespace DScratch.Tests.DScratchTests.Interactions.CommandHandlers;
 
@@ -13,17 +13,19 @@ namespace DScratch.Tests.DScratchTests.Interactions.CommandHandlers;
 public class UpdateMarkHandlerTest
 {
     private TreeBuilder builder;
-    private ITransaction transaction;
+    private DScratchService dScratchService;
+    private UpdateMarkHandler handler;
     
     [SetUp]
     public void SetUp()
     {
         builder = new TreeBuilder();
-        transaction = new DTransaction(
+        dScratchService = new DScratchService(
             document: builder.CreateDocument(), 
-            nodeFactory: new DNodeFactory(builder.IdGenerator),
-            userStateService: new UserStateService(), 
-            disableCleanUp: true);
+            nodeFactory: new DNodeFactory(builder.IdGenerator), 
+            userStateService: new UserStateService()) { DisableCleanUp = true };
+        
+        handler = new UpdateMarkHandler(dScratchService, new UserStateService());
     }
 
     private class ToggleAction : UpdateMarkHandlerTest
@@ -41,8 +43,7 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(start.Id, 2);
             
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Toggle);
-            var result = transaction.Commit();
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -77,8 +78,7 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 2, end.Id, 1);
             
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Toggle);
-            var result = transaction.Commit();
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -134,8 +134,7 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 2, end.Id, 1);
             
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Toggle);
-            var result = transaction.Commit();
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -186,8 +185,7 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
 
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Italic), UpdateMarkAction.Toggle);
-            var result = transaction.Commit();
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Italic), UpdateMarkAction.Toggle));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -240,8 +238,7 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
 
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Toggle);
-            var result = transaction.Commit();
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -295,8 +292,7 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
 
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Toggle);
-            var result = transaction.Commit();
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -349,8 +345,7 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
 
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Italic), UpdateMarkAction.Toggle);
-            var result = transaction.Commit();
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Italic), UpdateMarkAction.Toggle));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -405,9 +400,8 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 0, end.Id, 2);
 
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Italic), UpdateMarkAction.Toggle);
-            var result = transaction.Commit();
-
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Italic), UpdateMarkAction.Toggle));
+            
             // Assert
             using (Assert.EnterMultipleScope())
             {
@@ -454,8 +448,7 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(start.Id, 2);
             
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Add);
-            var result = transaction.Commit();
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Add));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -490,8 +483,7 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 2, end.Id, 1);
             
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Add);
-            var result = transaction.Commit();
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Add));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -547,9 +539,8 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 2, end.Id, 1);
             
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Add);
-            var result = transaction.Commit();
-
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Add));
+        
             // Assert
             using (Assert.EnterMultipleScope())
             {
@@ -599,9 +590,8 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
 
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Italic), UpdateMarkAction.Add);
-            var result = transaction.Commit();
-
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Italic), UpdateMarkAction.Add));
+         
             // Assert
             using (Assert.EnterMultipleScope())
             {
@@ -653,9 +643,8 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
 
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Add);
-            var result = transaction.Commit();
-
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Add));
+            
             // Assert
             using (Assert.EnterMultipleScope())
             {
@@ -708,9 +697,8 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
 
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Add);
-            var result = transaction.Commit();
-
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Add));
+  
             // Assert
             using (Assert.EnterMultipleScope())
             {
@@ -762,8 +750,7 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
 
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Italic), UpdateMarkAction.Add);
-            var result = transaction.Commit();
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Italic), UpdateMarkAction.Add));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -817,8 +804,7 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(start.Id, 2);
             
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Remove);
-            var result = transaction.Commit();
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Remove));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -855,8 +841,7 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 2, end.Id, 1);
             
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Remove);
-            var result = transaction.Commit();
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Remove));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -913,8 +898,7 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 2, end.Id, 1);
             
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Remove);
-            var result = transaction.Commit();
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Remove));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -965,8 +949,7 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
 
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Italic), UpdateMarkAction.Remove);
-            var result = transaction.Commit();
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Italic), UpdateMarkAction.Remove));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -1019,8 +1002,7 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
 
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Remove);
-            var result = transaction.Commit();
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Remove));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -1074,8 +1056,7 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
 
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Bold), UpdateMarkAction.Remove);
-            var result = transaction.Commit();
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Remove));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -1128,8 +1109,7 @@ public class UpdateMarkHandlerTest
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
 
             // Act
-            UpdateMarkHandler.Execute(transaction, keyPressInfo.Selection, new Mark(MarkKey.Italic), UpdateMarkAction.Remove);
-            var result = transaction.Commit();
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Italic), UpdateMarkAction.Remove));
 
             // Assert
             using (Assert.EnterMultipleScope())
