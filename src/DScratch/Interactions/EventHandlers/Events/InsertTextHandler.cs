@@ -71,7 +71,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
         }
         else if (nodeSearchResult.RightOrigin.HasFoundNode)
         {
-            var marks = GetMarksFrom(nodeSearchResult.RightOrigin.Node.Origin);
+            var marks = GetMarksFrom(nodeSearchResult.RightOrigin.Node);
             var textNode = transaction.NodeFactory.String(
                 value: keyPressInfo.Data,
                 origin: nodeSearchResult.RightOrigin.Node.Origin,
@@ -84,7 +84,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
         }
         else if (anchorNode.Parent is not null)
         {
-            var marks = GetMarksFrom(null);
+            var marks = GetMarksFrom(anchorNode.Parent.FirstChild);
             var textNode = transaction.NodeFactory.String(
                 value: keyPressInfo.Data, 
                 origin: null, 

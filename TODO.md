@@ -7,9 +7,10 @@
 - [ ] Make marks continues when Typing
   - [x] Typing
   - [x] Pending Marks
-  - [ ] Persist pending Marks for empty blocks
   - [ ] carry over mark to new block
-- [ ] MenuBar shows active marks
+  - [ ] Marks for empty blocks
+  - [ ] Color all the text in one block, start of block has the same color as rest
+- [x] MenuBar shows active marks
   - Also add this to the debug viewer.
 - [ ] Inline Elements
   - For now just Links 
@@ -27,8 +28,20 @@
 - [ ] Auto Page Numbering
 - [ ] Default Formating for Block type settings
   - Things like text spacing and so on are done here. Do not support as mark for now
+  - Those are Document Settings, not CRDT. So it is a global setting you can choose without effecting the tree.
+  - Those settings are implicitly included in the rendering of marks. So will go over the UpdateMarkDiff, but are not on the nodes itself
 - [ ] Auto Gen "Table of Contents"
 
 # Current
+
 - Still not happy with the Frontend. Everything a bit of an AI mess I created here xD
 - Color picker is not that nice to use. The cursor is not set anymore when clicking away. So you have to remember where you were
+
+# Questions
+
+## Marks on empty paragraph
+
+- Blocks have a default styling 
+- Text inherit via CSS in the DOM
+- Text insert at 0 will copy marks from RightOrigin
+

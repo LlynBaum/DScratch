@@ -9,7 +9,7 @@ using DScratch.Tests.Helpers;
 namespace DScratch.Tests.DScratchTests.Interactions.EventHandlers;
 
 [TestFixture]
-public class InsertTextHandlerTests
+public class InsertTextHandlerTest
 {
     private TreeBuilder builder;
     private InsertTextHandler handler;
@@ -29,7 +29,7 @@ public class InsertTextHandlerTests
         handler = new InsertTextHandler(service);
     }
 
-    private class SimpleInsert : InsertTextHandlerTests
+    private class SimpleInsert : InsertTextHandlerTest
     {
         [Test]
         public void Handle_CreatesExpectedChanges()
@@ -217,7 +217,7 @@ public class InsertTextHandlerTests
         }
     }
 
-    private class SelectionInsert : InsertTextHandlerTests
+    private class SelectionInsert : InsertTextHandlerTest
     {
         [Test]
         [TestCase(SelectionDirection.Forward)]
@@ -376,7 +376,7 @@ public class InsertTextHandlerTests
         }
     }
     
-    private class MergeParagraphs : InsertTextHandlerTests
+    private class MergeParagraphs : InsertTextHandlerTest
     {
         [Test]
         public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverTwoParagraphs()
@@ -551,7 +551,7 @@ public class InsertTextHandlerTests
         }
     }
 
-    private class EmptyBlocks : InsertTextHandlerTests
+    private class EmptyBlocks : InsertTextHandlerTest
     {
         [Test]
         public void Handle_CreatesExpectedChanges()
@@ -574,7 +574,7 @@ public class InsertTextHandlerTests
         }
     }
 
-    private class Marks : InsertTextHandlerTests
+    private class Marks : InsertTextHandlerTest
     {
         [Test]
         public void CopyMarks_FromOrigin()
@@ -620,7 +620,7 @@ public class InsertTextHandlerTests
         }
 
         [Test]
-        public void NoMarks_WhenInsertAsFirstChild()
+        public void CopiesMarksFromRightOrigin_WhenInsertAsFirstChild()
         {
             // Arrange
             TextNode node = null!;
@@ -636,7 +636,7 @@ public class InsertTextHandlerTests
             
             // Assert
             Assert.That(node.Origin, Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)node.Origin).Marks, Is.Empty);
+            Assert.That(((TextNode)node.Origin).Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
         }
         
         [Test]
