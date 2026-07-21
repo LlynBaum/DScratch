@@ -1,3 +1,4 @@
+using DScratch.Nodes.Marks;
 using DScratch.Nodes.NodeTypes;
 
 namespace DScratch.Nodes;
@@ -7,6 +8,8 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
     public abstract string TagName { get; }
     
     private readonly List<DNode> allChildNodes = childNodes ?? [];
+    
+    private readonly HashSet<Mark> marks = new HashSet<Mark>(new Mark.MarkTable());
     
     public NodeId Id { get; } = id;
     
@@ -27,6 +30,8 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
     public DNode? FirstChild => ActiveChildNodes.FirstOrDefault();
 
     public DNode? LastChild => ActiveChildNodes.LastOrDefault();
+
+    public IReadOnlySet<Mark> Marks => marks;
 
     internal void Remove()
     {
@@ -87,6 +92,26 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
         return index < 0 
             ? null 
             : ActiveChildNodes.Skip(index).FirstOrDefault();
+    }
+    
+    internal void CopyMarks(IEnumerable<Mark> initMarks)
+    {
+        marks.Clear();
+        foreach (var initMark in initMarks)
+        {
+            marks.Add(initMark);
+        }
+    }
+    
+    internal void SetMark(Mark mark)
+    {
+        marks.Remove(mark);
+        marks.Add(mark);
+    }
+
+    internal void RemoveMark(MarkKey key)
+    {
+        marks.Remove(new Mark(key, string.Empty));
     }
 
     public override string ToString()

@@ -19,6 +19,7 @@ internal static class NodeRenderExtensions
                 IElement => 
                 [
                     new StepDiff.InsertElementDiff(parentId.Value, node.GetFirstActiveOrigin()?.Id.Value, node.TagName, node.Id.Value),
+                    node.ToMarkUpdate(),
                     ..node.ActiveChildNodes.SelectMany(c => c.ToInsertSteps())
                 ],
                 _ => throw new ArgumentException("Node type is not an element, text or char node.")

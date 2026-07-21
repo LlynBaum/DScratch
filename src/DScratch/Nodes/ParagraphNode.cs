@@ -3,7 +3,7 @@ using DScratch.Nodes.NodeTypes;
 namespace DScratch.Nodes;
 
 public class ParagraphNode(NodeId id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null)
-    : DNode(id, origin, rightOrigin, childNodes), IBlockTextNode
+    : DNode(id, origin, rightOrigin, childNodes), IBlockElement
 {
     public override string TagName => "p";
     

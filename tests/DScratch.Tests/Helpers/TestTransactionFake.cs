@@ -47,12 +47,12 @@ public class TestTransactionFake : ITransaction, IRunningTransaction
         throw new NotImplementedException();
     }
 
-    public void AddMark(TextNode node, Mark mark)
+    public void AddMark(DNode node, Mark mark)
     {
         throw new NotImplementedException();
     }
 
-    public void RemoveMark(TextNode node, MarkKey key)
+    public void RemoveMark(DNode node, MarkKey key)
     {
         throw new NotImplementedException();
     }

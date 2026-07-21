@@ -14,13 +14,13 @@ public class UpdateMarkHandler(IDScratchService dScratchService, IUserStateServi
         if (selectionInfo.Direction is SelectionDirection.None)
         {
             var anchorNode = transaction.Document.FindNode(selectionInfo.AnchorNodeId);
-            if (anchorNode is IBlockElement blockElement)
+            if (anchorNode is IBlockElement)
             {
-                // blockElement.SetMark(command.Mark);
+                UpdateEmptyBlockMarks(transaction, selectionInfo, command, anchorNode);
             }
             else
             {
-                UpdatePendingMarks(command.Mark, command.Action, selectionInfo);
+                UpdatePendingMarks(command.Mark, command.Action);
             }
         }
         else
@@ -40,7 +40,7 @@ public class UpdateMarkHandler(IDScratchService dScratchService, IUserStateServi
         switch (action)
         {
             case UpdateMarkAction.Toggle:
-                var anchor = (TextNode)transaction.Document.FindNode(selectionInfo.AnchorNodeId)!;
+                var anchor = transaction.Document.FindNode(selectionInfo.AnchorNodeId)!;
                 var hasMark = anchor.Marks.Contains(mark);
                 foreach (var selectedNode in selectedNodes)
                 {
@@ -137,7 +137,37 @@ public class UpdateMarkHandler(IDScratchService dScratchService, IUserStateServi
         return result;
     }
     
-    private void UpdatePendingMarks(Mark mark, UpdateMarkAction action, SelectionInfo selectionInfo)
+    private static void UpdateEmptyBlockMarks(
+        ITransaction transaction, 
+        SelectionInfo selectionInfo,
+        UpdateMarkCommand command, DNode anchorNode)
+    {
+        switch (command.Action)
+        {
+            case UpdateMarkAction.Toggle:
+                var anchor = transaction.Document.FindNode(selectionInfo.AnchorNodeId)!;
+                var hasMark = anchor.Marks.Contains(command.Mark);
+                if (hasMark)
+                {
+                    transaction.RemoveMark(anchorNode, command.Mark.Key);
+                }
+                else
+                {
+                    transaction.AddMark(anchorNode, command.Mark);
+                }
+                break;
+            case UpdateMarkAction.Add:
+                transaction.AddMark(anchorNode, command.Mark);
+                break;
+            case UpdateMarkAction.Remove:
+                transaction.RemoveMark(anchorNode, command.Mark.Key);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(command.Action), command.Action, null);
+        }
+    }
+    
+    private void UpdatePendingMarks(Mark mark, UpdateMarkAction action)
     {
         switch (action)
         {

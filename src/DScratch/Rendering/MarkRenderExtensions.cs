@@ -6,7 +6,7 @@ namespace DScratch.Rendering;
 
 internal static class MarkRenderExtensions
 {
-    extension(TextNode node)
+    extension(DNode node)
     {
         public StepDiff ToMarkUpdate()
         {

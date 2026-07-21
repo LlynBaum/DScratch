@@ -1,4 +1,5 @@
 ﻿using DScratch.Nodes;
+using DScratch.Nodes.Marks;
 using DScratch.Tests.Helpers;
 using DScratch.Tests.Helpers.TestNodes;
 
@@ -381,5 +382,49 @@ public class DNodeTests
         
         // Assert
         Assert.That(result, Is.Null);
+    }
+    
+    [Test]
+    public void SetMark_AddMarkToSet()
+    {
+        // Arrange
+        var testNode = new TestNode(new NodeId("Test", 1), null, null);
+        
+        // Act
+        testNode.SetMark(new Mark(MarkKey.Bold, "Ka"));
+        
+        // Assert
+        Assert.That(testNode.Marks, Has.Count.EqualTo(1));
+        Assert.That(testNode.Marks.Single().Key, Is.EqualTo(MarkKey.Bold));
+    }
+    
+    [Test]
+    public void SetMark_OverridesExisting()
+    {
+        // Arrange
+        var testNode = new TestNode(new NodeId("Test", 1), null, null);
+        testNode.SetMark(new Mark(MarkKey.Color, "0"));
+        
+        // Act
+        testNode.SetMark(new Mark(MarkKey.Color, "1"));
+        
+        // Assert
+        Assert.That(testNode.Marks, Has.Count.EqualTo(1));
+        Assert.That(testNode.Marks.Single().Key, Is.EqualTo(MarkKey.Color));
+        Assert.That(testNode.Marks.Single().Value, Is.EqualTo("1"));
+    }
+    
+    [Test]
+    public void RemoveMark_RemovesMarkFromSet()
+    {
+        // Arrange
+        var testNode = new TestNode(new NodeId("Test", 1), null, null);
+        testNode.SetMark(new Mark(MarkKey.Bold, "Ka"));
+        
+        // Act
+        testNode.RemoveMark(MarkKey.Bold);
+        
+        // Assert
+        Assert.That(testNode.Marks, Has.Count.Zero);
     }
 }

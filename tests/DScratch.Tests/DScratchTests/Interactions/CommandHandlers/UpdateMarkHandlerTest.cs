@@ -1091,19 +1091,20 @@ public class UpdateMarkHandlerTest
                 new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Add));
             
             // Assert
-            // Assert.That(blockNode.Marks, Is.Equivalent([new Mark(MarkKey.Bold)]));
+            Assert.That(blockNode.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
             Assert.That(result.CursorPosition, Is.Null); // TODO: maybe set it, to be safe
+
             AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
                 Is.TypeOf<StepDiff.UpdateMarksDiff>()
             ]);
         }
         
         [Test]
-        public void ActionRemove_AtBlockElement_RemovesMarkToBlock()
+        public void ActionRemove_AtBlockElement_RemovesMarkFromBlock()
         {
             // Arrange
             var blockNode = builder.Paragraph();
-            // blockNode.SetMark(new Mark((MarkKey.Bold))
+            blockNode.SetMark(new Mark(MarkKey.Bold));
             
             // Act
             var result = handler.Execute(
@@ -1111,7 +1112,7 @@ public class UpdateMarkHandlerTest
                 new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Remove));
             
             // Assert
-            // Assert.That(blockNode.Marks, Is.Empty);
+            Assert.That(blockNode.Marks, Is.Empty);
             Assert.That(result.CursorPosition, Is.Null);
             AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
                 Is.TypeOf<StepDiff.UpdateMarksDiff>()
@@ -1130,7 +1131,7 @@ public class UpdateMarkHandlerTest
                 new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
             
             // Assert
-            // Assert.That(blockNode.Marks, Is.Equivalent([new Mark(MarkKey.Bold)]));
+            Assert.That(blockNode.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
             Assert.That(result.CursorPosition, Is.Null); // TODO: maybe set it, to be safe
             AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
                 Is.TypeOf<StepDiff.UpdateMarksDiff>()
@@ -1138,11 +1139,11 @@ public class UpdateMarkHandlerTest
         }
         
         [Test]
-        public void ActionToggleRemove_AtBlockElement_RemovesMarkToBlock()
+        public void ActionToggleRemove_AtBlockElement_RemovesMarkFromBlock()
         {
             // Arrange
             var blockNode = builder.Paragraph();
-            // blockNode.SetMark(new Mark((MarkKey.Bold))
+            blockNode.SetMark(new Mark(MarkKey.Bold));
             
             // Act
             var result = handler.Execute(
@@ -1150,7 +1151,7 @@ public class UpdateMarkHandlerTest
                 new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
             
             // Assert
-            // Assert.That(blockNode.Marks, Is.Empty);
+            Assert.That(blockNode.Marks, Is.Empty);
             Assert.That(result.CursorPosition, Is.Null);
             AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
                 Is.TypeOf<StepDiff.UpdateMarksDiff>()
@@ -1198,7 +1199,7 @@ public class UpdateMarkHandlerTest
                 new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Remove));
             
             // Assert
-            Assert.That(userStateServiceFake.AddedMarks, Is.Empty);
+            Assert.That(userStateServiceFake.RemovedMarks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
             Assert.That(textNode.Marks, Is.Empty);
             Assert.That(result.CursorPosition, Is.Null);
             Assert.That(result.Steps, Is.Empty);
@@ -1226,7 +1227,6 @@ public class UpdateMarkHandlerTest
             Assert.That(result.Steps, Is.Empty);
         }
         
-        
         [Test]
         public void ActionToggleRemove_AtTextNode_AddsMarkAsPending()
         {
@@ -1244,7 +1244,7 @@ public class UpdateMarkHandlerTest
                 new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
             
             // Assert
-            Assert.That(userStateServiceFake.AddedMarks, Is.Empty);
+            Assert.That(userStateServiceFake.RemovedMarks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
             Assert.That(textNode.Marks, Is.Empty);
             Assert.That(result.CursorPosition, Is.Null);
             Assert.That(result.Steps, Is.Empty);

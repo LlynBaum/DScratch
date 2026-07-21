@@ -24,9 +24,9 @@ public interface ITransaction
 
     void ReplaceNode(DNode node, Func<DNode, DNode> copyFactory);
     
-    void AddMark(TextNode node, Mark mark);
+    void AddMark(DNode node, Mark mark);
     
-    void RemoveMark(TextNode node, MarkKey key);
+    void RemoveMark(DNode node, MarkKey key);
     
     void AddCursorPosition(NodeId nodeId, int offset);
     

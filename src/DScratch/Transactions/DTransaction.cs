@@ -71,12 +71,12 @@ internal class DTransaction(
         steps.Add(new ReplaceNodeStep(node, copyFactory));
     }
 
-    public void AddMark(TextNode node, Mark mark)
+    public void AddMark(DNode node, Mark mark)
     { 
         steps.Add(new AddMarkStep(node, mark));
     }
 
-    public void RemoveMark(TextNode node, MarkKey key)
+    public void RemoveMark(DNode node, MarkKey key)
     {
         steps.Add(new RemoveMarkStep(node, key));
     }

@@ -4,7 +4,7 @@ using DScratch.Rendering;
 
 namespace DScratch.Transactions.Steps.Marks;
 
-public class RemoveMarkStep(TextNode node, MarkKey key) : IStep
+public class RemoveMarkStep(DNode node, MarkKey key) : IStep
 {
     public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
     {

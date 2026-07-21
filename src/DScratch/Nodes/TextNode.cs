@@ -1,5 +1,3 @@
-using DScratch.Nodes.Marks;
-
 namespace DScratch.Nodes;
 
 public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string content = "") 
@@ -7,15 +5,11 @@ public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string conte
 {
     public override string TagName => "span";
     
-    private readonly HashSet<Mark> marks = new HashSet<Mark>(new Mark.MarkTable());
-    
     public int Length => TextContent.Length;
 
     public string TextContent { get; private set; } = content;
 
     public NodeId LastId => Length > 0 ? new NodeId(Id.Client, Id.Clock + Length - 1) : Id;
-
-    public IReadOnlySet<Mark> Marks => marks;
 
     internal override void InsertChild(DNode node)
     {
@@ -25,26 +19,6 @@ public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string conte
     internal void AddText(string value)
     {
         TextContent += value;
-    }
-
-    internal void CopyMarks(IEnumerable<Mark> initMarks)
-    {
-        marks.Clear();
-        foreach (var initMark in initMarks)
-        {
-            marks.Add(initMark);
-        }
-    }
-    
-    internal void SetMark(Mark mark)
-    {
-        marks.Remove(mark);
-        marks.Add(mark);
-    }
-
-    internal void RemoveMark(MarkKey key)
-    {
-        marks.Remove(new Mark(key, string.Empty));
     }
 
     internal TextNode? Split(int offset, Func<int, NodeId> takeId)
@@ -61,7 +35,7 @@ public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string conte
         {
             TextContent = otherText
         };
-        newNode.CopyMarks(marks);
+        newNode.CopyMarks(Marks);
         
         Parent?.InsertChild(newNode);
         return newNode;
