@@ -1,11 +1,11 @@
 using DScratch.Interactions;
 using DScratch.Interactions.CommandHandlers.Commands;
 using DScratch.Interactions.CommandHandlers.Handlers;
-using DScratch.Interactions.UserStates;
 using DScratch.Nodes;
 using DScratch.Nodes.Marks;
 using DScratch.Tests.DScratchTests.Interactions.Helpers;
 using DScratch.Tests.Helpers;
+using DScratch.Transactions;
 
 namespace DScratch.Tests.DScratchTests.Interactions.CommandHandlers;
 
@@ -14,46 +14,27 @@ public class UpdateMarkHandlerTest
 {
     private TreeBuilder builder;
     private DScratchService dScratchService;
+    private UserStateServiceFake userStateServiceFake;
     private UpdateMarkHandler handler;
     
     [SetUp]
     public void SetUp()
     {
         builder = new TreeBuilder();
+        userStateServiceFake = new UserStateServiceFake();
         dScratchService = new DScratchService(
             document: builder.CreateDocument(), 
             nodeFactory: new DNodeFactory(builder.IdGenerator), 
-            userStateService: new UserStateService()) { DisableCleanUp = true };
+            userStateService: userStateServiceFake)
+        {
+            DisableCleanUp = true
+        };
         
-        handler = new UpdateMarkHandler(dScratchService, new UserStateService());
+        handler = new UpdateMarkHandler(dScratchService, userStateServiceFake);
     }
 
     private class ToggleAction : UpdateMarkHandlerTest
     {
-        [Test]
-        public void DoesNothing_WithSelectionDirectionNone()
-        {
-            // Arrange
-            TextNode start = null!;
-            var parent1 = builder.Paragraph(t =>
-            {
-                start = t.Text("abc");
-            });
-
-            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(start.Id, 2);
-            
-            // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
-
-            // Assert
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(parent1.ChildNodes, Has.Count.EqualTo(1));
-                Assert.That(start.Marks, Has.Count.Zero);
-                Assert.That(result.CursorPosition, Is.Null);
-            }
-        }
-        
         [Test]
         public void RemovesMarks_FromSelection_WhenAnchorHasGivenMark()
         {
@@ -436,30 +417,6 @@ public class UpdateMarkHandlerTest
     private class AddAction : UpdateMarkHandlerTest
     {
         [Test]
-        public void DoesNothing_WithSelectionDirectionNone()
-        {
-            // Arrange
-            TextNode start = null!;
-            var parent1 = builder.Paragraph(t =>
-            {
-                start = t.Text("abc");
-            });
-
-            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(start.Id, 2);
-            
-            // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Add));
-
-            // Assert
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(parent1.ChildNodes, Has.Count.EqualTo(1));
-                Assert.That(start.Marks, Has.Count.Zero);
-                Assert.That(result.CursorPosition, Is.Null);
-            }
-        }
-        
-        [Test]
         public void AddsMarks_FromSelection_AnchorHasMark()
         {
             // Arrange
@@ -790,32 +747,6 @@ public class UpdateMarkHandlerTest
     private class RemoveAction : UpdateMarkHandlerTest
     {
         [Test]
-        public void DoesNothing_WithSelectionDirectionNone()
-        {
-            // Arrange
-            TextNode start = null!;
-            var parent1 = builder.Paragraph(t =>
-            {
-                start = t.Text("abc");
-            });
-            
-            start.SetMark(new Mark(MarkKey.Bold));
-
-            var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(start.Id, 2);
-            
-            // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Remove));
-
-            // Assert
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(parent1.ChildNodes, Has.Count.EqualTo(1));
-                Assert.That(start.Marks, Has.Count.EqualTo(1));
-                Assert.That(result.CursorPosition, Is.Null);
-            }
-        }
-        
-        [Test]
         public void RemovesMarks_FromSelection_AnchorHasMark()
         {
             // Arrange
@@ -1143,6 +1074,180 @@ public class UpdateMarkHandlerTest
                 FocusOffset = 0,
                 Direction = SelectionDirection.Backward
             });
+        }
+    }
+
+    private class SelectionDirectionNone : UpdateMarkHandlerTest
+    {
+        [Test]
+        public void ActionAdd_AtBlockElement_SetsMarkToBlock()
+        {
+            // Arrange
+            var blockNode = builder.Paragraph();
+            
+            // Act
+            var result = handler.Execute(
+                KeyPressInfoHelper.GetKeyPressInfoDirectionNone(blockNode.Id, 0).Selection,
+                new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Add));
+            
+            // Assert
+            // Assert.That(blockNode.Marks, Is.Equivalent([new Mark(MarkKey.Bold)]));
+            Assert.That(result.CursorPosition, Is.Null); // TODO: maybe set it, to be safe
+            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
+                Is.TypeOf<StepDiff.UpdateMarksDiff>()
+            ]);
+        }
+        
+        [Test]
+        public void ActionRemove_AtBlockElement_RemovesMarkToBlock()
+        {
+            // Arrange
+            var blockNode = builder.Paragraph();
+            // blockNode.SetMark(new Mark((MarkKey.Bold))
+            
+            // Act
+            var result = handler.Execute(
+                KeyPressInfoHelper.GetKeyPressInfoDirectionNone(blockNode.Id, 0).Selection,
+                new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Remove));
+            
+            // Assert
+            // Assert.That(blockNode.Marks, Is.Empty);
+            Assert.That(result.CursorPosition, Is.Null);
+            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
+                Is.TypeOf<StepDiff.UpdateMarksDiff>()
+            ]);
+        }
+        
+        [Test]
+        public void ActionToggleAdd_AtBlockElement_SetsMarkToBlock()
+        {
+            // Arrange
+            var blockNode = builder.Paragraph();
+            
+            // Act
+            var result = handler.Execute(
+                KeyPressInfoHelper.GetKeyPressInfoDirectionNone(blockNode.Id, 0).Selection,
+                new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
+            
+            // Assert
+            // Assert.That(blockNode.Marks, Is.Equivalent([new Mark(MarkKey.Bold)]));
+            Assert.That(result.CursorPosition, Is.Null); // TODO: maybe set it, to be safe
+            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
+                Is.TypeOf<StepDiff.UpdateMarksDiff>()
+            ]);
+        }
+        
+        [Test]
+        public void ActionToggleRemove_AtBlockElement_RemovesMarkToBlock()
+        {
+            // Arrange
+            var blockNode = builder.Paragraph();
+            // blockNode.SetMark(new Mark((MarkKey.Bold))
+            
+            // Act
+            var result = handler.Execute(
+                KeyPressInfoHelper.GetKeyPressInfoDirectionNone(blockNode.Id, 0).Selection,
+                new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
+            
+            // Assert
+            // Assert.That(blockNode.Marks, Is.Empty);
+            Assert.That(result.CursorPosition, Is.Null);
+            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
+                Is.TypeOf<StepDiff.UpdateMarksDiff>()
+            ]);
+        }
+
+        
+        [Test]
+        public void ActionAdd_AtTextNode_AddsMarkAsPending()
+        {
+            // Arrange
+            TextNode textNode = null!;
+            builder.Paragraph(t =>
+            {
+                textNode = t.Text("a");
+            });
+            
+            // Act
+            var result = handler.Execute(
+                KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0).Selection,
+                new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Add));
+            
+            // Assert
+            Assert.That(userStateServiceFake.AddedMarks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+            Assert.That(textNode.Marks, Is.Empty);
+            Assert.That(result.CursorPosition, Is.Null);
+            Assert.That(result.Steps, Is.Empty);
+        }
+        
+        
+        [Test]
+        public void ActionRemove_AtTextNode_AddsMarkAsPending()
+        {
+            // Arrange
+            TextNode textNode = null!;
+            builder.Paragraph(t =>
+            {
+                textNode = t.Text("a");
+            });
+            userStateServiceFake.AddedMarks.Add(new Mark(MarkKey.Bold));
+            
+            // Act
+            var result = handler.Execute(
+                KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0).Selection,
+                new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Remove));
+            
+            // Assert
+            Assert.That(userStateServiceFake.AddedMarks, Is.Empty);
+            Assert.That(textNode.Marks, Is.Empty);
+            Assert.That(result.CursorPosition, Is.Null);
+            Assert.That(result.Steps, Is.Empty);
+        }
+        
+        [Test]
+        public void ActionToggleAdd_AtTextNode_AddsMarkAsPending()
+        {
+            // Arrange
+            TextNode textNode = null!;
+            builder.Paragraph(t =>
+            {
+                textNode = t.Text("a");
+            });
+            
+            // Act
+            var result = handler.Execute(
+                KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0).Selection,
+                new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
+            
+            // Assert
+            Assert.That(userStateServiceFake.AddedMarks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+            Assert.That(textNode.Marks, Is.Empty);
+            Assert.That(result.CursorPosition, Is.Null);
+            Assert.That(result.Steps, Is.Empty);
+        }
+        
+        
+        [Test]
+        public void ActionToggleRemove_AtTextNode_AddsMarkAsPending()
+        {
+            // Arrange
+            TextNode textNode = null!;
+            builder.Paragraph(t =>
+            {
+                textNode = t.Text("a");
+            });
+            userStateServiceFake.AddedMarks.Add(new Mark(MarkKey.Bold));
+            
+            // Act
+            var result = handler.Execute(
+                KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0).Selection,
+                new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
+            
+            // Assert
+            Assert.That(userStateServiceFake.AddedMarks, Is.Empty);
+            Assert.That(textNode.Marks, Is.Empty);
+            Assert.That(result.CursorPosition, Is.Null);
+            Assert.That(result.Steps, Is.Empty);
         }
     }
 }

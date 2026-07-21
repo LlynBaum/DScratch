@@ -16,11 +16,11 @@ public class UpdateMarkHandler(IDScratchService dScratchService, IUserStateServi
             var anchorNode = transaction.Document.FindNode(selectionInfo.AnchorNodeId);
             if (anchorNode is IBlockElement blockElement)
             {
-                //blockElement.SetMark(command.Mark);
+                // blockElement.SetMark(command.Mark);
             }
             else
             {
-                UpdatePendingMarks(command.Mark, command.Action, selectionInfo);                    
+                UpdatePendingMarks(command.Mark, command.Action, selectionInfo);
             }
         }
         else
