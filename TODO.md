@@ -1,8 +1,9 @@
 # Current
 
 1. Test MarkHandler
-2. Add Marks to Blocks
-3. Test marks for blocks
+2. Bold and Italic -> FontWeight and FontStyle
+3. Add Marks to Blocks
+4. Test marks for blocks
 
 # Features
 
