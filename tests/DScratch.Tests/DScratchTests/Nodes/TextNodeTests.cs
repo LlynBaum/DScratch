@@ -2,7 +2,6 @@ using DScratch.Nodes;
 using DScratch.Nodes.Marks;
 using DScratch.Tests.Helpers;
 using DScratch.Tests.Helpers.TestNodes;
-using DScratch.TreeVisualizers;
 
 namespace DScratch.Tests.DScratchTests.Nodes;
 
@@ -58,7 +57,7 @@ public class TextNodeTests
             });
         
         var textNode = (TextNode)testNode.ChildNodes[1];
-        textNode.SetMark(new Mark(MarkKey.Bold));
+        textNode.SetMark(new Mark(MarkKey.FontWeight, "bold"));
         
         // Act
         var result = textNode.Split(1, _ => new NodeId("Test", -1));

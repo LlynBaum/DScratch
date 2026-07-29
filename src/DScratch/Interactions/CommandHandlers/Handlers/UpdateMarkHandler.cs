@@ -20,54 +20,53 @@ public class UpdateMarkHandler(IDScratchService dScratchService, IUserStateServi
             }
             else
             {
-                UpdatePendingMarks(command.Mark, command.Action);
+                UpdatePendingMarks(command.Key, command.Value, command.Action);
             }
         }
         else
         {
-            HandleSelection(transaction, selectionInfo, command.Mark, command.Action);
+            HandleSelection(transaction, selectionInfo, command);
         }
     }
 
     private static void HandleSelection(
         ITransaction transaction,
         SelectionInfo selectionInfo,
-        Mark mark,
-        UpdateMarkAction action)
+        UpdateMarkCommand command)
     {
         var selectedNodes = GetSelectedNodes(transaction, selectionInfo);
 
-        switch (action)
+        switch (command.Action)
         {
             case UpdateMarkAction.Toggle:
                 var anchor = transaction.Document.FindNode(selectionInfo.AnchorNodeId)!;
-                var hasMark = anchor.Marks.Contains(mark);
+                var hasMark = anchor.Marks.ContainsKey(command.Key);
                 foreach (var selectedNode in selectedNodes)
                 {
                     if (hasMark)
                     {
-                        transaction.RemoveMark(selectedNode, mark.Key);
+                        transaction.RemoveMark(selectedNode, command.Key);
                     }
                     else
                     {
-                        transaction.AddMark(selectedNode, mark);
+                        transaction.AddMark(selectedNode, command.Key, command.Value!);
                     }
                 }
                 break;
             case UpdateMarkAction.Add:
                 foreach (var selectedNode in selectedNodes)
                 {
-                    transaction.AddMark(selectedNode, mark);
+                    transaction.AddMark(selectedNode, command.Key, command.Value!);
                 }
                 break;
             case UpdateMarkAction.Remove:
                 foreach (var selectedNode in selectedNodes)
                 {
-                    transaction.RemoveMark(selectedNode, mark.Key);
+                    transaction.RemoveMark(selectedNode, command.Key);
                 }
                 break;
             default:
-                throw new ArgumentOutOfRangeException(nameof(action), action, null);
+                throw new ArgumentOutOfRangeException(nameof(command.Action), command.Action, null);
         }
 
         if (selectedNodes.Any())
@@ -146,45 +145,45 @@ public class UpdateMarkHandler(IDScratchService dScratchService, IUserStateServi
         {
             case UpdateMarkAction.Toggle:
                 var anchor = transaction.Document.FindNode(selectionInfo.AnchorNodeId)!;
-                var hasMark = anchor.Marks.Contains(command.Mark);
+                var hasMark = anchor.Marks.ContainsKey(command.Key);
                 if (hasMark)
                 {
-                    transaction.RemoveMark(anchorNode, command.Mark.Key);
+                    transaction.RemoveMark(anchorNode, command.Key);
                 }
                 else
                 {
-                    transaction.AddMark(anchorNode, command.Mark);
+                    transaction.AddMark(anchorNode, command.Key, command.Value!);
                 }
                 break;
             case UpdateMarkAction.Add:
-                transaction.AddMark(anchorNode, command.Mark);
+                transaction.AddMark(anchorNode, command.Key, command.Value!);
                 break;
             case UpdateMarkAction.Remove:
-                transaction.RemoveMark(anchorNode, command.Mark.Key);
+                transaction.RemoveMark(anchorNode, command.Key);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(command.Action), command.Action, null);
         }
     }
     
-    private void UpdatePendingMarks(Mark mark, UpdateMarkAction action)
+    private void UpdatePendingMarks(MarkKey key, string? value, UpdateMarkAction action)
     {
         switch (action)
         {
             case UpdateMarkAction.Remove:
-                userStateService.RemovePendingMark(mark);
+                userStateService.RemovePendingMark(key);
                 break;
             case UpdateMarkAction.Add:
-                userStateService.AddPendingMark(mark);
+                userStateService.AddPendingMark(key, value!);
                 break;
             case UpdateMarkAction.Toggle:
-                if (userStateService.CheckMark(mark.Key, out _))
+                if (userStateService.CheckMark(key, out _))
                 {
-                    userStateService.RemovePendingMark(mark);
+                    userStateService.RemovePendingMark(key);
                 }
                 else
                 {
-                    userStateService.AddPendingMark(mark);
+                    userStateService.AddPendingMark(key, value!);
                 }
                 break;
             default:

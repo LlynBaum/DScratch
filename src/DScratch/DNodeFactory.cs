@@ -27,7 +27,7 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
         return new HeadingNode(headingLevel, node.Id, node.Origin, node.RightOrigin, [..node.ChildNodes]);
     }
 
-    public TextNode String(string value, DNode? origin, DNode? rightOrigin, IReadOnlySet<Mark>? initMarks = null)
+    public TextNode String(string value, DNode? origin, DNode? rightOrigin, IReadOnlyDictionary<MarkKey, string>? initMarks = null)
     {
         if (value.Length == 0)
         {

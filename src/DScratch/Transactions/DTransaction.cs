@@ -71,9 +71,9 @@ internal class DTransaction(
         steps.Add(new ReplaceNodeStep(node, copyFactory));
     }
 
-    public void AddMark(DNode node, Mark mark)
+    public void AddMark(DNode node, MarkKey key, string value)
     { 
-        steps.Add(new AddMarkStep(node, mark));
+        steps.Add(new AddMarkStep(node, key, value));
     }
 
     public void RemoveMark(DNode node, MarkKey key)
@@ -112,12 +112,12 @@ internal class DTransaction(
         return splitNode;
     }
 
-    public IReadOnlySet<Mark> CalculateMarks(IReadOnlySet<Mark> activeMarks)
+    public IReadOnlyDictionary<MarkKey, string> CalculateMarks(IReadOnlyDictionary<MarkKey, string> activeMarks)
     {
         return userStateService.PopPending()
             .Concat(activeMarks)
             .ExceptBy(userStateService.PopPendingRemovals(), m => m.Key)
-            .ToHashSet();
+            .ToDictionary();
     }
 
     public void NotifyNodeChange(DNode node) => modifiedNodes.Add(node);

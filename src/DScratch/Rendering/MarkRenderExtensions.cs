@@ -10,19 +10,19 @@ internal static class MarkRenderExtensions
     {
         public StepDiff ToMarkUpdate()
         {
-            var marks = node.Marks.Select(m => m.ToStyle()).ToDictionary();
+            var marks = node.Marks.Select(m => m.Key.ToStyle(m.Value)).ToDictionary();
             return new StepDiff.UpdateMarksDiff(node.Id.Value, marks);
         }
     }
 
-    private static KeyValuePair<string, string> ToStyle(this Mark mark)
+    private static KeyValuePair<string, string> ToStyle(this MarkKey key, string value)
     {
-        return mark.Key switch
+        return key switch
         {
-            MarkKey.Bold => new KeyValuePair<string, string>("font-weight", "bold"),
-            MarkKey.Italic => new KeyValuePair<string, string>("font-style", "italic"),
-            MarkKey.Color => new KeyValuePair<string, string>("color", mark.Value!),
-            _ => throw new ArgumentOutOfRangeException(nameof(mark))
+            MarkKey.FontWeight => new KeyValuePair<string, string>("font-weight", value),
+            MarkKey.FontStyle => new KeyValuePair<string, string>("font-style", value),
+            MarkKey.Color => new KeyValuePair<string, string>("color", value),
+            _ => throw new ArgumentOutOfRangeException(nameof(key))
         };
     }
 }

@@ -4,11 +4,11 @@ using DScratch.Rendering;
 
 namespace DScratch.Transactions.Steps.Marks;
 
-public class AddMarkStep(DNode node, Mark mark) : IStep
+public class AddMarkStep(DNode node, MarkKey key, string value) : IStep
 {
     public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
     {
-        node.SetMark(mark);
+        node.SetMark(key, value);
         transaction.NotifyNodeChange(node);
         return [node.ToMarkUpdate()];
     }

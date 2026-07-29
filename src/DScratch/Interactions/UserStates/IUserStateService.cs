@@ -5,19 +5,19 @@ namespace DScratch.Interactions.UserStates;
 
 public interface IUserStateService
 {
-    IReadOnlySet<Mark> ActiveMarks { get; }
-    IReadOnlySet<Mark> PendingMarks { get; }
+    IReadOnlyDictionary<MarkKey, string> ActiveMarks { get; }
+    IReadOnlyDictionary<MarkKey, string> PendingMarks { get; }
     IReadOnlySet<MarkKey> PendingMarkRemovals { get; }
 
     event Action OnStateChange;
     
-    void AddPendingMark(Mark mark);
+    void AddPendingMark(MarkKey key, string value);
     
-    void RemovePendingMark(Mark mark);
+    void RemovePendingMark(MarkKey key);
 
     bool CheckMark(MarkKey key, out string? value);
 
-    IReadOnlySet<Mark> PopPending();
+    IReadOnlyDictionary<MarkKey, string> PopPending();
 
     IReadOnlySet<MarkKey> PopPendingRemovals();
 

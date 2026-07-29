@@ -23,12 +23,12 @@ public class AddMarkStepTest
         var node = new TextNode(new NodeId("", 1), null, null);
         
         // Act
-        var step = new AddMarkStep(node, new Mark(MarkKey.Bold));
+        var step = new AddMarkStep(node, new Mark(MarkKey.FontWeight, "bold"));
         var result = step.Execute(transactionFake, null!);
         
         // Assert
         Assert.That(node.Marks, Has.Count.EqualTo(1));
-        Assert.That(node.Marks.Single(), Is.EqualTo(new Mark(MarkKey.Bold)));
+        Assert.That(node.Marks.Single(), Is.EqualTo(new Mark(MarkKey.FontWeight, "bold")));
         Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         AssertHelper.ThatStepsEqualTo(result, Is.TypeOf<StepDiff.UpdateMarksDiff>());
     }

@@ -586,7 +586,7 @@ public class InsertTextHandlerTest
                 node = t.Text("a");
             });
 
-            node.SetMark(new Mark(MarkKey.Bold));
+            node.SetMark(new Mark(MarkKey.FontWeight));
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1));
@@ -608,8 +608,8 @@ public class InsertTextHandlerTest
                 right = t.Text("a");
             });
 
-            node.SetMark(new Mark(MarkKey.Bold));
-            right.SetMark(new Mark(MarkKey.Italic));
+            node.SetMark(new Mark(MarkKey.FontWeight));
+            right.SetMark(new Mark(MarkKey.FontStyle));
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1));
@@ -629,14 +629,14 @@ public class InsertTextHandlerTest
                 node = t.Text("a");
             });
 
-            node.SetMark(new Mark(MarkKey.Bold));
+            node.SetMark(new Mark(MarkKey.FontWeight));
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 0));
             
             // Assert
             Assert.That(node.Origin, Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)node.Origin).Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+            Assert.That(((TextNode)node.Origin).Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
         }
         
         [Test]
@@ -665,7 +665,7 @@ public class InsertTextHandlerTest
                 node = t.Text("a");
             });
 
-            userStateService.AddPendingMark(new Mark(MarkKey.Bold));
+            userStateService.AddPendingMark(new Mark(MarkKey.FontWeight));
             
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, offset));
@@ -674,7 +674,7 @@ public class InsertTextHandlerTest
             var newNode = parent.ActiveChildNodes.ElementAt(offset);
             
             Assert.That(newNode, Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)newNode).Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+            Assert.That(((TextNode)newNode).Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
         }
         
         [Test]
@@ -687,15 +687,15 @@ public class InsertTextHandlerTest
                 node = t.Text("a");
             });
 
-            node.SetMark(new Mark(MarkKey.Italic));
-            userStateService.AddPendingMark(new Mark(MarkKey.Bold));
+            node.SetMark(new Mark(MarkKey.FontStyle));
+            userStateService.AddPendingMark(new Mark(MarkKey.FontWeight));
             
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1));
             
             // Assert
             Assert.That(node.RightOrigin, Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)node.RightOrigin).Marks, Is.EquivalentTo([new Mark(MarkKey.Italic), new Mark(MarkKey.Bold)]));
+            Assert.That(((TextNode)node.RightOrigin).Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle), new Mark(MarkKey.FontWeight)]));
         }
         
         [Test]

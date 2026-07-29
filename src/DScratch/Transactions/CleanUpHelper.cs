@@ -1,6 +1,5 @@
 using DScratch.Interactions;
 using DScratch.Nodes;
-using DScratch.Nodes.Marks;
 
 namespace DScratch.Transactions;
 
@@ -17,7 +16,7 @@ public static class CleanUpHelper
         origin = originTextNode;
         return originTextNode.IsDeleted == node.IsDeleted 
                && originTextNode.LastId.IsContinuesTo(node.Id) 
-               && originTextNode.Marks.SequenceEqual(node.Marks, new Mark.DefaultMarkComparer());
+               && originTextNode.Marks.SequenceEqual(node.Marks); // TODO: key only comparer
     }
     
     public static bool CanMergeWithRightOrigin(TextNode node, out TextNode rightOrigin)
@@ -31,7 +30,7 @@ public static class CleanUpHelper
         rightOrigin = rightOriginTextNode;
         return rightOriginTextNode.IsDeleted == node.IsDeleted 
                && node.LastId.IsContinuesTo(rightOriginTextNode.Id)
-               && rightOriginTextNode.Marks.SequenceEqual(node.Marks, new Mark.DefaultMarkComparer());
+               && rightOriginTextNode.Marks.SequenceEqual(node.Marks);
     }
     
     public static SelectionInfo? AdjustSelection(SelectionInfo? selectionInfo, TextNode oldNode, TextNode targetNode)

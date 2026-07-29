@@ -21,10 +21,10 @@ public class RemoveMarkStepTest
     {
         // Arrange
         var node = new TextNode(new NodeId("", 1), null, null);
-        node.SetMark(new Mark(MarkKey.Bold));
+        node.SetMark(new Mark(MarkKey.FontWeight, "bold"));
         
         // Act
-        var step = new RemoveMarkStep(node, MarkKey.Bold);
+        var step = new RemoveMarkStep(node, MarkKey.FontWeight);
         var result = step.Execute(transactionFake, null!);
 
         // Assert

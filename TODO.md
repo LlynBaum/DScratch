@@ -1,7 +1,7 @@
 # Current
 
 1. Test MarkHandler
-2. Bold and Italic -> FontWeight and FontStyle
+2. Bold and Italic → FontWeight and FontStyle
 3. Add Marks to Blocks
 4. Test marks for blocks
 
@@ -41,3 +41,7 @@
 # Side Quests
 
 - Color picker is not that nice to use. The cursor is not set anymore when clicking away. So you have to remember where you were
+
+# Improvements?
+
+- Command Handler get from DI via the Command without direct references is a bit, meh. Sure it allows me currently to always prepare the base stuff for all command handlers beforehand. But I could also make a base class instead

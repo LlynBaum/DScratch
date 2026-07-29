@@ -24,7 +24,7 @@ public interface ITransaction
 
     void ReplaceNode(DNode node, Func<DNode, DNode> copyFactory);
     
-    void AddMark(DNode node, Mark mark);
+    void AddMark(DNode node, MarkKey key, string value);
     
     void RemoveMark(DNode node, MarkKey key);
     
@@ -34,5 +34,5 @@ public interface ITransaction
 
     TextNode? SplitText(TextNode node, int offset);
 
-    IReadOnlySet<Mark> CalculateMarks(IReadOnlySet<Mark> activeMarks);
+    IReadOnlyDictionary<MarkKey, string> CalculateMarks(IReadOnlyDictionary<MarkKey, string> activeMarks);
 }

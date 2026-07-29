@@ -19,11 +19,11 @@ public class UserStateServiceTest
     public void AddPendingMark_AddsMarkToPendingMarks()
     {
         // Act
-        service.AddPendingMark(new Mark(MarkKey.Bold));
+        service.AddPendingMark(new Mark(MarkKey.FontWeight));
 
         // Assert
         Assert.That(service.PendingMarks, Has.Count.EqualTo(1));
-        Assert.That(service.PendingMarks.Single(), Is.EqualTo(new Mark(MarkKey.Bold)));
+        Assert.That(service.PendingMarks.Single(), Is.EqualTo(new Mark(MarkKey.FontWeight)));
     }
     
     [Test]
@@ -44,10 +44,10 @@ public class UserStateServiceTest
     public void RemovePendingMark_RemovesMarkFromPendingMarks()
     {
         // Arrange
-        ((HashSet<Mark>)service.PendingMarks).Add(new Mark(MarkKey.Bold));
+        ((HashSet<Mark>)service.PendingMarks).Add(new Mark(MarkKey.FontWeight));
         
         // Act
-        service.RemovePendingMark(new Mark(MarkKey.Bold));
+        service.RemovePendingMark(new Mark(MarkKey.FontWeight));
 
         // Assert
         Assert.That(service.PendingMarks, Has.Count.Zero);
@@ -57,11 +57,11 @@ public class UserStateServiceTest
     public void RemovePendingMark_AddsMarkToPendingRemovals_WhenMarkIsNotPending()
     {
         // Act
-        service.RemovePendingMark(new Mark(MarkKey.Bold));
+        service.RemovePendingMark(new Mark(MarkKey.FontWeight));
 
         // Assert
         Assert.That(service.PendingMarkRemovals, Has.Count.EqualTo(1));
-        Assert.That(service.PendingMarkRemovals.Single(), Is.EqualTo(MarkKey.Bold));
+        Assert.That(service.PendingMarkRemovals.Single(), Is.EqualTo(MarkKey.FontWeight));
     }
     
     [Test]
@@ -70,11 +70,11 @@ public class UserStateServiceTest
         // Arrange
         var isCalled = false;
         service.OnStateChange += () => isCalled = true;
-        ((HashSet<Mark>)service.PendingMarks).Add(new Mark(MarkKey.Bold));
-        ((HashSet<MarkKey>)service.PendingMarkRemovals).Add(MarkKey.Italic);
+        ((HashSet<Mark>)service.PendingMarks).Add(new Mark(MarkKey.FontWeight));
+        ((HashSet<MarkKey>)service.PendingMarkRemovals).Add(MarkKey.FontStyle);
 
         var node = new TextNode(new NodeId(), null, null);
-        node.SetMark(new Mark(MarkKey.Italic));
+        node.SetMark(new Mark(MarkKey.FontStyle));
         
         // Act
         service.UpdateState(node);
@@ -85,7 +85,7 @@ public class UserStateServiceTest
             Assert.That(isCalled, Is.True);
             Assert.That(service.PendingMarks, Has.Count.Zero);
             Assert.That(service.PendingMarkRemovals, Has.Count.Zero);
-            Assert.That(service.ActiveMarks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+            Assert.That(service.ActiveMarks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
         }
     }
     
@@ -95,7 +95,7 @@ public class UserStateServiceTest
         // Arrange
         var isCalled = false;
         service.OnStateChange += () => isCalled = true;
-        ((HashSet<Mark>)service.PendingMarks).Add(new Mark(MarkKey.Bold));
+        ((HashSet<Mark>)service.PendingMarks).Add(new Mark(MarkKey.FontWeight));
         
         // Act
         service.UpdateState(TestNode.Empty());
@@ -113,7 +113,7 @@ public class UserStateServiceTest
     public void PopPending_ReturnsPendingMarks_AndClearsPending()
     {
         // Arrange
-        ((HashSet<Mark>)service.PendingMarks).Add(new Mark(MarkKey.Bold));
+        ((HashSet<Mark>)service.PendingMarks).Add(new Mark(MarkKey.FontWeight));
         
         // Act
         var marks = service.PopPending();
@@ -121,7 +121,7 @@ public class UserStateServiceTest
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+            Assert.That(marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
             Assert.That(service.PendingMarks, Has.Count.Zero);
         }
     }
@@ -130,7 +130,7 @@ public class UserStateServiceTest
     public void PopPendingRemovals_ReturnsPendingRemovingMarks_AndClearsPending()
     {
         // Arrange
-        ((HashSet<MarkKey>)service.PendingMarkRemovals).Add(MarkKey.Bold);
+        ((HashSet<MarkKey>)service.PendingMarkRemovals).Add(MarkKey.FontWeight);
         
         // Act
         var marks = service.PopPendingRemovals();
@@ -138,7 +138,7 @@ public class UserStateServiceTest
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(marks, Is.EquivalentTo([MarkKey.Bold]));
+            Assert.That(marks, Is.EquivalentTo([MarkKey.FontWeight]));
             Assert.That(service.PendingMarkRemovals, Has.Count.Zero);
         }
     }
@@ -186,11 +186,11 @@ public class UserStateServiceTest
     public void CheckMark_ReturnsFalse_WhenPendingMarkRemovalIsSet()
     {
         // Arrange
-        ((HashSet<Mark>)service.ActiveMarks).Add(new Mark(MarkKey.Bold));
-        ((HashSet<MarkKey>)service.PendingMarkRemovals).Add(MarkKey.Bold);
+        ((HashSet<Mark>)service.ActiveMarks).Add(new Mark(MarkKey.FontWeight));
+        ((HashSet<MarkKey>)service.PendingMarkRemovals).Add(MarkKey.FontWeight);
         
         // Act
-        var found = service.CheckMark(MarkKey.Bold, out var value);
+        var found = service.CheckMark(MarkKey.FontWeight, out var value);
         
         // Assert
         Assert.That(found, Is.False);

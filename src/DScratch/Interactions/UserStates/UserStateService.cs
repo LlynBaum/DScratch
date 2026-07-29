@@ -5,27 +5,26 @@ namespace DScratch.Interactions.UserStates;
 
 public class UserStateService : IUserStateService
 {
-    private HashSet<Mark> activeMarks = new HashSet<Mark>(new Mark.MarkTable());
-    private readonly HashSet<Mark> pendingMarks = new HashSet<Mark>(new Mark.MarkTable());
+    private Dictionary<MarkKey, string> activeMarks = new Dictionary<MarkKey, string>();
+    private readonly Dictionary<MarkKey, string> pendingMarks = new Dictionary<MarkKey, string>();
     private readonly HashSet<MarkKey> pendingMarkRemovals = new HashSet<MarkKey>();
 
-    public IReadOnlySet<Mark> ActiveMarks => activeMarks;
-    public IReadOnlySet<Mark> PendingMarks => pendingMarks;
+    public IReadOnlyDictionary<MarkKey, string> ActiveMarks => activeMarks;
+    public IReadOnlyDictionary<MarkKey, string> PendingMarks => pendingMarks;
     public IReadOnlySet<MarkKey> PendingMarkRemovals => pendingMarkRemovals;
     
     public event Action? OnStateChange;
 
-    public void AddPendingMark(Mark mark)
+    public void AddPendingMark(MarkKey key, string value)
     {
-        pendingMarks.Remove(mark);
-        pendingMarks.Add(mark);
+        pendingMarks[key] = value;
     }
 
-    public void RemovePendingMark(Mark mark)
+    public void RemovePendingMark(MarkKey key)
     {
-        if (!pendingMarks.Remove(mark))
+        if (!pendingMarks.Remove(key))
         {
-            pendingMarkRemovals.Add(mark.Key);
+            pendingMarkRemovals.Add(key);
         }
     }
 
@@ -37,15 +36,12 @@ public class UserStateService : IUserStateService
             return false;
         }
 
-        var mark = new Mark(key);
-        if (pendingMarks.TryGetValue(mark, out var v))
+        if (pendingMarks.TryGetValue(key, out value))
         {
-            value = v.Value;
             return true;
         }
-        if (activeMarks.TryGetValue(mark, out v))
+        if (activeMarks.TryGetValue(key, out value))
         {
-            value = v.Value;
             return true;
         }
 
@@ -53,9 +49,9 @@ public class UserStateService : IUserStateService
         return false;
     }
 
-    public IReadOnlySet<Mark> PopPending()      
+    public IReadOnlyDictionary<MarkKey, string> PopPending()      
     {                                       
-        var result = pendingMarks.ToHashSet();
+        var result = pendingMarks.ToDictionary();
         pendingMarks.Clear();
         return result;
     }
@@ -71,7 +67,7 @@ public class UserStateService : IUserStateService
     {
         pendingMarks.Clear();
         pendingMarkRemovals.Clear();
-        activeMarks = selectedNode is TextNode textNode ? textNode.Marks.ToHashSet(new Mark.MarkTable()) : [];
+        activeMarks = selectedNode?.Marks.ToDictionary() ?? [];
         OnStateChange?.Invoke();
     }
 }

@@ -9,8 +9,8 @@ public class MarkRenderExtensionsTests
 {
     private static readonly IReadOnlySet<Mark> Marks = new HashSet<Mark>
     {
-        new Mark(MarkKey.Bold),
-        new Mark(MarkKey.Italic),
+        new Mark(MarkKey.FontWeight, "bold"),
+        new Mark(MarkKey.FontStyle, "italic"),
         new Mark(MarkKey.Color, "#fff")
     };
 

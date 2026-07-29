@@ -53,13 +53,13 @@ public class UpdateMarkHandlerTest
                 end = t.Text("456");
             });
             
-            start.SetMark(new Mark(MarkKey.Bold));
-            markedNode.SetMark(new Mark(MarkKey.Bold));
+            start.SetMark(new Mark(MarkKey.FontWeight));
+            markedNode.SetMark(new Mark(MarkKey.FontWeight));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 2, end.Id, 1);
             
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Toggle));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -75,7 +75,7 @@ public class UpdateMarkHandlerTest
                 Assert.That(end.TextContent, Is.EqualTo("4"));
                 Assert.That(((TextNode)end.RightOrigin!).TextContent, Is.EqualTo("56"));
                 
-                Assert.That(start.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(start.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
                 Assert.That(((TextNode)start.RightOrigin!).Marks, Is.Empty);
                 Assert.That(((TextNode)start.RightOrigin.RightOrigin!).Marks, Is.Empty);
                 Assert.That(((TextNode)end.Origin!).Marks, Is.Empty);
@@ -110,12 +110,12 @@ public class UpdateMarkHandlerTest
                 end = t.Text("456");
             });
             
-            markedNode.SetMark(new Mark(MarkKey.Bold));
+            markedNode.SetMark(new Mark(MarkKey.FontWeight));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 2, end.Id, 1);
             
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Toggle));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -132,10 +132,10 @@ public class UpdateMarkHandlerTest
                 Assert.That(((TextNode)end.RightOrigin!).TextContent, Is.EqualTo("56"));
                 
                 Assert.That(start.Marks, Is.Empty);
-                Assert.That(((TextNode)start.RightOrigin!).Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(((TextNode)start.RightOrigin.RightOrigin!).Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(((TextNode)end.Origin!).Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(end.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(((TextNode)start.RightOrigin!).Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(((TextNode)start.RightOrigin.RightOrigin!).Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(((TextNode)end.Origin!).Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(end.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
                 Assert.That(((TextNode)end.RightOrigin!).Marks, Is.Empty);
             }
             
@@ -160,13 +160,13 @@ public class UpdateMarkHandlerTest
                 end = t.Text("cd");
             });
 
-            start.SetMark(new Mark(MarkKey.Bold));
-            end.SetMark(new Mark(MarkKey.Italic));
+            start.SetMark(new Mark(MarkKey.FontWeight));
+            end.SetMark(new Mark(MarkKey.FontStyle));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
 
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Italic), UpdateMarkAction.Toggle));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontStyle), UpdateMarkAction.Toggle));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -186,10 +186,10 @@ public class UpdateMarkHandlerTest
                 Assert.That(node3.TextContent, Is.EqualTo("c"));
                 Assert.That(node4.TextContent, Is.EqualTo("d"));
                 
-                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold), new Mark(MarkKey.Italic)]));
-                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
-                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight), new Mark(MarkKey.FontStyle)]));
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
@@ -213,13 +213,13 @@ public class UpdateMarkHandlerTest
                 end = t.Text("cd");
             });
 
-            start.SetMark(new Mark(MarkKey.Bold));
-            end.SetMark(new Mark(MarkKey.Italic));
+            start.SetMark(new Mark(MarkKey.FontWeight));
+            end.SetMark(new Mark(MarkKey.FontStyle));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
 
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Toggle));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -239,10 +239,10 @@ public class UpdateMarkHandlerTest
                 Assert.That(node3.TextContent, Is.EqualTo("c"));
                 Assert.That(node4.TextContent, Is.EqualTo("d"));
                 
-                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic), new Mark(MarkKey.Bold)]));
-                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle), new Mark(MarkKey.FontWeight)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
             }
             
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
@@ -267,13 +267,13 @@ public class UpdateMarkHandlerTest
                 end = t.Text("cd");
             });
 
-            start.SetMark(new Mark(MarkKey.Bold));
-            end.SetMark(new Mark(MarkKey.Italic));
+            start.SetMark(new Mark(MarkKey.FontWeight));
+            end.SetMark(new Mark(MarkKey.FontStyle));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
 
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Toggle));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -293,10 +293,10 @@ public class UpdateMarkHandlerTest
                 Assert.That(node3.TextContent, Is.EqualTo("c"));
                 Assert.That(node4.TextContent, Is.EqualTo("d"));
                 
-                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
                 Assert.That(node2.Marks, Is.Empty);
-                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
-                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
@@ -320,13 +320,13 @@ public class UpdateMarkHandlerTest
                 end = t.Text("cd");
             });
 
-            start.SetMark(new Mark(MarkKey.Bold));
-            end.SetMark(new Mark(MarkKey.Italic));
+            start.SetMark(new Mark(MarkKey.FontWeight));
+            end.SetMark(new Mark(MarkKey.FontStyle));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
 
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Italic), UpdateMarkAction.Toggle));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontStyle), UpdateMarkAction.Toggle));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -346,10 +346,10 @@ public class UpdateMarkHandlerTest
                 Assert.That(node3.TextContent, Is.EqualTo("c"));
                 Assert.That(node4.TextContent, Is.EqualTo("d"));
                 
-                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
                 Assert.That(node3.Marks, Is.Empty);
-                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
@@ -376,12 +376,12 @@ public class UpdateMarkHandlerTest
                 end = t.Text("ef");
             });
 
-            mid.SetMark(new Mark(MarkKey.Bold));
+            mid.SetMark(new Mark(MarkKey.FontWeight));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 0, end.Id, 2);
 
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Italic), UpdateMarkAction.Toggle));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontStyle), UpdateMarkAction.Toggle));
             
             // Assert
             using (Assert.EnterMultipleScope())
@@ -399,9 +399,9 @@ public class UpdateMarkHandlerTest
                 Assert.That(node2.TextContent, Is.EqualTo("cd"));
                 Assert.That(node3.TextContent, Is.EqualTo("ef"));
 
-                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
-                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold), new Mark(MarkKey.Italic)]));
-                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight), new Mark(MarkKey.FontStyle)]));
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
@@ -434,13 +434,13 @@ public class UpdateMarkHandlerTest
                 end = t.Text("456");
             });
             
-            start.SetMark(new Mark(MarkKey.Bold));
-            markedNode.SetMark(new Mark(MarkKey.Bold));
+            start.SetMark(new Mark(MarkKey.FontWeight));
+            markedNode.SetMark(new Mark(MarkKey.FontWeight));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 2, end.Id, 1);
             
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Add));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Add));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -456,11 +456,11 @@ public class UpdateMarkHandlerTest
                 Assert.That(end.TextContent, Is.EqualTo("4"));
                 Assert.That(((TextNode)end.RightOrigin!).TextContent, Is.EqualTo("56"));
                 
-                Assert.That(start.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(((TextNode)start.RightOrigin!).Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(((TextNode)start.RightOrigin.RightOrigin!).Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(((TextNode)end.Origin!).Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(end.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(start.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(((TextNode)start.RightOrigin!).Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(((TextNode)start.RightOrigin.RightOrigin!).Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(((TextNode)end.Origin!).Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(end.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
                 Assert.That(((TextNode)end.RightOrigin!).Marks, Is.Empty);
             }
             
@@ -491,12 +491,12 @@ public class UpdateMarkHandlerTest
                 end = t.Text("456");
             });
             
-            markedNode.SetMark(new Mark(MarkKey.Bold));
+            markedNode.SetMark(new Mark(MarkKey.FontWeight));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 2, end.Id, 1);
             
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Add));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Add));
         
             // Assert
             using (Assert.EnterMultipleScope())
@@ -513,10 +513,10 @@ public class UpdateMarkHandlerTest
                 Assert.That(((TextNode)end.RightOrigin!).TextContent, Is.EqualTo("56"));
                 
                 Assert.That(start.Marks, Is.Empty);
-                Assert.That(((TextNode)start.RightOrigin!).Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(((TextNode)start.RightOrigin.RightOrigin!).Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(((TextNode)end.Origin!).Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(end.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(((TextNode)start.RightOrigin!).Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(((TextNode)start.RightOrigin.RightOrigin!).Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(((TextNode)end.Origin!).Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(end.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
                 Assert.That(((TextNode)end.RightOrigin!).Marks, Is.Empty);
             }
             
@@ -541,13 +541,13 @@ public class UpdateMarkHandlerTest
                 end = t.Text("cd");
             });
 
-            start.SetMark(new Mark(MarkKey.Bold));
-            end.SetMark(new Mark(MarkKey.Italic));
+            start.SetMark(new Mark(MarkKey.FontWeight));
+            end.SetMark(new Mark(MarkKey.FontStyle));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
 
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Italic), UpdateMarkAction.Add));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontStyle), UpdateMarkAction.Add));
          
             // Assert
             using (Assert.EnterMultipleScope())
@@ -567,10 +567,10 @@ public class UpdateMarkHandlerTest
                 Assert.That(node3.TextContent, Is.EqualTo("c"));
                 Assert.That(node4.TextContent, Is.EqualTo("d"));
                 
-                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold), new Mark(MarkKey.Italic)]));
-                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
-                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight), new Mark(MarkKey.FontStyle)]));
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
@@ -594,13 +594,13 @@ public class UpdateMarkHandlerTest
                 end = t.Text("cd");
             });
 
-            start.SetMark(new Mark(MarkKey.Bold));
-            end.SetMark(new Mark(MarkKey.Italic));
+            start.SetMark(new Mark(MarkKey.FontWeight));
+            end.SetMark(new Mark(MarkKey.FontStyle));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
 
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Add));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Add));
             
             // Assert
             using (Assert.EnterMultipleScope())
@@ -620,10 +620,10 @@ public class UpdateMarkHandlerTest
                 Assert.That(node3.TextContent, Is.EqualTo("c"));
                 Assert.That(node4.TextContent, Is.EqualTo("d"));
                 
-                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic), new Mark(MarkKey.Bold)]));
-                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle), new Mark(MarkKey.FontWeight)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
             }
             
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
@@ -648,13 +648,13 @@ public class UpdateMarkHandlerTest
                 end = t.Text("cd");
             });
 
-            start.SetMark(new Mark(MarkKey.Bold));
-            end.SetMark(new Mark(MarkKey.Italic));
+            start.SetMark(new Mark(MarkKey.FontWeight));
+            end.SetMark(new Mark(MarkKey.FontStyle));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
 
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Add));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Add));
   
             // Assert
             using (Assert.EnterMultipleScope())
@@ -674,10 +674,10 @@ public class UpdateMarkHandlerTest
                 Assert.That(node3.TextContent, Is.EqualTo("c"));
                 Assert.That(node4.TextContent, Is.EqualTo("d"));
                 
-                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic), new Mark(MarkKey.Bold)]));
-                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle), new Mark(MarkKey.FontWeight)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
@@ -701,13 +701,13 @@ public class UpdateMarkHandlerTest
                 end = t.Text("cd");
             });
 
-            start.SetMark(new Mark(MarkKey.Bold));
-            end.SetMark(new Mark(MarkKey.Italic));
+            start.SetMark(new Mark(MarkKey.FontWeight));
+            end.SetMark(new Mark(MarkKey.FontStyle));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
 
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Italic), UpdateMarkAction.Add));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontStyle), UpdateMarkAction.Add));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -727,10 +727,10 @@ public class UpdateMarkHandlerTest
                 Assert.That(node3.TextContent, Is.EqualTo("c"));
                 Assert.That(node4.TextContent, Is.EqualTo("d"));
                 
-                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold), new Mark(MarkKey.Italic)]));
-                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
-                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight), new Mark(MarkKey.FontStyle)]));
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
@@ -764,15 +764,15 @@ public class UpdateMarkHandlerTest
                 end = t.Text("456");
             });
             
-            start.SetMark(new Mark(MarkKey.Bold));
-            ((TextNode)start.RightOrigin!).SetMark(new Mark(MarkKey.Bold));
-            markedNode.SetMark(new Mark(MarkKey.Bold));
-            end.SetMark(new Mark(MarkKey.Bold));
+            start.SetMark(new Mark(MarkKey.FontWeight));
+            ((TextNode)start.RightOrigin!).SetMark(new Mark(MarkKey.FontWeight));
+            markedNode.SetMark(new Mark(MarkKey.FontWeight));
+            end.SetMark(new Mark(MarkKey.FontWeight));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 2, end.Id, 1);
             
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Remove));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Remove));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -788,12 +788,12 @@ public class UpdateMarkHandlerTest
                 Assert.That(end.TextContent, Is.EqualTo("4"));
                 Assert.That(((TextNode)end.RightOrigin!).TextContent, Is.EqualTo("56"));
                 
-                Assert.That(start.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(start.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
                 Assert.That(((TextNode)start.RightOrigin!).Marks, Is.Empty);
                 Assert.That(((TextNode)start.RightOrigin.RightOrigin!).Marks, Is.Empty);
                 Assert.That(((TextNode)end.Origin!).Marks, Is.Empty);
                 Assert.That(end.Marks, Is.Empty);
-                Assert.That(((TextNode)end.RightOrigin!).Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(((TextNode)end.RightOrigin!).Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
             }
             
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
@@ -823,13 +823,13 @@ public class UpdateMarkHandlerTest
                 end = t.Text("456");
             });
 
-            ((TextNode)start.RightOrigin!).SetMark(new Mark(MarkKey.Bold));
-            markedNode.SetMark(new Mark(MarkKey.Bold));
+            ((TextNode)start.RightOrigin!).SetMark(new Mark(MarkKey.FontWeight));
+            markedNode.SetMark(new Mark(MarkKey.FontWeight));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 2, end.Id, 1);
             
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Remove));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Remove));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -874,13 +874,13 @@ public class UpdateMarkHandlerTest
                 end = t.Text("cd");
             });
 
-            start.SetMark(new Mark(MarkKey.Bold));
-            end.SetMark(new Mark(MarkKey.Italic));
+            start.SetMark(new Mark(MarkKey.FontWeight));
+            end.SetMark(new Mark(MarkKey.FontStyle));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
 
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Italic), UpdateMarkAction.Remove));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontStyle), UpdateMarkAction.Remove));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -900,10 +900,10 @@ public class UpdateMarkHandlerTest
                 Assert.That(node3.TextContent, Is.EqualTo("c"));
                 Assert.That(node4.TextContent, Is.EqualTo("d"));
                 
-                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
                 Assert.That(node3.Marks, Is.Empty);
-                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
@@ -927,13 +927,13 @@ public class UpdateMarkHandlerTest
                 end = t.Text("cd");
             });
 
-            start.SetMark(new Mark(MarkKey.Bold));
-            end.SetMark(new Mark(MarkKey.Italic));
+            start.SetMark(new Mark(MarkKey.FontWeight));
+            end.SetMark(new Mark(MarkKey.FontStyle));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
 
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Remove));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Remove));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -953,10 +953,10 @@ public class UpdateMarkHandlerTest
                 Assert.That(node3.TextContent, Is.EqualTo("c"));
                 Assert.That(node4.TextContent, Is.EqualTo("d"));
                 
-                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
                 Assert.That(node2.Marks, Is.Empty);
-                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
-                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
             }
             
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
@@ -981,13 +981,13 @@ public class UpdateMarkHandlerTest
                 end = t.Text("cd");
             });
 
-            start.SetMark(new Mark(MarkKey.Bold));
-            end.SetMark(new Mark(MarkKey.Italic));
+            start.SetMark(new Mark(MarkKey.FontWeight));
+            end.SetMark(new Mark(MarkKey.FontStyle));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
 
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Remove));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Remove));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -1007,10 +1007,10 @@ public class UpdateMarkHandlerTest
                 Assert.That(node3.TextContent, Is.EqualTo("c"));
                 Assert.That(node4.TextContent, Is.EqualTo("d"));
                 
-                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
                 Assert.That(node2.Marks, Is.Empty);
-                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
-                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node3.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
@@ -1034,13 +1034,13 @@ public class UpdateMarkHandlerTest
                 end = t.Text("cd");
             });
 
-            start.SetMark(new Mark(MarkKey.Bold));
-            end.SetMark(new Mark(MarkKey.Italic));
+            start.SetMark(new Mark(MarkKey.FontWeight));
+            end.SetMark(new Mark(MarkKey.FontStyle));
 
             var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
 
             // Act
-            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.Italic), UpdateMarkAction.Remove));
+            var result = handler.Execute(keyPressInfo.Selection, new UpdateMarkCommand(new Mark(MarkKey.FontStyle), UpdateMarkAction.Remove));
 
             // Assert
             using (Assert.EnterMultipleScope())
@@ -1060,10 +1060,10 @@ public class UpdateMarkHandlerTest
                 Assert.That(node3.TextContent, Is.EqualTo("c"));
                 Assert.That(node4.TextContent, Is.EqualTo("d"));
                 
-                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
-                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+                Assert.That(node1.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+                Assert.That(node2.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
                 Assert.That(node3.Marks, Is.Empty);
-                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.Italic)]));
+                Assert.That(node4.Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
@@ -1088,10 +1088,10 @@ public class UpdateMarkHandlerTest
             // Act
             var result = handler.Execute(
                 KeyPressInfoHelper.GetKeyPressInfoDirectionNone(blockNode.Id, 0).Selection,
-                new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Add));
+                new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Add));
             
             // Assert
-            Assert.That(blockNode.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+            Assert.That(blockNode.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
             Assert.That(result.CursorPosition, Is.Null); // TODO: maybe set it, to be safe
 
             AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
@@ -1104,12 +1104,12 @@ public class UpdateMarkHandlerTest
         {
             // Arrange
             var blockNode = builder.Paragraph();
-            blockNode.SetMark(new Mark(MarkKey.Bold));
+            blockNode.SetMark(new Mark(MarkKey.FontWeight));
             
             // Act
             var result = handler.Execute(
                 KeyPressInfoHelper.GetKeyPressInfoDirectionNone(blockNode.Id, 0).Selection,
-                new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Remove));
+                new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Remove));
             
             // Assert
             Assert.That(blockNode.Marks, Is.Empty);
@@ -1128,10 +1128,10 @@ public class UpdateMarkHandlerTest
             // Act
             var result = handler.Execute(
                 KeyPressInfoHelper.GetKeyPressInfoDirectionNone(blockNode.Id, 0).Selection,
-                new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
+                new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Toggle));
             
             // Assert
-            Assert.That(blockNode.Marks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+            Assert.That(blockNode.Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
             Assert.That(result.CursorPosition, Is.Null); // TODO: maybe set it, to be safe
             AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
                 Is.TypeOf<StepDiff.UpdateMarksDiff>()
@@ -1143,12 +1143,12 @@ public class UpdateMarkHandlerTest
         {
             // Arrange
             var blockNode = builder.Paragraph();
-            blockNode.SetMark(new Mark(MarkKey.Bold));
+            blockNode.SetMark(new Mark(MarkKey.FontWeight));
             
             // Act
             var result = handler.Execute(
                 KeyPressInfoHelper.GetKeyPressInfoDirectionNone(blockNode.Id, 0).Selection,
-                new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
+                new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Toggle));
             
             // Assert
             Assert.That(blockNode.Marks, Is.Empty);
@@ -1172,10 +1172,10 @@ public class UpdateMarkHandlerTest
             // Act
             var result = handler.Execute(
                 KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0).Selection,
-                new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Add));
+                new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Add));
             
             // Assert
-            Assert.That(userStateServiceFake.AddedMarks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+            Assert.That(userStateServiceFake.AddedMarks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
             Assert.That(textNode.Marks, Is.Empty);
             Assert.That(result.CursorPosition, Is.Null);
             Assert.That(result.Steps, Is.Empty);
@@ -1191,15 +1191,15 @@ public class UpdateMarkHandlerTest
             {
                 textNode = t.Text("a");
             });
-            userStateServiceFake.AddedMarks.Add(new Mark(MarkKey.Bold));
+            userStateServiceFake.AddedMarks.Add(new Mark(MarkKey.FontWeight));
             
             // Act
             var result = handler.Execute(
                 KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0).Selection,
-                new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Remove));
+                new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Remove));
             
             // Assert
-            Assert.That(userStateServiceFake.RemovedMarks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+            Assert.That(userStateServiceFake.RemovedMarks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
             Assert.That(textNode.Marks, Is.Empty);
             Assert.That(result.CursorPosition, Is.Null);
             Assert.That(result.Steps, Is.Empty);
@@ -1218,10 +1218,10 @@ public class UpdateMarkHandlerTest
             // Act
             var result = handler.Execute(
                 KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0).Selection,
-                new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
+                new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Toggle));
             
             // Assert
-            Assert.That(userStateServiceFake.AddedMarks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+            Assert.That(userStateServiceFake.AddedMarks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
             Assert.That(textNode.Marks, Is.Empty);
             Assert.That(result.CursorPosition, Is.Null);
             Assert.That(result.Steps, Is.Empty);
@@ -1236,15 +1236,15 @@ public class UpdateMarkHandlerTest
             {
                 textNode = t.Text("a");
             });
-            userStateServiceFake.AddedMarks.Add(new Mark(MarkKey.Bold));
+            userStateServiceFake.AddedMarks.Add(new Mark(MarkKey.FontWeight));
             
             // Act
             var result = handler.Execute(
                 KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0).Selection,
-                new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
+                new UpdateMarkCommand(new Mark(MarkKey.FontWeight), UpdateMarkAction.Toggle));
             
             // Assert
-            Assert.That(userStateServiceFake.RemovedMarks, Is.EquivalentTo([new Mark(MarkKey.Bold)]));
+            Assert.That(userStateServiceFake.RemovedMarks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
             Assert.That(textNode.Marks, Is.Empty);
             Assert.That(result.CursorPosition, Is.Null);
             Assert.That(result.Steps, Is.Empty);

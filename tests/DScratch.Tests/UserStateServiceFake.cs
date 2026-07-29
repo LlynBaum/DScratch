@@ -29,7 +29,7 @@ public class UserStateServiceFake : IUserStateService
 
     public bool CheckMark(MarkKey key, out string? value)
     {
-        var result = AddedMarks.Except(RemovedMarks).ToHashSet().TryGetValue(new Mark(key), out var mark);
+        var result = AddedMarks.Except(RemovedMarks).ToHashSet().TryGetValue(new Mark(key, string.Empty), out var mark);
         value = mark.Value;
         return result;
     }

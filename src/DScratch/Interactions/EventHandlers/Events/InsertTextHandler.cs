@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using DScratch.Interactions.EventHandlers.Common;
 using DScratch.Interactions.EventHandlers.Models;
 using DScratch.Nodes;
@@ -38,7 +39,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
             return;
         }
 
-        var marks = transaction.CalculateMarks(new HashSet<Mark>());
+        var marks = transaction.CalculateMarks(FrozenDictionary<MarkKey, string>.Empty);
         // When we get a block element as anchor, we assume there are no TextNode within the block. So we just insert the text.
         // To prevent any broken Trees we insert it before the FirstChild, in case there are child nodes.
         var textNode = transaction.NodeFactory.String(keyPressInfo.Data, anchorNode.FirstChild, null, marks);
@@ -97,10 +98,9 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
         }
         return;
         
-        IReadOnlySet<Mark> GetMarksFrom(DNode? node)
+        IReadOnlyDictionary<MarkKey, string> GetMarksFrom(DNode? node)
         {
-            var activeMarks = node is TextNode t ? t.Marks : new HashSet<Mark>();
-            return transaction.CalculateMarks(activeMarks);
+            return transaction.CalculateMarks(node?.Marks ?? FrozenDictionary<MarkKey, string>.Empty);
         }
     }
 }

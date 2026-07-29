@@ -8,7 +8,7 @@ namespace DScratch.Client.Pages.Editor.Components;
 
 public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateService userStateService) : IDisposable
 {
-    private const string? DefaultTextColor = "#000000";
+    private const string DefaultTextColor = "#000000";
 
     private ViewModel viewModel = new ViewModel
     {
@@ -24,14 +24,14 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
 
     private async Task BoldAsync()
     {
-        await dispatcher.DispatchAsync(new UpdateMarkCommand(new Mark(MarkKey.Bold), UpdateMarkAction.Toggle));
-        viewModel.IsBoldActive = userStateService.CheckMark(MarkKey.Bold, out _);
+        await dispatcher.DispatchAsync(UpdateMarkCommand.Toggle(MarkKey.FontWeight, "bold"));
+        viewModel.IsBoldActive = userStateService.CheckMark(MarkKey.FontWeight, out _);
     }
 
     private async Task ItalicAsync()
     {
-        await dispatcher.DispatchAsync(new UpdateMarkCommand(new Mark(MarkKey.Italic), UpdateMarkAction.Toggle));
-        viewModel.IsItalicActive = userStateService.CheckMark(MarkKey.Italic, out _);
+        await dispatcher.DispatchAsync(UpdateMarkCommand.Toggle(MarkKey.FontStyle, "italic"));
+        viewModel.IsItalicActive = userStateService.CheckMark(MarkKey.FontStyle, out _);
     }
 
     private async Task ParagraphAsync() => await dispatcher.DispatchAsync(new ChangeBlockTypeCommand(BlockNodeType.Paragraph));
@@ -40,13 +40,13 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
     
     private async Task OnColorChangeAsync()
     {
-        await dispatcher.DispatchAsync(new UpdateMarkCommand(new Mark(MarkKey.Color, viewModel.ActiveColor), UpdateMarkAction.Add));
+        await dispatcher.DispatchAsync(UpdateMarkCommand.Add(MarkKey.Color, viewModel.ActiveColor ?? DefaultTextColor));
         viewModel.ActiveColor = userStateService.CheckMark(MarkKey.Color, out var color) ? color : DefaultTextColor;
     }
 
     private async Task ClearColorAsync()
     {
-        await dispatcher.DispatchAsync(new UpdateMarkCommand(new Mark(MarkKey.Color), UpdateMarkAction.Remove));
+        await dispatcher.DispatchAsync(UpdateMarkCommand.Remove(MarkKey.Color));
         viewModel.ActiveColor = userStateService.CheckMark(MarkKey.Color, out var color) ? color : DefaultTextColor;
     }
 
@@ -54,8 +54,8 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
     {
         viewModel = new ViewModel
         {
-            IsBoldActive = userStateService.CheckMark(MarkKey.Bold, out _),
-            IsItalicActive = userStateService.CheckMark(MarkKey.Italic, out _),
+            IsBoldActive = userStateService.CheckMark(MarkKey.FontWeight, out _),
+            IsItalicActive = userStateService.CheckMark(MarkKey.FontStyle, out _),
             ActiveColor = userStateService.CheckMark(MarkKey.Color, out var color) ? color : DefaultTextColor,
         };
         StateHasChanged();

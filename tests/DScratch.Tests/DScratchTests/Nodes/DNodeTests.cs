@@ -391,11 +391,11 @@ public class DNodeTests
         var testNode = new TestNode(new NodeId("Test", 1), null, null);
         
         // Act
-        testNode.SetMark(new Mark(MarkKey.Bold, "Ka"));
+        testNode.SetMark(new Mark(MarkKey.FontWeight, "Ka"));
         
         // Assert
         Assert.That(testNode.Marks, Has.Count.EqualTo(1));
-        Assert.That(testNode.Marks.Single().Key, Is.EqualTo(MarkKey.Bold));
+        Assert.That(testNode.Marks.Single().Key, Is.EqualTo(MarkKey.FontWeight));
     }
     
     [Test]
@@ -419,10 +419,10 @@ public class DNodeTests
     {
         // Arrange
         var testNode = new TestNode(new NodeId("Test", 1), null, null);
-        testNode.SetMark(new Mark(MarkKey.Bold, "Ka"));
+        testNode.SetMark(new Mark(MarkKey.FontWeight, "Ka"));
         
         // Act
-        testNode.RemoveMark(MarkKey.Bold);
+        testNode.RemoveMark(MarkKey.FontWeight);
         
         // Assert
         Assert.That(testNode.Marks, Has.Count.Zero);

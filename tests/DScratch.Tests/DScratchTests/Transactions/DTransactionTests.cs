@@ -6,7 +6,6 @@ using DScratch.Tests.Helpers.TestNodes;
 using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 using DScratch.Transactions.Steps.Marks;
-using NUnit.Framework.Legacy;
 
 namespace DScratch.Tests.DScratchTests.Transactions;
 
@@ -139,7 +138,7 @@ public class DTransactionTests
     public void RemoveMark_AddsRemoveMarkStep()
     {
         // Act
-        Transaction.RemoveMark(new TextNode(new NodeId("", 1), null, null), MarkKey.Bold);
+        Transaction.RemoveMark(new TextNode(new NodeId("", 1), null, null), MarkKey.FontWeight);
 
         // Assert
         Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
@@ -222,21 +221,21 @@ public class DTransactionTests
     {
         // Arrange
         UserStateService.AddPendingMark(new Mark(MarkKey.Color, "b"));
-        UserStateService.RemovePendingMark(new Mark(MarkKey.Italic));
+        UserStateService.RemovePendingMark(new Mark(MarkKey.FontStyle, "italic"));
         
         // Act
         var actual = Transaction.CalculateMarks(new HashSet<Mark>
         {
             new Mark(MarkKey.Color, "a"),
-            new Mark(MarkKey.Italic),
-            new Mark(MarkKey.Bold)
+            new Mark(MarkKey.FontStyle, "italic"),
+            new Mark(MarkKey.FontWeight, "bold")
         });
 
         // Assert
         Assert.That(actual, Is.EquivalentTo(new HashSet<Mark>
         {
             new Mark(MarkKey.Color, "b"),
-            new Mark(MarkKey.Bold)
+            new Mark(MarkKey.FontWeight, "bold")
         }));
     }
 

@@ -9,7 +9,7 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
     
     private readonly List<DNode> allChildNodes = childNodes ?? [];
     
-    private readonly HashSet<Mark> marks = new HashSet<Mark>(new Mark.MarkTable());
+    private readonly Dictionary<MarkKey, string> marks = new Dictionary<MarkKey, string>();
     
     public NodeId Id { get; } = id;
     
@@ -31,7 +31,7 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
 
     public DNode? LastChild => ActiveChildNodes.LastOrDefault();
 
-    public IReadOnlySet<Mark> Marks => marks;
+    public IReadOnlyDictionary<MarkKey, string> Marks => marks;
 
     internal void Remove()
     {
@@ -94,24 +94,23 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
             : ActiveChildNodes.Skip(index).FirstOrDefault();
     }
     
-    internal void CopyMarks(IEnumerable<Mark> initMarks)
+    internal void CopyMarks(IEnumerable<KeyValuePair<MarkKey, string>> initMarks)
     {
         marks.Clear();
         foreach (var initMark in initMarks)
         {
-            marks.Add(initMark);
+            marks[initMark.Key] = initMark.Value;
         }
     }
     
-    internal void SetMark(Mark mark)
+    internal void SetMark(MarkKey key, string value)
     {
-        marks.Remove(mark);
-        marks.Add(mark);
+        marks[key] = value;
     }
 
     internal void RemoveMark(MarkKey key)
     {
-        marks.Remove(new Mark(key, string.Empty));
+        marks.Remove(key);
     }
 
     public override string ToString()
