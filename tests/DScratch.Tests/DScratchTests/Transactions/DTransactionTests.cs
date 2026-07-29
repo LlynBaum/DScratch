@@ -127,7 +127,7 @@ public class DTransactionTests
     public void AddMark_AddsAddMarkStep()
     {
         // Act
-        Transaction.AddMark(new TextNode(new NodeId("", 1), null, null), new Mark());
+        Transaction.AddMark(new TextNode(new NodeId("", 1), null, null), MarkKey.Color, "");
 
         // Assert
         Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
@@ -220,22 +220,22 @@ public class DTransactionTests
     public void CalculateMarks_ReturnsExpectedMarks()
     {
         // Arrange
-        UserStateService.AddPendingMark(new Mark(MarkKey.Color, "b"));
-        UserStateService.RemovePendingMark(new Mark(MarkKey.FontStyle, "italic"));
+        UserStateService.AddPendingMark(MarkKey.Color, "b");
+        UserStateService.RemovePendingMark(MarkKey.FontStyle);
         
         // Act
-        var actual = Transaction.CalculateMarks(new HashSet<Mark>
+        var actual = Transaction.CalculateMarks(new Dictionary<MarkKey, string>
         {
-            new Mark(MarkKey.Color, "a"),
-            new Mark(MarkKey.FontStyle, "italic"),
-            new Mark(MarkKey.FontWeight, "bold")
+            { MarkKey.Color, "a" },
+            { MarkKey.FontStyle, "italic" },
+            { MarkKey.FontWeight, "bold" }
         });
 
         // Assert
-        Assert.That(actual, Is.EquivalentTo(new HashSet<Mark>
+        Assert.That(actual, Is.EquivalentTo(new Dictionary<MarkKey, string>
         {
-            new Mark(MarkKey.Color, "b"),
-            new Mark(MarkKey.FontWeight, "bold")
+            { MarkKey.Color, "b" },
+            { MarkKey.FontWeight, "bold" }
         }));
     }
 

@@ -47,7 +47,7 @@ public class TestTransactionFake : ITransaction, IRunningTransaction
         throw new NotImplementedException();
     }
 
-    public void AddMark(DNode node, Mark mark)
+    public void AddMark(DNode node, MarkKey key, string value)
     {
         throw new NotImplementedException();
     }
@@ -67,17 +67,12 @@ public class TestTransactionFake : ITransaction, IRunningTransaction
         throw new NotImplementedException();
     }
 
-    public DNode? FindNode(NodeId nodeId)
+    public TextNode SplitText(TextNode node, int offset)
     {
         throw new NotImplementedException();
     }
 
-    public TextNode? SplitText(TextNode node, int offset)
-    {
-        throw new NotImplementedException();
-    }
-
-    public IReadOnlySet<Mark> CalculateMarks(IReadOnlySet<Mark> activeMarks)
+    public IReadOnlyDictionary<MarkKey, string> CalculateMarks(IReadOnlyDictionary<MarkKey, string> activeMarks)
     {
         throw new NotImplementedException();
     }

@@ -7,11 +7,11 @@ namespace DScratch.Tests.DScratchTests.Rendering;
 
 public class MarkRenderExtensionsTests
 {
-    private static readonly IReadOnlySet<Mark> Marks = new HashSet<Mark>
+    private static readonly IReadOnlyDictionary<MarkKey, string> Marks = new Dictionary<MarkKey, string>
     {
-        new Mark(MarkKey.FontWeight, "bold"),
-        new Mark(MarkKey.FontStyle, "italic"),
-        new Mark(MarkKey.Color, "#fff")
+        { MarkKey.FontWeight, "bold" },
+        { MarkKey.FontStyle, "italic" },
+        { MarkKey.Color, "#fff" }
     };
 
     private static void AssertMarks(StepDiff.UpdateMarksDiff step)
@@ -29,7 +29,7 @@ public class MarkRenderExtensionsTests
         var textNode = new TextNode(nodeId, null, null);
         foreach (var mark in Marks)
         {
-            textNode.SetMark(mark);
+            textNode.SetMark(mark.Key, mark.Value);
         }
 
         // Act

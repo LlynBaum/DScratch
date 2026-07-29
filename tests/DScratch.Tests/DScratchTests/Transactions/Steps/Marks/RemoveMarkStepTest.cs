@@ -21,7 +21,7 @@ public class RemoveMarkStepTest
     {
         // Arrange
         var node = new TextNode(new NodeId("", 1), null, null);
-        node.SetMark(new Mark(MarkKey.FontWeight, "bold"));
+        node.SetMark(MarkKey.FontWeight, "bold");
         
         // Act
         var step = new RemoveMarkStep(node, MarkKey.FontWeight);

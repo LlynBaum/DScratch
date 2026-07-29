@@ -246,8 +246,8 @@ public class DTransactionCleanUpTests
                 modifiedNode.Delete();
             }
             
-            node.SetMark(new Mark(MarkKey.Color, "a"));
-            modifiedNode.SetMark(new Mark(MarkKey.Color, "b"));
+            node.SetMark(MarkKey.Color, "a");
+            modifiedNode.SetMark(MarkKey.Color, "b");
 
             Transaction.AddCursorPosition(modifiedNode.Id, 2);
         
@@ -280,8 +280,8 @@ public class DTransactionCleanUpTests
                 modifiedNode.Delete();
             }
             
-            node.SetMark(new Mark(MarkKey.Color, "a"));
-            modifiedNode.SetMark(new Mark(MarkKey.Color, "b"));
+            node.SetMark(MarkKey.Color, "a");
+            modifiedNode.SetMark(MarkKey.Color, "b");
             
             Transaction.AddCursorPosition(node.Id, 2);
         

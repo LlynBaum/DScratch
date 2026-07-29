@@ -57,7 +57,7 @@ public class TextNodeTests
             });
         
         var textNode = (TextNode)testNode.ChildNodes[1];
-        textNode.SetMark(new Mark(MarkKey.FontWeight, "bold"));
+        textNode.SetMark(MarkKey.FontWeight, "bold");
         
         // Act
         var result = textNode.Split(1, _ => new NodeId("Test", -1));

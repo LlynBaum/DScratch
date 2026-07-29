@@ -6,35 +6,40 @@ namespace DScratch.Tests;
 
 public class UserStateServiceFake : IUserStateService
 {
-    public readonly List<Mark> AddedMarks = [];
-    public readonly List<Mark> RemovedMarks = [];
+    public readonly Dictionary<MarkKey, string> AddedMarks = [];
+    public readonly HashSet<MarkKey> RemovedMarks = [];
 
-    public IReadOnlySet<Mark> ActiveMarks { get; } = new HashSet<Mark>();
+    public IReadOnlyDictionary<MarkKey, string> ActiveMarks { get; } = new Dictionary<MarkKey, string>();
 
-    public IReadOnlySet<Mark> PendingMarks { get; } = new HashSet<Mark>();
+    public IReadOnlyDictionary<MarkKey, string> PendingMarks { get; } = new Dictionary<MarkKey, string>();
 
     public IReadOnlySet<MarkKey> PendingMarkRemovals { get; } = new HashSet<MarkKey>();
     
     public event Action? OnStateChange;
-    
-    public void AddPendingMark(Mark mark)
+
+    public void AddPendingMark(MarkKey key, string value)
     {
-        AddedMarks.Add(mark);
+        AddedMarks[key] = value;
     }
 
-    public void RemovePendingMark(Mark mark)
+    public void RemovePendingMark(MarkKey key)
     {
-        RemovedMarks.Add(mark);
+        RemovedMarks.Add(key);
     }
 
     public bool CheckMark(MarkKey key, out string? value)
     {
-        var result = AddedMarks.Except(RemovedMarks).ToHashSet().TryGetValue(new Mark(key, string.Empty), out var mark);
-        value = mark.Value;
-        return result;
+        return AddedMarks.ExceptBy(RemovedMarks, m => m.Key)
+            .ToDictionary()
+            .TryGetValue(key, out value);
     }
 
-    public IReadOnlySet<Mark> PopPending()
+    IReadOnlyDictionary<MarkKey, string> IUserStateService.PopPending()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IReadOnlyDictionary<MarkKey, string> PopPending()
     {
         throw new NotImplementedException();
     }
