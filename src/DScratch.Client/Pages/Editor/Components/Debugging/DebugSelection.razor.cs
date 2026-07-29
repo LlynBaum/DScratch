@@ -8,8 +8,8 @@ namespace DScratch.Client.Pages.Editor.Components.Debugging;
 public partial class DebugSelection(IEditorDebugService editorDebugService, IUserStateService userStateService) : IDisposable
 {
     private SelectionInfo? CurrentSelection => editorDebugService.CurrentClientSelection;
-    private IReadOnlySet<Mark> ActiveMarks => userStateService.ActiveMarks;
-    private IReadOnlySet<Mark> PendingMarks => userStateService.PendingMarks;
+    private IReadOnlyDictionary<MarkKey, string> ActiveMarks => userStateService.ActiveMarks;
+    private IReadOnlyDictionary<MarkKey, string> PendingMarks => userStateService.PendingMarks;
     private IReadOnlySet<MarkKey> PendingMarkRemovals => userStateService.PendingMarkRemovals;
 
     protected override void OnInitialized()
