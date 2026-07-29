@@ -586,7 +586,7 @@ public class InsertTextHandlerTest
                 node = t.Text("a");
             });
 
-            node.SetMark(new Mark(MarkKey.FontWeight));
+            node.SetMark(MarkKey.FontWeight, "bold");
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1));
@@ -608,8 +608,8 @@ public class InsertTextHandlerTest
                 right = t.Text("a");
             });
 
-            node.SetMark(new Mark(MarkKey.FontWeight));
-            right.SetMark(new Mark(MarkKey.FontStyle));
+            node.SetMark(MarkKey.FontWeight, "bold");
+            right.SetMark(MarkKey.FontStyle, "italic");
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1));
@@ -629,14 +629,14 @@ public class InsertTextHandlerTest
                 node = t.Text("a");
             });
 
-            node.SetMark(new Mark(MarkKey.FontWeight));
+            node.SetMark(MarkKey.FontWeight, "bold");
 
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 0));
             
             // Assert
             Assert.That(node.Origin, Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)node.Origin).Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+            Assert.That(((TextNode)node.Origin).Marks, Is.EquivalentTo(new Dictionary<MarkKey, string> { { MarkKey.FontWeight, "bold" } }));
         }
         
         [Test]
@@ -665,7 +665,7 @@ public class InsertTextHandlerTest
                 node = t.Text("a");
             });
 
-            userStateService.AddPendingMark(new Mark(MarkKey.FontWeight));
+            userStateService.AddPendingMark(MarkKey.FontWeight, "bold");
             
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, offset));
@@ -674,7 +674,7 @@ public class InsertTextHandlerTest
             var newNode = parent.ActiveChildNodes.ElementAt(offset);
             
             Assert.That(newNode, Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)newNode).Marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+            Assert.That(((TextNode)newNode).Marks, Is.EquivalentTo(new Dictionary<MarkKey, string> { { MarkKey.FontWeight, "bold" } }));
         }
         
         [Test]
@@ -687,15 +687,15 @@ public class InsertTextHandlerTest
                 node = t.Text("a");
             });
 
-            node.SetMark(new Mark(MarkKey.FontStyle));
-            userStateService.AddPendingMark(new Mark(MarkKey.FontWeight));
+            node.SetMark(MarkKey.FontStyle, "italic");
+            userStateService.AddPendingMark(MarkKey.FontWeight, "bold");
             
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1));
             
             // Assert
             Assert.That(node.RightOrigin, Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)node.RightOrigin).Marks, Is.EquivalentTo([new Mark(MarkKey.FontStyle), new Mark(MarkKey.FontWeight)]));
+            Assert.That(((TextNode)node.RightOrigin).Marks, Is.EquivalentTo(new Dictionary<MarkKey, string> { { MarkKey.FontStyle, "italic" }, { MarkKey.FontWeight, "bold" } }));
         }
         
         [Test]
@@ -708,15 +708,15 @@ public class InsertTextHandlerTest
                 node = t.Text("a");
             });
 
-            node.SetMark(new Mark(MarkKey.Color, "a"));
-            userStateService.AddPendingMark(new Mark(MarkKey.Color, "b"));
+            node.SetMark(MarkKey.Color, "a");
+            userStateService.AddPendingMark(MarkKey.Color, "b");
             
             // Act
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1));
             
             // Assert
             Assert.That(node.RightOrigin, Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)node.RightOrigin).Marks, Is.EquivalentTo([new Mark(MarkKey.Color, "b")]));
+            Assert.That(((TextNode)node.RightOrigin).Marks, Is.EquivalentTo(new Dictionary<MarkKey, string> { { MarkKey.Color, "b" } }));
         }
     }
 }

@@ -19,35 +19,35 @@ public class UserStateServiceTest
     public void AddPendingMark_AddsMarkToPendingMarks()
     {
         // Act
-        service.AddPendingMark(new Mark(MarkKey.FontWeight));
+        service.AddPendingMark(MarkKey.FontWeight, "bold");
 
         // Assert
         Assert.That(service.PendingMarks, Has.Count.EqualTo(1));
-        Assert.That(service.PendingMarks.Single(), Is.EqualTo(new Mark(MarkKey.FontWeight)));
+        Assert.That(service.PendingMarks[MarkKey.FontWeight], Is.EqualTo("bold"));
     }
     
     [Test]
     public void AddPendingMark_OverridesExistingPendingMarks()
     {
         // Arrange
-        ((HashSet<Mark>)service.PendingMarks).Add(new Mark(MarkKey.Color, "a"));
+        service.AddPendingMark(MarkKey.Color, "a");
         
         // Act
-        service.AddPendingMark(new Mark(MarkKey.Color, "b"));
+        service.AddPendingMark(MarkKey.Color, "b");
 
         // Assert
         Assert.That(service.PendingMarks, Has.Count.EqualTo(1));
-        Assert.That(service.PendingMarks.Single(), Is.EqualTo(new Mark(MarkKey.Color, "b")));
+        Assert.That(service.PendingMarks[MarkKey.Color], Is.EqualTo("b"));
     }
 
     [Test]
     public void RemovePendingMark_RemovesMarkFromPendingMarks()
     {
         // Arrange
-        ((HashSet<Mark>)service.PendingMarks).Add(new Mark(MarkKey.FontWeight));
+        service.AddPendingMark(MarkKey.FontWeight, "bold");
         
         // Act
-        service.RemovePendingMark(new Mark(MarkKey.FontWeight));
+        service.RemovePendingMark(MarkKey.FontWeight);
 
         // Assert
         Assert.That(service.PendingMarks, Has.Count.Zero);
@@ -57,7 +57,7 @@ public class UserStateServiceTest
     public void RemovePendingMark_AddsMarkToPendingRemovals_WhenMarkIsNotPending()
     {
         // Act
-        service.RemovePendingMark(new Mark(MarkKey.FontWeight));
+        service.RemovePendingMark(MarkKey.FontWeight);
 
         // Assert
         Assert.That(service.PendingMarkRemovals, Has.Count.EqualTo(1));
@@ -70,11 +70,11 @@ public class UserStateServiceTest
         // Arrange
         var isCalled = false;
         service.OnStateChange += () => isCalled = true;
-        ((HashSet<Mark>)service.PendingMarks).Add(new Mark(MarkKey.FontWeight));
-        ((HashSet<MarkKey>)service.PendingMarkRemovals).Add(MarkKey.FontStyle);
+        service.AddPendingMark(MarkKey.FontWeight, "bold");
+        service.RemovePendingMark(MarkKey.FontStyle);
 
         var node = new TextNode(new NodeId(), null, null);
-        node.SetMark(new Mark(MarkKey.FontStyle));
+        node.SetMark(MarkKey.FontStyle, "italic");
         
         // Act
         service.UpdateState(node);
@@ -85,7 +85,7 @@ public class UserStateServiceTest
             Assert.That(isCalled, Is.True);
             Assert.That(service.PendingMarks, Has.Count.Zero);
             Assert.That(service.PendingMarkRemovals, Has.Count.Zero);
-            Assert.That(service.ActiveMarks, Is.EquivalentTo([new Mark(MarkKey.FontStyle)]));
+            Assert.That(service.ActiveMarks, Is.EquivalentTo(new Dictionary<MarkKey, string> { { MarkKey.FontStyle, "italic" } }));
         }
     }
     
@@ -95,7 +95,7 @@ public class UserStateServiceTest
         // Arrange
         var isCalled = false;
         service.OnStateChange += () => isCalled = true;
-        ((HashSet<Mark>)service.PendingMarks).Add(new Mark(MarkKey.FontWeight));
+        service.AddPendingMark(MarkKey.FontWeight, "bold");
         
         // Act
         service.UpdateState(TestNode.Empty());
@@ -113,7 +113,7 @@ public class UserStateServiceTest
     public void PopPending_ReturnsPendingMarks_AndClearsPending()
     {
         // Arrange
-        ((HashSet<Mark>)service.PendingMarks).Add(new Mark(MarkKey.FontWeight));
+        service.AddPendingMark(MarkKey.FontWeight, "bold");
         
         // Act
         var marks = service.PopPending();
@@ -121,7 +121,7 @@ public class UserStateServiceTest
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(marks, Is.EquivalentTo([new Mark(MarkKey.FontWeight)]));
+            Assert.That(marks, Is.EquivalentTo(new Dictionary<MarkKey, string> { { MarkKey.FontWeight, "bold" } }));
             Assert.That(service.PendingMarks, Has.Count.Zero);
         }
     }
@@ -130,7 +130,7 @@ public class UserStateServiceTest
     public void PopPendingRemovals_ReturnsPendingRemovingMarks_AndClearsPending()
     {
         // Arrange
-        ((HashSet<MarkKey>)service.PendingMarkRemovals).Add(MarkKey.FontWeight);
+        service.RemovePendingMark(MarkKey.FontWeight);
         
         // Act
         var marks = service.PopPendingRemovals();
@@ -147,7 +147,7 @@ public class UserStateServiceTest
     public void CheckMark_ReturnsTrue_WhenFoundAsPendingMark()
     {
         // Arrange
-        ((HashSet<Mark>)service.PendingMarks).Add(new Mark(MarkKey.Color, "a"));
+        service.AddPendingMark(MarkKey.Color, "a");
         
         // Act
         var found = service.CheckMark(MarkKey.Color, out var value);
@@ -161,7 +161,9 @@ public class UserStateServiceTest
     public void CheckMark_ReturnsTrue_WhenFoundAsActiveMark()
     {
         // Arrange
-        ((HashSet<Mark>)service.ActiveMarks).Add(new Mark(MarkKey.Color, "a"));
+        var node = new TextNode(new NodeId(), null, null);
+        node.SetMark(MarkKey.Color, "a");
+        service.UpdateState(node);
         
         // Act
         var found = service.CheckMark(MarkKey.Color, out var value);
@@ -186,8 +188,10 @@ public class UserStateServiceTest
     public void CheckMark_ReturnsFalse_WhenPendingMarkRemovalIsSet()
     {
         // Arrange
-        ((HashSet<Mark>)service.ActiveMarks).Add(new Mark(MarkKey.FontWeight));
-        ((HashSet<MarkKey>)service.PendingMarkRemovals).Add(MarkKey.FontWeight);
+        var node = new TextNode(new NodeId(), null, null);
+        node.SetMark(MarkKey.FontWeight, "bold");
+        service.UpdateState(node);
+        service.RemovePendingMark(MarkKey.FontWeight);
         
         // Act
         var found = service.CheckMark(MarkKey.FontWeight, out var value);
