@@ -10,6 +10,7 @@ public static class ClientServiceRegistration
     public static void RegisterServices(IServiceCollection services, bool isDevelopment)
     { 
         EventHandlerRegistration.Register(services);
+        CommandHandlerRegistration.Register(services);
         services.AddScoped<IEditorCommandDispatcher, EditorCommandDispatcher>();
         services.AddScoped<BrowserEventHelper>();
         services.AddScoped<DJsInvoker>();

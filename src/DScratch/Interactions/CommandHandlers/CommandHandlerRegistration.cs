@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DScratch.Interactions.CommandHandlers;
 
-public class CommandHandlerRegistration
+public static class CommandHandlerRegistration
 {
     public static void Register(IServiceCollection services)
     {
