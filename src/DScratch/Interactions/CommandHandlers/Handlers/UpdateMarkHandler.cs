@@ -16,7 +16,7 @@ public class UpdateMarkHandler(IDScratchService dScratchService, IUserStateServi
             var anchorNode = transaction.Document.FindNode(selectionInfo.AnchorNodeId);
             if (anchorNode is IBlockElement)
             {
-                UpdateEmptyBlockMarks(transaction, selectionInfo, command, anchorNode);
+                UpdateEmptyBlockMarks(transaction, command, anchorNode);
             }
             else
             {
@@ -137,15 +137,14 @@ public class UpdateMarkHandler(IDScratchService dScratchService, IUserStateServi
     }
     
     private static void UpdateEmptyBlockMarks(
-        ITransaction transaction, 
-        SelectionInfo selectionInfo,
-        UpdateMarkCommand command, DNode anchorNode)
+        ITransaction transaction,
+        UpdateMarkCommand command, 
+        DNode anchorNode)
     {
         switch (command.Action)
         {
             case UpdateMarkAction.Toggle:
-                var anchor = transaction.Document.FindNode(selectionInfo.AnchorNodeId)!;
-                var hasMark = anchor.Marks.ContainsKey(command.Key);
+                var hasMark = anchorNode.Marks.ContainsKey(command.Key);
                 if (hasMark)
                 {
                     transaction.RemoveMark(anchorNode, command.Key);

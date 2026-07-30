@@ -1092,7 +1092,7 @@ public class UpdateMarkHandlerTest
             
             // Assert
             Assert.That(blockNode.Marks, Is.EquivalentTo(new Dictionary<MarkKey, string> { { MarkKey.FontWeight, "bold" } }));
-            Assert.That(result.CursorPosition, Is.Null); // TODO: maybe set it, to be safe
+            Assert.That(result.CursorPosition, Is.Null);
 
             AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
                 Is.TypeOf<StepDiff.UpdateMarksDiff>()
@@ -1132,7 +1132,7 @@ public class UpdateMarkHandlerTest
             
             // Assert
             Assert.That(blockNode.Marks, Is.EquivalentTo(new Dictionary<MarkKey, string> { { MarkKey.FontWeight, "bold" } }));
-            Assert.That(result.CursorPosition, Is.Null); // TODO: maybe set it, to be safe
+            Assert.That(result.CursorPosition, Is.Null);
             AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
                 Is.TypeOf<StepDiff.UpdateMarksDiff>()
             ]);
@@ -1248,6 +1248,93 @@ public class UpdateMarkHandlerTest
             Assert.That(textNode.Marks, Is.Empty);
             Assert.That(result.CursorPosition, Is.Null);
             Assert.That(result.Steps, Is.Empty);
+        }
+    }
+
+    private class EmptyBlocks : UpdateMarkHandlerTest
+    {
+        [Test]
+        public void ActionToggleAdd_InEmptyBlock_AddsMarkToBlock()
+        {
+            // Arrange
+            var block = builder.Paragraph();
+            
+            // Act
+            var result = handler.Execute(
+                KeyPressInfoHelper.GetKeyPressInfoDirectionNone(block.Id, 0).Selection,
+                UpdateMarkCommand.Toggle(MarkKey.FontWeight, "bold"));
+            
+            // Assert
+            Assert.That(block.Marks, Is.EquivalentTo(new Dictionary<MarkKey, string>
+            {
+                { MarkKey.FontWeight, "bold" }
+            }));
+            Assert.That(result.CursorPosition, Is.Null);
+            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
+                Is.TypeOf<StepDiff.UpdateMarksDiff>()
+            ]);
+        }
+        
+        [Test]
+        public void ActionToggleRemove_InEmptyBlock_RemovesMarkFromBlock()
+        {
+            // Arrange
+            var block = builder.Paragraph();
+            block.SetMark(MarkKey.FontWeight, "bold");
+            
+            // Act
+            var result = handler.Execute(
+                KeyPressInfoHelper.GetKeyPressInfoDirectionNone(block.Id, 0).Selection,
+                UpdateMarkCommand.Toggle(MarkKey.FontWeight, "bold"));
+            
+            // Assert
+            Assert.That(block.Marks, Is.Empty);
+            Assert.That(result.CursorPosition, Is.Null);
+            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
+                Is.TypeOf<StepDiff.UpdateMarksDiff>()
+            ]);
+        }
+        
+        [Test]
+        public void ActionAdd_InEmptyBlock_AddsMarkToBlock()
+        {
+            // Arrange
+            var block = builder.Paragraph();
+            
+            // Act
+            var result = handler.Execute(
+                KeyPressInfoHelper.GetKeyPressInfoDirectionNone(block.Id, 0).Selection,
+                UpdateMarkCommand.Add(MarkKey.FontWeight, "bold"));
+            
+            // Assert
+            Assert.That(block.Marks, Is.EquivalentTo(new Dictionary<MarkKey, string>
+            {
+                { MarkKey.FontWeight, "bold" }
+            }));
+            Assert.That(result.CursorPosition, Is.Null);
+            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
+                Is.TypeOf<StepDiff.UpdateMarksDiff>()
+            ]);
+        }
+        
+        [Test]
+        public void ActionRemove_InEmptyBlock_RemovesMarkFromBlock()
+        {
+            // Arrange
+            var block = builder.Paragraph();
+            block.SetMark(MarkKey.FontWeight, "bold");
+            
+            // Act
+            var result = handler.Execute(
+                KeyPressInfoHelper.GetKeyPressInfoDirectionNone(block.Id, 0).Selection,
+                UpdateMarkCommand.Remove(MarkKey.FontWeight));
+            
+            // Assert
+            Assert.That(block.Marks, Is.Empty);
+            Assert.That(result.CursorPosition, Is.Null);
+            AssertHelper.ThatStepsEqualTo(result.Steps, expected: [
+                Is.TypeOf<StepDiff.UpdateMarksDiff>()
+            ]);
         }
     }
 }

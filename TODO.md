@@ -1,10 +1,3 @@
-# Current
-
-1. Test MarkHandler
-2. Bold and Italic → FontWeight and FontStyle
-3. Add Marks to Blocks
-4. Test marks for blocks
-
 # Features
 
 - [x] Marks
@@ -14,7 +7,7 @@
 - [ ] Make marks continues when Typing
   - [x] Typing
   - [x] Pending Marks
-  - [ ] Marks for empty blocks
+  - [x] Marks for empty blocks
   - [ ] carry over mark to new block
 - [x] MenuBar shows active marks
   - Also add this to the debug viewer.
