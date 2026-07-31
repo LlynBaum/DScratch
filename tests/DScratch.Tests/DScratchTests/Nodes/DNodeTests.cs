@@ -1,5 +1,5 @@
-﻿using DScratch.Nodes;
-using DScratch.Nodes.Marks;
+﻿using DScratch.Marks;
+using DScratch.Nodes;
 using DScratch.Tests.Helpers;
 using DScratch.Tests.Helpers.TestNodes;
 
@@ -426,5 +426,37 @@ public class DNodeTests
         
         // Assert
         Assert.That(testNode.Marks, Has.Count.Zero);
+    }
+
+    [Test]
+    public void GetComputedMarks_ReturnsExpectedMarks()
+    {
+        // Arrange
+        DNode node = null!;
+        var builder = new TreeBuilder();
+        var block = builder.TestBlockElementNode(t =>
+        {
+            var inline = t.TestInlineElementNode(tt =>
+            {
+                node = tt.Text("a");
+                node.SetMark(MarkKey.FontWeight, "400");
+            });
+            
+            inline.SetMark(MarkKey.Color, "#fff");
+            inline.SetMark(MarkKey.FontWeight, "700");
+        });
+        block.SetMark(MarkKey.Color, "#abc");
+        block.SetMark(MarkKey.FontStyle, "italic");
+        
+        // Act
+        var result = node.GetComputedMarks();
+        
+        // Assert
+        Assert.That(result, Is.EquivalentTo(new Dictionary<MarkKey, string>
+        {
+            { MarkKey.FontWeight, "400" },
+            { MarkKey.FontStyle, "italic" },
+            { MarkKey.Color, "#fff" },
+        }));
     }
 }

@@ -1,8 +1,8 @@
 using DScratch.Interactions;
 using DScratch.Interactions.EventHandlers.Events;
 using DScratch.Interactions.UserStates;
+using DScratch.Marks;
 using DScratch.Nodes;
-using DScratch.Nodes.Marks;
 using DScratch.Tests.DScratchTests.Interactions.Helpers;
 using DScratch.Tests.Helpers;
 

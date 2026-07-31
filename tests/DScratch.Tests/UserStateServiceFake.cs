@@ -1,6 +1,6 @@
 using DScratch.Interactions.UserStates;
+using DScratch.Marks;
 using DScratch.Nodes;
-using DScratch.Nodes.Marks;
 
 namespace DScratch.Tests;
 

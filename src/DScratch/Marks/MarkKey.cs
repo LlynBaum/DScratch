@@ -1,4 +1,4 @@
-namespace DScratch.Nodes.Marks;
+namespace DScratch.Marks;
 
 public enum MarkKey
 {

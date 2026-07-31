@@ -1,4 +1,4 @@
-using DScratch.Nodes.Marks;
+using DScratch.Marks;
 using DScratch.Nodes.NodeTypes;
 
 namespace DScratch.Nodes;
@@ -134,6 +134,27 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
         }
 
         return current ?? throw new InvalidOperationException("Node does not have a Block Parent.");
+    }
+
+    public IReadOnlyDictionary<MarkKey, string> GetComputedMarks()
+    {
+        var result = marks.ToDictionary();
+        
+        var current = Parent;
+        while (current is not null)
+        {
+            foreach (var m in current.Marks)
+            {
+                if (!result.ContainsKey(m.Key))
+                {
+                    result.Add(m.Key, m.Value);
+                }
+            }
+            
+            current = current.Parent;
+        }
+
+        return result;
     }
 
     public void ClaimChildNodes()

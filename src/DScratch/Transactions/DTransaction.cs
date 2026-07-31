@@ -1,7 +1,7 @@
 using DScratch.Interactions;
 using DScratch.Interactions.UserStates;
+using DScratch.Marks;
 using DScratch.Nodes;
-using DScratch.Nodes.Marks;
 using DScratch.Rendering;
 using DScratch.Transactions.Steps;
 using DScratch.Transactions.Steps.Marks;

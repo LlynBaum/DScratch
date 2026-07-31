@@ -1,3 +1,18 @@
+# Current
+
+- Add a ComputedMarks Property on DNode, which includes inherited marks
+- Use ComputedMarks in UserStateService
+
+## Marks Toggle with inheriting
+
+Marks are an Object with functions. They know on their own how they can be toggled. So instead of toggle removes/adds, it just calls that, or if not there add.
+However, the toggle must also take inheriting into account. So maybe instead of that, there is a static class
+that knows how to compute Marks. It just takes a MarkKey, Node and Action. Then it will change the Mark on the node.
+It also takes into account the ComputedMarks and will therefor either just remove or add marks. Or instead of removing set things like `FontStyle = normal`.
+Or instead of it setting it, it can just compute. It is basically a lookup table for the mark values for active and inactive.
+You give the key and action, and it will check if it has to set the default value or the active value.
+And yes this will end up with a shit ton of marks that are just `FontStyle: normal`, but whatever, it is simple and stupid.
+
 # Features
 
 - [x] Marks

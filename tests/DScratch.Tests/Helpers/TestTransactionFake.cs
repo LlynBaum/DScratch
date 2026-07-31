@@ -1,6 +1,6 @@
 using DScratch.Interactions;
+using DScratch.Marks;
 using DScratch.Nodes;
-using DScratch.Nodes.Marks;
 using DScratch.Transactions;
 
 namespace DScratch.Tests.Helpers;

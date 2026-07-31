@@ -1,8 +1,7 @@
 using DScratch.Interactions;
-using DScratch.Interactions.CommandHandlers.Commands;
 using DScratch.Interactions.CommandHandlers.Handlers;
+using DScratch.Marks;
 using DScratch.Nodes;
-using DScratch.Nodes.Marks;
 using DScratch.Tests.DScratchTests.Interactions.Helpers;
 using DScratch.Tests.Helpers;
 using DScratch.Transactions;

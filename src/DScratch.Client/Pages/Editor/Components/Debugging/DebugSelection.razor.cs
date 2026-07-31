@@ -1,7 +1,7 @@
 using DScratch.Client.Services;
 using DScratch.Interactions;
 using DScratch.Interactions.UserStates;
-using DScratch.Nodes.Marks;
+using DScratch.Marks;
 
 namespace DScratch.Client.Pages.Editor.Components.Debugging;
 

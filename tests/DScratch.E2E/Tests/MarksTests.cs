@@ -416,4 +416,32 @@ public class MarksTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan).ToHaveCSSAsync("font-style", "italic");
         await Expect(Editor.Paragraph.TextSpan).ToHaveCSSAsync("font-weight", "700");
     }
+    
+    [Test]
+    public async Task FormatedBlock_CanRevertStyling()
+    {
+        await Editor.ClickAsync();
+        
+        await EditorMenu.ClickBold();
+        await EditorMenu.ClickItalic();
+
+        await Page.TypeAtCurrentCursorAsync("abcd");
+        await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync("abcd");
+        await Expect(Editor.Paragraph.TextSpan).ToHaveCSSAsync("font-style", "italic");
+        await Expect(Editor.Paragraph.TextSpan).ToHaveCSSAsync("font-weight", "700");
+        
+        await Page.SetSelectionAsync(new SelectionInfo
+        {
+            AnchorId = "Darki-2",
+            AnchorOffset = 1,
+            FocusId = "Darki-2",
+            FocusOffset = 3,
+        });
+        await EditorMenu.ClickBold();
+        await EditorMenu.ClickItalic();
+        
+        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("bc");
+        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-style", "normal");
+        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-weight", "400");
+    }
 }

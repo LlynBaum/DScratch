@@ -1,5 +1,5 @@
+using DScratch.Marks;
 using DScratch.Nodes;
-using DScratch.Nodes.Marks;
 using DScratch.Tests.Helpers;
 using DScratch.Transactions;
 using DScratch.Transactions.Steps.Marks;

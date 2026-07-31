@@ -1,8 +1,8 @@
 using System.Collections.Frozen;
 using DScratch.Interactions.EventHandlers.Common;
 using DScratch.Interactions.EventHandlers.Models;
+using DScratch.Marks;
 using DScratch.Nodes;
-using DScratch.Nodes.Marks;
 using DScratch.Transactions;
 
 namespace DScratch.Interactions.EventHandlers.Events;
