@@ -49,7 +49,7 @@ public class UserStateServiceFake : IUserStateService
         throw new NotImplementedException();
     }
 
-    public void UpdateState(DNode? selectedNode)
+    public void UpdateState(DNode? node)
     {
         throw new NotImplementedException();
     }

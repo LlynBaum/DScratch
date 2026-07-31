@@ -299,7 +299,7 @@ public class MarksTests : PlaywrightTestBase
         }
     }
     
-        [Test]
+    [Test]
     public async Task BoldButtons_SetsPendingRemoval()
     {
         await Editor.ClickAsync();
@@ -389,5 +389,31 @@ public class MarksTests : PlaywrightTestBase
             Assert.That(selection.FocusId, Is.EqualTo("Darki-6"));
             Assert.That(selection.FocusOffset, Is.EqualTo(1));
         }
+    }
+
+    [Test]
+    public async Task FormatingInEmptyBlock_WorksAsExpected()
+    {
+        await Editor.ClickAsync();
+
+        // Set Bold/Italic and unset again
+        await EditorMenu.ClickBold();
+        await EditorMenu.ClickItalic();
+        await Expect(EditorMenu.Bold).ToContainClassAsync("active");
+        await Expect(EditorMenu.Italic).ToContainClassAsync("active");
+        
+        await EditorMenu.ClickBold();
+        await EditorMenu.ClickItalic();
+        await Expect(EditorMenu.Bold).Not.ToContainClassAsync("active");
+        await Expect(EditorMenu.Italic).Not.ToContainClassAsync("active");
+        
+        // Typing will inherit from block
+        await EditorMenu.ClickBold();
+        await EditorMenu.ClickItalic();
+
+        await Page.TypeAtCurrentCursorAsync("abc");
+        await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync("abc");
+        await Expect(Editor.Paragraph.TextSpan).ToHaveCSSAsync("font-style", "italic");
+        await Expect(Editor.Paragraph.TextSpan).ToHaveCSSAsync("font-weight", "700");
     }
 }

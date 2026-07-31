@@ -1,6 +1,5 @@
 using DScratch.Interactions.CommandHandlers;
 using DScratch.Interactions.CommandHandlers.Commands;
-using DScratch.Interactions.CommandHandlers.Handlers;
 using DScratch.Interactions.UserStates;
 using DScratch.Nodes.Marks;
 
@@ -26,12 +25,14 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
     {
         await dispatcher.DispatchAsync(UpdateMarkCommand.Toggle(MarkKey.FontWeight, "bold"));
         viewModel.IsBoldActive = userStateService.CheckMark(MarkKey.FontWeight, out _);
+        StateHasChanged();
     }
 
     private async Task ItalicAsync()
     {
         await dispatcher.DispatchAsync(UpdateMarkCommand.Toggle(MarkKey.FontStyle, "italic"));
         viewModel.IsItalicActive = userStateService.CheckMark(MarkKey.FontStyle, out _);
+        StateHasChanged();
     }
 
     private async Task ParagraphAsync() => await dispatcher.DispatchAsync(new ChangeBlockTypeCommand(BlockNodeType.Paragraph));

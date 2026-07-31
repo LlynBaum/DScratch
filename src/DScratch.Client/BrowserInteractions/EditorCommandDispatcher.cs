@@ -22,7 +22,7 @@ public class EditorCommandDispatcher(
         var handler = serviceProvider.GetService<IEditorCommandHandler<TCommand>>();
         if (handler is null)
         {
-            logger.LogWarning("No handler registered for command: {Command}", command?.GetType().Name);
+            logger.LogWarning("No handler registered for command: {Command}", command.GetType().Name);
             return;
         }
         

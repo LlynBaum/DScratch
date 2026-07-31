@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using DScratch.Nodes;
 using DScratch.Nodes.Marks;
 
@@ -5,12 +6,15 @@ namespace DScratch.Interactions.UserStates;
 
 public class UserStateService : IUserStateService
 {
-    private Dictionary<MarkKey, string> activeMarks = new Dictionary<MarkKey, string>();
+    private DNode? selectedNode;
     private readonly Dictionary<MarkKey, string> pendingMarks = new Dictionary<MarkKey, string>();
     private readonly HashSet<MarkKey> pendingMarkRemovals = new HashSet<MarkKey>();
 
-    public IReadOnlyDictionary<MarkKey, string> ActiveMarks => activeMarks;
+    public IReadOnlyDictionary<MarkKey, string> ActiveMarks => selectedNode?.Marks 
+                                                               ?? FrozenDictionary<MarkKey, string>.Empty;
+    
     public IReadOnlyDictionary<MarkKey, string> PendingMarks => pendingMarks;
+    
     public IReadOnlySet<MarkKey> PendingMarkRemovals => pendingMarkRemovals;
     
     public event Action? OnStateChange;
@@ -40,7 +44,7 @@ public class UserStateService : IUserStateService
         {
             return true;
         }
-        if (activeMarks.TryGetValue(key, out value))
+        if (ActiveMarks.TryGetValue(key, out value))
         {
             return true;
         }
@@ -63,11 +67,11 @@ public class UserStateService : IUserStateService
         return result;
     }
 
-    public void UpdateState(DNode? selectedNode)
+    public void UpdateState(DNode? node)
     {
         pendingMarks.Clear();
         pendingMarkRemovals.Clear();
-        activeMarks = selectedNode?.Marks.ToDictionary() ?? [];
+        selectedNode = node;
         OnStateChange?.Invoke();
     }
 }
