@@ -14,7 +14,7 @@ public class SetColor(string color) : IMarkCommand
         }
     }
 
-    public void ExecutePending(IUserStateService userStateService)
+    public void AddPending(IUserStateService userStateService)
     {
         userStateService.AddPendingMark(MarkKey.Color, color);
     }

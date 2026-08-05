@@ -21,7 +21,7 @@ public class ToggleFontWeight : IMarkCommand
         }
     }
     
-    public void ExecutePending(IUserStateService userStateService)
+    public void AddPending(IUserStateService userStateService)
     {
         userStateService.CheckMark(MarkKey.FontWeight, out var value);
         userStateService.AddPendingMark(MarkKey.FontWeight, value is "bold" ? "normal" : "bold");

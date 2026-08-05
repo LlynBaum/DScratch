@@ -19,7 +19,7 @@ public class UpdateMarkHandler(IDScratchService dScratchService, IUserStateServi
             }
             else
             {
-                command.ExecutePending(userStateService);
+                command.AddPending(userStateService);
             }
         }
         else

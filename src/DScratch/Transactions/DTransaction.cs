@@ -114,9 +114,10 @@ internal class DTransaction(
 
     public IReadOnlyDictionary<MarkKey, string> CalculateMarks(IReadOnlyDictionary<MarkKey, string> activeMarks)
     {
-        return userStateService.PopPending()
-            .Concat(activeMarks)
-            .ExceptBy(userStateService.PopPendingRemovals(), m => m.Key)
+        var pending = userStateService.PopPending();
+        return activeMarks
+            .Where(m => !pending.ContainsKey(m.Key))
+            .Concat(pending)
             .ToDictionary();
     }
 

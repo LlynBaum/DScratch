@@ -221,13 +221,12 @@ public class DTransactionTests
     {
         // Arrange
         UserStateService.AddPendingMark(MarkKey.Color, "b");
-        UserStateService.RemovePendingMark(MarkKey.FontStyle);
+        UserStateService.AddPendingMark(MarkKey.FontStyle, "italic");
         
         // Act
         var actual = Transaction.CalculateMarks(new Dictionary<MarkKey, string>
         {
             { MarkKey.Color, "a" },
-            { MarkKey.FontStyle, "italic" },
             { MarkKey.FontWeight, "bold" }
         });
 
@@ -235,7 +234,8 @@ public class DTransactionTests
         Assert.That(actual, Is.EquivalentTo(new Dictionary<MarkKey, string>
         {
             { MarkKey.Color, "b" },
-            { MarkKey.FontWeight, "bold" }
+            { MarkKey.FontWeight, "bold" },
+            { MarkKey.FontStyle, "italic" },
         }));
     }
 

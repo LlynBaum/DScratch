@@ -21,7 +21,7 @@ public class ToggleFontStyle : IMarkCommand
         }
     }
 
-    public void ExecutePending(IUserStateService userStateService)
+    public void AddPending(IUserStateService userStateService)
     {
         userStateService.CheckMark(MarkKey.FontStyle, out var value);
         userStateService.AddPendingMark(MarkKey.FontStyle, value is "italic" ? "normal" : "italic");

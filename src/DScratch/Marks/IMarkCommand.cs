@@ -9,5 +9,5 @@ public interface IMarkCommand : IEditorCommand
 {
     void Execute(ITransaction transaction, DNode anchor, IEnumerable<DNode> nodes);
 
-    void ExecutePending(IUserStateService userStateService);
+    void AddPending(IUserStateService userStateService);
 }
