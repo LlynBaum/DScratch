@@ -24,14 +24,14 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
     private async Task BoldAsync()
     {
         await dispatcher.DispatchAsync<IMarkCommand>(new ToggleFontWeight());
-        viewModel.IsBoldActive = userStateService.CheckMark(MarkKey.FontWeight, out _);
+        viewModel.IsBoldActive = userStateService.CheckMark(MarkKey.FontWeight, out var fontWeight) && fontWeight is "bold";
         StateHasChanged();
     }
 
     private async Task ItalicAsync()
     {
         await dispatcher.DispatchAsync<IMarkCommand>(new ToggleFontStyle());
-        viewModel.IsItalicActive = userStateService.CheckMark(MarkKey.FontStyle, out _);
+        viewModel.IsItalicActive = userStateService.CheckMark(MarkKey.FontStyle, out var fontStyle) && fontStyle is "italic";
         StateHasChanged();
     }
 
