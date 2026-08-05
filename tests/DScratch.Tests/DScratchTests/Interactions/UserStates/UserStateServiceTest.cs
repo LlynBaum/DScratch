@@ -1,6 +1,7 @@
 using DScratch.Interactions.UserStates;
 using DScratch.Marks;
 using DScratch.Nodes;
+using DScratch.Tests.Helpers;
 using DScratch.Tests.Helpers.TestNodes;
 
 namespace DScratch.Tests.DScratchTests.Interactions.UserStates;
@@ -13,6 +14,27 @@ public class UserStateServiceTest
     public void SetUp()
     {
         service = new UserStateService();
+    }
+
+    [Test]
+    public void ActiveMarks_AreComputedMarks()
+    {
+        // Arrange
+        TextNode node = null!;
+        var block = new TreeBuilder().Paragraph(t =>
+        {
+            node = t.Text("a");
+        });
+        
+        block.SetMark(MarkKey.FontStyle, "italic");
+        node.SetMark(MarkKey.FontWeight, "bold");
+        service.UpdateState(node);
+        
+        // Act
+        var result = service.ActiveMarks;
+        
+        // Assert
+        Assert.That(result.Keys, Is.EquivalentTo([MarkKey.FontStyle, MarkKey.FontWeight]));
     }
 
     [Test]

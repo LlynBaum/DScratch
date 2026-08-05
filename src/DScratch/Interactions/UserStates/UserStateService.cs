@@ -9,7 +9,7 @@ public class UserStateService : IUserStateService
     private DNode? selectedNode;
     private readonly Dictionary<MarkKey, string> pendingMarks = new Dictionary<MarkKey, string>();
 
-    public IReadOnlyDictionary<MarkKey, string> ActiveMarks => selectedNode?.Marks 
+    public IReadOnlyDictionary<MarkKey, string> ActiveMarks => selectedNode?.GetComputedMarks() 
                                                                ?? FrozenDictionary<MarkKey, string>.Empty;
     
     public IReadOnlyDictionary<MarkKey, string> PendingMarks => pendingMarks;

@@ -1,7 +1,5 @@
 # Current
 
-- Add a ComputedMarks Property on DNode, which includes inherited marks
-- Use ComputedMarks in UserStateService
 - New Paragraph after text copies the ComputedMarks
 
 ## Marks Toggle with inheriting
