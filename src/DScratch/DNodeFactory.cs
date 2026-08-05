@@ -7,9 +7,11 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
 {
     public INodeIdGenerator NodeIdGenerator => nodeIdGenerator;
     
-    public ParagraphNode Paragraph(DNode? origin, DNode? rightOrigin)
+    public ParagraphNode Paragraph(DNode? origin, DNode? rightOrigin, IReadOnlyDictionary<MarkKey, string>? initMarks = null)
     {
-        return new ParagraphNode(nodeIdGenerator.GetNextId(), origin, rightOrigin);
+        var node = new ParagraphNode(nodeIdGenerator.GetNextId(), origin, rightOrigin);
+        if(initMarks is not null) node.CopyMarks(initMarks);
+        return node;
     }
     
     public ParagraphNode ParagraphFrom(DNode node)

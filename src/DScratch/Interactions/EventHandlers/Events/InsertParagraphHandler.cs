@@ -35,7 +35,7 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : EventWit
             throw new ArgumentException("Expected node to have a parent.");
         }
         
-        var paragraph = transaction.NodeFactory.Paragraph(anchorNode, anchorNode.RightOrigin);
+        var paragraph = transaction.NodeFactory.Paragraph(anchorNode, anchorNode.RightOrigin, anchorNode.Marks); // TODO: test
         transaction.Insert(paragraph, anchorNode.Parent);
         transaction.AddCursorPosition(paragraph.Id, 0);
     }
@@ -56,8 +56,7 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : EventWit
         }
         
         var (origin, rightOrigin) = GetOrigins(keyPressInfo, siblingBlock);
-        var paragraph = transaction.NodeFactory.Paragraph(origin, rightOrigin);
-
+        var paragraph = transaction.NodeFactory.Paragraph(origin, rightOrigin, nodeSearchResult.Origin.Node?.Marks); // TODO: test
         transaction.Insert(paragraph, siblingBlock.Parent!);
         
         if (keyPressInfo.Selection.AnchorOffset > 0 && nodeSearchResult.Origin.HasFoundNode)

@@ -7,7 +7,7 @@ public interface INodeFactory
 {
     INodeIdGenerator NodeIdGenerator { get; }
     
-    ParagraphNode Paragraph(DNode? origin, DNode? rightOrigin);
+    ParagraphNode Paragraph(DNode? origin, DNode? rightOrigin, IReadOnlyDictionary<MarkKey, string>? initMarks = null);
 
     ParagraphNode ParagraphFrom(DNode node);
 
