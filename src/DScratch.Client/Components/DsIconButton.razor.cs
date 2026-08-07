@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace DScratch.Client.Components;
 
-public partial class IconButton : ComponentBase
+public partial class DsIconButton : ComponentBase
 {
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
