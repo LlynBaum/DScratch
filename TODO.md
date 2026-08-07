@@ -1,6 +1,6 @@
 # Current
 
-- Test: New Paragraph after text copies the ComputedMarks
+...
 
 ## Marks Toggle with inheriting
 
@@ -18,16 +18,31 @@ And yes this will end up with a shit ton of marks that are just `FontStyle: norm
   - [x] Bold
   - [x] Italic
   - [x] Color
-- [ ] Make marks continues when Typing
+- [x] Make marks continues when Typing
   - [x] Typing
   - [x] Pending Marks
   - [x] Marks for empty blocks
-  - [ ] carry over mark to new block
+  - [x] carry over mark to new block
 - [x] MenuBar shows active marks
   - Also add this to the debug viewer.
 - [ ] Inline Elements
   - For now just Links 
   - Later maybe like Chapter References and co.
+- [ ] Text Alignment
+  - Left, Right
+  - Middle
+  - Justify
+- [ ] Text Size
+- [ ] Text Decoration
+  - Strike
+  - Underline
+  - Underline squiggly
+- [ ] Lists
+  - Bullet point
+  - numbered
+- [ ] Format Helpers
+  - Format Clear
+  - Format Brush
 - [ ] Shortcut Keys
   - Keybinds like CTRL + B for Bold
 - [ ] History with Undo and Redo features

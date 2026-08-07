@@ -6,7 +6,7 @@
     disabled="@Disabled">
     @if (Icon.HasValue)
     {
-        @((MarkupString)GetIconSvg(Icon.Value))
+        <DsIcon Icon="Icon.Value" />
     }
     else
     {

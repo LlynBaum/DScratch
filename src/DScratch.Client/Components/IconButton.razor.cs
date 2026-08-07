@@ -1,4 +1,3 @@
-using DScratch.Client.Components.Icons;
 using Microsoft.AspNetCore.Components;
 
 namespace DScratch.Client.Components;
@@ -22,9 +21,4 @@ public partial class IconButton : ComponentBase
 
     [Parameter]
     public string? Title { get; set; }
-
-    private string GetIconSvg(EditorIcon icon)
-    {
-        return IconProvider.GetSvg(icon);
-    }
 }

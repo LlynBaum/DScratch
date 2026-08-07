@@ -1,6 +1,7 @@
 using DScratch.Interactions;
 using DScratch.Interactions.EventHandlers.Events;
 using DScratch.Interactions.UserStates;
+using DScratch.Marks;
 using DScratch.Nodes;
 using DScratch.Tests.DScratchTests.Interactions.Helpers;
 using DScratch.Tests.Helpers;
@@ -132,6 +133,92 @@ public class InsertParagraphHandlerTests
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin.Id, 0);
+        }
+
+        [Test]
+        public void CopiesComputedMarksFromFirstCharacter_WhenInsertingParagraphAtStart()
+        {
+            // Arrange
+            TextNode textNode = null!;
+            TextNode textNode2 = null!;
+            var parent = builder.Paragraph(t =>
+            {
+                textNode = t.Text("a");
+                textNode2 = t.Text("a");
+            });
+            
+            textNode.SetMark(MarkKey.Color, "#fff");
+            textNode2.SetMark(MarkKey.Color, "#000");
+            parent.SetMark(MarkKey.FontWeight, "bold");
+            
+            // Act
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0));
+            
+            // Assert
+            Assert.That(parent.Origin, Is.Not.Null);
+            Assert.That(parent.Origin, Is.TypeOf<ParagraphNode>());
+            Assert.That(parent.Origin.Marks, Is.EquivalentTo(new Dictionary<MarkKey, string>
+            {
+                { MarkKey.Color, "#fff" },
+                { MarkKey.FontWeight, "bold" }
+            }));
+        }
+        
+        [Test]
+        public void CopiesComputedMarksFromLastCharacter_WhenInsertingParagraphAtEnd()
+        {
+            // Arrange
+            TextNode textNode = null!;
+            TextNode textNode2 = null!;
+            var parent = builder.Paragraph(t =>
+            {
+                textNode = t.Text("a");
+                textNode2 = t.Text("a");
+            });
+            
+            textNode.SetMark(MarkKey.Color, "#fff");
+            textNode2.SetMark(MarkKey.Color, "#000");
+            parent.SetMark(MarkKey.FontWeight, "bold");
+            
+            // Act
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode2.Id, 1));
+            
+            // Assert
+            Assert.That(parent.RightOrigin, Is.Not.Null);
+            Assert.That(parent.RightOrigin, Is.TypeOf<ParagraphNode>());
+            Assert.That(parent.RightOrigin.Marks, Is.EquivalentTo(new Dictionary<MarkKey, string>
+            {
+                { MarkKey.Color, "#000" },
+                { MarkKey.FontWeight, "bold" }
+            }));
+        }
+        
+        [Test]
+        public void CopiesComputedMarksFromParagraph_WhenInsertingParagraphInTheMiddle()
+        {
+            // Arrange
+            TextNode textNode = null!;
+            TextNode textNode2 = null!;
+            var parent = builder.Paragraph(t =>
+            {
+                textNode = t.Text("a");
+                textNode2 = t.Text("a");
+            });
+            
+            textNode.SetMark(MarkKey.Color, "#fff");
+            textNode2.SetMark(MarkKey.Color, "#000");
+            parent.SetMark(MarkKey.FontWeight, "bold");
+            
+            // Act
+            handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode2.Id, 0));
+            
+            // Assert
+            Assert.That(parent.Origin, Is.Not.Null);
+            Assert.That(parent.Origin, Is.TypeOf<ParagraphNode>());
+            Assert.That(parent.Origin.Marks, Is.EquivalentTo(new Dictionary<MarkKey, string>
+            {
+                { MarkKey.FontWeight, "bold" }
+            }));
         }
     }
     
@@ -425,6 +512,21 @@ public class InsertParagraphHandlerTests
 
             // Assert
             Assert.That(parent.RightOrigin, Is.TypeOf<ParagraphNode>());
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin.Id, 0);
+        }
+
+        [Test]
+        public void Handle_CopiesMarks_FromBlock()
+        {
+            var parent = builder.TestBlockElementNode();
+            parent.SetMark(MarkKey.Color, "#fff");
+
+            // Act
+            var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 0));
+
+            // Assert
+            Assert.That(parent.RightOrigin, Is.TypeOf<ParagraphNode>());
+            Assert.That(parent.RightOrigin.Marks, Is.EquivalentTo(new Dictionary<MarkKey, string> {{ MarkKey.Color, "#fff" }}));
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin.Id, 0);
         }
     }

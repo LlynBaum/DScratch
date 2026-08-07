@@ -1,5 +1,7 @@
+using System.Collections.Frozen;
 using DScratch.Interactions.EventHandlers.Common;
 using DScratch.Interactions.EventHandlers.Models;
+using DScratch.Marks;
 using DScratch.Nodes;
 using DScratch.Transactions;
 
@@ -14,15 +16,12 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : EventWit
         ITransaction transaction,
         TextNode anchorTextNode)
     {
-        if (keyPressInfo.Selection.AnchorOffset <= 0)
+        DNode? rightOrigin = transaction.SplitText(anchorTextNode, keyPressInfo.Selection.AnchorOffset);
+        if (rightOrigin?.Id == anchorTextNode.Id)
         {
-            var parent = anchorTextNode.GetNearestBlock();
-            return new DNodeSearchResult(
-                Origin: DNodeInfo.NotFound(), 
-                RightOrigin: DNodeInfo.From(parent.FirstChild, 0));
+            rightOrigin = rightOrigin.Origin;
         }
-
-        var rightOrigin = transaction.SplitText(anchorTextNode, keyPressInfo.Selection.AnchorOffset);
+        
         return new DNodeSearchResult(
             Origin: new DNodeInfo(anchorTextNode, anchorTextNode.Length), 
             RightOrigin: DNodeInfo.From(rightOrigin, 0));
@@ -35,7 +34,7 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : EventWit
             throw new ArgumentException("Expected node to have a parent.");
         }
         
-        var paragraph = transaction.NodeFactory.Paragraph(anchorNode, anchorNode.RightOrigin, anchorNode.Marks); // TODO: test
+        var paragraph = transaction.NodeFactory.Paragraph(anchorNode, anchorNode.RightOrigin, anchorNode.Marks);
         transaction.Insert(paragraph, anchorNode.Parent);
         transaction.AddCursorPosition(paragraph.Id, 0);
     }
@@ -56,7 +55,8 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : EventWit
         }
         
         var (origin, rightOrigin) = GetOrigins(keyPressInfo, siblingBlock);
-        var paragraph = transaction.NodeFactory.Paragraph(origin, rightOrigin, nodeSearchResult.Origin.Node?.Marks); // TODO: test
+        var marks = GetMarksForParagraph(nodeSearchResult, siblingBlock);
+        var paragraph = transaction.NodeFactory.Paragraph(origin, rightOrigin, marks);
         transaction.Insert(paragraph, siblingBlock.Parent!);
         
         if (keyPressInfo.Selection.AnchorOffset > 0 && nodeSearchResult.Origin.HasFoundNode)
@@ -67,7 +67,27 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : EventWit
         var cursorTarget = keyPressInfo.Selection.AnchorOffset > 0 ? paragraph : rightOrigin!;
         transaction.AddCursorPosition(cursorTarget.Id, 0);
     }
-    
+
+    private static IReadOnlyDictionary<MarkKey, string> GetMarksForParagraph(DNodeSearchResult nodeSearchResult, DNode siblingBlock)
+    {
+        if (nodeSearchResult.Origin.HasFoundNode && nodeSearchResult.RightOrigin.HasFoundNode)
+        {
+            return siblingBlock.GetComputedMarks();
+        }
+
+        if (nodeSearchResult.Origin.HasFoundNode)
+        {
+            return nodeSearchResult.Origin.Node.GetComputedMarks();
+        }
+
+        if (nodeSearchResult.RightOrigin.HasFoundNode)
+        {
+            return nodeSearchResult.RightOrigin.Node.GetComputedMarks();
+        }
+        
+        return FrozenDictionary<MarkKey, string>.Empty;
+    }
+
     private static (DNode? origin, DNode? rightOrigin) GetOrigins(KeyPressInfo keyPressInfo, DNode sibling)
     {
         return keyPressInfo.Selection.AnchorOffset <= 0 ? (sibling.Origin, sibling) : (sibling, sibling.RightOrigin);
