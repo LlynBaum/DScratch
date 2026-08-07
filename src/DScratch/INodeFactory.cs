@@ -14,6 +14,8 @@ public interface INodeFactory
     HeadingNode Heading(HeadingLevel headingLevel, DNode? origin, DNode? rightOrigin);
 
     HeadingNode HeadingFrom(DNode node, HeadingLevel headingLevel);
+
+    LinkNode LinkNode(DNode? origin, DNode? rightOrigin, string href, IReadOnlyDictionary<MarkKey, string>? initMarks = null);
     
     TextNode String(string value, DNode? origin, DNode? rightOrigin, IReadOnlyDictionary<MarkKey, string>? initMarks = null);
 }

@@ -41,6 +41,13 @@ else
                     </div>
                 }
 
+                @if (!string.IsNullOrEmpty(node.Href))
+                {
+                    <div class="node-href">
+                        <span class="href-val">href: @node.Href</span>
+                    </div>
+                }
+
                 @if (node.IsDeleted)
                 {
                     <span class="deleted-label">Deleted</span>

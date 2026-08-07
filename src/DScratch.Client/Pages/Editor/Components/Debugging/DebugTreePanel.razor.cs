@@ -47,6 +47,7 @@ public partial class DebugTreePanel(IEditorDebugService debugService, IDScratchS
             visited.Add(current);
             
             var text = current is TextNode tn ? tn.TextContent : "";
+            var href = current is LinkNode ln ? ln.Href : null;
             list.Add(new TreeNodeViewModel
             {
                 Id = current.Id.Value,
@@ -55,7 +56,8 @@ public partial class DebugTreePanel(IEditorDebugService debugService, IDScratchS
                 IsDeleted = current.IsDeleted,
                 OriginId = current.Origin?.Id.Value ?? "null",
                 RightOriginId = current.RightOrigin?.Id.Value ?? "null",
-                TextContent = text
+                TextContent = text,
+                Href = href
             });
             
             if (current.ChildNodes.Count > 0)
@@ -101,4 +103,5 @@ public class TreeNodeViewModel
     public string OriginId { get; set; } = "";
     public string RightOriginId { get; set; } = "";
     public string TextContent { get; set; } = "";
+    public string? Href { get; set; }
 }

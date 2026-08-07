@@ -1,16 +1,16 @@
 <button
-    class="icon-button @(IsActive ? "active" : "")"
-    @onmousedown:preventDefault
-    @onclick="OnClick"
-    title="@Title"
+    type="@Type"
+    class="@CssClass"
     disabled="@Disabled"
+    style="@Style"
+    @onclick="OnClick"
     @attributes="AdditionalAttributes">
     @if (Icon.HasValue)
     {
         <DsIcon Icon="Icon.Value" />
     }
-    else
+    @if (ChildContent != null)
     {
-        @ChildContent
+        <span>@ChildContent</span>
     }
 </button>

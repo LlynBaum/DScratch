@@ -1,6 +1,8 @@
 # Current
 
-...
+- Currently user can't type in dialog, because Editor JS captures it and thinks it is a text insert
+- add links tests
+- remove links
 
 ## Marks Toggle with inheriting
 
@@ -67,3 +69,4 @@ And yes this will end up with a shit ton of marks that are just `FontStyle: norm
 # Improvements?
 
 - Command Handler get from DI via the Command without direct references is a bit, meh. Sure it allows me currently to always prepare the base stuff for all command handlers beforehand. But I could also make a base class instead
+- HTML Tag on the Node itself is not so nice. Would be better if this is purely done by the rendering part.

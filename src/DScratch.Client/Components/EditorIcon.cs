@@ -24,7 +24,9 @@ public enum EditorIcon
     FormatUnderlined,
     FormatUnderlinedSquiggle,
     TextDecrease,
-    TextIncrease
+    TextIncrease,
+    Link,
+    LinkOff
 }
 
 public static class EditorIconExtensions
@@ -54,6 +56,8 @@ public static class EditorIconExtensions
         EditorIcon.FormatUnderlinedSquiggle => "format_underlined_squiggle.svg",
         EditorIcon.TextDecrease => "text_decrease.svg",
         EditorIcon.TextIncrease => "text_increase.svg",
+        EditorIcon.Link => "link.svg",
+        EditorIcon.LinkOff => "link_off.svg",
         _ => throw new ArgumentOutOfRangeException(nameof(icon), icon, null)
     };
 }

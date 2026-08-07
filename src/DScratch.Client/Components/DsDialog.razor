@@ -1,0 +1,29 @@
+@if (IsOpen)
+{
+    <div class="ds-dialog-backdrop" @onclick="HandleBackdropClick">
+        <dialog class="ds-dialog @Class" open style="@Style" @onclick:stopPropagation @attributes="AdditionalAttributes">
+            @if (!string.IsNullOrEmpty(Title) || ShowCloseButton)
+            {
+                <div class="ds-dialog-header">
+                    @if (!string.IsNullOrEmpty(Title))
+                    {
+                        <h3 class="ds-dialog-title">@Title</h3>
+                    }
+                    @if (ShowCloseButton)
+                    {
+                        <button type="button" class="ds-dialog-close" @onclick="CloseAsync" aria-label="Close">&times;</button>
+                    }
+                </div>
+            }
+            <div class="ds-dialog-body">
+                @ChildContent
+            </div>
+            @if (FooterContent != null)
+            {
+                <div class="ds-dialog-footer">
+                    @FooterContent
+                </div>
+            }
+        </dialog>
+    </div>
+}

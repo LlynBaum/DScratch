@@ -11,5 +11,7 @@ public static class CommandHandlerRegistration
     {
         services.AddScoped<IEditorCommandHandler<ChangeBlockTypeCommand>, ChangeBlockTypeHandler>();
         services.AddScoped<IEditorCommandHandler<IMarkCommand>, UpdateMarkHandler>();
+        services.AddScoped<IEditorCommandHandler<AddLinkCommand>, AddLinkHandler>();
+        services.AddScoped<IEditorCommandHandler<RemoveLinkCommand>, RemoveLinkHandler>();
     }
 }

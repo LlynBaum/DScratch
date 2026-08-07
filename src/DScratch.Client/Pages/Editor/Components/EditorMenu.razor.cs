@@ -2,6 +2,7 @@ using DScratch.Interactions.CommandHandlers;
 using DScratch.Interactions.CommandHandlers.Commands;
 using DScratch.Interactions.UserStates;
 using DScratch.Marks;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace DScratch.Client.Pages.Editor.Components;
 
@@ -34,10 +35,6 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
         viewModel.IsItalicActive = userStateService.CheckMark(MarkKey.FontStyle, out var fontStyle) && fontStyle is "italic";
         StateHasChanged();
     }
-
-    private async Task ParagraphAsync() => await dispatcher.DispatchAsync(new ChangeBlockTypeCommand(BlockNodeType.Paragraph));
-    
-    private async Task HeadingAsync(BlockNodeType blockNodeType) => await dispatcher.DispatchAsync(new ChangeBlockTypeCommand(blockNodeType));
     
     private async Task OnColorChangeAsync()
     {
@@ -49,6 +46,50 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
     {
         await dispatcher.DispatchAsync<IMarkCommand>(new SetColor(DefaultTextColor));
         viewModel.ActiveColor = userStateService.CheckMark(MarkKey.Color, out var color) ? color : DefaultTextColor;
+    }
+
+    private async Task ParagraphAsync() => await dispatcher.DispatchAsync(new ChangeBlockTypeCommand(BlockNodeType.Paragraph));
+    
+    private async Task HeadingAsync(BlockNodeType blockNodeType) => await dispatcher.DispatchAsync(new ChangeBlockTypeCommand(blockNodeType));
+    
+    private bool isLinkDialogOpen;
+    private string linkUrl = string.Empty;
+
+    private void OpenLinkDialog()
+    {
+        linkUrl = string.Empty;
+        isLinkDialogOpen = true;
+    }
+
+    private void CloseLinkDialog()
+    {
+        isLinkDialogOpen = false;
+    }
+
+    private async Task SubmitLinkAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(linkUrl))
+        {
+            await dispatcher.DispatchAsync(new AddLinkCommand(linkUrl));
+        }
+        isLinkDialogOpen = false;
+    }
+
+    private async Task HandleLinkKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SubmitLinkAsync();
+        }
+        else if (e.Key == "Escape")
+        {
+            CloseLinkDialog();
+        }
+    }
+
+    private async Task RemoveLinkAsync()
+    {
+        await dispatcher.DispatchAsync(new RemoveLinkCommand());
     }
 
     private void OnActiveMarksChanged()

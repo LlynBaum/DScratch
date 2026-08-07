@@ -53,12 +53,6 @@ public class UpdateMarkHandler(IDScratchService dScratchService, IUserStateServi
 
     private static IReadOnlyList<TextNode> GetSelectedNodes(ITransaction transaction, SelectionInfo selectionInfo)
     {
-        if (selectionInfo.Direction is SelectionDirection.None)
-        {
-            // Currently there is no mark that would actually do anything with no selection.
-            return [];
-        }
-
         var (originId, rightOriginId) = selectionInfo.GetConvertedNodeIds();
         
         var origin = transaction.Document.FindNode(originId);

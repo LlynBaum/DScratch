@@ -34,6 +34,9 @@ public class TreeVisualizer(DNode root)
             case TextNode textNode:
                 Console.WriteLine($"{IndentationChars}{node.GetType().Name}(ID: {node.Id}{deletedChar}) [{originId} - {rightOriginId}] --- \"{textNode.TextContent}\"");
                 break;
+            case LinkNode linkNode:
+                Console.WriteLine($"{IndentationChars}{node.GetType().Name}(ID: {node.Id}{deletedChar}) [{originId} - {rightOriginId}] --- Href: \"{linkNode.Href}\"");
+                break;
             default:
                 Console.WriteLine($"{IndentationChars}{node.GetType().Name}(ID: {node.Id}{deletedChar}) [{originId} - {rightOriginId}]");
                 break;

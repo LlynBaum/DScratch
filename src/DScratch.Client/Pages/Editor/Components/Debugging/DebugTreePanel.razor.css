@@ -114,6 +114,14 @@
     color: #0f766e;
 }
 
+.node-badge.linknode {
+    border-color: #fde68a;
+}
+.node-badge.linknode .node-type {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
 .node-links {
     display: flex;
     gap: 4px;
@@ -135,6 +143,20 @@
 
 .text-val {
     font-weight: 500;
+}
+
+.node-href {
+    color: #d97706;
+    word-break: break-all;
+    font-size: 11px;
+}
+
+.href-val {
+    font-weight: 500;
+    background-color: #fffbeb;
+    padding: 1px 5px;
+    border-radius: 3px;
+    border: 1px solid #fef3c7;
 }
 
 .deleted-label {

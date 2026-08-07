@@ -6,6 +6,8 @@
     <DsIconButton OnClick="@BoldAsync" IsActive="@viewModel.IsBoldActive" Icon="EditorIcon.Bold" Title="Bold" />
     <DsIconButton OnClick="@ItalicAsync" IsActive="@viewModel.IsItalicActive" Icon="EditorIcon.Italic" Title="Italic" />
     
+    <ColorPicker @bind-Value="viewModel.ActiveColor" OnClear="ClearColorAsync" @bind-Value:after="OnColorChangeAsync" />
+    
     <MenuDivider />
     
     <DsIconButton OnClick="@ParagraphAsync" Icon="EditorIcon.Paragraph" Title="Paragraph" />
@@ -18,5 +20,17 @@
     
     <MenuDivider />
     
-    <ColorPicker @bind-Value="viewModel.ActiveColor" OnClear="ClearColorAsync" @bind-Value:after="OnColorChangeAsync" />
+    <DsIconButton OnClick="@OpenLinkDialog" Icon="EditorIcon.Link" Title="Add Link" />
+    <DsIconButton OnClick="@RemoveLinkAsync" Icon="EditorIcon.LinkOff" Title="Remove Link" />
 </nav>
+
+<DsDialog @bind-IsOpen="isLinkDialogOpen" Title="Add Link">
+    <ChildContent>
+        <label for="link-url-input" class="ds-dialog-label">URL</label>
+        <input id="link-url-input" type="url" placeholder="https://example.com" @bind="linkUrl" @bind:event="oninput" @onkeydown="HandleLinkKeyDown" />
+    </ChildContent>
+    <FooterContent>
+        <DsButton Variant="DsButtonVariant.Secondary" OnClick="@CloseLinkDialog">Cancel</DsButton>
+        <DsButton Variant="DsButtonVariant.Primary" OnClick="@SubmitLinkAsync">Add Link</DsButton>
+    </FooterContent>
+</DsDialog>
