@@ -14,6 +14,7 @@ public class InsertParagraphTests : PlaywrightTestBase
         await Expect(Editor.Paragraph).ToHaveCountAsync(2);
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
@@ -34,6 +35,7 @@ public class InsertParagraphTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.First.TextSpan).ToHaveTextAsync("a");
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-3"));
@@ -54,6 +56,7 @@ public class InsertParagraphTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.Last.TextSpan).ToHaveTextAsync("a");
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
@@ -75,6 +78,7 @@ public class InsertParagraphTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.Last.TextSpan).ToHaveTextAsync("b");
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-4"));
@@ -107,6 +111,7 @@ public class InsertParagraphTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.Last.TextSpan.Last).ToHaveTextAsync("gh");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-17"));

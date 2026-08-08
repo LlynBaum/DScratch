@@ -1,4 +1,4 @@
-import {getSelection, SelectionInfo, setSelection} from "./selection";
+import {getEditorSelection, SelectionInfo, setSelection} from "./selection";
 
 let selectionSnapshot: SelectionInfo | null = null;
 
@@ -11,7 +11,7 @@ export function registerMenu() {
     
     editorMenu.addEventListener("click", e => {
        if((e.target as HTMLElement).closest("[data-snapshot-selection]")) {
-           selectionSnapshot = getSelection();
+           selectionSnapshot = getEditorSelection();
        }
 
         if((e.target as HTMLElement).closest("[data-restore-selection]")) {

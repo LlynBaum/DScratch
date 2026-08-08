@@ -34,6 +34,7 @@ public class MarksTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.Last.TextSpan.Nth(1)).Not.ToHaveCSSAsync("font-weight", "700");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-11"));
@@ -72,6 +73,7 @@ public class MarksTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.Last.TextSpan.Nth(1)).Not.ToHaveCSSAsync("font-style", "italic");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-11"));
@@ -111,6 +113,7 @@ public class MarksTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan.Nth(2)).Not.ToHaveCSSAsync("font-weight", "700");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-6"));
@@ -170,6 +173,7 @@ public class MarksTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan.Nth(3)).ToHaveCSSAsync("font-weight", "700");
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-8"));
@@ -216,6 +220,7 @@ public class MarksTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-weight", "400");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
@@ -253,6 +258,7 @@ public class MarksTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-weight", "400");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-6"));
@@ -290,6 +296,7 @@ public class MarksTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-style", "normal");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-6"));
@@ -336,6 +343,7 @@ public class MarksTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-weight", "700");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-6"));
@@ -382,6 +390,7 @@ public class MarksTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-style", "italic");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-6"));

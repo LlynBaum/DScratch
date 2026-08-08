@@ -1,6 +1,5 @@
 # Current
 
-- getSelection should return null when selection not in editor. Maybe rename to getEditorSelection. C# should handle null selection.
 - add links tests
 - remove links
 
@@ -64,7 +63,6 @@ And yes this will end up with a shit ton of marks that are just `FontStyle: norm
 
 # Side Quests
 
-- Selection Update Event should check if selection is even in the editor before trying to look for nodes
 - Color picker is not that nice to use. The cursor is not set anymore when clicking away. So you have to remember where you were
 
 # Improvements?

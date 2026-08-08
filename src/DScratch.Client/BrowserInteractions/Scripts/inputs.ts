@@ -1,4 +1,4 @@
-import {getSelection, snapshotSelection} from "./selection";
+import {getEditorSelection, snapshotSelection} from "./selection";
 
 const handledTypes = [
     "insertText",
@@ -23,19 +23,21 @@ async function handleInput(event: InputEvent) {
         return;
     }
 
-    const selectionInfo = getSelection();
+    const selectionInfo = getEditorSelection();
     const payload = {
         InputType: event.inputType,
         Data: event.data,
         Selection: selectionInfo
     };
-    
-    snapshotSelection(selectionInfo);
+
+    if (selectionInfo) {
+        snapshotSelection(selectionInfo);
+    }
     
     try {
         await window.editor.bridgeReference?.invokeMethodAsync("OnKeyPressCallbackAsync", payload);
     } catch (e) {
-        console.error(e, "Failed to send event with anchor ", selectionInfo.anchorId);
+        console.error(e, "Failed to send event with anchor ", selectionInfo?.anchorId);
     }
 }
 

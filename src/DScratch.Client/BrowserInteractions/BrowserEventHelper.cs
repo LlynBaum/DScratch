@@ -17,7 +17,7 @@ public class BrowserEventHelper(
     [JSInvokable]
     public async Task OnKeyPressCallbackAsync(KeyPressInfo keyPressInfo)
     {
-        if (keyPressInfo.Selection.AnchorNodeId.IsRoot || keyPressInfo.Selection.FocusNodeId.IsRoot)
+        if (keyPressInfo.Selection is null || keyPressInfo.Selection.AnchorNodeId.IsRoot || keyPressInfo.Selection.FocusNodeId.IsRoot)
         {
             return;
         }

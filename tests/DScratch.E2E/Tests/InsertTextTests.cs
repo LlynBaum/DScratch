@@ -16,6 +16,7 @@ public class InsertTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync(text);
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
@@ -38,6 +39,7 @@ public class InsertTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan.Last).ToHaveTextAsync("a");
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-3"));
@@ -59,6 +61,7 @@ public class InsertTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync("a" + text);
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
@@ -82,6 +85,7 @@ public class InsertTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan.Last).ToHaveTextAsync("b");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-5"));
@@ -110,6 +114,7 @@ public class InsertTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan.Last).ToHaveTextAsync("d");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-10"));
@@ -143,6 +148,7 @@ public class InsertTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan.Last).ToHaveTextAsync("gh");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-19"));

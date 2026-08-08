@@ -16,7 +16,7 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : EventWit
         ITransaction transaction,
         TextNode anchorTextNode)
     {
-        DNode? rightOrigin = transaction.SplitText(anchorTextNode, keyPressInfo.Selection.AnchorOffset);
+        DNode? rightOrigin = transaction.SplitText(anchorTextNode, keyPressInfo.Selection!.AnchorOffset);
         if (rightOrigin?.Id == anchorTextNode.Id)
         {
             rightOrigin = rightOrigin.Origin;
@@ -51,7 +51,7 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : EventWit
         if (siblingBlock.Parent is null)
         {
             // Even blocks at least have to have root as a parent.
-            throw new ArgumentException($"Expected an block at {keyPressInfo.Selection.AnchorId} with a parent node.");
+            throw new ArgumentException($"Expected an block at {keyPressInfo.Selection!.AnchorId} with a parent node.");
         }
         
         var (origin, rightOrigin) = GetOrigins(keyPressInfo, siblingBlock);
@@ -59,7 +59,7 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : EventWit
         var paragraph = transaction.NodeFactory.Paragraph(origin, rightOrigin, marks);
         transaction.Insert(paragraph, siblingBlock.Parent!);
         
-        if (keyPressInfo.Selection.AnchorOffset > 0 && nodeSearchResult.Origin.HasFoundNode)
+        if (keyPressInfo.Selection!.AnchorOffset > 0 && nodeSearchResult.Origin.HasFoundNode)
         {
             transaction.MoveRange(nodeSearchResult.Origin.Node.RightOrigin, null, paragraph, null);
         }
@@ -90,6 +90,6 @@ public class InsertParagraphHandler(IDScratchService dScratchService) : EventWit
 
     private static (DNode? origin, DNode? rightOrigin) GetOrigins(KeyPressInfo keyPressInfo, DNode sibling)
     {
-        return keyPressInfo.Selection.AnchorOffset <= 0 ? (sibling.Origin, sibling) : (sibling, sibling.RightOrigin);
+        return keyPressInfo.Selection!.AnchorOffset <= 0 ? (sibling.Origin, sibling) : (sibling, sibling.RightOrigin);
     }
 }

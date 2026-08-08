@@ -44,7 +44,7 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventW
             return DNodeInfo.NotFound();
         }
         
-        var rightNode = transaction.SplitText(walker.Node, keyPressInfo.Selection.AnchorOffset);
+        var rightNode = transaction.SplitText(walker.Node, keyPressInfo.Selection!.AnchorOffset);
         if (rightNode is null || keyPressInfo.Selection.AnchorOffset > 0)
         {
             walker.NextNode();

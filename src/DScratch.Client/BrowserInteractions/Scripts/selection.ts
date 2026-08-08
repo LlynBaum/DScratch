@@ -57,16 +57,22 @@ export function saveSelection() {
     };
 }
 
-export function getSelection(): SelectionInfo {
+export function getEditorSelection(): SelectionInfo | null {
     const selection = window.getSelection();
+    if (!selection) return null;
 
-    const anchorElement = getElementFromNode(selection?.anchorNode!);
-    const focusElement = getElementFromNode(selection?.focusNode!);
+    const anchorElement = selection.anchorNode && getElementFromNode(selection.anchorNode);
+    const focusElement = selection.focusNode && getElementFromNode(selection.focusNode);
 
-    const anchorId = getNodeId(anchorElement)!;
+    if (!anchorElement) return null;
+    
+    const anchorId = getNodeId(anchorElement);
     const anchorOffset = getAbsolutOffset(anchorElement, selection?.anchorNode!, selection?.anchorOffset);
-    const focusId = getNodeId(focusElement);
-    const focusOffset = getAbsolutOffset(focusElement, selection?.focusNode!, selection?.focusOffset);
+    
+    if (!anchorId) return null;
+    
+    const focusId = focusElement ? getNodeId(focusElement) : anchorId;
+    const focusOffset = focusElement ? getAbsolutOffset(focusElement, selection?.focusNode!, selection?.focusOffset) : anchorOffset;
     
     return {
         direction: selection?.direction as SelectionDirection ?? "none",
@@ -166,7 +172,7 @@ let timeout: any;
 function handleSelectionChange() {
     clearTimeout(timeout);
     timeout = setTimeout(async () => {
-        const selection = getSelection();
+        const selection = getEditorSelection();
         await window.editor.bridgeReference?.invokeMethodAsync("OnSelectionChange", selection);
     }, 100);
 }

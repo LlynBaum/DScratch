@@ -14,6 +14,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph).ToBeVisibleAsync();
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-1"));
@@ -30,6 +31,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph).ToBeVisibleAsync();
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-1"));
@@ -50,6 +52,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan.Last).ToHaveTextAsync("c");
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
@@ -70,6 +73,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan.Last).ToHaveTextAsync("c");
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
@@ -92,6 +96,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan.Last).ToHaveTextAsync("d");
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
@@ -115,6 +120,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan.Last).ToHaveTextAsync("   ");
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
@@ -133,6 +139,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph).ToHaveCountAsync(1);
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-1"));
@@ -152,6 +159,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph).ToHaveCountAsync(1);
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-1"));
@@ -174,6 +182,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync("a");
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-3"));
@@ -192,6 +201,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph).ToHaveCountAsync(1);
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-1"));
@@ -212,6 +222,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph).ToHaveCountAsync(1);
         
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
@@ -234,6 +245,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync("a");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-3"));
@@ -268,6 +280,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan.Last).ToHaveTextAsync("gh");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
@@ -302,6 +315,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.TextSpan.Last).ToHaveTextAsync("gh");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));

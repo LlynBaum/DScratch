@@ -21,7 +21,7 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
             return DNodeSearchResult.Empty;
         }
 
-        if (keyPressInfo.Selection.AnchorOffset is 0)
+        if (keyPressInfo.Selection!.AnchorOffset is 0)
         {
             return new DNodeSearchResult(DNodeInfo.NotFound(), DNodeInfo.From(anchorTextNode, 0));
         }

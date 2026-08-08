@@ -1,13 +1,13 @@
 import { applyTransaction, TransactionResult } from "./transaction";
 import { registerInput } from "./inputs";
-import {getSelection, registerSelection, SelectionInfo} from "./selection";
+import {getEditorSelection, registerSelection, SelectionInfo} from "./selection";
 import {registerMenu} from "./editorMenu";
 
 interface Editor {
     bridgeReference: any;
     initialize: (dotNetRef: any) => void;
     applyTransaction: (transaction: TransactionResult) => void;
-    getSelection: () => SelectionInfo;
+    getEditorSelection: () => SelectionInfo | null;
     node: HTMLElement | null;
 }
 
@@ -64,6 +64,6 @@ window.editor = {
     bridgeReference: null,
     initialize: initEditor,
     applyTransaction: applyTransaction,
-    getSelection: getSelection,
+    getEditorSelection: getEditorSelection,
     node: null,
 };

@@ -6,5 +6,5 @@ public class KeyPressInfo
     
     public required string? Data { get; init; }
     
-    public required SelectionInfo Selection { get; init; }
+    public required SelectionInfo? Selection { get; init; }
 }

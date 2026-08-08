@@ -44,7 +44,7 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : Event
 
     private static DNodeInfo SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
     {
-        if (keyPressInfo.Selection.AnchorOffset is 0)
+        if (keyPressInfo.Selection!.AnchorOffset is 0)
         {
             return DNodeInfo.NotFound();
         }

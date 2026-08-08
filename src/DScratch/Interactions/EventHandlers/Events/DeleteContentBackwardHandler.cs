@@ -44,7 +44,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : Ev
 
     private static DNodeInfo SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
     {
-        if (keyPressInfo.Selection.AnchorOffset is 0)
+        if (keyPressInfo.Selection!.AnchorOffset is 0)
         {
             return new DNodeInfo(null, 0);
         }

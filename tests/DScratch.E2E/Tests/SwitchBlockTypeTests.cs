@@ -24,6 +24,7 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
         await Expect(Editor.Heading(level)).ToHaveTextAsync("a");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
@@ -45,6 +46,7 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
         await Expect(Editor.Paragraph).ToHaveTextAsync("a");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
@@ -85,6 +87,7 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
         await Expect(Editor.Heading(level).Nth(2)).ToHaveTextAsync("ef");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
@@ -123,6 +126,7 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
         await Expect(Editor.Paragraph.Nth(2).TextSpan).ToHaveTextAsync("ef");
 
         var selection = await GetCursorPositionAsync();
+        Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));

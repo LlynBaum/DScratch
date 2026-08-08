@@ -13,8 +13,8 @@ public class EditorCommandDispatcher(
 {
     public async Task DispatchAsync<TCommand>(TCommand command) where TCommand : IEditorCommand
     {
-        var selectionInfo = await jsInvoker.GetSelectionAsync();
-        if (selectionInfo.AnchorNodeId.IsRoot || selectionInfo.FocusNodeId.IsRoot)
+        var selectionInfo = await jsInvoker.GetEditorSelectionAsync();
+        if (selectionInfo is null || selectionInfo.AnchorNodeId.IsRoot || selectionInfo.FocusNodeId.IsRoot)
         {
             return;
         }

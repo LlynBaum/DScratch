@@ -22,10 +22,14 @@ public class PlaywrightTestBase : E2ETestsRunnerBase
         await Editor.WaitForAsync(new() { State = WaitForSelectorState.Visible });
     }
 
-    protected async Task<SelectionInfo> GetCursorPositionAsync()
+    protected async Task<SelectionInfo?> GetCursorPositionAsync()
     {
-        var selection = await Page.EvaluateAsync<JsonElement>("window.editor.getSelection()");
-        return selection.Deserialize<SelectionInfo>(JsonSerializerOptions) // Use System.Text, so direction string can be deserialized
-               ?? throw new InvalidOperationException("Failed to deserialize SelectionInfo.");
+        var selection = await Page.EvaluateAsync<JsonElement?>("window.editor.getEditorSelection()");
+        if (!selection.HasValue || selection.Value.ValueKind == JsonValueKind.Null)
+        {
+            return null;
+        }
+
+        return selection.Value.Deserialize<SelectionInfo>(JsonSerializerOptions);
     }
 }

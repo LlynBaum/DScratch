@@ -37,7 +37,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : Eve
 
     private static DNodeInfo SimpleDeleteForward(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
     {
-        var noteToDelete = transaction.SplitText(targetTextNode, keyPressInfo.Selection.AnchorOffset);
+        var noteToDelete = transaction.SplitText(targetTextNode, keyPressInfo.Selection!.AnchorOffset);
         if (noteToDelete is null)
         {
             return DNodeInfo.NotFound();
