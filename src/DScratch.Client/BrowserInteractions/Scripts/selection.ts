@@ -77,7 +77,7 @@ export function getSelection(): SelectionInfo {
     };
 }
 
-export function setSelection(selection: SelectionInfo) {
+export function setSelectionSave(selection: SelectionInfo) {
     if (!currentSelection) {
         resetSnapshot();
         return;
@@ -86,13 +86,9 @@ export function setSelection(selection: SelectionInfo) {
     const currentParent = getElementFromNode(currentSelection.anchorNode!);
     const currentParentId = getNodeId(currentParent);
     const currentOffset = getAbsolutOffset(currentParent, currentSelection.anchorNode!, currentSelection.anchorOffset);
-
-    /*const currentFocusParent = currentSelection.focusNode && getElementFromNode(currentSelection.focusNode!);
-    const currentFocusParentId = currentFocusParent && currentFocusParent.getAttribute("data-dnode-id");
-    const currentFocusOffset = getAbsolutOffset(currentParent, currentSelection.focusNode!, currentSelection.focusOffset);*/
     
     if(!snapshot) {
-        setSelectionFrom(selection);
+        setSelection(selection);
         resetSnapshot();
         return;
     }
@@ -101,21 +97,16 @@ export function setSelection(selection: SelectionInfo) {
         currentParentId !== snapshot.anchorId ||
         currentOffset !== snapshot.absolutAnchorOffset;
     
-    /*
-    currentFocusParentId !== (snapshot.endPath && snapshot.endPath[0]) ||
-    currentFocusOffset !== snapshot.absolutEndOffset
-    */
-    
     if (userMovedNatively) {
         resetSnapshot();
         return;
     }
 
-    setSelectionFrom(selection);
+    setSelection(selection);
     resetSnapshot();
 }
 
-function setSelectionFrom(selectionInfo: SelectionInfo) {
+export function setSelection(selectionInfo: SelectionInfo) {
     if (selectionInfo.direction === "none") {
         setCursorPosition(selectionInfo.anchorId, selectionInfo.anchorOffset);
     } else {

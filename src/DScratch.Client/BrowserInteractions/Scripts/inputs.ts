@@ -11,7 +11,6 @@ const handledTypes = [
 
 export function registerInput() {
     window.editor.node?.addEventListener("beforeinput", async event => await handleInput(event));
-
 }
 
 async function handleInput(event: InputEvent) {

@@ -1,4 +1,4 @@
-#editor {
+.editor {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -8,7 +8,7 @@
     width: 100%;
 }
 
-.doc-editor {
+#doc-editor {
     box-sizing: border-box;
     flex-grow: 1;
     width: 100%;

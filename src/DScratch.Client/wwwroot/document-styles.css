@@ -1,4 +1,4 @@
-@scope (#editor) {
+@scope (#doc-editor) {
     :scope {
         --paper-padding: 24px;
         

@@ -18,6 +18,9 @@ public partial class DsIconButton : ComponentBase
 
     [Parameter]
     public bool Disabled { get; set; }
+    
+    [Parameter]
+    public bool PreventDefault { get; set; }
 
     [Parameter]
     public string? Title { get; set; }

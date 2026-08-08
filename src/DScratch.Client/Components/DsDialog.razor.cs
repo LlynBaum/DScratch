@@ -31,9 +31,6 @@ public partial class DsDialog : ComponentBase
     [Parameter]
     public string? Class { get; set; }
 
-    [Parameter]
-    public string? Style { get; set; }
-
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
 

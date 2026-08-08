@@ -1,6 +1,7 @@
 import { applyTransaction, TransactionResult } from "./transaction";
 import { registerInput } from "./inputs";
 import {getSelection, registerSelection, SelectionInfo} from "./selection";
+import {registerMenu} from "./editorMenu";
 
 interface Editor {
     bridgeReference: any;
@@ -17,7 +18,7 @@ declare global {
 }
 
 function initEditor(dotNetRef: any) {
-    const editor = document.getElementById("editor");
+    const editor = document.getElementById("doc-editor");
     window.editor.node = editor;
     window.editor.bridgeReference = dotNetRef;
     
@@ -29,6 +30,7 @@ function initEditor(dotNetRef: any) {
     editor?.addEventListener("click", setCursorToEnd);
     registerInput();
     registerSelection();
+    registerMenu();
     
     const rootNode = editor.querySelector<HTMLElement>("[data-dnode-id='Root']");
     rootNode?.setAttribute("contenteditable", '');

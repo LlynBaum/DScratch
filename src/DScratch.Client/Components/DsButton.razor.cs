@@ -17,10 +17,10 @@ public partial class DsButton : ComponentBase
     public DsButtonVariant Variant { get; set; } = DsButtonVariant.Primary;
 
     [Parameter]
-    public string Type { get; set; } = "button";
-
-    [Parameter]
     public bool Disabled { get; set; }
+    
+    [Parameter]
+    public bool PreventDefault { get; set; }
 
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
@@ -33,9 +33,6 @@ public partial class DsButton : ComponentBase
 
     [Parameter]
     public string? Class { get; set; }
-
-    [Parameter]
-    public string? Style { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }

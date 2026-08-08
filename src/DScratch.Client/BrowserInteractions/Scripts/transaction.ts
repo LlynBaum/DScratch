@@ -1,4 +1,4 @@
-import {saveSelection, SelectionInfo, setSelection} from "./selection";
+import {saveSelection, SelectionInfo, setSelectionSave} from "./selection";
 import {findTextNodeAtOffset} from "./nodeHelper";
 
 enum StepType {
@@ -57,7 +57,7 @@ export function applyTransaction(transaction: TransactionResult){
     saveSelection();
     transaction.steps.map(handle);
     if (transaction.cursorPosition) {
-        setSelection(transaction.cursorPosition);
+        setSelectionSave(transaction.cursorPosition);
     }
 
     function handle(step?: Step | null) {

@@ -1,7 +1,7 @@
 @if (IsOpen)
 {
     <div class="ds-dialog-backdrop" @onclick="HandleBackdropClick">
-        <dialog class="ds-dialog @Class" open style="@Style" @onclick:stopPropagation @attributes="AdditionalAttributes">
+        <dialog @attributes="AdditionalAttributes" class="ds-dialog @Class" open @onclick:stopPropagation>
             @if (!string.IsNullOrEmpty(Title) || ShowCloseButton)
             {
                 <div class="ds-dialog-header">

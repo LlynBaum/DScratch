@@ -1,6 +1,6 @@
 <button
     class="icon-button @(IsActive ? "active" : "")"
-    @onmousedown:preventDefault
+    @onmousedown:preventDefault="@PreventDefault"
     @onclick="OnClick"
     title="@Title"
     disabled="@Disabled"

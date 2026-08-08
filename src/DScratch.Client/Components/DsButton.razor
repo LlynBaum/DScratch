@@ -1,10 +1,10 @@
 <button
-    type="@Type"
-    class="@CssClass"
-    disabled="@Disabled"
-    style="@Style"
+    type="button"
     @onclick="OnClick"
-    @attributes="AdditionalAttributes">
+    @onmousedown:preventDefault="@PreventDefault"
+    @attributes="AdditionalAttributes"
+    disabled="@Disabled"
+    class="@CssClass">
     @if (Icon.HasValue)
     {
         <DsIcon Icon="Icon.Value" />
