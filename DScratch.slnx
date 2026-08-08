@@ -1,5 +1,7 @@
 <Solution>
   <Folder Name="/SolutionItems/">
+    <File Path=".github\workflows\docker-publish.yml" />
+    <File Path="Dockerfile" />
     <File Path="README.md" />
     <File Path="TODO.md" />
   </Folder>
