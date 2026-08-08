@@ -1,6 +1,8 @@
 # Current
 
 - add links tests
+  - Also add test for selection over multiple Blocks. What happens then? Currently, breaks everything. But what does a user expect?
+  - Or maybe switch to, insert link, user also types in text. User can only edit text of link via Dialog, not inline. But ahhhh not as nice
 - remove links
 
 # Features
