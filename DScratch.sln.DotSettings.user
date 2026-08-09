@@ -47,9 +47,7 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=889b5859_002D4871_002D4ac4_002Da414_002D758adfe9e454/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from &amp;lt;Tests&amp;gt;\&amp;lt;DScratch.Tests&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Project Location="/home/darki/Developement/DScratch/tests/DScratch.Tests" Presentation="&amp;lt;Tests&amp;gt;\&amp;lt;DScratch.Tests&amp;gt;" /&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=94d15615_002Dd5d4_002D4dba_002Dbaa8_002De744434b29fc/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from &amp;lt;Tests&amp;gt;\&amp;lt;DScratch.Tests&amp;gt; #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;Project Location="/home/darki/Developement/DScratch/tests/DScratch.Tests" Presentation="&amp;lt;Tests&amp;gt;\&amp;lt;DScratch.Tests&amp;gt;" /&gt;
-&lt;/SessionState&gt;</s:String>
+	
 	
 	
 	

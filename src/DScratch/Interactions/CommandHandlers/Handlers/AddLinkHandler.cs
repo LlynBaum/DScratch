@@ -80,7 +80,51 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         DNode origin,
         DNode rightOrigin)
     {
+        var (originOffset, rightOriginOffset) = selectionInfo.GetConvertedOffsets();
+
+        var startNode = originOffset > 0
+            ? origin is TextNode originText 
+                ? transaction.SplitText(originText, originOffset) 
+                : throw new ArgumentException($"Expected TextNode at {origin.Id}")
+            : origin;
         
+        var startLink = transaction.NodeFactory.LinkNode(startNode?.Origin, null, command.Href);
+        transaction.MoveRange(startNode, null, startLink, null);
+        transaction.Insert(startLink, origin.Parent!);
+        
+        var currentBlock = origin.GetNearestBlock().RightOrigin;
+        var endBlock = rightOrigin.GetNearestBlock();
+
+        while (currentBlock is not null && currentBlock.Id != endBlock.Id)
+        {
+            var link = transaction.NodeFactory.LinkNode(null, null, command.Href);
+            transaction.Insert(link, currentBlock);
+            transaction.MoveRange(currentBlock.FirstChild, null, link, null);
+            
+            currentBlock = currentBlock.RightOrigin;
+        }
+
+        DNode? endNode;
+        if (rightOriginOffset > 0)
+        {
+            if (rightOrigin is not TextNode rightOriginText)
+            {
+                throw new ArgumentException($"Expected TextNode at {rightOrigin.Id}");
+            }
+            
+            transaction.SplitText(rightOriginText, rightOriginOffset);
+            endNode = rightOriginText;
+        }
+        else
+        {
+            endNode = rightOrigin.Origin;
+        }
+        
+        var endLink = transaction.NodeFactory.LinkNode(null, endNode?.RightOrigin, command.Href);
+        transaction.MoveRange(null, endNode, endLink, null);
+        transaction.Insert(endLink, endBlock);
+        
+        transaction.AddCursorPosition(selectionInfo);
     }
 
     private static void HandleSimpleSelection(
@@ -91,10 +135,11 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         DNode rightOrigin)
     {
         var nodes = GetSelectedNodes(transaction, selectionInfo, origin, rightOrigin);
-        var linkNode = transaction.NodeFactory.LinkNode(nodes.Origin.Node, nodes.RightOrigin.Node, command.Href);
-        var parent = nodes.Origin.Node?.Parent ?? nodes.RightOrigin.Node?.Parent;
-        transaction.Insert(linkNode, parent!);
+        var linkNode = transaction.NodeFactory.LinkNode(nodes.Origin.Node?.Origin, nodes.RightOrigin.Node?.RightOrigin, command.Href);
+        var parent = nodes.Origin.Node?.Parent ?? nodes.RightOrigin.Node?.Parent!;
+        transaction.Insert(linkNode, parent);
         transaction.MoveRange(nodes.Origin.Node, nodes.RightOrigin.Node, linkNode, null);
+        transaction.AddCursorPosition(selectionInfo);
     }
     
     private static DNodeSearchResult GetSelectedNodes(
