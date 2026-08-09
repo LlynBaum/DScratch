@@ -1,10 +1,8 @@
 # Current
 
-- Redo Link UX
-  - Add Link opens popup at selection. When no selection opens at cursor with a Display Text field
-  - Unlink only via hover over link (use popover attribute, hope they preserve selection, else the whole selection attribute must stay)
-  - Edit Display Text Inline
-  - Link over multiple blocks are unlinked separately.
+- Two Errors left in the browser when adding a link. Probably the cause of the Link getting added until the end of para instead of only selection
+- The first time opening the popover for adding link, the highlight does not work
+- The value of the Input field in the popover does not reset when closing or submitting it
 
 # Features
 

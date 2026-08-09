@@ -59,7 +59,14 @@ function registerLinkSettings() {
         if(!targetElement.closest("a")) return;
         
         targetElement.style.setProperty("anchor-name", `--${LINK_SETTINGS_POPOVER}`);
-        targetElement.setAttribute("data-link-anchor", "data-link-settings-anchor");
+        targetElement.setAttribute("data-link-settings-anchor", "");
         popover.showPopover();
+    });
+    
+    popover.querySelector("button")?.addEventListener("click", () => {
+        const previousAnchor = document.querySelector<HTMLElement>("[data-link-settings-anchor]");
+        previousAnchor?.removeAttribute("data-link-settings-anchor");
+        previousAnchor?.style.setProperty("anchor-name", null);
+        popover.hidePopover();
     });
 }

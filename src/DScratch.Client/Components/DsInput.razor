@@ -3,8 +3,8 @@
 
 <input
     type="text"
+    @oninput="EventCallback.Factory.CreateBinder(this, value => CurrentValueAsString = value, CurrentValueAsString ?? string.Empty)"
     @attributes="AdditionalAttributes"
     class="@CombinedCssClass"
     value="@CurrentValueAsString"
-    @onchange="OnChange"
-    @oninput="OnInput" />
+/>
