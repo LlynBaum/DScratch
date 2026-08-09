@@ -25,9 +25,7 @@
 </nav>
 
 <DsPopover Id="add-link-popover" popover="hint">
-    <label for="link-url-input" class="ds-dialog-label">URL</label>
-    <input id="link-url-input" type="url" placeholder="https://example.com" @bind="linkUrl" @bind:event="oninput" @onkeydown="HandleLinkKeyDown" />
-    
+    <input type="url" placeholder="https://example.com" @bind="linkUrl" @bind:event="oninput" @onkeydown="HandleLinkKeyDown" />
     <DsButton Variant="DsButtonVariant.Primary" OnClick="@SubmitLinkAsync">Add Link</DsButton>
 </DsPopover>
 

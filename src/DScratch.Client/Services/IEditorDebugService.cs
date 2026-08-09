@@ -19,5 +19,5 @@ public interface IEditorDebugService
 
     void NotifyDocumentChanged(DebugTransactionInfo debugTransactionResult);
 
-    void NotifySelectionChange(SelectionInfo selectionInfo);
+    void NotifySelectionChange(SelectionInfo? selectionInfo);
 }

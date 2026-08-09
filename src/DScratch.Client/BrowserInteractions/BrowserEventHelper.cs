@@ -47,8 +47,15 @@ public class BrowserEventHelper(
     }
 
     [JSInvokable]
-    public void OnSelectionChange(SelectionInfo selectionInfo)
+    public void OnSelectionChange(SelectionInfo? selectionInfo)
     {
+        if (selectionInfo is null)
+        {
+            userStateService.UpdateState(null);
+            editorDebugService.NotifySelectionChange(null);
+            return;
+        }
+        
         var node = dScratchService.Document.FindNode(selectionInfo.AnchorNodeId);
         userStateService.UpdateState(node);
 

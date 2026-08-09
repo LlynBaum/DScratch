@@ -19,5 +19,5 @@ public class EditorDebugFake : IEditorDebugService
     
     public void NotifyDocumentChanged(DebugTransactionInfo debugTransactionResult) { }
 
-    public void NotifySelectionChange(SelectionInfo selectionInfo) { }
+    public void NotifySelectionChange(SelectionInfo? selectionInfo) { }
 }

@@ -32,7 +32,7 @@ public class EditorDebugService : IEditorDebugService
         DocumentChanged?.Invoke();
     }
 
-    public void NotifySelectionChange(SelectionInfo selectionInfo)
+    public void NotifySelectionChange(SelectionInfo? selectionInfo)
     {
         CurrentClientSelection = selectionInfo;
         SelectionChanged?.Invoke();
