@@ -214,7 +214,13 @@ public class AddLinkHandlerTest
         Assert.That(((TextNode)linkNode.ChildNodes[0]).TextContent, Is.EqualTo("d"));
         Assert.That(((TextNode)linkNode.ChildNodes[1]).TextContent, Is.EqualTo("e"));
         
-        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, keyPressInfo.Selection!);
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+        {
+            AnchorId = linkNode.ChildNodes[1].Id.Value,
+            AnchorOffset = 1,
+            FocusId = linkNode.ChildNodes[1].Id.Value,
+            FocusOffset = 1
+        });
     }
     
     [Test]
@@ -279,6 +285,12 @@ public class AddLinkHandlerTest
             Assert.That(((TextNode)linkNode3.ChildNodes[0]).TextContent, Is.EqualTo("e"));
         }
 
-        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, keyPressInfo.Selection!);
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+        {
+            AnchorId = linkNode3.ChildNodes[0].Id.Value,
+            AnchorOffset = 1,
+            FocusId = linkNode3.ChildNodes[0].Id.Value,
+            FocusOffset = 1
+        });
     }
 }

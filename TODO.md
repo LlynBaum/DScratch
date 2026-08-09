@@ -1,8 +1,16 @@
 # Current
 
-- Two Errors left in the browser when adding a link. Probably the cause of the Link getting added until the end of para instead of only selection
-- The first time opening the popover for adding link, the highlight does not work
 - The value of the Input field in the popover does not reset when closing or submitting it
+- Opening dialog with Direction none missing
+- E2E Tests for Links
+- CTRL hold to click a link
+- Option to choose target for link
+- Option to edit link url
+
+## Weird Bugs
+
+- Popover closing instantly when using mouse clicks
+- The first time opening the popover for adding link, the highlight does not work
 
 # Features
 
@@ -56,6 +64,8 @@
   - Those are Document Settings, not CRDT. So it is a global setting you can choose without effecting the tree.
   - Those settings are implicitly included in the rendering of marks. So will go over the UpdateMarkDiff, but are not on the nodes itself
 - [ ] Auto Gen "Table of Contents"
+- [ ] Images
+- [ ] Tables
 
 # Side Quests
 

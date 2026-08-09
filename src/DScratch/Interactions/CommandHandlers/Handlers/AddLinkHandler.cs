@@ -123,8 +123,19 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         var endLink = transaction.NodeFactory.LinkNode(null, endNode?.RightOrigin, command.Href);
         transaction.MoveRange(null, endNode, endLink, null);
         transaction.Insert(endLink, endBlock);
+
+        if (endNode is null || SelectionHelper.NearestTextNode(endNode) is not { HasFoundNode: true } endTextNode)
+        {
+            throw new ArgumentException($"Expected TextNode near {endNode?.Id}");
+        }
         
-        transaction.AddCursorPosition(selectionInfo);
+        transaction.AddCursorPosition(new SelectionInfo
+        {
+            AnchorId = endTextNode.Node.Id.Value,
+            AnchorOffset = endTextNode.Node.Length,
+            FocusId = endTextNode.Node.Id.Value,
+            FocusOffset = endTextNode.Node.Length
+        });
     }
 
     private static void HandleSimpleSelection(
@@ -139,7 +150,14 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         var parent = nodes.Origin.Node?.Parent ?? nodes.RightOrigin.Node?.Parent!;
         transaction.Insert(linkNode, parent);
         transaction.MoveRange(nodes.Origin.Node, nodes.RightOrigin.Node, linkNode, null);
-        transaction.AddCursorPosition(selectionInfo);
+        
+        transaction.AddCursorPosition(new SelectionInfo
+        {
+            AnchorId = nodes.RightOrigin.Node!.Id.Value,
+            AnchorOffset = nodes.RightOrigin.Offset,
+            FocusId = nodes.RightOrigin.Node!.Id.Value,
+            FocusOffset = nodes.RightOrigin.Offset
+        });
     }
     
     private static DNodeSearchResult GetSelectedNodes(
@@ -170,14 +188,23 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
             }
         }
 
+        TextNode endTextNode;
         if (walker.Node is not null && rightOriginOffset > 0)
         {
+            endTextNode = walker.Node;
             var offset = selectionInfo.AnchorId != selectionInfo.FocusId
                 ? rightOriginOffset
                 : rightOriginOffset - originOffset;
             transaction.SplitText(walker.Node, offset);
         }
+        else
+        {
+            endTextNode = walker.Node?.Origin is not null && SelectionHelper.NearestTextNode(walker.Node.Origin) is
+                { HasFoundNode: true } n
+                ? n.Node
+                : throw new ArgumentException($"Expected TextNode near {walker.Node?.Origin?.Id}");
+        }
         
-        return new DNodeSearchResult(DNodeInfo.From(start, 0), DNodeInfo.From(end, 0));
+        return new DNodeSearchResult(DNodeInfo.From(start, 0), DNodeInfo.From(endTextNode, endTextNode.Length));
     }
 }
