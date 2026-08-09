@@ -1,21 +1,56 @@
-import {getEditorSelection, SelectionInfo, setSelection} from "./selection";
+import {getEditorSelection} from "./selection";
+import {findNode} from "./nodeHelper";
 
-let selectionSnapshot: SelectionInfo | null = null;
+const ADD_LINK_POPOVER = "add-link-popover";
+const LINK_SETTINGS_POPOVER = "link-settings-popover";
 
 export function registerMenu() {
-    const editorMenu = document.querySelector<HTMLElement>(".editor > .editor-menu");
-    if(!editorMenu){
-        console.error("no editor menu found.");
-        return;
-    }
-    
-    editorMenu.addEventListener("click", e => {
-       if((e.target as HTMLElement).closest("[data-snapshot-selection]")) {
-           selectionSnapshot = getEditorSelection();
-       }
+    registerAddLink();
+    registerLinkSettings();
+}
 
-        if((e.target as HTMLElement).closest("[data-restore-selection]")) {
-            selectionSnapshot && setSelection(selectionSnapshot);
-        }
+function registerAddLink() {
+    const addLinkButton = document.getElementById("add-link");
+    const popover = document.getElementById(ADD_LINK_POPOVER);
+    if (!addLinkButton || !popover) return;
+    
+    addLinkButton.addEventListener("click", () => {
+        const previousAnchor = document.querySelector<HTMLElement>("[data-link-anchor]");
+        previousAnchor?.removeAttribute("data-link-anchor");
+        previousAnchor?.style.setProperty("anchor-name", null);
+        popover.hidePopover();
+        
+        const selection = getEditorSelection();
+        if (!selection) return;
+        
+        const targetElement = findNode(selection.focusId || selection.anchorId);
+        if (!targetElement) return;
+        
+        targetElement.style.setProperty("anchor-name", `--${ADD_LINK_POPOVER}`);
+        targetElement.setAttribute("data-link-anchor", "");
+        popover.showPopover();
+    });
+}
+
+function registerLinkSettings() {
+    const popover = document.getElementById(LINK_SETTINGS_POPOVER);
+    if(!popover) return;
+
+    document.addEventListener("selectionchange", () => {
+        const previousAnchor = document.querySelector<HTMLElement>("[data-link-settings-anchor]");
+        previousAnchor?.removeAttribute("data-link-settings-anchor");
+        previousAnchor?.style.setProperty("anchor-name", null);
+        popover.hidePopover();
+        
+        const selection = getEditorSelection();
+        if (!selection || selection.direction !== "none") return;
+        
+        const targetElement = findNode(selection.anchorId);
+        if (!targetElement) return;
+        if(!targetElement.closest("a")) return;
+        
+        targetElement.style.setProperty("anchor-name", `--${LINK_SETTINGS_POPOVER}`);
+        targetElement.setAttribute("data-link-anchor", "data-link-settings-anchor");
+        popover.showPopover();
     });
 }

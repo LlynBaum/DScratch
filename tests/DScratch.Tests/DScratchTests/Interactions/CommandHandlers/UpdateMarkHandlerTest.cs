@@ -55,7 +55,7 @@ public class UpdateMarkHandlerTest
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 2, end.Id, 1);
         
         // Act
-        var result = handler.Execute(keyPressInfo.Selection, command);
+        var result = handler.Execute(keyPressInfo.Selection!, command);
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -99,7 +99,7 @@ public class UpdateMarkHandlerTest
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
 
         // Act
-        var result = handler.Execute(keyPressInfo.Selection, command);
+        var result = handler.Execute(keyPressInfo.Selection!, command);
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -141,7 +141,7 @@ public class UpdateMarkHandlerTest
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 0, end.Id, 2);
 
         // Act
-        var result = handler.Execute(keyPressInfo.Selection, command);
+        var result = handler.Execute(keyPressInfo.Selection!, command);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -177,7 +177,7 @@ public class UpdateMarkHandlerTest
         });
             
         // Act
-        var result = handler.Execute(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0).Selection, command);
+        var result = handler.Execute(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0).Selection!, command);
             
         // Assert
         Assert.That(command.AddPendingCalled, Is.True);
@@ -193,7 +193,7 @@ public class UpdateMarkHandlerTest
         var block = builder.Paragraph();
             
         // Act
-        var result = handler.Execute(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(block.Id, 0).Selection, command);
+        var result = handler.Execute(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(block.Id, 0).Selection!, command);
             
         // Assert
         Assert.That(command.ExecuteCall, Is.EquivalentTo([block]));

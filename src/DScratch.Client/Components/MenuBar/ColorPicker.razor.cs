@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace DScratch.Client.Components;
+namespace DScratch.Client.Components.MenuBar;
 
 public partial class ColorPicker : ComponentBase
 {

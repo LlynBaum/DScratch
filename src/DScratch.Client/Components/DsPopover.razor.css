@@ -1,0 +1,5 @@
+div[popover] {
+    position: absolute;
+    position-area: span-bottom;
+    offset-anchor: calc(-1 * var(--editor-spacing-xs));
+}
