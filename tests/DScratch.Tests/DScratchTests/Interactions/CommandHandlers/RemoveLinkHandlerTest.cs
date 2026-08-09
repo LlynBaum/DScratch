@@ -93,7 +93,7 @@ public class RemoveLinkHandlerTest
             Assert.That(parent.ChildNodes[2].IsDeleted, Is.True);
 
             Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("abc"));
-            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("abc"));
+            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("def"));
             Assert.That(parent.ChildNodes[2].ChildNodes, Has.Count.Zero);
         }
 

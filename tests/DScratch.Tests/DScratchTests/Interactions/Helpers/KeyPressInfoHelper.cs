@@ -17,7 +17,7 @@ public class KeyPressInfoHelper
                 AnchorId = nodeId.Value,
                 AnchorOffset = anchorOffset,
                 FocusId = nodeId.Value,
-                FocusOffset = 0
+                FocusOffset = anchorOffset
             }
         };
     }

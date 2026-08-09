@@ -43,9 +43,14 @@
   - Format Brush
 - [ ] Shortcut Keys
   - Keybinds like CTRL + B for Bold
+  - CTRL + K for Links
 - [ ] History with Undo and Redo features
 - [ ] Auto Heading Numbering
   - This needs support for read-only text that is being displayed
+  - [ ] Heading Ref Links
+    - Each Heading has as ID the Heading Number
+    - Links are just href="#number" in the DOM
+    - Auto Update all Links that point to Headings when Numbers change
 - [ ] Pages
   - [ ] Extend Layout Engine to automatically make pages
   - [ ] Add custom page Break UI & CTRL + Enter
