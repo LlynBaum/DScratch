@@ -25,10 +25,10 @@
 </nav>
 
 <DsPopover Id="add-link-popover" popover="hint">
-    <input type="url" placeholder="https://example.com" @bind="linkUrl" @bind:event="oninput" @onkeydown="HandleLinkKeyDown" />
+    <DsInput type="url" placeholder="https://example.com" @bind-Value="linkUrl" @bind-Value:event="oninput" @onkeydown="HandleLinkKeyDown" />
     <DsButton Variant="DsButtonVariant.Primary" OnClick="@SubmitLinkAsync">Add Link</DsButton>
 </DsPopover>
 
 <DsPopover Id="link-settings-popover" popover="hint">
-    <DsIconButton OnClick="@RemoveLinkAsync" Icon="EditorIcon.LinkOff" PreventDefault Title="Remove Link" />
+    <DsIconButton OnClick="@RemoveLinkAsync" Icon="EditorIcon.LinkOff" Title="Remove Link" />
 </DsPopover>

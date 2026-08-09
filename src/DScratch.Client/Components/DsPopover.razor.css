@@ -1,5 +1,32 @@
+.ds-popover,
 div[popover] {
     position: absolute;
-    position-area: span-bottom;
-    offset-anchor: calc(-1 * var(--editor-spacing-xs));
+    position-area: bottom;
+    margin-top: var(--editor-spacing-sm);
+
+    background-color: var(--editor-bg-surface);
+    color: var(--editor-text-primary);
+    border: 1px solid var(--editor-border-color);
+    border-radius: var(--editor-radius-md);
+    box-shadow: var(--editor-shadow-md);
+    padding: var(--editor-spacing-sm) var(--editor-spacing-md);
+}
+
+.ds-popover:popover-open,
+div[popover]:popover-open {
+    display: flex;
+    align-items: center;
+    gap: var(--editor-spacing-sm);
+    animation: dsPopoverFadeIn 0.15s ease-out;
+}
+
+@keyframes dsPopoverFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

@@ -1,0 +1,10 @@
+@namespace DScratch.Client.Components
+@inherits Microsoft.AspNetCore.Components.Forms.InputBase<string>
+
+<input
+    type="text"
+    @attributes="AdditionalAttributes"
+    class="@CombinedCssClass"
+    value="@CurrentValueAsString"
+    @onchange="OnChange"
+    @oninput="OnInput" />

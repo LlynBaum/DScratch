@@ -1,0 +1,34 @@
+.ds-input {
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    height: 32px;
+    padding: var(--editor-spacing-xs) var(--editor-spacing-sm);
+    background-color: var(--editor-color-neutral-50);
+    border: 1px solid var(--editor-border-muted);
+    border-radius: var(--editor-radius-sm);
+    color: var(--editor-text-primary);
+    font-family: var(--editor-font-family);
+    font-size: var(--editor-font-size-sm);
+    outline: none;
+    box-sizing: border-box;
+    transition: var(--editor-transition-fast);
+}
+
+.ds-input::placeholder {
+    color: var(--editor-text-muted);
+    opacity: 0.85;
+    font-weight: 400;
+}
+
+.ds-input:focus {
+    border-color: var(--editor-color-primary);
+    background-color: var(--editor-bg-surface);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.ds-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--editor-bg-app);
+}
