@@ -4,6 +4,7 @@ using DScratch.Host.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHealthChecks();
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
@@ -30,5 +31,7 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(DScratch.Client._Imports).Assembly);
+
+app.MapHealthChecks("/health").AllowAnonymous();
 
 app.Run();

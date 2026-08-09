@@ -18,5 +18,6 @@ WORKDIR /app
 COPY --from=build /app/src/DScratch.Host/out ./
 
 EXPOSE 8080
+# Add helth check maybe?
 
 ENTRYPOINT ["dotnet", "DScratch.Host.dll"]

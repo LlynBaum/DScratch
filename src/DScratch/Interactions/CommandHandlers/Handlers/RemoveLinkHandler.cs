@@ -3,10 +3,10 @@ using DScratch.Transactions;
 
 namespace DScratch.Interactions.CommandHandlers.Handlers;
 
-public class RemoveLinkHandler : IEditorCommandHandler<RemoveLinkCommand>
+public class RemoveLinkHandler(IDScratchService dScratchService) : CommandBase<RemoveLinkCommand>(dScratchService)
 {
-    public TransactionResult Execute(SelectionInfo selectionInfo, RemoveLinkCommand command)
+    protected override void Handle(ITransaction transaction, SelectionInfo selectionInfo, RemoveLinkCommand command)
     {
-        return new TransactionResult([]); // TODO
+        throw new NotImplementedException();
     }
 }

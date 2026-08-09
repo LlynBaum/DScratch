@@ -4,7 +4,7 @@ using DScratch.TreeVisualizers;
 
 namespace DScratch.Tests.Helpers;
 
-public class TreeBuilder : TreeBuilder.IBlockTextTreeBuilder
+public class TreeBuilder : TreeBuilder.ITextTreeBuilder
 {
     public RootNode Root { get; }
 
@@ -53,7 +53,15 @@ public class TreeBuilder : TreeBuilder.IBlockTextTreeBuilder
         return text;
     }
 
-    public ParagraphNode Paragraph(Action<IBlockTextTreeBuilder>? configureChildNodes = null)
+    public LinkNode Link(string href, Action<ITextTreeBuilder>? configureChildNodes = null)
+    {
+        var link = factory.LinkNode(null, null, href);
+        configureChildNodes?.Invoke(GetChildTreeBuilder(link));
+        Append(link);
+        return link;
+    }
+
+    public ParagraphNode Paragraph(Action<ITextTreeBuilder>? configureChildNodes = null)
     {
         var paragraph = factory.Paragraph(null, null);
         configureChildNodes?.Invoke(GetChildTreeBuilder(paragraph));
@@ -61,7 +69,7 @@ public class TreeBuilder : TreeBuilder.IBlockTextTreeBuilder
         return paragraph;
     }
 
-    public HeadingNode Heading(HeadingLevel headingLevel, Action<IBlockTextTreeBuilder>? configureChildNodes = null)
+    public HeadingNode Heading(HeadingLevel headingLevel, Action<ITextTreeBuilder>? configureChildNodes = null)
     {
         var heading = factory.Heading(headingLevel, null, null);
         configureChildNodes?.Invoke(GetChildTreeBuilder(heading));
@@ -117,9 +125,11 @@ public class TreeBuilder : TreeBuilder.IBlockTextTreeBuilder
         void Print();
     }
     
-    public interface IBlockTextTreeBuilder : ITreeMaker
+    public interface ITextTreeBuilder : ITreeMaker
     {
         TextNode Text(string value);
+
+        LinkNode Link(string href, Action<ITextTreeBuilder>? configureChildNodes = null);
 
         TestInlineElementNode TestInlineElementNode(Action<TreeBuilder>? configureChildNodes = null);
     }
