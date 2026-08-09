@@ -25,6 +25,7 @@ public readonly record struct DNodeInfo(DNode? Node, int Offset)
 
         return new DNodeInfo(node, offset ?? 0);
     }
+
 }
 
 public readonly record struct NodeInfo<TNode>(TNode? Node, int Offset) where TNode : DNode
@@ -48,6 +49,11 @@ public readonly record struct NodeInfo<TNode>(TNode? Node, int Offset) where TNo
         }
 
         return new NodeInfo<TNode>(node, offset ?? 0);
+    }
+    
+    public static implicit operator DNodeInfo(NodeInfo<TNode> nodeInfo)
+    {
+        return DNodeInfo.From(nodeInfo.Node, nodeInfo.AbsoluteOffsetIfPresent);
     }
 }
 

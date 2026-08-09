@@ -5,15 +5,15 @@ namespace DScratch.Interactions;
 
 public static class SelectionHelper
 {
-    public static DNodeInfo NearestTextNode(DNode target)
+    public static NodeInfo<TextNode> NearestTextNode(DNode target)
     {
         var current = target;
         while (current is not null)
         {
-            if (current is TextNode textNode) return new DNodeInfo(current, textNode.Length);
+            if (current is TextNode textNode) return new NodeInfo<TextNode>(textNode, textNode.Length);
             current = current.LastChild;
         }
         
-        return new DNodeInfo(current, 0);
+        return NodeInfo<TextNode>.NotFound();
     }
 }

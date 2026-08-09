@@ -9,25 +9,100 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
 {
     protected override void Handle(ITransaction transaction, SelectionInfo selectionInfo, AddLinkCommand command)
     {
-        var nodes = GetSelectedNodes(transaction, selectionInfo);
+        if (selectionInfo.Direction is SelectionDirection.None)
+        {
+            InsertWithDisplayText(transaction, selectionInfo, command);
+            return;
+        }
+        
+        var (originId, rightOriginId) = selectionInfo.GetConvertedNodeIds();
+        var origin = transaction.Document.FindNode(originId);
+        var rightOrigin = transaction.Document.FindNode(rightOriginId);
+        
+        if (origin is null || rightOrigin is null)
+        {
+            throw new ArgumentException($"Node with given id not found: {selectionInfo.AnchorId} or {selectionInfo.FocusId}");
+        }
+
+        if (origin.GetNearestBlock().Id == rightOrigin.GetNearestBlock().Id)
+        {
+            HandleSimpleSelection(transaction, selectionInfo, command, origin, rightOrigin);
+        }
+        else
+        {
+            HandleSelection(transaction, selectionInfo, command, origin, rightOrigin);
+        }
+    }
+
+    private static void InsertWithDisplayText(ITransaction transaction, SelectionInfo selectionInfo, AddLinkCommand command)
+    {
+        if (command.DisplayText is null)
+        {
+            throw new ArgumentException("Expected to have a DisplayText with SelectionDirection None.");
+        }
+            
+        var target = transaction.Document.FindNode(selectionInfo.AnchorNodeId);
+        if (target is null)
+        {
+            throw new ArgumentException($"Node with given id not found: {selectionInfo.AnchorId}");
+        }
+            
+        if (target is not TextNode textNode)
+        {
+            throw new ArgumentException("Expected TextNode at selection.");
+        }
+
+        DNode? textOrigin;
+        DNode? textRightOrigin;
+            
+        if (selectionInfo.AnchorOffset > 0)
+        {
+            textOrigin = textNode;
+            textRightOrigin = transaction.SplitText(textNode, selectionInfo.AnchorOffset) ?? textNode.RightOrigin;
+        }
+        else
+        {
+            textOrigin = textNode.Origin;
+            textRightOrigin = textNode;
+        }
+
+        var linkNode = transaction.NodeFactory.LinkNode(textOrigin, textRightOrigin, command.Href);
+        var text = transaction.NodeFactory.String(command.DisplayText, null, null);
+        transaction.Insert(text, linkNode);
+        transaction.Insert(linkNode, textOrigin?.Parent ?? textRightOrigin?.Parent!);
+        transaction.AddCursorPosition(text.Id, text.TextContent.Length);
+    }
+
+    private static void HandleSelection(
+        ITransaction transaction,
+        SelectionInfo selectionInfo,
+        AddLinkCommand command,
+        DNode origin,
+        DNode rightOrigin)
+    {
+        
+    }
+
+    private static void HandleSimpleSelection(
+        ITransaction transaction,
+        SelectionInfo selectionInfo,
+        AddLinkCommand command,
+        DNode origin,
+        DNode rightOrigin)
+    {
+        var nodes = GetSelectedNodes(transaction, selectionInfo, origin, rightOrigin);
         var linkNode = transaction.NodeFactory.LinkNode(nodes.Origin.Node, nodes.RightOrigin.Node, command.Href);
         var parent = nodes.Origin.Node?.Parent ?? nodes.RightOrigin.Node?.Parent;
         transaction.Insert(linkNode, parent!);
         transaction.MoveRange(nodes.Origin.Node, nodes.RightOrigin.Node, linkNode, null);
     }
     
-    private static DNodeSearchResult GetSelectedNodes(ITransaction transaction, SelectionInfo selectionInfo)
+    private static DNodeSearchResult GetSelectedNodes(
+        ITransaction transaction,
+        SelectionInfo selectionInfo,
+        DNode? start,
+        DNode end)
     {
-        var (originId, rightOriginId) = selectionInfo.GetConvertedNodeIds();
-        
-        var start = transaction.Document.FindNode(originId);
-        var end = transaction.Document.FindNode(rightOriginId);
-        
-        if (start is null || end is null)
-        {
-            throw new ArgumentException($"Node with given id not found: {selectionInfo.AnchorId} or {selectionInfo.FocusId}");
-        }
-
         if (start is not TextNode originText || end is not TextNode)
         {
             throw new ArgumentException("Expected TextNode at selection.");

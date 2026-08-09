@@ -10,6 +10,7 @@ namespace DScratch.Tests.DScratchTests.Interactions.CommandHandlers;
 
 public class AddLinkHandlerTest
 {
+    private const string Href = "dscratch.darki.dev";
     private TreeBuilder builder;
     private DScratchService dScratchService;
     private AddLinkHandler handler;
@@ -24,6 +25,144 @@ public class AddLinkHandlerTest
             userStateService: new UserStateService()) { DisableCleanUp = true };
         
         handler = new AddLinkHandler(dScratchService);
+    }
+
+    [Test]
+    public void AddsDisplayTextAsTextWithLink_InsertInMiddleOfText()
+    {
+        const string displayText = "DScratch";
+        
+        // Arrange
+        TextNode target = null!;
+        var parent = builder.Paragraph(t =>
+        {
+            target = t.Text("ab");
+        });
+        
+        // Act
+        var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 1);
+        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href, displayText));
+        
+        // Arrange
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<LinkNode>());
+            Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
+        }
+        
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("a"));
+            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("b"));
+        }
+        
+        var linkNode = (LinkNode)parent.ChildNodes[1];
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(linkNode.Href, Is.EqualTo(Href));
+            Assert.That(linkNode.ChildNodes, Has.Count.EqualTo(1));
+        }
+        
+        Assert.That(linkNode.ChildNodes[0], Is.TypeOf<TextNode>());
+        Assert.That(((TextNode)linkNode.ChildNodes[0]).TextContent, Is.EqualTo(displayText));
+        
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+        {
+            AnchorId = linkNode.ChildNodes[0].Id.Value,
+            AnchorOffset = displayText.Length,
+            FocusId = linkNode.ChildNodes[0].Id.Value,
+            FocusOffset = displayText.Length
+        });
+    }
+    
+    [Test]
+    public void AddsDisplayTextAsTextWithLink_InsertAfterText()
+    {
+        const string displayText = "DScratch";
+        
+        // Arrange
+        TextNode target = null!;
+        var parent = builder.Paragraph(t =>
+        {
+            target = t.Text("ab");
+        });
+        
+        // Act
+        var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 2);
+        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href, displayText));
+        
+        // Arrange
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<LinkNode>());
+        }
+        Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
+        
+        var linkNode = (LinkNode)parent.ChildNodes[1];
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(linkNode.Href, Is.EqualTo(Href));
+            Assert.That(linkNode.ChildNodes, Has.Count.EqualTo(1));
+        }
+        
+        Assert.That(linkNode.ChildNodes[0], Is.TypeOf<TextNode>());
+        Assert.That(((TextNode)linkNode.ChildNodes[0]).TextContent, Is.EqualTo(displayText));
+        
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+        {
+            AnchorId = linkNode.ChildNodes[0].Id.Value,
+            AnchorOffset = displayText.Length,
+            FocusId = linkNode.ChildNodes[0].Id.Value,
+            FocusOffset = displayText.Length
+        });
+    }
+    
+    [Test]
+    public void AddsDisplayTextAsTextWithLink_InsertBeforeText()
+    {
+        const string displayText = "DScratch";
+        
+        // Arrange
+        TextNode target = null!;
+        var parent = builder.Paragraph(t =>
+        {
+            target = t.Text("ab");
+        });
+        
+        // Act
+        var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0);
+        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href, displayText));
+        
+        // Arrange
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ChildNodes[0], Is.TypeOf<LinkNode>());
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+        }
+        Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("ab"));
+        
+        var linkNode = (LinkNode)parent.ChildNodes[0];
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(linkNode.Href, Is.EqualTo(Href));
+            Assert.That(linkNode.ChildNodes, Has.Count.EqualTo(1));
+        }
+        
+        Assert.That(linkNode.ChildNodes[0], Is.TypeOf<TextNode>());
+        Assert.That(((TextNode)linkNode.ChildNodes[0]).TextContent, Is.EqualTo(displayText));
+        
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+        {
+            AnchorId = linkNode.ChildNodes[0].Id.Value,
+            AnchorOffset = displayText.Length,
+            FocusId = linkNode.ChildNodes[0].Id.Value,
+            FocusOffset = displayText.Length
+        });
     }
 
     [Test]
@@ -42,7 +181,7 @@ public class AddLinkHandlerTest
         
         // Act
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(originTarget.Id, 1, rightOriginTarget.Id, 1);
-        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand("dscratch.darki.dev"));
+        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href));
         
         // Assert
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
@@ -66,7 +205,7 @@ public class AddLinkHandlerTest
         var linkNode = (LinkNode)parent.ChildNodes[2];
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(linkNode.Href, Is.EqualTo("dscratch.darki.dev"));
+            Assert.That(linkNode.Href, Is.EqualTo(Href));
             Assert.That(linkNode.ChildNodes, Has.Count.EqualTo(2));
         }
         
@@ -96,7 +235,7 @@ public class AddLinkHandlerTest
         
         // Act
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(originTarget.Id, 1, rightOriginTarget.Id, 1);
-        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand("dscratch.darki.dev"));
+        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href));
         
         // Assert
         Assert.That(parent1.ChildNodes, Has.Count.EqualTo(2));
@@ -128,11 +267,11 @@ public class AddLinkHandlerTest
         
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(linkNode1.Href, Is.EqualTo("dscratch.darki.dev"));
+            Assert.That(linkNode1.Href, Is.EqualTo(Href));
             Assert.That(linkNode1.ChildNodes, Has.Count.EqualTo(1));
-            Assert.That(linkNode2.Href, Is.EqualTo("dscratch.darki.dev"));
+            Assert.That(linkNode2.Href, Is.EqualTo(Href));
             Assert.That(linkNode2.ChildNodes, Has.Count.EqualTo(1));
-            Assert.That(linkNode3.Href, Is.EqualTo("dscratch.darki.dev"));
+            Assert.That(linkNode3.Href, Is.EqualTo(Href));
             Assert.That(linkNode3.ChildNodes, Has.Count.EqualTo(1));
         }
 
