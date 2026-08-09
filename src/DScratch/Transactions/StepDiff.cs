@@ -45,7 +45,9 @@ public abstract record StepDiff(string Type)
     /// </param>
     /// <param name="TagName">The HTML Tag for the element to insert</param>
     /// <param name="NewNodeId">The id of the Node</param>
-    public record InsertElementDiff(string ParentId, string? PreviousSiblingId, string TagName, string NewNodeId) : StepDiff(InsertElement);
+    /// <param name="Attributes">HTML Attributes to add to the Element</param>
+    public record InsertElementDiff(string ParentId, string? PreviousSiblingId, string TagName, string NewNodeId, IReadOnlyDictionary<string, string>? Attributes = null) 
+        : StepDiff(InsertElement);
 
     /// <summary>
     /// Deletes an element from the DOM.

@@ -36,6 +36,7 @@ interface InsertElementStep extends Step {
     previousSiblingId: string | null;
     tagName: string;
     newNodeId: string;
+    attributes: { [key:string] : string; } | null;
 }
 
 interface DeleteElementStep extends Step {
@@ -70,13 +71,13 @@ export function applyTransaction(transaction: TransactionResult){
                 handleDeleteTextStep(step as DeleteTextStep);
                 break
             case StepType.insertElement:
-                handleInsertElementBlockStep(step as InsertElementStep);
+                handleInsertElementStep(step as InsertElementStep);
                 break;
             case StepType.deleteElement:
                 handleDeleteElementStep(step as DeleteElementStep);
                 break;
             case StepType.move:
-                handleMoveBlockStep(step as MoveStep);
+                handleMoveStep(step as MoveStep);
                 break;
             case StepType.updateMarks:
                 handleUpdateMarksStep(step as UpdateMarksStep);
@@ -92,7 +93,7 @@ function handleInsertTextStep(step: InsertTextStep) {
     const { node, relativeOffset } = findTextNodeAtOffset(element, step.offset);
     if(node) {
         const text = node.textContent;
-        node.textContent = text.slice(0, relativeOffset) + step.text + text.slice(relativeOffset);
+        node.textContent = text!.slice(0, relativeOffset) + step.text + text!.slice(relativeOffset);
     } else {
         const createdNode = document.createTextNode(step.text);
         element.appendChild(createdNode);
@@ -106,7 +107,7 @@ function handleDeleteTextStep(step: DeleteTextStep) {
     const { node, relativeOffset } = findTextNodeAtOffset(element, step.offset);
     if(node) {
         const text = node.textContent;
-        node.textContent = text.slice(0, relativeOffset) + text.slice(relativeOffset + step.length);
+        node.textContent = text!.slice(0, relativeOffset) + text!.slice(relativeOffset + step.length);
     }
     
     // TODO: test if that really works. Should clean up any empty spans
@@ -115,14 +116,14 @@ function handleDeleteTextStep(step: DeleteTextStep) {
     }
 }
 
-function handleInsertElementBlockStep(step: InsertElementStep) {
+function handleInsertElementStep(step: InsertElementStep) {
     const parent = findNode(step.parentId);
     if (!parent) return;
 
     const previousSibling = step.previousSiblingId ? findNode(step.previousSiblingId) : null;
 
-    const element = createElement(step.tagName, step.newNodeId);
-    insertElementBlock(element, parent, previousSibling);
+    const element = createElement(step.tagName, step.newNodeId, step.attributes);
+    insertElement(element, parent, previousSibling);
 }
 
 function handleDeleteElementStep(step: DeleteElementStep) {
@@ -132,12 +133,12 @@ function handleDeleteElementStep(step: DeleteElementStep) {
     element.remove();
 }
 
-function handleMoveBlockStep(step: MoveStep) {
+function handleMoveStep(step: MoveStep) {
     const element = findNode(step.targetNodeId);
     const newParent = findNode(step.targetParentId);
     if (element && newParent) {
         const previousSibling = step.previousSiblingId ? findNode(step.previousSiblingId) : null;
-        insertElementBlock(element, newParent, previousSibling);
+        insertElement(element, newParent, previousSibling);
     }
 }
 
@@ -152,13 +153,18 @@ function handleUpdateMarksStep(step: UpdateMarksStep) {
     }
 }
 
-function createElement(tagName: string, id: string) {
+function createElement(tagName: string, id: string, attributes: { [key:string] : string; } | null) {
     const element = document.createElement(tagName);
     element.setAttribute("data-dnode-id", id);
+
+    for (let atr in attributes) {
+        element.setAttribute(atr, attributes[atr])
+    }
+    
     return element;
 }
 
-function insertElementBlock(element: Element, parent: Element, previousSibling: Element | null) {
+function insertElement(element: Element, parent: Element, previousSibling: Element | null) {
     const referenceNode = previousSibling ? previousSibling.nextSibling : parent.firstChild;
     parent.insertBefore(element, referenceNode);
 }

@@ -16,7 +16,17 @@ internal static class NodeRenderExtensions
             {
                 RootNode => [..node.ActiveChildNodes.SelectMany(c => c.ToInsertSteps())],
                 TextNode textNode => InsertTextNode(textNode, parentId),
-                IElement => 
+                LinkNode linkNode => [
+                    new StepDiff.InsertElementDiff(
+                        ParentId: parentId.Value,
+                        PreviousSiblingId: node.GetFirstActiveOrigin()?.Id.Value,
+                        TagName: node.TagName,
+                        NewNodeId: node.Id.Value, 
+                        Attributes: new Dictionary<string, string> { { "href", linkNode.Href } }),
+                    node.ToMarkUpdate(),
+                    ..node.ActiveChildNodes.SelectMany(c => c.ToInsertSteps())
+                ],
+                IElement =>
                 [
                     new StepDiff.InsertElementDiff(parentId.Value, node.GetFirstActiveOrigin()?.Id.Value, node.TagName, node.Id.Value),
                     node.ToMarkUpdate(),
