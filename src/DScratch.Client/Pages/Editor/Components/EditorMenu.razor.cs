@@ -52,19 +52,7 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
     
     private async Task HeadingAsync(BlockNodeType blockNodeType) => await dispatcher.DispatchAsync(new ChangeBlockTypeCommand(blockNodeType));
     
-    private bool isLinkDialogOpen;
     private string linkUrl = string.Empty;
-
-    private void OpenLinkDialog()
-    {
-        linkUrl = string.Empty;
-        isLinkDialogOpen = true;
-    }
-
-    private void CloseLinkDialog()
-    {
-        isLinkDialogOpen = false;
-    }
 
     private async Task SubmitLinkAsync()
     {
@@ -72,7 +60,6 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
         {
             await dispatcher.DispatchAsync(new AddLinkCommand(linkUrl));
         }
-        isLinkDialogOpen = false;
     }
 
     private async Task HandleLinkKeyDown(KeyboardEventArgs e)
@@ -80,10 +67,6 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
         if (e.Key == "Enter")
         {
             await SubmitLinkAsync();
-        }
-        else if (e.Key == "Escape")
-        {
-            CloseLinkDialog();
         }
     }
 

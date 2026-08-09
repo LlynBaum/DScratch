@@ -1,4 +1,4 @@
-import {getEditorSelection} from "./selection";
+import {clearFakeSelection, getEditorSelection, restoreEditorSelection, showFakeSelection} from "./selection";
 import {findNode} from "./nodeHelper";
 
 const ADD_LINK_POPOVER = "add-link-popover";
@@ -29,6 +29,15 @@ function registerAddLink() {
         targetElement.style.setProperty("anchor-name", `--${ADD_LINK_POPOVER}`);
         targetElement.setAttribute("data-link-anchor", "");
         popover.showPopover();
+    });
+
+    popover.addEventListener("beforetoggle", e => {
+        if(e.newState === "closed") {
+            restoreEditorSelection();
+            clearFakeSelection();
+        } else {
+            showFakeSelection();
+        }
     });
 }
 

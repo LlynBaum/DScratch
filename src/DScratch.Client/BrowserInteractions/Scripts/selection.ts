@@ -23,6 +23,7 @@ interface CurrentSelectionInfo {
     anchorNode: Node | null;
 }
 
+let lastEditorSelection: SelectionInfo | null = null;
 let snapshot: SelectionSnapshot | null = null;
 let currentSelection: CurrentSelectionInfo | null = null;
 
@@ -64,12 +65,12 @@ export function getEditorSelection(): SelectionInfo | null {
     const anchorElement = selection.anchorNode && getElementFromNode(selection.anchorNode);
     const focusElement = selection.focusNode && getElementFromNode(selection.focusNode);
 
-    if (!anchorElement) return null;
+    if (!anchorElement) return lastEditorSelection;
     
     const anchorId = getNodeId(anchorElement);
     const anchorOffset = getAbsolutOffset(anchorElement, selection?.anchorNode!, selection?.anchorOffset);
     
-    if (!anchorId) return null;
+    if (!anchorId) return lastEditorSelection;
     
     const focusId = focusElement ? getNodeId(focusElement) : anchorId;
     const focusOffset = focusElement ? getAbsolutOffset(focusElement, selection?.focusNode!, selection?.focusOffset) : anchorOffset;
@@ -81,6 +82,11 @@ export function getEditorSelection(): SelectionInfo | null {
         focusId: focusId,
         focusOffset: focusOffset
     };
+}
+
+export function restoreEditorSelection() {
+    if(!lastEditorSelection) return;
+    setSelection(lastEditorSelection);
 }
 
 export function setSelectionSave(selection: SelectionInfo) {
@@ -161,7 +167,7 @@ function setCursorSelection(selectionInfo: SelectionInfo) {
     range.setEnd(end.node!, end.relativeOffset);
     selection?.addRange(range);
     
-    function asStartEnd(anchor: { node: Text | null; relativeOffset: number }, focus: { node: Text | null; relativeOffset: number }) {
+    function asStartEnd(anchor: { node: Node | null; relativeOffset: number }, focus: { node: Node | null; relativeOffset: number }) {
         return selectionInfo.direction === "forward" 
             ? { start: anchor, end: focus }
             : { start: focus, end: anchor };
@@ -173,6 +179,29 @@ function handleSelectionChange() {
     clearTimeout(timeout);
     timeout = setTimeout(async () => {
         const selection = getEditorSelection();
+        lastEditorSelection = selection;
         await window.editor.bridgeReference?.invokeMethodAsync("OnSelectionChange", selection);
     }, 100);
+}
+
+export function showFakeSelection() {
+    if (!CSS.highlights) return;
+    if (!lastEditorSelection || !lastEditorSelection.focusId) return; // TODO: when selection direction none idk what to do for now.
+    
+    const anchorElement = findNode(lastEditorSelection.anchorId)!;
+    const focusElement = findNode(lastEditorSelection.focusId)!;
+    const anchor = findTextNodeAtOffset(anchorElement, lastEditorSelection.anchorOffset);
+    const focus = findTextNodeAtOffset(focusElement, lastEditorSelection.focusOffset!);
+    
+    const range = new Range();
+    range.setStart(anchor.node!, anchor.relativeOffset);
+    range.setEnd(focus.node!, focus.relativeOffset);
+    const highlight = new Highlight(range);
+    CSS.highlights.clear();
+    CSS.highlights.set("ds-editor-selection", highlight);
+}
+
+export function clearFakeSelection() {
+    if (!CSS.highlights) return;
+    CSS.highlights.clear();
 }

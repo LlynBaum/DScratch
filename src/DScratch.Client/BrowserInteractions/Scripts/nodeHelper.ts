@@ -29,7 +29,7 @@ export function getElementFromNode(node: Node): Element {
         : node.parentElement?.closest("[data-dnode-id]")!;
 }
 
-export function findTextNodeAtOffset(parent: Element, offset: number){
+export function findTextNodeAtOffset(parent: Element, offset: number): { node: Node | null, relativeOffset: number } {
     const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
 
     let currentOffset = 0;
