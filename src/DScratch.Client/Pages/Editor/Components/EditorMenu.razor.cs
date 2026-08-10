@@ -51,14 +51,15 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
     private async Task ParagraphAsync() => await dispatcher.DispatchAsync(new ChangeBlockTypeCommand(BlockNodeType.Paragraph));
     
     private async Task HeadingAsync(BlockNodeType blockNodeType) => await dispatcher.DispatchAsync(new ChangeBlockTypeCommand(blockNodeType));
-    
+
+    private string? displayText;
     private string linkUrl = string.Empty;
 
     private async Task SubmitLinkAsync()
     {
         if (!string.IsNullOrWhiteSpace(linkUrl))
         {
-            await dispatcher.DispatchAsync(new AddLinkCommand(linkUrl, "_self"));
+            await dispatcher.DispatchAsync(new AddLinkCommand(linkUrl, "_self", displayText));
         }
     }
 
@@ -73,6 +74,12 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
     private async Task RemoveLinkAsync()
     {
         await dispatcher.DispatchAsync(new RemoveLinkCommand());
+    }
+
+    private void ResetLinkValues()
+    {
+        linkUrl = string.Empty;
+        displayText = null;
     }
 
     private void OnActiveMarksChanged()

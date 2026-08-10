@@ -1,5 +1,4 @@
-.ds-popover,
-div[popover] {
+.ds-popover {
     position: absolute;
     position-area: bottom;
     margin-top: var(--editor-spacing-sm);
@@ -12,9 +11,9 @@ div[popover] {
     padding: var(--editor-spacing-sm) var(--editor-spacing-md);
 }
 
-.ds-popover:popover-open,
-div[popover]:popover-open {
+.ds-popover:popover-open {
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: var(--editor-spacing-sm);
     animation: dsPopoverFadeIn 0.15s ease-out;

@@ -128,4 +128,25 @@ public class DNodeFactoryTests
         
         void Act() => factory.String("", testNode, testNode2);
     }
+
+    [Test]
+    public void Link_ReturnsLinkNode_WithNewId()
+    {
+        var testNode = new TestNode(new NodeId(), null, null);
+        var testNode2 = new TestNode(new NodeId(), null, null);
+        
+        var nodeIdGen = new TestNodeIdGenerator();
+        var factory = new DNodeFactory(nodeIdGen);
+        
+        var result = factory.LinkNode(testNode, testNode2, "www.ggogle.com", "_blank");
+        
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.Id.Clock, Is.EqualTo(0));
+            Assert.That(result.Href, Is.EqualTo("www.ggogle.com"));
+            Assert.That(result.Target, Is.EqualTo("_blank"));
+            Assert.That(result.Origin, Is.EqualTo(testNode));
+            Assert.That(result.RightOrigin, Is.EqualTo(testNode2));
+        }
+    }
 }

@@ -14,6 +14,8 @@ function registerAddLink() {
     const popover = document.getElementById(ADD_LINK_POPOVER);
     if (!addLinkButton || !popover) return;
     
+    const displayTextInput = popover.querySelector<HTMLElement>(".display-text");
+    
     addLinkButton.addEventListener("click", () => {
         const previousAnchor = document.querySelector<HTMLElement>("[data-link-anchor]");
         previousAnchor?.removeAttribute("data-link-anchor");
@@ -37,6 +39,9 @@ function registerAddLink() {
             clearFakeSelection();
         } else {
             showFakeSelection();
+            
+            const selection = getSelection();
+            displayTextInput!.style.display = selection?.isCollapsed ? "flex" : "none";
         }
     });
 

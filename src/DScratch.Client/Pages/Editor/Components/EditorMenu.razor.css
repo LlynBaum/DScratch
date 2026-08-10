@@ -12,3 +12,10 @@
 
     font-family: var(--editor-font-family);
 }
+
+.add-link-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    width: 100%;
+}
