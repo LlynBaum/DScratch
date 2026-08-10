@@ -1,5 +1,5 @@
 <button
-    class="icon-button @(IsActive ? "active" : "")"
+    class="icon-button @(IsActive ? "active" : "") @CssClass"
     @onmousedown:preventDefault="@PreventDefault"
     @onclick="OnClick"
     title="@Title"

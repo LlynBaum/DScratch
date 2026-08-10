@@ -43,7 +43,8 @@ async function handleInput(event: InputEvent) {
 
 function isInvalidUserAction() {
     const selection = window.getSelection();
-    if (!selection) return false;
+    if (!selection) return true;
+    if (!selection.anchorNode?.parentElement?.closest("[contenteditable]")) return true;
     
     return selection?.anchorNode === window.editor.node 
         || selection?.focusNode === window.editor.node;

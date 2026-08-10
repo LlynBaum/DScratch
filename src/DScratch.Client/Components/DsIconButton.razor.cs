@@ -24,6 +24,9 @@ public partial class DsIconButton : ComponentBase
 
     [Parameter]
     public string? Title { get; set; }
+    
+    [Parameter]
+    public string? CssClass { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }

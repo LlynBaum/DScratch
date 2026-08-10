@@ -24,11 +24,11 @@
     <DsIconButton id="add-link" Icon="EditorIcon.Link" PreventDefault Title="Add Link" />
 </nav>
 
-<DsPopover Id="add-link-popover" popover="hint">
+<DsPopover Id="add-link-popover" popover="hint" OnToggle="@(() => linkUrl = string.Empty)">
     <DsInput type="url" placeholder="https://example.com" @bind-Value="linkUrl" @onkeydown="HandleLinkKeyDown" />
     <DsButton Variant="DsButtonVariant.Primary" OnClick="@SubmitLinkAsync">Add Link</DsButton>
 </DsPopover>
 
 <DsPopover Id="link-settings-popover" popover="hint">
-    <DsIconButton OnClick="@RemoveLinkAsync" Icon="EditorIcon.LinkOff" Title="Remove Link" />
+    <DsIconButton CssClass="remove-link" OnClick="@RemoveLinkAsync" Icon="EditorIcon.LinkOff" Title="Remove Link" PreventDefault />
 </DsPopover>

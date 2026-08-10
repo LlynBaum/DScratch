@@ -39,11 +39,26 @@ function registerAddLink() {
             showFakeSelection();
         }
     });
+
+    popover.querySelector("button")?.addEventListener("click", closePopover);
+    popover.querySelector("input")?.addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            closePopover();
+        }
+    });
+    
+    function closePopover() {
+        const previousAnchor = document.querySelector<HTMLElement>("[data-link-anchor]");
+        previousAnchor?.removeAttribute("data-link-anchor");
+        previousAnchor?.style.setProperty("anchor-name", null);
+        popover?.hidePopover();
+    }
 }
 
 function registerLinkSettings() {
     const popover = document.getElementById(LINK_SETTINGS_POPOVER);
-    if(!popover) return;
+    if (!popover) return;
 
     document.addEventListener("selectionchange", () => {
         const previousAnchor = document.querySelector<HTMLElement>("[data-link-settings-anchor]");
@@ -63,7 +78,7 @@ function registerLinkSettings() {
         popover.showPopover();
     });
     
-    popover.querySelector("button")?.addEventListener("click", () => {
+    popover.querySelector<HTMLElement>(".remove-link")?.addEventListener("click", () => {
         const previousAnchor = document.querySelector<HTMLElement>("[data-link-settings-anchor]");
         previousAnchor?.removeAttribute("data-link-settings-anchor");
         previousAnchor?.style.setProperty("anchor-name", null);

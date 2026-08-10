@@ -14,4 +14,7 @@ public partial class DsPopover
     
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
+    
+    [Parameter]
+    public EventCallback OnToggle { get; set; }
 }

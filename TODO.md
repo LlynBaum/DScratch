@@ -66,6 +66,7 @@
 - [ ] Auto Gen "Table of Contents"
 - [ ] Images
 - [ ] Tables
+- [ ] Copy & Paste
 
 # Side Quests
 
