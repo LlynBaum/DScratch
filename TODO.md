@@ -1,9 +1,9 @@
 # Current
 
-- Opening dialog with Direction none missing
+- Whole popover thing is flaky with race conditions on in which order which event fire and trigger weird stuff.
 - E2E Tests for Links
 - CTRL hold to click a link
-- Option to choose target for link
+- Option to choose target for link. Edit and Add
 - Option to edit link url
 
 ## Weird Bugs

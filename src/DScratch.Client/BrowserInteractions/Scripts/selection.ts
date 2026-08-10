@@ -186,16 +186,24 @@ function handleSelectionChange() {
 
 export function showFakeSelection() {
     if (!CSS.highlights) return;
-    if (!lastEditorSelection || !lastEditorSelection.focusId) return; // TODO: when selection direction none idk what to do for now.
+    if (!lastEditorSelection || lastEditorSelection.direction === "none") return; // TODO: when selection direction none idk what to do for now.
     
     const anchorElement = findNode(lastEditorSelection.anchorId)!;
-    const focusElement = findNode(lastEditorSelection.focusId)!;
+    const focusElement = findNode(lastEditorSelection.focusId!)!;
     const anchor = findTextNodeAtOffset(anchorElement, lastEditorSelection.anchorOffset);
     const focus = findTextNodeAtOffset(focusElement, lastEditorSelection.focusOffset!);
     
+
+    const { start, end } = lastEditorSelection.direction === "forward"
+        ? { start: anchor, end: focus }
+            : { start: focus, end: anchor };
+    
+    if (!start.node || !end.node) return;
+
     const range = new Range();
-    range.setStart(anchor.node!, anchor.relativeOffset);
-    range.setEnd(focus.node!, focus.relativeOffset);
+    range.setStart(start.node, start.relativeOffset);
+    range.setEnd(end.node, end.relativeOffset);
+    
     const highlight = new Highlight(range);
     CSS.highlights.clear();
     CSS.highlights.set("ds-editor-selection", highlight);

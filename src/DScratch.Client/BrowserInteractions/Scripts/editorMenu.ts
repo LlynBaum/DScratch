@@ -46,7 +46,7 @@ function registerAddLink() {
     });
 
     popover.querySelector("button")?.addEventListener("click", closePopover);
-    popover.querySelector("input")?.addEventListener("keydown", e => {
+    popover.querySelector<HTMLInputElement>("input.link-url")?.addEventListener("keydown", e => {
         if (e.key === "Enter") {
             e.preventDefault();
             closePopover();
