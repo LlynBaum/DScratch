@@ -66,7 +66,7 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
             textRightOrigin = textNode;
         }
 
-        var linkNode = transaction.NodeFactory.LinkNode(textOrigin, textRightOrigin, command.Href);
+        var linkNode = transaction.NodeFactory.LinkNode(textOrigin, textRightOrigin, command.Href, command.Target);
         var text = transaction.NodeFactory.String(command.DisplayText, null, null);
         transaction.Insert(text, linkNode);
         transaction.Insert(linkNode, textOrigin?.Parent ?? textRightOrigin?.Parent!);
@@ -88,7 +88,7 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
                 : throw new ArgumentException($"Expected TextNode at {origin.Id}")
             : origin;
         
-        var startLink = transaction.NodeFactory.LinkNode(startNode?.Origin, null, command.Href);
+        var startLink = transaction.NodeFactory.LinkNode(startNode?.Origin, null, command.Href, command.Target);
         transaction.MoveRange(startNode, null, startLink, null);
         transaction.Insert(startLink, origin.Parent!);
         
@@ -97,7 +97,7 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
 
         while (currentBlock is not null && currentBlock.Id != endBlock.Id)
         {
-            var link = transaction.NodeFactory.LinkNode(null, null, command.Href);
+            var link = transaction.NodeFactory.LinkNode(null, null, command.Href, command.Target);
             transaction.Insert(link, currentBlock);
             transaction.MoveRange(currentBlock.FirstChild, null, link, null);
             
@@ -120,7 +120,7 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
             endNode = rightOrigin.Origin;
         }
         
-        var endLink = transaction.NodeFactory.LinkNode(null, endNode?.RightOrigin, command.Href);
+        var endLink = transaction.NodeFactory.LinkNode(null, endNode?.RightOrigin, command.Href, command.Target);
         transaction.MoveRange(null, endNode, endLink, null);
         transaction.Insert(endLink, endBlock);
 
@@ -146,7 +146,7 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         DNode rightOrigin)
     {
         var nodes = GetSelectedNodes(transaction, selectionInfo, origin, rightOrigin);
-        var linkNode = transaction.NodeFactory.LinkNode(nodes.Origin.Node?.Origin, nodes.RightOrigin.Node?.RightOrigin, command.Href);
+        var linkNode = transaction.NodeFactory.LinkNode(nodes.Origin.Node?.Origin, nodes.RightOrigin.Node?.RightOrigin, command.Href, command.Target);
         var parent = nodes.Origin.Node?.Parent ?? nodes.RightOrigin.Node?.Parent!;
         transaction.Insert(linkNode, parent);
         transaction.MoveRange(nodes.Origin.Node, nodes.RightOrigin.Node, linkNode, null);

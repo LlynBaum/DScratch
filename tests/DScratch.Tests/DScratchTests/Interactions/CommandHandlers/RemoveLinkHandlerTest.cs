@@ -31,7 +31,7 @@ public class RemoveLinkHandlerTest
         // Arrange
         var parent = builder.Paragraph(t =>
         {
-            t.Link("", tt => tt.Text("abc"));
+            t.Link("", configureChildNodes: tt => tt.Text("abc"));
         });
         
         // Act
@@ -66,7 +66,7 @@ public class RemoveLinkHandlerTest
         // Arrange
         var parent = builder.Paragraph(t =>
         {
-            t.Link("dscratch.darki.dev", tt =>
+            t.Link("dscratch.darki.dev", configureChildNodes: tt =>
             {
                 tt.Text("abc");
                 tt.Text("def");

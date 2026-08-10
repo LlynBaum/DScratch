@@ -22,7 +22,7 @@ internal static class NodeRenderExtensions
                         PreviousSiblingId: node.GetFirstActiveOrigin()?.Id.Value,
                         TagName: node.TagName,
                         NewNodeId: node.Id.Value, 
-                        Attributes: new Dictionary<string, string> { { "href", linkNode.Href } }),
+                        Attributes: new Dictionary<string, string> { { "href", linkNode.Href }, { "target", linkNode.Target } }),
                     node.ToMarkUpdate(),
                     ..node.ActiveChildNodes.SelectMany(c => c.ToInsertSteps())
                 ],

@@ -53,9 +53,9 @@ public class TreeBuilder : TreeBuilder.ITextTreeBuilder
         return text;
     }
 
-    public LinkNode Link(string href, Action<ITextTreeBuilder>? configureChildNodes = null)
+    public LinkNode Link(string href, string target = "_self", Action<ITextTreeBuilder>? configureChildNodes = null)
     {
-        var link = factory.LinkNode(null, null, href);
+        var link = factory.LinkNode(null, null, href, target);
         configureChildNodes?.Invoke(GetChildTreeBuilder(link));
         Append(link);
         return link;
@@ -129,7 +129,7 @@ public class TreeBuilder : TreeBuilder.ITextTreeBuilder
     {
         TextNode Text(string value);
 
-        LinkNode Link(string href, Action<ITextTreeBuilder>? configureChildNodes = null);
+        LinkNode Link(string href, string target = "_self", Action<ITextTreeBuilder>? configureChildNodes = null);
 
         TestInlineElementNode TestInlineElementNode(Action<TreeBuilder>? configureChildNodes = null);
     }

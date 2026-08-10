@@ -1,6 +1,5 @@
 # Current
 
-- The value of the Input field in the popover does not reset when closing or submitting it
 - Opening dialog with Direction none missing
 - E2E Tests for Links
 - CTRL hold to click a link

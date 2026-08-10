@@ -41,7 +41,7 @@ public class AddLinkHandlerTest
         
         // Act
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 1);
-        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href, displayText));
+        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href, "_self", displayText));
         
         // Arrange
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
@@ -91,7 +91,7 @@ public class AddLinkHandlerTest
         
         // Act
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 2);
-        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href, displayText));
+        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href, "_self", displayText));
         
         // Arrange
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
@@ -135,7 +135,7 @@ public class AddLinkHandlerTest
         
         // Act
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0);
-        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href, displayText));
+        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href, "_self", displayText));
         
         // Arrange
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
@@ -181,7 +181,7 @@ public class AddLinkHandlerTest
         
         // Act
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(originTarget.Id, 1, rightOriginTarget.Id, 1);
-        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href));
+        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href, "_self"));
         
         // Assert
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
@@ -235,7 +235,7 @@ public class AddLinkHandlerTest
         
         // Act
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(originTarget.Id, 1, rightOriginTarget.Id, 1);
-        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href));
+        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href, "_self"));
         builder.Print();
         
         // Assert

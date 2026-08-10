@@ -58,7 +58,7 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
     {
         if (!string.IsNullOrWhiteSpace(linkUrl))
         {
-            await dispatcher.DispatchAsync(new AddLinkCommand(linkUrl));
+            await dispatcher.DispatchAsync(new AddLinkCommand(linkUrl, "_self"));
         }
     }
 
