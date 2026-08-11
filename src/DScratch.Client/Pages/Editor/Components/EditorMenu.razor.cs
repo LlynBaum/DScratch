@@ -1,3 +1,5 @@
+using DScratch.Client.BrowserInteractions;
+using DScratch.Interactions;
 using DScratch.Interactions.CommandHandlers;
 using DScratch.Interactions.CommandHandlers.Commands;
 using DScratch.Interactions.UserStates;
@@ -6,7 +8,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace DScratch.Client.Pages.Editor.Components;
 
-public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateService userStateService) : IDisposable
+public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateService userStateService, DJsInvoker jsInvoker) : IDisposable
 {
     private const string DefaultTextColor = "#000000";
 
@@ -54,15 +56,16 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
 
     private string? displayText;
     private string linkUrl = string.Empty;
+    private bool hasDisplayText;
 
     private async Task SubmitLinkAsync()
     {
-        if (!string.IsNullOrWhiteSpace(linkUrl))
+        if (!IsInvalidLinkInput())
         {
             await dispatcher.DispatchAsync(new AddLinkCommand(linkUrl, "_self", displayText));
         }
     }
-
+    
     private async Task HandleLinkKeyDown(KeyboardEventArgs e)
     {
         if (e.Key == "Enter")
@@ -71,6 +74,24 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
         }
     }
 
+    private async Task OnAddLinkOpen()
+    {
+        var selection = await jsInvoker.GetEditorSelectionAsync();
+        hasDisplayText = selection?.Direction is SelectionDirection.None;
+    }
+
+    private bool IsInvalidLinkInput()
+    {
+        if (string.IsNullOrWhiteSpace(linkUrl)) return true;
+        
+        if (hasDisplayText)
+        {
+            return string.IsNullOrWhiteSpace(displayText);
+        }
+
+        return false;
+    }
+    
     private async Task RemoveLinkAsync()
     {
         await dispatcher.DispatchAsync(new RemoveLinkCommand());

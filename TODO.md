@@ -1,10 +1,14 @@
 # Current
 
-- No check that Display Text is not empty when submitting and it is displayed. Idk should probably be C# checking but do not know how. Maybe just ignore that event and not close the popover? that should work.
 - E2E Tests for Links
+  - Add Link on exiting Text
+  - Add Link with Display Text
+  - AddLink Button disabled when link empty (selection)
+  - AddLink Button disabled when link & display text empty (no selection)
 - CTRL hold to click a link
 - Option to choose target for link. Edit and Add
 - Option to edit link url
+- Insert Link Cursor Position doesn't work?
 
 ## Weird Bugs
 

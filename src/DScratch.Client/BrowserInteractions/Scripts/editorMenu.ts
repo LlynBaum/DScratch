@@ -15,26 +15,9 @@ function registerAddLink() {
     if (!addLinkButton || !popover) return;
     
     const displayTextInput = popover.querySelector<HTMLElement>(".display-text");
-    
-    addLinkButton.addEventListener("click", () => {
-        const previousAnchor = document.querySelector<HTMLElement>("[data-link-anchor]");
-        previousAnchor?.removeAttribute("data-link-anchor");
-        previousAnchor?.style.setProperty("anchor-name", null);
-        popover.hidePopover();
-        
-        const selection = getEditorSelection();
-        if (!selection) return;
-        
-        const targetElement = findNode(selection.focusId || selection.anchorId);
-        if (!targetElement) return;
-        
-        targetElement.style.setProperty("anchor-name", `--${ADD_LINK_POPOVER}`);
-        targetElement.setAttribute("data-link-anchor", "");
-        popover.showPopover();
-    });
 
     popover.addEventListener("beforetoggle", e => {
-        if(e.newState === "closed") {
+        if (e.newState === "closed") {
             restoreEditorSelection();
             clearFakeSelection();
         } else {
@@ -42,14 +25,16 @@ function registerAddLink() {
             
             const selection = getSelection();
             displayTextInput!.style.display = selection?.isCollapsed ? "flex" : "none";
+            positionPopover();
         }
     });
 
-    popover.querySelector("button")?.addEventListener("click", closePopover);
     popover.querySelector<HTMLInputElement>("input.link-url")?.addEventListener("keydown", e => {
         if (e.key === "Enter") {
             e.preventDefault();
-            closePopover();
+            if (!popover.querySelector("button")?.disabled) {
+                closePopover();
+            }
         }
     });
     
@@ -58,6 +43,21 @@ function registerAddLink() {
         previousAnchor?.removeAttribute("data-link-anchor");
         previousAnchor?.style.setProperty("anchor-name", null);
         popover?.hidePopover();
+    }
+    
+    function positionPopover() {
+        const previousAnchor = document.querySelector<HTMLElement>("[data-link-anchor]");
+        previousAnchor?.removeAttribute("data-link-anchor");
+        previousAnchor?.style.setProperty("anchor-name", null);
+
+        const selection = getEditorSelection();
+        if (!selection) return;
+
+        const targetElement = findNode(selection.focusId || selection.anchorId);
+        if (!targetElement) return;
+
+        targetElement.style.setProperty("anchor-name", `--${ADD_LINK_POPOVER}`);
+        targetElement.setAttribute("data-link-anchor", "");
     }
 }
 

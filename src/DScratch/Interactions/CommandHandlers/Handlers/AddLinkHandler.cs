@@ -36,11 +36,11 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
 
     private static void InsertWithDisplayText(ITransaction transaction, SelectionInfo selectionInfo, AddLinkCommand command)
     {
-        if (command.DisplayText is null)
+        if (string.IsNullOrEmpty(command.DisplayText))
         {
             throw new ArgumentException("Expected to have a DisplayText with SelectionDirection None.");
         }
-            
+        
         var target = transaction.Document.FindNode(selectionInfo.AnchorNodeId);
         if (target is null)
         {
