@@ -2,9 +2,9 @@
 
 - E2E Tests for Links
   - Add Link on exiting Text
-  - Add Link with Display Text
   - AddLink Button disabled when link empty (selection)
-  - AddLink Button disabled when link & display text empty (no selection)
+  - Remove Link
+  - Add Link on multi line
 - CTRL hold to click a link
 - Option to choose target for link. Edit and Add
 - Option to edit link url

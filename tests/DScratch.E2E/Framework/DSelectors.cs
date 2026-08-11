@@ -22,6 +22,8 @@ public static class DSelectors
         }
 
         public ILocator TextSpan => locator.Locator("span[data-dnode-id]");
+        
+        public ILocator Link => locator.Locator("a[data-dnode-id]");
     }
 
     extension(IPage page)

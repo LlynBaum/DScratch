@@ -38,4 +38,9 @@ public class EditorMenuLocator(ILocator editorMenu)
 
         await editorMenu.GetByTitle(headingName).ClickAsync();
     }
+
+    public async Task ClickAddLink()
+    {
+        await editorMenu.GetByTitle("Add Link").ClickAsync();
+    }
 }
