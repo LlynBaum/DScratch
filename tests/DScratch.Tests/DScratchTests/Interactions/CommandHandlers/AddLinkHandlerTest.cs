@@ -122,6 +122,44 @@ public class AddLinkHandlerTest
     }
     
     [Test]
+    public void AddsDisplayTextAsTextWithLink_InsertInEmptyBlock()
+    {
+        const string displayText = "DScratch";
+        
+        // Arrange
+        var parent = builder.Paragraph();
+        
+        // Act
+        var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 2);
+        var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href, "_self", displayText));
+        
+        // Arrange
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ChildNodes[0], Is.TypeOf<LinkNode>());
+        }
+
+        var linkNode = (LinkNode)parent.ChildNodes[0];
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(linkNode.Href, Is.EqualTo(Href));
+            Assert.That(linkNode.ChildNodes, Has.Count.EqualTo(1));
+        }
+        
+        Assert.That(linkNode.ChildNodes[0], Is.TypeOf<TextNode>());
+        Assert.That(((TextNode)linkNode.ChildNodes[0]).TextContent, Is.EqualTo(displayText));
+        
+        AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
+        {
+            AnchorId = linkNode.ChildNodes[0].Id.Value,
+            AnchorOffset = displayText.Length,
+            FocusId = linkNode.ChildNodes[0].Id.Value,
+            FocusOffset = displayText.Length
+        });
+    }
+    
+    [Test]
     public void AddsDisplayTextAsTextWithLink_InsertBeforeText()
     {
         const string displayText = "DScratch";

@@ -47,29 +47,36 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
             throw new ArgumentException($"Node with given id not found: {selectionInfo.AnchorId}");
         }
             
-        if (target is not TextNode textNode)
-        {
-            throw new ArgumentException("Expected TextNode at selection.");
-        }
-
+        
         DNode? textOrigin;
         DNode? textRightOrigin;
-            
-        if (selectionInfo.AnchorOffset > 0)
+        DNode parent;
+        
+        if (target is TextNode textNode)
         {
-            textOrigin = textNode;
-            textRightOrigin = transaction.SplitText(textNode, selectionInfo.AnchorOffset) ?? textNode.RightOrigin;
+            if (selectionInfo.AnchorOffset > 0)
+            {
+                textOrigin = textNode;
+                textRightOrigin = transaction.SplitText(textNode, selectionInfo.AnchorOffset) ?? textNode.RightOrigin;
+            }
+            else
+            {
+                textOrigin = textNode.Origin;
+                textRightOrigin = textNode;
+            }
+            parent = textOrigin?.Parent ?? textRightOrigin?.Parent!;
         }
         else
         {
-            textOrigin = textNode.Origin;
-            textRightOrigin = textNode;
+            textOrigin = null;
+            textRightOrigin = null;
+            parent = target;
         }
-
+        
         var linkNode = transaction.NodeFactory.LinkNode(textOrigin, textRightOrigin, command.Href, command.Target);
         var text = transaction.NodeFactory.String(command.DisplayText, null, null);
+        transaction.Insert(linkNode, parent);
         transaction.Insert(text, linkNode);
-        transaction.Insert(linkNode, textOrigin?.Parent ?? textRightOrigin?.Parent!);
         transaction.AddCursorPosition(text.Id, text.TextContent.Length);
     }
 

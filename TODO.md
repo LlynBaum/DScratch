@@ -1,6 +1,6 @@
 # Current
 
-- Whole popover thing is flaky with race conditions on in which order which event fire and trigger weird stuff.
+- No check that Display Text is not empty when submitting and it is displayed. Idk should probably be C# checking but do not know how. Maybe just ignore that event and not close the popover? that should work.
 - E2E Tests for Links
 - CTRL hold to click a link
 - Option to choose target for link. Edit and Add

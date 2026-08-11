@@ -1,5 +1,5 @@
 import {saveSelection, SelectionInfo, setSelectionSave} from "./selection";
-import {findTextNodeAtOffset} from "./nodeHelper";
+import * as nodeHelper from "./nodeHelper";
 
 enum StepType {
     insertText = "insertText",
@@ -90,7 +90,7 @@ function handleInsertTextStep(step: InsertTextStep) {
     const element = findNode(step.parentId);
     if (!element) return;
     
-    const { node, relativeOffset } = findTextNodeAtOffset(element, step.offset);
+    const { node, relativeOffset } = nodeHelper.findTextNodeAtOffset(element, step.offset);
     if(node) {
         const text = node.textContent;
         node.textContent = text!.slice(0, relativeOffset) + step.text + text!.slice(relativeOffset);
@@ -104,7 +104,7 @@ function handleDeleteTextStep(step: DeleteTextStep) {
     const element = findNode(step.parentId);
     if (!element) return;
     
-    const { node, relativeOffset } = findTextNodeAtOffset(element, step.offset);
+    const { node, relativeOffset } = nodeHelper.findTextNodeAtOffset(element, step.offset);
     if(node) {
         const text = node.textContent;
         node.textContent = text!.slice(0, relativeOffset) + text!.slice(relativeOffset + step.length);
@@ -170,9 +170,9 @@ function insertElement(element: Element, parent: Element, previousSibling: Eleme
 }
 
 function findNode(nodeId: string) : HTMLElement | null {
-    const element = document.querySelector<HTMLElement>(`[data-dnode-id='${nodeId}']`);
+    const element = nodeHelper.findNode(nodeId);
     if(!element) {
-        console.error(`Could not find node '${nodeId}'.`);
+        console.error(new Error(`Could not find node '${nodeId}'.`));
     }
     return element;
 }

@@ -8,7 +8,7 @@ internal static class NodeRenderExtensions
 {
     extension(DNode node)
     {
-        public StepDiff[] ToInsertSteps()
+        public StepDiff?[] ToInsertSteps()
         {
             var parentId = node.ParentElement?.Id ?? NodeId.Root;
             
@@ -58,7 +58,7 @@ internal static class NodeRenderExtensions
         }
     }
 
-    private static StepDiff[] InsertTextNode(TextNode textNode, NodeId parentId)
+    private static StepDiff?[] InsertTextNode(TextNode textNode, NodeId parentId)
     {
         return [
             new StepDiff.InsertElementDiff(

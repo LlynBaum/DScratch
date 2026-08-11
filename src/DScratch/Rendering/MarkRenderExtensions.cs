@@ -8,8 +8,9 @@ internal static class MarkRenderExtensions
 {
     extension(DNode node)
     {
-        public StepDiff ToMarkUpdate()
+        public StepDiff? ToMarkUpdate()
         {
+            if (node.Marks.Count == 0) return null;
             var marks = node.Marks.Select(m => m.Key.ToStyle(m.Value)).ToDictionary();
             return new StepDiff.UpdateMarksDiff(node.Id.Value, marks);
         }
