@@ -7,6 +7,8 @@ public static class DSelectors
 {
     extension(ILocator locator)
     {
+        public ILocator AllChildren => locator.Locator("> *");
+        
         public ILocator Paragraph => locator.Locator("p[data-dnode-id]");
         
         public ILocator Heading1 => locator.Locator("h1[data-dnode-id]");

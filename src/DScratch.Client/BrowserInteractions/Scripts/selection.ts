@@ -85,7 +85,7 @@ export function getEditorSelection(): SelectionInfo | null {
 }
 
 export function restoreEditorSelection() {
-    if(!lastEditorSelection) return;
+    if (!lastEditorSelection) return;
     setSelection(lastEditorSelection);
 }
 
@@ -119,6 +119,7 @@ export function setSelectionSave(selection: SelectionInfo) {
 }
 
 export function setSelection(selectionInfo: SelectionInfo) {
+    lastEditorSelection = selectionInfo;
     if (selectionInfo.direction === "none") {
         setCursorPosition(selectionInfo.anchorId, selectionInfo.anchorOffset);
     } else {
@@ -176,11 +177,14 @@ function setCursorSelection(selectionInfo: SelectionInfo) {
 
 let timeout: any;
 function handleSelectionChange() {
+    const selection = getEditorSelection();
+    if (selection) {
+        lastEditorSelection = selection;
+    }
+    
     clearTimeout(timeout);
     timeout = setTimeout(async () => {
-        const selection = getEditorSelection();
-        lastEditorSelection = selection;
-        await window.editor.bridgeReference?.invokeMethodAsync("OnSelectionChange", selection);
+        await window.editor.bridgeReference?.invokeMethodAsync("OnSelectionChange", lastEditorSelection);
     }, 100);
 }
 

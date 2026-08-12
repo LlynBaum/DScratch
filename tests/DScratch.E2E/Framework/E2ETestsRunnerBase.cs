@@ -26,6 +26,7 @@ public class E2ETestsRunnerBase
     {
         Page = await browser.NewPageAsync();
         SetDefaultExpectTimeout(DefaultTimeoutSec * 1000);
+        
         await Page.GotoAsync(E2ETestFixture.BaseUrl);
     }
 

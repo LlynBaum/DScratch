@@ -96,8 +96,8 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
             : origin;
         
         var startLink = transaction.NodeFactory.LinkNode(startNode?.Origin, null, command.Href, command.Target);
-        transaction.MoveRange(startNode, null, startLink, null);
         transaction.Insert(startLink, origin.Parent!);
+        transaction.MoveRange(startNode, null, startLink, null);
         
         var currentBlock = origin.GetNearestBlock().RightOrigin;
         var endBlock = rightOrigin.GetNearestBlock();
@@ -127,9 +127,9 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
             endNode = rightOrigin.Origin;
         }
         
-        var endLink = transaction.NodeFactory.LinkNode(null, endNode?.RightOrigin, command.Href, command.Target);
-        transaction.MoveRange(null, endNode, endLink, null);
+        var endLink = transaction.NodeFactory.LinkNode(endNode, endNode?.RightOrigin, command.Href, command.Target);
         transaction.Insert(endLink, endBlock);
+        transaction.MoveRange(null, endNode, endLink, null);
 
         if (endNode is null || SelectionHelper.NearestTextNode(endNode) is not { HasFoundNode: true } endTextNode)
         {
