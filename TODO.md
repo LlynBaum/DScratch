@@ -1,11 +1,8 @@
 # Current
 
-- E2E Tests for Links
-  - Remove Link
 - CTRL hold to click a link
 - Option to choose target for link. Edit and Add
 - Option to edit link url
-- Insert Link Cursor Position doesn't work?
 
 ## Weird Bugs
 
