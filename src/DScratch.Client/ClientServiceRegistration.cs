@@ -16,13 +16,6 @@ public static class ClientServiceRegistration
         services.AddScoped<DJsInvoker>();
         services.AddScoped<INodeIdGenerator, NodeIdGenerator>();
 
-        if (isDevelopment)
-        {
-            services.AddScoped<IEditorDebugService, EditorDebugService>();
-        }
-        else
-        {
-            services.AddScoped<IEditorDebugService, EditorDebugFake>();
-        }
+        services.AddScoped<IEditorDebugService, EditorDebugService>();
     }
 }
