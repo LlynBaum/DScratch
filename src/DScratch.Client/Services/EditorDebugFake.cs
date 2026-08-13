@@ -10,14 +10,24 @@ public class EditorDebugFake : IEditorDebugService
     public bool IsDebugEnabled
     {
         get => false;
-        set { }
+        set
+        {
+            _ = value;
+            DebugModeChanged?.Invoke();
+        }
     }
 
     public event Action? DocumentChanged;
     public event Action? SelectionChanged;
     public event Action? DebugModeChanged;
-    
-    public void NotifyDocumentChanged(DebugTransactionInfo debugTransactionResult) { }
 
-    public void NotifySelectionChange(SelectionInfo? selectionInfo) { }
+    public void NotifyDocumentChanged(DebugTransactionInfo debugTransactionResult)
+    {
+        DocumentChanged?.Invoke();
+    }
+
+    public void NotifySelectionChange(SelectionInfo? selectionInfo) 
+    { 
+        SelectionChanged?.Invoke();
+    }
 }

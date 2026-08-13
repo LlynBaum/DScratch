@@ -28,28 +28,37 @@ else
                         <span class="field-value monospace badge">@(LastKeyPressInfo.Data is null ? "null" : $"\"{LastKeyPressInfo.Data}\"")</span>
                     </div>
                     
-                    <div class="selection-field">
-                        <span class="field-label">Start Anchor ID</span>
-                        <span class="field-value monospace badge">@LastKeyPressInfo.Selection.AnchorId</span>
-                    </div>
-                    <div class="selection-field">
-                        <span class="field-label">Start Anchor Offset</span>
-                        <span class="field-value monospace badge font-bold">@LastKeyPressInfo.Selection.AnchorOffset</span>
-                    </div>
+                    @if (LastKeyPressInfo.Selection is not null)
+                    {
+                        <div class="selection-field">
+                            <span class="field-label">Start Anchor ID</span>
+                            <span class="field-value monospace badge">@LastKeyPressInfo.Selection.AnchorId</span>
+                        </div>
+                        <div class="selection-field">
+                            <span class="field-label">Start Anchor Offset</span>
+                            <span class="field-value monospace badge font-bold">@LastKeyPressInfo.Selection.AnchorOffset</span>
+                        </div>
 
-                    <div class="selection-field">
-                        <span class="field-label">Start Focus ID</span>
-                        <span class="field-value monospace badge">@LastKeyPressInfo.Selection.FocusId</span>
-                    </div>
-                    <div class="selection-field">
-                        <span class="field-label">Start Focus Offset</span>
-                        <span class="field-value monospace badge font-bold">@LastKeyPressInfo.Selection.FocusOffset</span>
-                    </div>
+                        <div class="selection-field">
+                            <span class="field-label">Start Focus ID</span>
+                            <span class="field-value monospace badge">@LastKeyPressInfo.Selection.FocusId</span>
+                        </div>
+                        <div class="selection-field">
+                            <span class="field-label">Start Focus Offset</span>
+                            <span class="field-value monospace badge font-bold">@LastKeyPressInfo.Selection.FocusOffset</span>
+                        </div>
 
-                    <div class="selection-field">
-                        <span class="field-label">Direction</span>
-                        <span class="field-value badge">@LastKeyPressInfo.Selection.Direction.ToString().ToLower()</span>
-                    </div>
+                        <div class="selection-field">
+                            <span class="field-label">Direction</span>
+                            <span class="field-value badge">@LastKeyPressInfo.Selection.Direction.ToString().ToLower()</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="selection-field">
+                            No Selection
+                        </div>
+                    }
                 </div>
             </div>
         }

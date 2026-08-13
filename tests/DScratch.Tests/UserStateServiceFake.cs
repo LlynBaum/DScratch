@@ -36,6 +36,6 @@ public class UserStateServiceFake : IUserStateService
 
     public void UpdateState(DNode? node)
     {
-        throw new NotImplementedException();
+        OnStateChange?.Invoke();
     }
 }
