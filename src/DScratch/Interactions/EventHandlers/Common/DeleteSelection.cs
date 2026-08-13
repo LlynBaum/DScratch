@@ -16,7 +16,7 @@ public static class DeleteSelection
     
     private static NodeSearchResult<TextNode> SearchSelectedNodes(KeyPressInfo keyPressInfo, ITransaction transaction)
     {
-        var (originOffset, rightOriginOffset) = keyPressInfo.Selection.GetConvertedOffsets();
+        var (originOffset, rightOriginOffset) = keyPressInfo.Selection!.GetConvertedOffsets();
         var (originId, rightOriginId) = keyPressInfo.Selection.GetConvertedNodeIds();
         var origin = transaction.Document.FindNode(originId);
         var rightOrigin = transaction.Document.FindNode(rightOriginId);
