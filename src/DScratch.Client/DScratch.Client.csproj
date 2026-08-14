@@ -25,7 +25,16 @@
       <ProjectReference Include="..\DScratch\DScratch.csproj" />
     </ItemGroup>
 
-    <Target Name="BundleJS" BeforeTargets="Build">
+    <ItemGroup>
+        <!-- Track TypeScript sources for incremental builds -->
+        <TypeScriptFiles Include="BrowserInteractions/Scripts/**/*.ts;BrowserInteractions/Scripts/package.json" />
+    </ItemGroup>
+
+    <!-- Run before static web asset discovery and publish pipelines -->
+    <Target Name="BundleJS"
+            BeforeTargets="ResolveStaticWebAssetsInputs;ResolveProjectStaticWebAssets;BeforeBuild;BeforePublish"
+            Inputs="@(TypeScriptFiles)"
+            Outputs="wwwroot/js/editor.bundle.js">
         <Exec Command="npm install" WorkingDirectory="BrowserInteractions/Scripts" />
         <Exec Command="npx esbuild editor.ts --bundle --outfile=../../wwwroot/js/editor.bundle.js" WorkingDirectory="BrowserInteractions/Scripts" />
     </Target>
