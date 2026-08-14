@@ -1,4 +1,4 @@
-import {getEditorSelection, snapshotSelection} from "./selection";
+import {getEditorSelection, snapshotSelection} from "../selection";
 
 const handledTypes = [
     "insertText",

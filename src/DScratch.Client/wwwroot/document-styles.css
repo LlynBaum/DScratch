@@ -52,5 +52,17 @@
     a {
         color: var(--link-color);
         text-decoration: underline;
+        cursor: text;
+        
+        :active {
+            cursor: text;
+        }
+    }
+    
+    &[data-link-click-active] a {
+        cursor: pointer;
+        :active {
+            cursor: pointer;
+        }
     }
 }

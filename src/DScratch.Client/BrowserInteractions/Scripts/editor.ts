@@ -1,5 +1,6 @@
-import { applyTransaction, TransactionResult } from "./transaction";
-import { registerInput } from "./inputs";
+import { applyTransaction, TransactionResult } from "./renderEngine/transaction";
+import { registerInput } from "./userInteraction/inputs";
+import { registerLinks } from "./userInteraction/links";
 import {getEditorSelection, registerSelection, SelectionInfo} from "./selection";
 import {registerMenu} from "./editorMenu";
 
@@ -31,6 +32,7 @@ function initEditor(dotNetRef: any) {
     registerInput();
     registerSelection();
     registerMenu();
+    registerLinks();
     
     const rootNode = editor.querySelector<HTMLElement>("[data-dnode-id='Root']");
     rootNode?.setAttribute("contenteditable", '');

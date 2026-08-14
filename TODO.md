@@ -1,6 +1,5 @@
 # Current
 
-- CTRL hold to click a link
 - Option to choose target for link. Edit and Add
 - Option to edit link url
 

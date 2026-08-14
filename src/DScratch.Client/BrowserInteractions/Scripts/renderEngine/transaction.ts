@@ -1,5 +1,5 @@
-import {saveSelection, SelectionInfo, setSelectionSave} from "./selection";
-import * as nodeHelper from "./nodeHelper";
+import {saveSelection, SelectionInfo, setSelectionSave} from "../selection";
+import * as nodeHelper from "../nodeHelper";
 
 enum StepType {
     insertText = "insertText",
