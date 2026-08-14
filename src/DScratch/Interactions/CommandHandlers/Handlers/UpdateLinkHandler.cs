@@ -4,9 +4,9 @@ using DScratch.Transactions;
 
 namespace DScratch.Interactions.CommandHandlers.Handlers;
 
-public class RemoveLinkHandler(IDScratchService dScratchService) : CommandBase<RemoveLinkCommand>(dScratchService)
+public class UpdateLinkHandler(IDScratchService dScratchService) : CommandBase<UpdateLinkCommand>(dScratchService)
 {
-    protected override void Handle(ITransaction transaction, SelectionInfo selectionInfo, RemoveLinkCommand command)
+    protected override void Handle(ITransaction transaction, SelectionInfo selectionInfo, UpdateLinkCommand command)
     {
         if (selectionInfo.Direction is not SelectionDirection.None)
         {
@@ -19,12 +19,11 @@ public class RemoveLinkHandler(IDScratchService dScratchService) : CommandBase<R
         {
             return;
         }
-        
-        transaction.MoveRange(linkNode.FirstChild, linkNode.LastChild, linkNode.Parent!, linkNode.Origin);
-        transaction.Delete(linkNode);
-        transaction.AddCursorPosition(selectionInfo.AnchorNodeId, selectionInfo.AnchorOffset);
-    }
 
+        // TODO: CreateUpdate creates a delegate that the transaction will execute and sends a updateAttribute step to TS.
+        transaction.UpdateAttributes(linkNode, linkNode.CreateUpdate(command.Href, command.Target));
+    }
+    
     private static LinkNode? FindLinkNode(DNode? node)
     {
         return node switch

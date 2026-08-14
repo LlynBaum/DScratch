@@ -46,5 +46,6 @@
 </DsPopover>
 
 <DsPopover Id="link-settings-popover" popover="hint">
+    <DsInput class="link-url" type="url" placeholder="https://example.com" @onchange="@UrlChangedAsync" />
     <DsIconButton CssClass="remove-link" OnClick="@RemoveLinkAsync" Icon="EditorIcon.LinkOff" Title="Remove Link" PreventDefault />
 </DsPopover>
