@@ -3,7 +3,7 @@ using DScratch.Client.BrowserInteractions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-namespace DScratch.Client.Pages.Editor.Components;
+namespace DScratch.Client.Pages.Editor;
 
 public partial class RegisterEditor(
     BrowserEventHelper browserEventHelper,

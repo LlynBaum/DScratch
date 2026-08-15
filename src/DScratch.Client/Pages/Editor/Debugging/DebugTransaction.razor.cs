@@ -1,8 +1,8 @@
 using DScratch.Client.Services;
-using DScratch.Transactions;
 using DScratch.Interactions;
+using DScratch.Transactions;
 
-namespace DScratch.Client.Pages.Editor.Components.Debugging;
+namespace DScratch.Client.Pages.Editor.Debugging;
 
 public partial class DebugTransaction(IEditorDebugService editorDebugService) : IDisposable
 {

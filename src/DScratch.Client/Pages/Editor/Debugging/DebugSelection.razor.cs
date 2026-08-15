@@ -3,7 +3,7 @@ using DScratch.Interactions;
 using DScratch.Interactions.UserStates;
 using DScratch.Marks;
 
-namespace DScratch.Client.Pages.Editor.Components.Debugging;
+namespace DScratch.Client.Pages.Editor.Debugging;
 
 public partial class DebugSelection(IEditorDebugService editorDebugService, IUserStateService userStateService) : IDisposable
 {

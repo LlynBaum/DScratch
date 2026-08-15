@@ -368,7 +368,7 @@ Handling selection during asynchronous WASM round-trips is critical:
 
 [`DScratch.Host`](file:///home/darki/Developement/DScratch/src/DScratch.Host/Program.cs) serves as the host application:
 - **Interactive WebAssembly with SSR**: Blazor renders the initial shell on the server before client-side WebAssembly takes over.
-- **Static Asset Optimization**: Delivers compiled WASM binaries, CSS design tokens (`editor-tokens.css`, `document-styles.css`), and bundled JavaScript (`editor.js`).
+- **Static Asset Optimization**: Delivers compiled WASM binaries, CSS design tokens (`editor-tokens.css`, `document-styles.css`), and bundled JavaScript (`editor.bundle.js`).
 - **P2P Collaboration Hub (Roadmap)**: Designed to host WebRTC signaling and peer discovery for distributed, multi-user document collaboration.
 
 ---

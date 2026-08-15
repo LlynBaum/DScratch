@@ -1,7 +1,7 @@
 using DScratch.Client.Services;
 using DScratch.Nodes;
 
-namespace DScratch.Client.Pages.Editor.Components.Debugging;
+namespace DScratch.Client.Pages.Editor.Debugging;
 
 public partial class DebugTreePanel(IEditorDebugService debugService, IDScratchService dScratchService) : IDisposable
 {

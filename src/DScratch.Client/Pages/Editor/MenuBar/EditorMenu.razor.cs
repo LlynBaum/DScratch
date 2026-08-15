@@ -4,10 +4,9 @@ using DScratch.Interactions.CommandHandlers;
 using DScratch.Interactions.CommandHandlers.Commands;
 using DScratch.Interactions.UserStates;
 using DScratch.Marks;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace DScratch.Client.Pages.Editor.Components;
+namespace DScratch.Client.Pages.Editor.MenuBar;
 
 public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateService userStateService, DJsInvoker jsInvoker) : IDisposable
 {

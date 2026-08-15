@@ -1,7 +1,7 @@
 using DScratch.Client.Services;
 using Microsoft.AspNetCore.Components;
 
-namespace DScratch.Client.Pages.Editor.Components.Debugging;
+namespace DScratch.Client.Pages.Editor.Debugging;
 
 public partial class DebugPanel(IEditorDebugService debugService)
 {

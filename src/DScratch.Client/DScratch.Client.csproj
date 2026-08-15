@@ -26,5 +26,19 @@
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>
     </ItemGroup>
+    
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Pages\Editor\Components\Debugging\DebugPanel.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Editor\Components\Debugging\DebugSelection.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Editor\Components\Debugging\DebugTransaction.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Editor\Components\Debugging\DebugTreePanel.razor" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <AdditionalFiles Include="Pages\Editor\Debugging\DebugPanel.razor" />
+      <AdditionalFiles Include="Pages\Editor\Debugging\DebugSelection.razor" />
+      <AdditionalFiles Include="Pages\Editor\Debugging\DebugTransaction.razor" />
+      <AdditionalFiles Include="Pages\Editor\Debugging\DebugTreePanel.razor" />
+    </ItemGroup>
 
 </Project>
