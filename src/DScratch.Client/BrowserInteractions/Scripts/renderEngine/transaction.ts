@@ -119,7 +119,6 @@ function handleDeleteTextStep(step: DeleteTextStep) {
         node.textContent = text!.slice(0, relativeOffset) + text!.slice(relativeOffset + step.length);
     }
     
-    // TODO: test if that really works. Should clean up any empty spans
     if (element.childNodes.length == 0) {
         element.remove();
     }

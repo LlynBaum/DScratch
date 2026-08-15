@@ -1,6 +1,12 @@
 # Current
 
-- Pages?
+- E2E Tests
+- Transaction collects modified nodes
+- Greedy Flow 
+  - Move page down if overflow
+  - Move stuff up if underflow
+- Page Number API for C#
+- Hard Page Break (CTRL + Enter, UI)
 
 # Features
 
@@ -61,6 +67,7 @@
   - Those are Document Settings, not CRDT. So it is a global setting you can choose without effecting the tree.
   - Those settings are implicitly included in the rendering of marks. So will go over the UpdateMarkDiff, but are not on the nodes itself
 - [ ] Auto Gen "Table of Contents"
+  - Updates only on Printing, Preview or explicitly told by user
 - [ ] Images
 - [ ] Tables
 - [ ] Copy & Paste
