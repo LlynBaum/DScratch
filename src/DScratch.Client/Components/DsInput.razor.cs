@@ -1,16 +1,45 @@
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components;
 
 namespace DScratch.Client.Components;
 
-public partial class DsInput : InputBase<string>
+public partial class DsInput
 {
-    private string CombinedCssClass => $"ds-input {CssClass}".Trim();
+    [Parameter]
+    public string? CssClass { get; set; }
 
-    protected override bool TryParseValueFromString(string? value, [NotNullWhen(true)] out string? result, [NotNullWhen(false)] out string? validationErrorMessage)
+    [Parameter] 
+    public string? Value { get; set; }
+    
+    [Parameter] 
+    public BindEvent BindEvent { get; set; } = BindEvent.Input;
+    
+    [Parameter]
+    public EventCallback<string?> ValueChanged { get; set; }
+    
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object?>? AdditionalAttributes { get; set; }
+    
+    private string CombinedCssClass => $"ds-input {CssClass}".TrimEnd();
+
+    private async Task HandleInput(ChangeEventArgs e)
     {
-        result = value ?? string.Empty;
-        validationErrorMessage = null;
-        return true;
+        if (BindEvent == BindEvent.Input)
+        {
+            await ValueChanged.InvokeAsync(e.Value?.ToString());
+        }
     }
+
+    private async Task HandleChange(ChangeEventArgs e)
+    {
+        if (BindEvent == BindEvent.Change)
+        {
+            await ValueChanged.InvokeAsync(e.Value?.ToString());
+        }
+    }
+}
+
+public enum BindEvent
+{
+    Change,
+    Input
 }

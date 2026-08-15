@@ -32,8 +32,8 @@
 </nav>
 
 <DsPopover Id="add-link-popover" popover="hint" OnToggle="@ResetLinkValues">
-    <DsInput class="display-text" placeholder="Display Text" @bind-Value="displayText" />
-    <DsInput class="link-url" type="url" placeholder="https://example.com" @bind-Value="linkUrl" @onkeydown="HandleLinkKeyDown"/>
+    <DsInput CssClass="display-text" placeholder="Display Text" @bind-Value="displayText" />
+    <DsInput CssClass="link-url" type="url" placeholder="https://example.com" @bind-Value="linkUrl" @onkeydown="HandleLinkKeyDown"/>
     <span class="add-link-button">
         <DsButton Variant="DsButtonVariant.Primary"
                   OnClick="@SubmitLinkAsync"
@@ -46,6 +46,12 @@
 </DsPopover>
 
 <DsPopover Id="link-settings-popover" popover="hint">
-    <input class="link-url" type="url" placeholder="https://example.com" @onchange="@UrlChangedAsync" />
-    <DsIconButton CssClass="remove-link" OnClick="@RemoveLinkAsync" Icon="EditorIcon.LinkOff" Title="Remove Link" PreventDefault />
+    <DsInput CssClass="link-url" 
+             type="url"
+             placeholder="https://example.com"
+             BindEvent="BindEvent.Change"
+             Value="@editLink"
+             ValueChanged="@UrlChangedAsync" />
+    
+    <DsIconButton CssClass="remove-link" OnClick="@RemoveLinkAsync" Icon="EditorIcon.LinkOff" Title="Remove Link" PreventDefault/>
 </DsPopover>

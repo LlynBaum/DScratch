@@ -1,4 +1,9 @@
-import {clearFakeSelection, getEditorSelection, restoreEditorSelection, showFakeSelection} from "./selection";
+import {
+    clearFakeSelection,
+    getEditorSelection,
+    restoreEditorSelection,
+    showFakeSelection
+} from "./selection";
 import {findNode} from "./nodeHelper";
 
 const ADD_LINK_POPOVER = "add-link-popover";
@@ -66,27 +71,55 @@ function registerLinkSettings() {
     if (!popover) return;
 
     document.addEventListener("selectionchange", () => {
-        const previousAnchor = document.querySelector<HTMLElement>("[data-link-settings-anchor]");
-        previousAnchor?.removeAttribute("data-link-settings-anchor");
-        previousAnchor?.style.setProperty("anchor-name", null);
-        popover.hidePopover();
         
         const selection = getEditorSelection();
-        if (!selection || selection.direction !== "none") return;
+        if (!selection || selection.direction !== "none") {
+            hideLinkSettings();
+            return;
+        }
         
         const targetElement = findNode(selection.anchorId);
-        if (!targetElement) return;
-        if(!targetElement.closest("a")) return;
+        if (!targetElement) {
+            hideLinkSettings();
+            return;
+        }
+        
+        const link = targetElement.closest("a");
+        if(!link) {
+            hideLinkSettings();
+            return;
+        }
+
+        if (!targetElement.hasAttribute("data-link-settings-anchor")) {
+            const previousAnchor = document.querySelector<HTMLElement>("[data-link-settings-anchor]");
+            previousAnchor?.removeAttribute("data-link-settings-anchor");
+            previousAnchor?.style.setProperty("anchor-name", null);
+
+            popover.querySelector<HTMLInputElement>("input.link-url")!.value = link.href;
+        }
         
         targetElement.style.setProperty("anchor-name", `--${LINK_SETTINGS_POPOVER}`);
         targetElement.setAttribute("data-link-settings-anchor", "");
         popover.showPopover();
     });
     
-    popover.querySelector<HTMLElement>(".remove-link")?.addEventListener("click", () => {
+    popover.addEventListener("beforetoggle", e => {
+        if (e.newState !== "open") return;
+
+        const selection = getEditorSelection();
+        if (!selection || selection.direction !== "none") return;
+        const targetElement = findNode(selection.anchorId);
+        const link = targetElement?.closest("a");
+        if(!link) return;
+        popover.querySelector<HTMLInputElement>("input.link-url")!.value = link.href;
+    });
+    
+    popover.querySelector<HTMLElement>(".remove-link")?.addEventListener("click", hideLinkSettings);
+
+    function hideLinkSettings() {
         const previousAnchor = document.querySelector<HTMLElement>("[data-link-settings-anchor]");
         previousAnchor?.removeAttribute("data-link-settings-anchor");
         previousAnchor?.style.setProperty("anchor-name", null);
-        popover.hidePopover();
-    });
+        popover?.hidePopover();
+    }
 }

@@ -4,7 +4,6 @@ using DScratch.Interactions.CommandHandlers;
 using DScratch.Interactions.CommandHandlers.Commands;
 using DScratch.Interactions.UserStates;
 using DScratch.Marks;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace DScratch.Client.Pages.Editor.Components;
@@ -93,11 +92,11 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
         return false;
     }
 
-    private async Task UrlChangedAsync(ChangeEventArgs e)
+    private string? editLink;
+    private async Task UrlChangedAsync(string? url)
     {
-        var url = e.Value?.ToString();
+        editLink = url;
         if (string.IsNullOrWhiteSpace(url)) return;
-        
         await dispatcher.DispatchAsync(new UpdateLinkCommand(url, null));
     }
     

@@ -1,10 +1,10 @@
 @namespace DScratch.Client.Components
-@inherits Microsoft.AspNetCore.Components.Forms.InputBase<string>
 
 <input
     type="text"
-    @oninput="EventCallback.Factory.CreateBinder(this, value => CurrentValueAsString = value, CurrentValueAsString ?? string.Empty)"
+    value="@Value"
+    @oninput="HandleInput"
+    @onchange="HandleChange"
     @attributes="AdditionalAttributes"
     class="@CombinedCssClass"
-    value="@CurrentValueAsString"
 />
