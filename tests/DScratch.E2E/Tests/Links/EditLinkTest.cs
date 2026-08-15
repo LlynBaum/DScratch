@@ -51,4 +51,28 @@ public class EditLinkTest : PlaywrightTestBase
             Assert.That(selection.AnchorOffset, Is.EqualTo(3));
         }
     }
+    
+    [Test]
+    public async Task UpdateHrefOnLink_ChangesHrefOnLinkElementInDocument()
+    {
+        await Editor.ClickAsync();
+        await Page.TypeAtCurrentCursorAsync("abc");
+        
+        await Expect(Page.Locator("#link-settings-popover")).Not.ToBeVisibleAsync();
+         
+        await EditorMenu.ClickAddLink();
+        await Page.Locator("#add-link-popover .display-text").FillAsync("test");
+        await Page.Locator("#add-link-popover .link-url").FillAsync("https://dscratch.darki.dev");
+        await Page.Locator("#add-link-popover button").ClickAsync();
+        
+        await Expect(Editor.Paragraph.Link).ToHaveAttributeAsync("href", "https://dscratch.darki.dev");
+        
+        await Expect(Page.Locator("#link-settings-popover")).ToBeVisibleAsync();
+        await Expect(Page.Locator("#link-settings-popover").Locator("input.link-url")).ToHaveValueAsync("https://dscratch.darki.dev/");
+        await Page.Locator("#link-settings-popover").Locator("input.link-url").ClearAsync();
+        await Page.Locator("#link-settings-popover").Locator("input.link-url").FillAsync("https://www.google.com");
+        await Editor.ClickAsync();
+        
+        await Expect(Editor.Paragraph.Link).ToHaveAttributeAsync("href", "https://www.google.com");
+    }
 }

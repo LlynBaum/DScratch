@@ -7,7 +7,8 @@ enum StepType {
     insertElement = "insertElement",
     deleteElement = "deleteElement",
     move = "move",
-    updateMarks = "updateMarks"
+    updateMarks = "updateMarks",
+    updateAttributes = "updateAttributes"
 }
 
 export interface TransactionResult {
@@ -54,6 +55,11 @@ interface UpdateMarksStep extends Step {
     marks: { [key:string] : string; };
 }
 
+interface UpdateAttributes extends Step {
+    nodeId: string;
+    attributes: { [key:string] : string; };
+}
+
 export function applyTransaction(transaction: TransactionResult){
     saveSelection();
     transaction.steps.map(handle);
@@ -81,6 +87,9 @@ export function applyTransaction(transaction: TransactionResult){
                 break;
             case StepType.updateMarks:
                 handleUpdateMarksStep(step as UpdateMarksStep);
+                break;
+            case StepType.updateAttributes:
+                handleUpdateAttributesStep(step as UpdateAttributes);
                 break;
         }
     }
@@ -150,6 +159,20 @@ function handleUpdateMarksStep(step: UpdateMarksStep) {
     for (let marksKey in step.marks) {
         // @ts-ignore / we trust C# to send valid CSS properties
         element.style[marksKey] = step.marks[marksKey];
+    }
+}
+
+function handleUpdateAttributesStep(step: UpdateAttributes) {
+    const element = findNode(step.nodeId);
+    if(!element) return;
+    
+    for (let attr in element.attributes) {
+        if (attr === "style" || attr === "data-dnode-id") continue;
+        element.removeAttribute(attr);
+    }
+    
+    for (let attr in step.attributes){
+        element.setAttribute(attr, step.attributes[attr]);
     }
 }
 

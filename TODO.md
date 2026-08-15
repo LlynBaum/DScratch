@@ -1,8 +1,5 @@
 # Current
 
-- Option to edit link url
-  - [ ] Add Transaction step
-  - [ ] write Test
 - Option to choose target for link. Edit and Add
 
 # Features
@@ -20,10 +17,15 @@
   - Also add this to the debug viewer.
 - [x] Inline Elements
   - For now just Links 
-  - Later maybe like Chapter References and co.
 - [ ] Pages
   - [ ] Extend Layout Engine to automatically make pages
   - [ ] Add custom page Break UI & CTRL + Enter
+  - [ ] New Line without new Paragraph (currently backend can't hanlde so browser just does stuff and backend breaks)
+- [ ] Save Files and Load them
+  - [ ] Starting Page
+    - Create new Document
+    - Load Document
+  - [ ] Save file
 - [ ] Shortcut Keys
   - Keybinds like CTRL + B for Bold
   - CTRL + K for Links
@@ -52,6 +54,7 @@
 - [ ] Header & Footer
   - Maybe opt out option
 - [ ] Auto Page Numbering
+- [ ] Chapter References and co.
 - [ ] Default Formating for Block type settings
   - Things like text spacing and so on are done here. Do not support as mark for now
   - Those are Document Settings, not CRDT. So it is a global setting you can choose without effecting the tree.
@@ -60,6 +63,7 @@
 - [ ] Images
 - [ ] Tables
 - [ ] Copy & Paste
+- [ ] PDF Export
 
 # Side Quests
 

@@ -53,5 +53,7 @@
              Value="@editLink"
              ValueChanged="@UrlChangedAsync" />
     
+    Open in new Tab: <input class="link-target" type="checkbox" value="@isTargetBlank" @onchange="OnTargetChangeAsync" />
+    
     <DsIconButton CssClass="remove-link" OnClick="@RemoveLinkAsync" Icon="EditorIcon.LinkOff" Title="Remove Link" PreventDefault/>
 </DsPopover>
