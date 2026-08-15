@@ -1,0 +1,18 @@
+@using DScratch.Client.Components
+<DsPopover Id="link-settings-popover" popover="hint">
+    <DsInput CssClass="link-url" 
+             type="url"
+             placeholder="https://example.com"
+             BindEvent="BindEvent.Change"
+             Value="@editLink"
+             ValueChanged="@UrlChangedAsync" />
+    
+    <div class="popover-row">
+        <DsCheckbox CssClass="edit-link-target"
+                    Label="Open in new Tab"
+                    Value="@isEditTargetBlank"
+                    ValueChanged="@OnEditTargetChangeAsync" />
+        
+        <DsIconButton CssClass="remove-link" OnClick="@RemoveLinkAsync" Icon="EditorIcon.LinkOff" Title="Remove Link" PreventDefault/>
+    </div>
+</DsPopover>

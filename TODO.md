@@ -1,7 +1,5 @@
 # Current
 
-- Clean Up
-  - Editor Menu Separate int subcomponents
 - Pages?
 
 # Features

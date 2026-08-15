@@ -1,0 +1,14 @@
+.popover-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: var(--editor-spacing-md);
+}
+
+.add-link-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}

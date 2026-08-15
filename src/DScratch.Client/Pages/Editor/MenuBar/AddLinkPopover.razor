@@ -1,0 +1,18 @@
+@using DScratch.Client.Components
+
+<DsPopover Id="add-link-popover" popover="hint" OnToggle="@OnPopoverToggleAsync">
+    <DsInput CssClass="display-text" placeholder="Display Text" @bind-Value="displayText" />
+    <DsInput CssClass="link-url" type="url" placeholder="https://example.com" @bind-Value="linkUrl" @onkeydown="HandleLinkKeyDown"/>
+    <div class="popover-row">
+        <DsCheckbox CssClass="link-target" Label="Open in new Tab" @bind-Value="isTargetBlank" />
+        <span class="add-link-button">
+            <DsButton Variant="DsButtonVariant.Primary"
+                      OnClick="@SubmitLinkAsync"
+                      Disabled="@IsInvalidLinkInput()"
+                      command="hide-popover" 
+                      commandfor="add-link-popover">
+                Add Link
+            </DsButton>
+        </span>
+    </div>
+</DsPopover>
