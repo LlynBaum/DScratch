@@ -1,0 +1,28 @@
+@namespace DScratch.Client.Components
+
+<label class="@CombinedWrapperCssClass" for="@Id">
+    <span class="ds-checkbox-input-wrapper">
+        <input
+            id="@Id"
+            type="checkbox"
+            checked="@Value"
+            disabled="@Disabled"
+            @onchange="HandleChange"
+            @attributes="AdditionalAttributes"
+            class="@CombinedInputCssClass"
+        />
+        <span class="ds-checkbox-control" aria-hidden="true">
+            <svg class="ds-checkbox-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.5 8.5L6.5 11.5L12.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </span>
+    </span>
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <span class="ds-checkbox-label">@Label</span>
+    }
+    else if (ChildContent != null)
+    {
+        <span class="ds-checkbox-label">@ChildContent</span>
+    }
+</label>

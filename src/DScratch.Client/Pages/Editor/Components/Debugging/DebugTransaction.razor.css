@@ -274,3 +274,39 @@
     margin-left: 3px;
     font-weight: 500;
 }
+
+.step-badge.updateattributes {
+    background-color: #e0f2fe;
+    border-color: #bae6fd;
+    color: #0369a1;
+}
+
+.attributes-list {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    vertical-align: middle;
+}
+
+.attribute-pill {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 1px 6px;
+    line-height: 1.2;
+}
+
+.attribute-key {
+    color: #0369a1;
+    font-weight: 600;
+}
+
+.attribute-val {
+    color: #0d9488;
+    margin-left: 2px;
+    font-weight: 500;
+}
+

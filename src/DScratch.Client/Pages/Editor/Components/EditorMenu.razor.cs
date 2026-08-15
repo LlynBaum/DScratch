@@ -58,12 +58,14 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
     private string? displayText;
     private string linkUrl = string.Empty;
     private bool hasDisplayText;
+    private bool isTargetBlank;
 
     private async Task SubmitLinkAsync()
     {
         if (!IsInvalidLinkInput())
         {
-            await dispatcher.DispatchAsync(new AddLinkCommand(linkUrl, "_self", displayText));
+            var target = isTargetBlank ? "_blank" : "_self";
+            await dispatcher.DispatchAsync(new AddLinkCommand(linkUrl, target, displayText));
         }
     }
     
@@ -101,11 +103,10 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
         await dispatcher.DispatchAsync(new UpdateLinkCommand(url, null));
     }
 
-    private bool isTargetBlank = false;
-    private async Task OnTargetChangeAsync(ChangeEventArgs e)
+    private bool isEditTargetBlank;
+    private async Task OnEditTargetChangeAsync(bool isBlank)
     {
-        if (e.Value is not bool isBlank) return;
-        isTargetBlank = isBlank;
+        isEditTargetBlank = isBlank;
         var target = isBlank ? "_blank" : "_self";
         await dispatcher.DispatchAsync(new UpdateLinkCommand(null, target));
     }
@@ -119,6 +120,7 @@ public partial class EditorMenu(IEditorCommandDispatcher dispatcher, IUserStateS
     {
         linkUrl = string.Empty;
         displayText = null;
+        isTargetBlank = false;
     }
 
     private void OnActiveMarksChanged()

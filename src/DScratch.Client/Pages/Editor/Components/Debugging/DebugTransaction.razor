@@ -157,6 +157,19 @@ else
                                                 <span class="data-label">New:</span> <span class="data-value text-indigo-600">@insertElement.NewNodeId</span>
                                                 <span class="data-separator">|</span>
                                                 <span class="data-tag">&lt;@insertElement.TagName&gt;</span>
+                                                @if (insertElement.Attributes is { Count: > 0 })
+                                                {
+                                                    <span class="data-separator">|</span>
+                                                    <span class="data-label">Attrs:</span>
+                                                    <div class="attributes-list">
+                                                        @foreach (var (key, value) in insertElement.Attributes)
+                                                        {
+                                                            <span class="attribute-pill">
+                                                                <span class="attribute-key">@key</span>=<span class="attribute-val">"@value"</span>
+                                                            </span>
+                                                        }
+                                                    </div>
+                                                }
                                             </div>
                                             break;
                                         case StepDiff.DeleteElement:
@@ -188,6 +201,29 @@ else
                                                         {
                                                             <span class="mark-pill">
                                                                 <span class="mark-key">@key</span>: <span class="mark-val">@value</span>
+                                                            </span>
+                                                        }
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-slate-400 italic">none</span>
+                                                }
+                                            </div>
+                                            break;
+                                        case StepDiff.UpdateAttributes:
+                                            var updateAttr = (StepDiff.UpdateAttributesDiff)step;
+                                            <div class="diff-data-line">
+                                                <span class="data-label">Target:</span> <span class="data-value font-bold">@updateAttr.NodeId</span>
+                                                <span class="data-separator">|</span>
+                                                <span class="data-label">Attrs:</span>
+                                                @if (updateAttr.Attributes.Count > 0)
+                                                {
+                                                    <div class="attributes-list">
+                                                        @foreach (var (key, value) in updateAttr.Attributes)
+                                                        {
+                                                            <span class="attribute-pill">
+                                                                <span class="attribute-key">@key</span>=<span class="attribute-val">"@value"</span>
                                                             </span>
                                                         }
                                                     </div>
