@@ -1,6 +1,8 @@
 # Current
 
 - Option to edit link url
+  - [ ] Add Transaction step
+  - [ ] write Test
 - Option to choose target for link. Edit and Add
 
 # Features

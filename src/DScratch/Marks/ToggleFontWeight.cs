@@ -16,7 +16,7 @@ public class ToggleFontWeight : IMarkCommand
         {
             foreach (var node in nodes)
             {
-                transaction.AddMark(node, MarkKey.FontWeight, fontWeight);
+                transaction.UpdateMark(node, MarkKey.FontWeight, fontWeight);
             } 
         }
     }

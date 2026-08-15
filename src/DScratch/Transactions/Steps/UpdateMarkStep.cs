@@ -2,9 +2,9 @@ using DScratch.Marks;
 using DScratch.Nodes;
 using DScratch.Rendering;
 
-namespace DScratch.Transactions.Steps.Marks;
+namespace DScratch.Transactions.Steps;
 
-public class AddMarkStep(DNode node, MarkKey key, string value) : IStep
+public class UpdateMarkStep(DNode node, MarkKey key, string value) : IStep
 {
     public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
     {

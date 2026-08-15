@@ -4,7 +4,6 @@ using DScratch.Marks;
 using DScratch.Nodes;
 using DScratch.Rendering;
 using DScratch.Transactions.Steps;
-using DScratch.Transactions.Steps.Marks;
 
 namespace DScratch.Transactions;
 
@@ -71,14 +70,14 @@ internal class DTransaction(
         steps.Add(new ReplaceNodeStep(node, copyFactory));
     }
 
-    public void AddMark(DNode node, MarkKey key, string value)
+    public void UpdateMark(DNode node, MarkKey key, string value)
     { 
-        steps.Add(new AddMarkStep(node, key, value));
+        steps.Add(new UpdateMarkStep(node, key, value));
     }
 
-    public void RemoveMark(DNode node, MarkKey key)
+    public void UpdateAttributes(DNode node, Action update)
     {
-        steps.Add(new RemoveMarkStep(node, key));
+        steps.Add(new UpdateAttributeStep(node, update));
     }
 
     public void AddCursorPosition(NodeId nodeId, int offset)

@@ -20,7 +20,7 @@ public class SetColorTest
         new SetColor("#fff").Execute(transactionSpy, node1, [node1, node2, node3]);
         
         // Assert
-        Assert.That(transactionSpy.AddMarkCalls, Is.EquivalentTo([
+        Assert.That(transactionSpy.UpdateMarkCalls, Is.EquivalentTo([
             (node1, MarkKey.Color, "#fff"),
             (node2, MarkKey.Color, "#fff"),
             (node3, MarkKey.Color, "#fff"),
@@ -44,7 +44,7 @@ public class SetColorTest
         new SetColor("#fff").Execute(transactionSpy, node1, [node1, node2, node3]);
         
         // Assert
-        Assert.That(transactionSpy.AddMarkCalls, Is.EquivalentTo([
+        Assert.That(transactionSpy.UpdateMarkCalls, Is.EquivalentTo([
             (node1, MarkKey.Color, "#fff"),
             (node2, MarkKey.Color, "#fff"),
             (node3, MarkKey.Color, "#fff"),

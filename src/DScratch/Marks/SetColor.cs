@@ -10,7 +10,7 @@ public class SetColor(string color) : IMarkCommand
     {
         foreach (var node in nodes)
         {
-            transaction.AddMark(node, MarkKey.Color, color);
+            transaction.UpdateMark(node, MarkKey.Color, color);
         }
     }
 

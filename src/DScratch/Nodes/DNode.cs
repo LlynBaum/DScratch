@@ -164,4 +164,6 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
             childNode.Parent = this;
         }
     }
+
+    public virtual Dictionary<string, string>? GetAttributes() => null;
 }

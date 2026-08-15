@@ -5,7 +5,6 @@ using DScratch.Tests.Helpers;
 using DScratch.Tests.Helpers.TestNodes;
 using DScratch.Transactions;
 using DScratch.Transactions.Steps;
-using DScratch.Transactions.Steps.Marks;
 
 namespace DScratch.Tests.DScratchTests.Transactions;
 
@@ -124,25 +123,25 @@ public class DTransactionTests
     }
 
     [Test]
-    public void AddMark_AddsAddMarkStep()
+    public void UpdateMark_AddsUpdateMarkStep()
     {
         // Act
-        Transaction.AddMark(new TextNode(new NodeId("", 1), null, null), MarkKey.Color, "");
+        Transaction.UpdateMark(new TextNode(new NodeId("", 1), null, null), MarkKey.Color, "");
 
         // Assert
         Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
-        Assert.That(Transaction.Steps.Single(), Is.TypeOf<AddMarkStep>());
+        Assert.That(Transaction.Steps.Single(), Is.TypeOf<UpdateMarkStep>());
     }
     
     [Test]
-    public void RemoveMark_AddsRemoveMarkStep()
+    public void UpdateAttributes_AddsUpdateAttributeStep()
     {
         // Act
-        Transaction.RemoveMark(new TextNode(new NodeId("", 1), null, null), MarkKey.FontWeight);
+        Transaction.UpdateAttributes(new TextNode(new NodeId("", 1), null, null), () => {});
 
         // Assert
         Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
-        Assert.That(Transaction.Steps.Single(), Is.TypeOf<RemoveMarkStep>());
+        Assert.That(Transaction.Steps.Single(), Is.TypeOf<UpdateAttributeStep>());
     }
     
     [Test]

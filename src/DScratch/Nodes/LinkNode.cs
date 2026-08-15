@@ -20,4 +20,22 @@ public class LinkNode(NodeId id, DNode? origin, DNode? rightOrigin, string href,
         
         base.InsertChild(node);
     }
+
+    public Action CreateUpdate(string? commandHref, string? commandTarget)
+    {
+        return () =>
+        {
+            Href = commandHref ?? Href;
+            Target = commandTarget ?? Target;
+        };
+    }
+
+    public override Dictionary<string, string>? GetAttributes()
+    {
+        return new Dictionary<string, string>
+        {
+            { "href", Href },
+            { "target", Target }
+        };
+    }
 }

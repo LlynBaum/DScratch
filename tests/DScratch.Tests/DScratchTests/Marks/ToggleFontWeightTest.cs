@@ -20,7 +20,7 @@ public class ToggleFontWeightTest
         new ToggleFontWeight().Execute(transactionSpy, node1, [node1, node2, node3]);
         
         // Assert
-        Assert.That(transactionSpy.AddMarkCalls, Is.EquivalentTo([
+        Assert.That(transactionSpy.UpdateMarkCalls, Is.EquivalentTo([
             (node1, MarkKey.FontWeight, "bold"),
             (node2, MarkKey.FontWeight, "bold"),
             (node3, MarkKey.FontWeight, "bold"),
@@ -44,7 +44,7 @@ public class ToggleFontWeightTest
         new ToggleFontWeight().Execute(transactionSpy, node1, [node1, node2, node3]);
         
         // Assert
-        Assert.That(transactionSpy.AddMarkCalls, Is.EquivalentTo([
+        Assert.That(transactionSpy.UpdateMarkCalls, Is.EquivalentTo([
             (node1, MarkKey.FontWeight, "bold"),
             (node2, MarkKey.FontWeight, "bold"),
             (node3, MarkKey.FontWeight, "bold"),
@@ -68,7 +68,7 @@ public class ToggleFontWeightTest
         new ToggleFontWeight().Execute(transactionSpy, node1, [node1, node2, node3]);
         
         // Assert
-        Assert.That(transactionSpy.AddMarkCalls, Is.EquivalentTo([
+        Assert.That(transactionSpy.UpdateMarkCalls, Is.EquivalentTo([
             (node1, MarkKey.FontWeight, "normal"),
             (node2, MarkKey.FontWeight, "normal"),
             (node3, MarkKey.FontWeight, "normal"),

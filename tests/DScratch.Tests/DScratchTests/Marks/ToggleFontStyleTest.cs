@@ -20,7 +20,7 @@ public class ToggleFontStyleTest
         new ToggleFontStyle().Execute(transactionSpy, node1, [node1, node2, node3]);
         
         // Assert
-        Assert.That(transactionSpy.AddMarkCalls, Is.EquivalentTo([
+        Assert.That(transactionSpy.UpdateMarkCalls, Is.EquivalentTo([
             (node1, MarkKey.FontStyle, "italic"),
             (node2, MarkKey.FontStyle, "italic"),
             (node3, MarkKey.FontStyle, "italic"),
@@ -44,7 +44,7 @@ public class ToggleFontStyleTest
         new ToggleFontStyle().Execute(transactionSpy, node1, [node1, node2, node3]);
         
         // Assert
-        Assert.That(transactionSpy.AddMarkCalls, Is.EquivalentTo([
+        Assert.That(transactionSpy.UpdateMarkCalls, Is.EquivalentTo([
             (node1, MarkKey.FontStyle, "italic"),
             (node2, MarkKey.FontStyle, "italic"),
             (node3, MarkKey.FontStyle, "italic"),
@@ -68,7 +68,7 @@ public class ToggleFontStyleTest
         new ToggleFontStyle().Execute(transactionSpy, node1, [node1, node2, node3]);
         
         // Assert
-        Assert.That(transactionSpy.AddMarkCalls, Is.EquivalentTo([
+        Assert.That(transactionSpy.UpdateMarkCalls, Is.EquivalentTo([
             (node1, MarkKey.FontStyle, "normal"),
             (node2, MarkKey.FontStyle, "normal"),
             (node3, MarkKey.FontStyle, "normal"),

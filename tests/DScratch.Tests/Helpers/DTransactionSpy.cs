@@ -16,8 +16,8 @@ public class DTransactionSpy : ITransaction, IRunningTransaction
     public List<(DNode? Start, DNode? End)> DeleteRangeCalls { get; } = [];
     public List<(DNode? Start, DNode? End, DNode TargetParent, DNode? TargetOrigin)> MoveRangeCalls { get; } = [];
     public List<(DNode Node, Func<DNode, DNode> CopyFactory)> ReplaceNodeCalls { get; } = [];
-    public List<(DNode Node, MarkKey Key, string Value)> AddMarkCalls { get; } = [];
-    public List<(DNode Node, MarkKey Key)> RemoveMarkCalls { get; } = [];
+    public List<(DNode Node, MarkKey Key, string Value)> UpdateMarkCalls { get; } = [];
+    public List<(DNode Node, Action update)> UpdateAttributesCalls { get; } = [];
     public List<(NodeId NodeId, int Offset)> AddCursorPositionNodeIdCalls { get; } = [];
     public List<SelectionInfo> AddCursorPositionSelectionCalls { get; } = [];
     public List<(TextNode Node, int Offset)> SplitTextCalls { get; } = [];
@@ -70,14 +70,14 @@ public class DTransactionSpy : ITransaction, IRunningTransaction
         ReplaceNodeCalls.Add((node, copyFactory));
     }
 
-    public void AddMark(DNode node, MarkKey key, string value)
+    public void UpdateMark(DNode node, MarkKey key, string value)
     {
-        AddMarkCalls.Add((node, key, value));
+        UpdateMarkCalls.Add((node, key, value));
     }
 
-    public void RemoveMark(DNode node, MarkKey key)
+    public void UpdateAttributes(DNode node, Action update)
     {
-        RemoveMarkCalls.Add((node, key));
+        UpdateAttributesCalls.Add((node, update));
     }
 
     public void AddCursorPosition(NodeId nodeId, int offset)

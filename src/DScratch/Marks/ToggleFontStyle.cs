@@ -16,7 +16,7 @@ public class ToggleFontStyle : IMarkCommand
         {
             foreach (var node in nodes)
             {
-                transaction.AddMark(node, MarkKey.FontStyle, fontStyle);
+                transaction.UpdateMark(node, MarkKey.FontStyle, fontStyle);
             } 
         }
     }

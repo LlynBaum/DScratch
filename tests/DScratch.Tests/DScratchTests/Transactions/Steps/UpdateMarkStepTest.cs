@@ -2,11 +2,11 @@ using DScratch.Marks;
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
 using DScratch.Transactions;
-using DScratch.Transactions.Steps.Marks;
+using DScratch.Transactions.Steps;
 
-namespace DScratch.Tests.DScratchTests.Transactions.Steps.Marks;
+namespace DScratch.Tests.DScratchTests.Transactions.Steps;
 
-public class AddMarkStepTest
+public class UpdateMarkStepTest
 {
     private TestTransactionFake transactionFake;
 
@@ -23,7 +23,7 @@ public class AddMarkStepTest
         var node = new TextNode(new NodeId("", 1), null, null);
         
         // Act
-        var step = new AddMarkStep(node, MarkKey.FontWeight, "bold");
+        var step = new UpdateMarkStep(node, MarkKey.FontWeight, "bold");
         var result = step.Execute(transactionFake, null!);
         
         // Assert
