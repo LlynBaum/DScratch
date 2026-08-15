@@ -1,6 +1,8 @@
 # Current
 
-- Option to choose target for link. Edit and Add
+- Clean Up
+  - Editor Menu Separate int subcomponents
+- Pages?
 
 # Features
 
@@ -35,6 +37,7 @@
   - Middle
   - Justify
 - [ ] Text Size
+  - CSS LineHeight = TextSize * MagicNumber
 - [ ] Text Decoration
   - Strike
   - Underline
@@ -64,6 +67,8 @@
 - [ ] Tables
 - [ ] Copy & Paste
 - [ ] PDF Export
+- [ ] Zoom into Document
+  - via CSS Transform
 
 # Side Quests
 
