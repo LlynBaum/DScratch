@@ -1,12 +1,14 @@
 # Current
 
-- E2E Tests
-- Transaction collects modified nodes
-- Greedy Flow 
-  - Move page down if overflow
-  - Move stuff up if underflow
-- Page Number API for C#
-- Hard Page Break (CTRL + Enter, UI)
+- [ ] E2E Tests
+- [ ] Transaction collects modified nodes
+- [ ] Greedy Flow 
+  - [ ] Move page down if overflow
+  - [ ] Move stuff up if underflow
+- [ ] Page Number API for C#
+  - [x] TS part
+  - [ ] implement C# side 
+- [ ] Hard Page Break (CTRL + Enter, UI)
 
 # Features
 

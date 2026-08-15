@@ -3,12 +3,14 @@ import { registerInput } from "./userInteraction/inputs";
 import { registerLinks } from "./userInteraction/links";
 import {getEditorSelection, registerSelection, SelectionInfo} from "./selection";
 import {registerMenu} from "./editorMenu";
+import * as renderEngineApi from "./renderEngine/renderEngineApi";
 
 interface Editor {
     bridgeReference: any;
     initialize: (dotNetRef: any) => void;
     applyTransaction: (transaction: TransactionResult) => void;
     getEditorSelection: () => SelectionInfo | null;
+    getPageNumbers: renderEngineApi.GetPageNumbersFunc
     node: HTMLElement | null;
 }
 
@@ -67,5 +69,6 @@ window.editor = {
     initialize: initEditor,
     applyTransaction: applyTransaction,
     getEditorSelection: getEditorSelection,
+    getPageNumbers: renderEngineApi.getPageNumbers,
     node: null,
 };
