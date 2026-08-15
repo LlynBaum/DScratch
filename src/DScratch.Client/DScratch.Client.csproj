@@ -7,6 +7,8 @@
         <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
         <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
         <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+        
+        <FrontendRootPath>$(MSBuildProjectDirectory)/BrowserInteractions/Scripts/</FrontendRootPath>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,29 +16,15 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Update="Scripts/editor.js">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\..\tools\DScratch.TreeVisualizers\DScratch.TreeVisualizers.csproj" />
       <ProjectReference Include="..\DScratch\DScratch.csproj" />
     </ItemGroup>
-
+    
     <ItemGroup>
-        <!-- Track TypeScript sources for incremental builds -->
-        <TypeScriptFiles Include="BrowserInteractions/Scripts/**/*.ts;BrowserInteractions/Scripts/package.json" />
+        <PackageReference Include="Swallow.MSBuild.Node" Version="0.3.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>build</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
-
-    <!-- Run before static web asset discovery and publish pipelines -->
-    <Target Name="BundleJS"
-            BeforeTargets="ResolveStaticWebAssetsInputs;ResolveProjectStaticWebAssets;BeforeBuild;BeforePublish"
-            Inputs="@(TypeScriptFiles)"
-            Outputs="wwwroot/js/editor.bundle.js">
-        <Exec Command="npm install" WorkingDirectory="BrowserInteractions/Scripts" />
-        <Exec Command="npx esbuild editor.ts --bundle --outfile=../../wwwroot/js/editor.bundle.js" WorkingDirectory="BrowserInteractions/Scripts" />
-    </Target>
 
 </Project>

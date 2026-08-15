@@ -1,5 +1,6 @@
 # Current
 
+- Fix TypeScript budnling. There was a problem with publishing and bundling ts. I think it must be compied to the obj folder not wwwroot. But maybe look at swallow again or even use swallow?
 - Option to edit link url
 - Option to choose target for link. Edit and Add
 

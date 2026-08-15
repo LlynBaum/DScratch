@@ -55,5 +55,4 @@ nunit-*.xml
 
 # JS
 
-editor.bundle.js
 node_modules

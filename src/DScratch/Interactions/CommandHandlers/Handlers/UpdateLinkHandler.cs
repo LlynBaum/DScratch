@@ -21,7 +21,7 @@ public class UpdateLinkHandler(IDScratchService dScratchService) : CommandBase<U
         }
 
         // TODO: CreateUpdate creates a delegate that the transaction will execute and sends a updateAttribute step to TS.
-        transaction.UpdateAttributes(linkNode, linkNode.CreateUpdate(command.Href, command.Target));
+        //transaction.UpdateAttributes(linkNode, linkNode.CreateUpdate(command.Href, command.Target));
     }
     
     private static LinkNode? FindLinkNode(DNode? node)
