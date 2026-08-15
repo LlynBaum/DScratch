@@ -112,7 +112,7 @@ function registerLinkSettings() {
         const link = targetElement?.closest("a");
         if(!link) return;
         popover.querySelector<HTMLInputElement>("input.link-url")!.value = link.href;
-        popover.querySelector<HTMLInputElement>("input.link-target")!.checked = link.target === "_blank";
+        popover.querySelector<HTMLInputElement>("input.edit-link-target")!.checked = link.target === "_blank";
     });
     
     popover.querySelector<HTMLElement>(".remove-link")?.addEventListener("click", hideLinkSettings);

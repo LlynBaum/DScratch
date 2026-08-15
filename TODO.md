@@ -69,6 +69,7 @@
 
 - Color picker is not that nice to use. The cursor is not set anymore when clicking away. So you have to remember where you were
 - Make Popovers better, they are in middle of page when targeting a paragraph
+- why does selection with the mouse not work that great? Is that just a problem of the browser?
 
 # Improvements?
 

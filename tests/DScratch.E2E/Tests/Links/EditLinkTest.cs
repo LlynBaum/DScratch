@@ -75,4 +75,27 @@ public class EditLinkTest : PlaywrightTestBase
         
         await Expect(Editor.Paragraph.Link).ToHaveAttributeAsync("href", "https://www.google.com");
     }
+    
+    [Test]
+    public async Task UpdateTargetOnLink_ChangesTargetOnLinkElementInDocument()
+    {
+        await Editor.ClickAsync();
+        await Page.TypeAtCurrentCursorAsync("abc");
+        
+        await Expect(Page.Locator("#link-settings-popover")).Not.ToBeVisibleAsync();
+         
+        await EditorMenu.ClickAddLink();
+        await Page.Locator("#add-link-popover .display-text").FillAsync("test");
+        await Page.Locator("#add-link-popover .link-url").FillAsync("https://dscratch.darki.dev");
+        await Page.Locator("#add-link-popover button").ClickAsync();
+        
+        await Expect(Editor.Paragraph.Link).ToHaveAttributeAsync("target", "_self");
+        
+        await Expect(Page.Locator("#link-settings-popover")).ToBeVisibleAsync();
+        await Expect(Page.Locator("#link-settings-popover").Locator("input.edit-link-target")).Not.ToBeCheckedAsync();
+        await Page.Locator("#link-settings-popover").Locator("input.edit-link-target").CheckAsync();
+        await Expect(Page.Locator("#link-settings-popover").Locator("input.edit-link-target")).ToBeCheckedAsync();
+        
+        await Expect(Editor.Paragraph.Link).ToHaveAttributeAsync("target", "_blank");
+    }
 }

@@ -22,6 +22,7 @@ public class AddLinkTest : PlaywrightTestBase
         await Expect(Page.Locator("#add-link-popover button")).ToBeDisabledAsync();
         await Page.Locator("#add-link-popover .link-url").FillAsync("dscratch.darki.dev");
         await Expect(Page.Locator("#add-link-popover button")).Not.ToBeDisabledAsync();
+        await Expect(Page.Locator("#add-link-popover input.link-target")).Not.ToBeCheckedAsync();
 
         await Page.Locator("#add-link-popover button").ClickAsync();
         await Expect(Page.Locator("#add-link-popover")).Not.ToBeVisibleAsync();
@@ -29,6 +30,7 @@ public class AddLinkTest : PlaywrightTestBase
         await Expect(Editor.Paragraph).ToContainTextAsync("abctest");
         await Expect(Editor.Paragraph.TextSpan.First).ToHaveTextAsync("abc");
         await Expect(Editor.Paragraph.Link).ToHaveAttributeAsync("href", "dscratch.darki.dev");
+        await Expect(Editor.Paragraph.Link).ToHaveAttributeAsync("target", "_self");
         await Expect(Editor.Paragraph.Link.TextSpan).ToHaveTextAsync("test");
         
         var selection = await GetCursorPositionAsync();
@@ -143,5 +145,24 @@ public class AddLinkTest : PlaywrightTestBase
             Assert.That(selection.FocusId, Is.EqualTo("Darki-10"));
             Assert.That(selection.FocusOffset, Is.EqualTo(1));
         }
+    }
+    
+    [Test]
+    public async Task AddLinkWithTargetNewTab_AddsLinkWithTargetBlank()
+    {
+        await Editor.ClickAsync();
+        await Page.TypeAtCurrentCursorAsync("abc");
+
+        await EditorMenu.ClickAddLink();
+
+        await Expect(Page.Locator("#add-link-popover")).ToBeVisibleAsync();
+        await Expect(Page.Locator("#add-link-popover input.link-target")).ToBeVisibleAsync();
+
+        await Page.Locator("#add-link-popover .display-text").FillAsync("test");
+        await Page.Locator("#add-link-popover .link-url").FillAsync("dscratch.darki.dev");
+        await Page.Locator("#add-link-popover input.link-target").CheckAsync();
+        await Page.Locator("#add-link-popover button").ClickAsync();
+
+        await Expect(Editor.Paragraph.Link).ToHaveAttributeAsync("target", "_blank");
     }
 }
