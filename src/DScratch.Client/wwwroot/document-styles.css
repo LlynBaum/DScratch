@@ -4,6 +4,21 @@
         
         color: var(--text-color-default);
     }
+
+    .page {
+        background-color: var(--editor-bg-surface);
+        height: 80%;
+        width: min-content;
+        aspect-ratio: 210 / 297; /* A4 Aspect Ratio */
+        border: 1px solid var(--editor-border-color);
+        
+        & > div {
+            box-sizing: border-box;
+            padding: var(--paper-padding);
+            height: 100%;
+            width: 100%;
+        }
+    }
     
     * {
         outline: none;

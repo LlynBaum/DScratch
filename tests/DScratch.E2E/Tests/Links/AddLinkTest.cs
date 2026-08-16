@@ -8,7 +8,7 @@ public class AddLinkTest : PlaywrightTestBase
     [Test]
     public async Task AddLink_SelectionDirectionNone_AddsLinkWithDisplayText()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("abc");
 
         await EditorMenu.ClickAddLink();
@@ -27,11 +27,11 @@ public class AddLinkTest : PlaywrightTestBase
         await Page.Locator("#add-link-popover button").ClickAsync();
         await Expect(Page.Locator("#add-link-popover")).Not.ToBeVisibleAsync();
 
-        await Expect(Editor.Paragraph).ToContainTextAsync("abctest");
-        await Expect(Editor.Paragraph.TextSpan.First).ToHaveTextAsync("abc");
-        await Expect(Editor.Paragraph.Link).ToHaveAttributeAsync("href", "dscratch.darki.dev");
-        await Expect(Editor.Paragraph.Link).ToHaveAttributeAsync("target", "_self");
-        await Expect(Editor.Paragraph.Link.TextSpan).ToHaveTextAsync("test");
+        await Expect(DefaultPage.Paragraph).ToContainTextAsync("abctest");
+        await Expect(DefaultPage.Paragraph.TextSpan.First).ToHaveTextAsync("abc");
+        await Expect(DefaultPage.Paragraph.Link).ToHaveAttributeAsync("href", "dscratch.darki.dev");
+        await Expect(DefaultPage.Paragraph.Link).ToHaveAttributeAsync("target", "_self");
+        await Expect(DefaultPage.Paragraph.Link.TextSpan).ToHaveTextAsync("test");
         
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -45,7 +45,7 @@ public class AddLinkTest : PlaywrightTestBase
     [Test]
     public async Task AddLink_WithSelection_AddsLink()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("abc");
 
         await Page.SetSelectionAsync(new SelectionInfo
@@ -69,11 +69,11 @@ public class AddLinkTest : PlaywrightTestBase
         await Page.Locator("#add-link-popover button").ClickAsync();
         await Expect(Page.Locator("#add-link-popover")).Not.ToBeVisibleAsync();
 
-        await Expect(Editor.Paragraph.AllChildren).ToHaveCountAsync(2);
-        await Expect(Editor.Paragraph).ToContainTextAsync("abc");
-        await Expect(Editor.Paragraph.TextSpan.First).ToHaveTextAsync("a");
-        await Expect(Editor.Paragraph.Link).ToHaveAttributeAsync("href", "dscratch.darki.dev");
-        await Expect(Editor.Paragraph.Link.TextSpan).ToHaveTextAsync("bc");
+        await Expect(DefaultPage.Paragraph.AllChildren).ToHaveCountAsync(2);
+        await Expect(DefaultPage.Paragraph).ToContainTextAsync("abc");
+        await Expect(DefaultPage.Paragraph.TextSpan.First).ToHaveTextAsync("a");
+        await Expect(DefaultPage.Paragraph.Link).ToHaveAttributeAsync("href", "dscratch.darki.dev");
+        await Expect(DefaultPage.Paragraph.Link.TextSpan).ToHaveTextAsync("bc");
         
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -89,7 +89,7 @@ public class AddLinkTest : PlaywrightTestBase
     [Test]
     public async Task AddLink_WithSelectionMultiline_AddsLink()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("abc");
         await Page.EnterAsync();
         await Page.TypeAtCurrentCursorAsync("def");
@@ -117,24 +117,24 @@ public class AddLinkTest : PlaywrightTestBase
         await Page.Locator("#add-link-popover button").ClickAsync();
         await Expect(Page.Locator("#add-link-popover")).Not.ToBeVisibleAsync();
 
-        await Expect(Editor.Paragraph).ToHaveCountAsync(3);
-        await Expect(Editor.Paragraph.Nth(0)).ToContainTextAsync("abc");
-        await Expect(Editor.Paragraph.Nth(1)).ToContainTextAsync("def");
-        await Expect(Editor.Paragraph.Nth(2)).ToContainTextAsync("ghi");
+        await Expect(DefaultPage.Paragraph).ToHaveCountAsync(3);
+        await Expect(DefaultPage.Paragraph.Nth(0)).ToContainTextAsync("abc");
+        await Expect(DefaultPage.Paragraph.Nth(1)).ToContainTextAsync("def");
+        await Expect(DefaultPage.Paragraph.Nth(2)).ToContainTextAsync("ghi");
 
-        await Expect(Editor.Paragraph.Nth(0).AllChildren).ToHaveCountAsync(2);
-        await Expect(Editor.Paragraph.Nth(0).TextSpan.First).ToHaveTextAsync("a");
-        await Expect(Editor.Paragraph.Nth(0).Link).ToHaveAttributeAsync("href", "dscratch.darki.dev");
-        await Expect(Editor.Paragraph.Nth(0).Link.TextSpan).ToHaveTextAsync("bc");
+        await Expect(DefaultPage.Paragraph.Nth(0).AllChildren).ToHaveCountAsync(2);
+        await Expect(DefaultPage.Paragraph.Nth(0).TextSpan.First).ToHaveTextAsync("a");
+        await Expect(DefaultPage.Paragraph.Nth(0).Link).ToHaveAttributeAsync("href", "dscratch.darki.dev");
+        await Expect(DefaultPage.Paragraph.Nth(0).Link.TextSpan).ToHaveTextAsync("bc");
         
-        await Expect(Editor.Paragraph.Nth(1).AllChildren).ToHaveCountAsync(1);
-        await Expect(Editor.Paragraph.Nth(1).Link).ToHaveAttributeAsync("href", "dscratch.darki.dev");
-        await Expect(Editor.Paragraph.Nth(1).Link.TextSpan).ToHaveTextAsync("def");
+        await Expect(DefaultPage.Paragraph.Nth(1).AllChildren).ToHaveCountAsync(1);
+        await Expect(DefaultPage.Paragraph.Nth(1).Link).ToHaveAttributeAsync("href", "dscratch.darki.dev");
+        await Expect(DefaultPage.Paragraph.Nth(1).Link.TextSpan).ToHaveTextAsync("def");
         
-        await Expect(Editor.Paragraph.Nth(2).AllChildren).ToHaveCountAsync(2);
-        await Expect(Editor.Paragraph.Nth(2).Link).ToHaveAttributeAsync("href", "dscratch.darki.dev");
-        await Expect(Editor.Paragraph.Nth(2).Link.TextSpan).ToHaveTextAsync("g");
-        await Expect(Editor.Paragraph.Nth(2).TextSpan.Last).ToHaveTextAsync("hi");
+        await Expect(DefaultPage.Paragraph.Nth(2).AllChildren).ToHaveCountAsync(2);
+        await Expect(DefaultPage.Paragraph.Nth(2).Link).ToHaveAttributeAsync("href", "dscratch.darki.dev");
+        await Expect(DefaultPage.Paragraph.Nth(2).Link.TextSpan).ToHaveTextAsync("g");
+        await Expect(DefaultPage.Paragraph.Nth(2).TextSpan.Last).ToHaveTextAsync("hi");
         
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -150,7 +150,7 @@ public class AddLinkTest : PlaywrightTestBase
     [Test]
     public async Task AddLinkWithTargetNewTab_AddsLinkWithTargetBlank()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("abc");
 
         await EditorMenu.ClickAddLink();
@@ -163,6 +163,6 @@ public class AddLinkTest : PlaywrightTestBase
         await Page.Locator("#add-link-popover input.link-target").CheckAsync();
         await Page.Locator("#add-link-popover button").ClickAsync();
 
-        await Expect(Editor.Paragraph.Link).ToHaveAttributeAsync("target", "_blank");
+        await Expect(DefaultPage.Paragraph.Link).ToHaveAttributeAsync("target", "_blank");
     }
 }

@@ -7,6 +7,8 @@ public static class DSelectors
 {
     extension(ILocator locator)
     {
+        public ILocator EditorPage => locator.Locator(".page[data-page-index]");
+        
         public ILocator AllChildren => locator.Locator("> *");
         
         public ILocator Paragraph => locator.Locator("p[data-dnode-id]");

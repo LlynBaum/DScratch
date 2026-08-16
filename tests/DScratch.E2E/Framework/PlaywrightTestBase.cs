@@ -10,8 +10,10 @@ public class PlaywrightTestBase : E2ETestsRunnerBase
     {
         PropertyNameCaseInsensitive = true
     };
+
+    protected ILocator Editor => Page.Locator("#doc-editor");
     
-    protected ILocator Editor => Page.Locator("div[contenteditable]");
+    protected ILocator DefaultPage => Editor.EditorPage.Nth(0).Locator("div[contenteditable]");
 
     protected EditorMenuLocator EditorMenu => new EditorMenuLocator(Page.Locator("nav.menu"));
     
@@ -19,7 +21,7 @@ public class PlaywrightTestBase : E2ETestsRunnerBase
     public async Task NavigateToEditor()
     {
         // Wait for the Blazor WASM engine to fully load and hydrate the editor
-        await Editor.WaitForAsync(new() { State = WaitForSelectorState.Visible });
+        await DefaultPage.WaitForAsync(new() { State = WaitForSelectorState.Visible });
     }
 
     protected async Task<SelectionInfo?> GetCursorPositionAsync()

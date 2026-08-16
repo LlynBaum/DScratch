@@ -8,7 +8,7 @@ public class MarksTests : PlaywrightTestBase
     [Test]
     public async Task BoldButtons_MakesSelectionBold()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("test");
         await Page.EnterAsync();
         await Page.TypeAtCurrentCursorAsync("test");
@@ -23,15 +23,15 @@ public class MarksTests : PlaywrightTestBase
         
         await EditorMenu.ClickBold();
 
-        await Expect(Editor.Paragraph.First.TextSpan.Nth(0)).ToHaveTextAsync("te");
-        await Expect(Editor.Paragraph.First.TextSpan.Nth(0)).Not.ToHaveCSSAsync("font-weight", "700");
-        await Expect(Editor.Paragraph.First.TextSpan.Nth(1)).ToHaveTextAsync("st");
-        await Expect(Editor.Paragraph.First.TextSpan.Nth(1)).ToHaveCSSAsync("font-weight", "700");
+        await Expect(DefaultPage.Paragraph.First.TextSpan.Nth(0)).ToHaveTextAsync("te");
+        await Expect(DefaultPage.Paragraph.First.TextSpan.Nth(0)).Not.ToHaveCSSAsync("font-weight", "700");
+        await Expect(DefaultPage.Paragraph.First.TextSpan.Nth(1)).ToHaveTextAsync("st");
+        await Expect(DefaultPage.Paragraph.First.TextSpan.Nth(1)).ToHaveCSSAsync("font-weight", "700");
         
-        await Expect(Editor.Paragraph.First.TextSpan.Nth(0)).ToHaveTextAsync("te");
-        await Expect(Editor.Paragraph.Last.TextSpan.Nth(0)).ToHaveCSSAsync("font-weight", "700");
-        await Expect(Editor.Paragraph.First.TextSpan.Nth(1)).ToHaveTextAsync("st");
-        await Expect(Editor.Paragraph.Last.TextSpan.Nth(1)).Not.ToHaveCSSAsync("font-weight", "700");
+        await Expect(DefaultPage.Paragraph.First.TextSpan.Nth(0)).ToHaveTextAsync("te");
+        await Expect(DefaultPage.Paragraph.Last.TextSpan.Nth(0)).ToHaveCSSAsync("font-weight", "700");
+        await Expect(DefaultPage.Paragraph.First.TextSpan.Nth(1)).ToHaveTextAsync("st");
+        await Expect(DefaultPage.Paragraph.Last.TextSpan.Nth(1)).Not.ToHaveCSSAsync("font-weight", "700");
 
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -47,7 +47,7 @@ public class MarksTests : PlaywrightTestBase
     [Test]
     public async Task ItalicButtons_MakesSelectionItalic()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("test");
         await Page.EnterAsync();
         await Page.TypeAtCurrentCursorAsync("test");
@@ -62,15 +62,15 @@ public class MarksTests : PlaywrightTestBase
         
         await EditorMenu.ClickItalic();
 
-        await Expect(Editor.Paragraph.First.TextSpan.Nth(0)).ToHaveTextAsync("te");
-        await Expect(Editor.Paragraph.First.TextSpan.Nth(0)).Not.ToHaveCSSAsync("font-style", "italic");
-        await Expect(Editor.Paragraph.First.TextSpan.Nth(1)).ToHaveTextAsync("st");
-        await Expect(Editor.Paragraph.First.TextSpan.Nth(1)).ToHaveCSSAsync("font-style", "italic");
+        await Expect(DefaultPage.Paragraph.First.TextSpan.Nth(0)).ToHaveTextAsync("te");
+        await Expect(DefaultPage.Paragraph.First.TextSpan.Nth(0)).Not.ToHaveCSSAsync("font-style", "italic");
+        await Expect(DefaultPage.Paragraph.First.TextSpan.Nth(1)).ToHaveTextAsync("st");
+        await Expect(DefaultPage.Paragraph.First.TextSpan.Nth(1)).ToHaveCSSAsync("font-style", "italic");
         
-        await Expect(Editor.Paragraph.First.TextSpan.Nth(0)).ToHaveTextAsync("te");
-        await Expect(Editor.Paragraph.Last.TextSpan.Nth(0)).ToHaveCSSAsync("font-style", "italic");
-        await Expect(Editor.Paragraph.First.TextSpan.Nth(1)).ToHaveTextAsync("st");
-        await Expect(Editor.Paragraph.Last.TextSpan.Nth(1)).Not.ToHaveCSSAsync("font-style", "italic");
+        await Expect(DefaultPage.Paragraph.First.TextSpan.Nth(0)).ToHaveTextAsync("te");
+        await Expect(DefaultPage.Paragraph.Last.TextSpan.Nth(0)).ToHaveCSSAsync("font-style", "italic");
+        await Expect(DefaultPage.Paragraph.First.TextSpan.Nth(1)).ToHaveTextAsync("st");
+        await Expect(DefaultPage.Paragraph.Last.TextSpan.Nth(1)).Not.ToHaveCSSAsync("font-style", "italic");
 
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -86,7 +86,7 @@ public class MarksTests : PlaywrightTestBase
     [Test]
     public async Task ItalicAndBold_ClickBothAndBothStylesAreApplied()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("test");
 
         await Page.SetSelectionAsync(new SelectionInfo
@@ -100,17 +100,17 @@ public class MarksTests : PlaywrightTestBase
         await EditorMenu.ClickItalic();
         await EditorMenu.ClickBold();
 
-        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("t");
-        await Expect(Editor.Paragraph.TextSpan.Nth(0)).Not.ToHaveCSSAsync("font-style", "italic");
-        await Expect(Editor.Paragraph.TextSpan.Nth(0)).Not.ToHaveCSSAsync("font-weight", "700");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("t");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(0)).Not.ToHaveCSSAsync("font-style", "italic");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(0)).Not.ToHaveCSSAsync("font-weight", "700");
         
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("es");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-style", "italic");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-weight", "700");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("es");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-style", "italic");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-weight", "700");
         
-        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("t");
-        await Expect(Editor.Paragraph.TextSpan.Nth(2)).Not.ToHaveCSSAsync("font-style", "italic");
-        await Expect(Editor.Paragraph.TextSpan.Nth(2)).Not.ToHaveCSSAsync("font-weight", "700");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("t");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(2)).Not.ToHaveCSSAsync("font-style", "italic");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(2)).Not.ToHaveCSSAsync("font-weight", "700");
 
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -126,7 +126,7 @@ public class MarksTests : PlaywrightTestBase
     [Test]
     public async Task BoldButton_WhenSelectionHasMixedMarks()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("abcd");
 
         await Page.SetSelectionAsync(new SelectionInfo
@@ -156,21 +156,21 @@ public class MarksTests : PlaywrightTestBase
         });
         await EditorMenu.ClickBold();
         
-        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("a");
-        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-style", "italic");
-        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-weight", "400");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("a");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-style", "italic");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-weight", "400");
         
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("b");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-style", "italic");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-weight", "700");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("b");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-style", "italic");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-weight", "700");
         
-        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("c");
-        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-style", "normal");
-        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-weight", "700");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("c");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-style", "normal");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-weight", "700");
         
-        await Expect(Editor.Paragraph.TextSpan.Nth(3)).ToHaveTextAsync("d");
-        await Expect(Editor.Paragraph.TextSpan.Nth(3)).ToHaveCSSAsync("font-style", "normal");
-        await Expect(Editor.Paragraph.TextSpan.Nth(3)).ToHaveCSSAsync("font-weight", "700");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(3)).ToHaveTextAsync("d");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(3)).ToHaveCSSAsync("font-style", "normal");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(3)).ToHaveCSSAsync("font-weight", "700");
         
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -186,7 +186,7 @@ public class MarksTests : PlaywrightTestBase
     [Test]
     public async Task BoldButton_WhenSelectionOverTextWithMiddleHasMarks()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("abcdef");
 
         await Page.SetSelectionAsync(new SelectionInfo
@@ -207,17 +207,17 @@ public class MarksTests : PlaywrightTestBase
         });
         await EditorMenu.ClickItalic();
 
-        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("ab");
-        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-style", "italic");
-        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-weight", "400");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("ab");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-style", "italic");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-weight", "400");
         
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("cd");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-style", "italic");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-weight", "700");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("cd");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-style", "italic");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-weight", "700");
         
-        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("ef");
-        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-style", "italic");
-        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-weight", "400");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("ef");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-style", "italic");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-weight", "400");
 
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -233,7 +233,7 @@ public class MarksTests : PlaywrightTestBase
     [Test]
     public async Task BoldButtons_SetsPendingMark()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("tet");
 
         await Page.SetSelectionAsync(new SelectionInfo
@@ -250,12 +250,12 @@ public class MarksTests : PlaywrightTestBase
         
         await Page.TypeAtCurrentCursorAsync("s");
 
-        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("te");
-        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-weight", "400");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("s");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-weight", "700");
-        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("t");
-        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-weight", "400");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("te");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-weight", "400");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("s");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-weight", "700");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("t");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-weight", "400");
 
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -271,7 +271,7 @@ public class MarksTests : PlaywrightTestBase
     [Test]
     public async Task ItalicButtons_SetsPendingMark()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("tet");
 
         await Page.SetSelectionAsync(new SelectionInfo
@@ -288,12 +288,12 @@ public class MarksTests : PlaywrightTestBase
         
         await Page.TypeAtCurrentCursorAsync("s");
 
-        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("te");
-        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-style", "normal");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("s");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-style", "italic");
-        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("t");
-        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-style", "normal");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("te");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-style", "normal");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("s");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-style", "italic");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("t");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-style", "normal");
 
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -309,7 +309,7 @@ public class MarksTests : PlaywrightTestBase
     [Test]
     public async Task BoldButtons_SetsPendingRemoval()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("tet");
 
         await Page.SetSelectionAsync(new SelectionInfo
@@ -335,12 +335,12 @@ public class MarksTests : PlaywrightTestBase
         
         await Page.TypeAtCurrentCursorAsync("s");
 
-        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("te");
-        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-weight", "700");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("s");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-weight", "400");
-        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("t");
-        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-weight", "700");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("te");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-weight", "700");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("s");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-weight", "400");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("t");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-weight", "700");
 
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -356,7 +356,7 @@ public class MarksTests : PlaywrightTestBase
     [Test]
     public async Task ItalicButtons_SetsPendingRemoval()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("tet");
         
         await Page.SetSelectionAsync(new SelectionInfo
@@ -382,12 +382,12 @@ public class MarksTests : PlaywrightTestBase
         
         await Page.TypeAtCurrentCursorAsync("s");
 
-        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("te");
-        await Expect(Editor.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-style", "italic");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("s");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-style", "normal");
-        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("t");
-        await Expect(Editor.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-style", "italic");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(0)).ToHaveTextAsync("te");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(0)).ToHaveCSSAsync("font-style", "italic");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("s");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-style", "normal");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(2)).ToHaveTextAsync("t");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(2)).ToHaveCSSAsync("font-style", "italic");
 
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -403,7 +403,7 @@ public class MarksTests : PlaywrightTestBase
     [Test]
     public async Task FormatingInEmptyBlock_WorksAsExpected()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
 
         // Set Bold/Italic and unset again
         await EditorMenu.ClickBold();
@@ -421,23 +421,23 @@ public class MarksTests : PlaywrightTestBase
         await EditorMenu.ClickItalic();
 
         await Page.TypeAtCurrentCursorAsync("abc");
-        await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync("abc");
-        await Expect(Editor.Paragraph.TextSpan).ToHaveCSSAsync("font-style", "italic");
-        await Expect(Editor.Paragraph.TextSpan).ToHaveCSSAsync("font-weight", "700");
+        await Expect(DefaultPage.Paragraph.TextSpan).ToHaveTextAsync("abc");
+        await Expect(DefaultPage.Paragraph.TextSpan).ToHaveCSSAsync("font-style", "italic");
+        await Expect(DefaultPage.Paragraph.TextSpan).ToHaveCSSAsync("font-weight", "700");
     }
     
     [Test]
     public async Task FormatedBlock_CanRevertStyling()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         
         await EditorMenu.ClickBold();
         await EditorMenu.ClickItalic();
 
         await Page.TypeAtCurrentCursorAsync("abcd");
-        await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync("abcd");
-        await Expect(Editor.Paragraph.TextSpan).ToHaveCSSAsync("font-style", "italic");
-        await Expect(Editor.Paragraph.TextSpan).ToHaveCSSAsync("font-weight", "700");
+        await Expect(DefaultPage.Paragraph.TextSpan).ToHaveTextAsync("abcd");
+        await Expect(DefaultPage.Paragraph.TextSpan).ToHaveCSSAsync("font-style", "italic");
+        await Expect(DefaultPage.Paragraph.TextSpan).ToHaveCSSAsync("font-weight", "700");
         
         await Page.SetSelectionAsync(new SelectionInfo
         {
@@ -449,8 +449,8 @@ public class MarksTests : PlaywrightTestBase
         await EditorMenu.ClickBold();
         await EditorMenu.ClickItalic();
         
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("bc");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-style", "normal");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-weight", "400");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("bc");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-style", "normal");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveCSSAsync("font-weight", "400");
     }
 }

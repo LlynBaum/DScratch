@@ -14,14 +14,14 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
     [TestCase(HeadingLevel.Level6)]
     public async Task HeadingButtons_SwitchesCurrentBlockToExpectedHeading(HeadingLevel level)
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("a");
 
         await EditorMenu.ClickHeading(level);
 
-        await Expect(Editor.Paragraph).ToHaveCountAsync(0);
-        await Expect(Editor.Heading(level)).ToHaveCountAsync(1);
-        await Expect(Editor.Heading(level)).ToHaveTextAsync("a");
+        await Expect(DefaultPage.Paragraph).ToHaveCountAsync(0);
+        await Expect(DefaultPage.Heading(level)).ToHaveCountAsync(1);
+        await Expect(DefaultPage.Heading(level)).ToHaveTextAsync("a");
 
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -35,15 +35,15 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
     [Test]
     public async Task ParagraphButtons_SwitchesCurrentBlockToParagraph()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("a");
 
         await EditorMenu.ClickHeading(HeadingLevel.Level1);
         await EditorMenu.ClickParagraph();
 
-        await Expect(Editor.Heading(HeadingLevel.Level1)).ToHaveCountAsync(0);
-        await Expect(Editor.Paragraph).ToHaveCountAsync(1);
-        await Expect(Editor.Paragraph).ToHaveTextAsync("a");
+        await Expect(DefaultPage.Heading(HeadingLevel.Level1)).ToHaveCountAsync(0);
+        await Expect(DefaultPage.Paragraph).ToHaveCountAsync(1);
+        await Expect(DefaultPage.Paragraph).ToHaveTextAsync("a");
 
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -63,7 +63,7 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
     [TestCase(HeadingLevel.Level6)]
     public async Task HeadingButtons_SwitchesCurrentBlockToExpectedHeading_WithSelection(HeadingLevel level)
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("ab");
         await Page.EnterAsync();
         await Page.TypeAtCurrentCursorAsync("cd");
@@ -80,11 +80,11 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
 
         await EditorMenu.ClickHeading(level);
 
-        await Expect(Editor.Paragraph).ToHaveCountAsync(0);
-        await Expect(Editor.Heading(level)).ToHaveCountAsync(3);
-        await Expect(Editor.Heading(level).Nth(0)).ToHaveTextAsync("ab");
-        await Expect(Editor.Heading(level).Nth(1)).ToHaveTextAsync("cd");
-        await Expect(Editor.Heading(level).Nth(2)).ToHaveTextAsync("ef");
+        await Expect(DefaultPage.Paragraph).ToHaveCountAsync(0);
+        await Expect(DefaultPage.Heading(level)).ToHaveCountAsync(3);
+        await Expect(DefaultPage.Heading(level).Nth(0)).ToHaveTextAsync("ab");
+        await Expect(DefaultPage.Heading(level).Nth(1)).ToHaveTextAsync("cd");
+        await Expect(DefaultPage.Heading(level).Nth(2)).ToHaveTextAsync("ef");
 
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -101,7 +101,7 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
     [Test]
     public async Task ParagraphButtons_SwitchesCurrentBlockToParagraph_WithSelection()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("ab");
         await Page.EnterAsync();
         await Page.TypeAtCurrentCursorAsync("cd");
@@ -119,11 +119,11 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
         await EditorMenu.ClickHeading(HeadingLevel.Level1);
         await EditorMenu.ClickParagraph();
 
-        await Expect(Editor.Heading(HeadingLevel.Level1)).ToHaveCountAsync(0);
-        await Expect(Editor.Paragraph).ToHaveCountAsync(3);
-        await Expect(Editor.Paragraph.Nth(0).TextSpan).ToHaveTextAsync("ab");
-        await Expect(Editor.Paragraph.Nth(1).TextSpan).ToHaveTextAsync("cd");
-        await Expect(Editor.Paragraph.Nth(2).TextSpan).ToHaveTextAsync("ef");
+        await Expect(DefaultPage.Heading(HeadingLevel.Level1)).ToHaveCountAsync(0);
+        await Expect(DefaultPage.Paragraph).ToHaveCountAsync(3);
+        await Expect(DefaultPage.Paragraph.Nth(0).TextSpan).ToHaveTextAsync("ab");
+        await Expect(DefaultPage.Paragraph.Nth(1).TextSpan).ToHaveTextAsync("cd");
+        await Expect(DefaultPage.Paragraph.Nth(2).TextSpan).ToHaveTextAsync("ef");
 
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);

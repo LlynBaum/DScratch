@@ -10,10 +10,10 @@ public class InsertTextTests : PlaywrightTestBase
     {
         const string text = "DScratch";
         
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         
         await Page.TypeAtCurrentCursorAsync(text);
-        await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync(text);
+        await Expect(DefaultPage.Paragraph.TextSpan).ToHaveTextAsync(text);
         
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -29,14 +29,14 @@ public class InsertTextTests : PlaywrightTestBase
     {
         const string text = "DScratch";
         
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("a");
 
         await Page.SetCursorAsync("Darki-2", 0);
         await Page.TypeAtCurrentCursorAsync(text);
 
-        await Expect(Editor.Paragraph.TextSpan.First).ToHaveTextAsync(text);
-        await Expect(Editor.Paragraph.TextSpan.Last).ToHaveTextAsync("a");
+        await Expect(DefaultPage.Paragraph.TextSpan.First).ToHaveTextAsync(text);
+        await Expect(DefaultPage.Paragraph.TextSpan.Last).ToHaveTextAsync("a");
         
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -52,13 +52,13 @@ public class InsertTextTests : PlaywrightTestBase
     {
         const string text = "DScratch";
         
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("a");
 
         await Page.SetCursorAsync("Darki-2", 1);
         await Page.TypeAtCurrentCursorAsync(text);
 
-        await Expect(Editor.Paragraph.TextSpan).ToHaveTextAsync("a" + text);
+        await Expect(DefaultPage.Paragraph.TextSpan).ToHaveTextAsync("a" + text);
         
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -74,15 +74,15 @@ public class InsertTextTests : PlaywrightTestBase
     {
         const string text = "DScratch";
         
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("ab");
 
         await Page.SetCursorAsync("Darki-2", 1);
         await Page.TypeAtCurrentCursorAsync(text);
 
-        await Expect(Editor.Paragraph.TextSpan.First).ToHaveTextAsync("a");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync(text);
-        await Expect(Editor.Paragraph.TextSpan.Last).ToHaveTextAsync("b");
+        await Expect(DefaultPage.Paragraph.TextSpan.First).ToHaveTextAsync("a");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync(text);
+        await Expect(DefaultPage.Paragraph.TextSpan.Last).ToHaveTextAsync("b");
 
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -96,7 +96,7 @@ public class InsertTextTests : PlaywrightTestBase
     [Test]
     public async Task WriteText_ReplaceTextSelectionWithTypedText()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("abcd");
 
         await Page.SetSelectionAsync(new SelectionInfo
@@ -109,9 +109,9 @@ public class InsertTextTests : PlaywrightTestBase
 
         await Page.TypeAtCurrentCursorAsync("f");
 
-        await Expect(Editor.Paragraph.TextSpan.First).ToHaveTextAsync("a");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("f");
-        await Expect(Editor.Paragraph.TextSpan.Last).ToHaveTextAsync("d");
+        await Expect(DefaultPage.Paragraph.TextSpan.First).ToHaveTextAsync("a");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("f");
+        await Expect(DefaultPage.Paragraph.TextSpan.Last).ToHaveTextAsync("d");
 
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
@@ -125,7 +125,7 @@ public class InsertTextTests : PlaywrightTestBase
     [Test]
     public async Task WriteText_ReplaceTextSelectionWithTypedText_AndMergeParagraphs()
     {
-        await Editor.ClickAsync();
+        await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync("abcd");
         await Page.EnterAsync();
         await Page.TypeAtCurrentCursorAsync("wtf");
@@ -142,10 +142,10 @@ public class InsertTextTests : PlaywrightTestBase
 
         await Page.TypeAtCurrentCursorAsync("x");
 
-        await Expect(Editor.Paragraph).ToHaveCountAsync(1);
-        await Expect(Editor.Paragraph.TextSpan.First).ToHaveTextAsync("ab");
-        await Expect(Editor.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("x");
-        await Expect(Editor.Paragraph.TextSpan.Last).ToHaveTextAsync("gh");
+        await Expect(DefaultPage.Paragraph).ToHaveCountAsync(1);
+        await Expect(DefaultPage.Paragraph.TextSpan.First).ToHaveTextAsync("ab");
+        await Expect(DefaultPage.Paragraph.TextSpan.Nth(1)).ToHaveTextAsync("x");
+        await Expect(DefaultPage.Paragraph.TextSpan.Last).ToHaveTextAsync("gh");
 
         var selection = await GetCursorPositionAsync();
         Assert.That(selection, Is.Not.Null);
