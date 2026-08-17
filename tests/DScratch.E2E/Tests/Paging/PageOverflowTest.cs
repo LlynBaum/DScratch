@@ -5,7 +5,7 @@ namespace DScratch.E2E.Tests.Paging;
 public class PageOverflowTest : PlaywrightTestBase
 {
     [Test]
-    public async Task MovesTextToNewPage_WhenTextOverflowsOnPage()
+    public async Task CreatesNewPage_WhenTextOverflows_AndNextPageDoesNotExistYet()
     {
         const string firstPageText =
             "akljfajslöfkjalöskjfölkajsölkfjölkajölkjölkjfölkjaöljsöldjfölkajölskjdfölkjalkjlkjlkjdslkfjljkd";
@@ -19,6 +19,7 @@ public class PageOverflowTest : PlaywrightTestBase
             await Page.TypeAtCurrentCursorAsync(i.ToString());
             await Page.EnterAsync();
             await Expect(Editor.EditorPage).ToHaveCountAsync(1);
+            await Expect(Editor.EditorPage.Paragraph).ToHaveCountAsync(i + 2);
         }
 
         await Page.TypeAtCurrentCursorAsync(overflowText);

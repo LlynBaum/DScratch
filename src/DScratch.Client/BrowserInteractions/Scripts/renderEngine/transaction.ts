@@ -1,5 +1,6 @@
 import {saveSelection, SelectionInfo, setSelectionSave} from "../selection";
 import * as nodeHelper from "../nodeHelper";
+import * as paging from "./paging";
 
 enum StepType {
     insertText = "insertText",
@@ -62,42 +63,39 @@ interface UpdateAttributes extends Step {
 
 export function applyTransaction(transaction: TransactionResult){
     saveSelection();
-    transaction.steps.map(handle);
+    const modifiedElements = transaction.steps.map(handle).filter(e => !!e);
+    paging.update(modifiedElements);
     if (transaction.cursorPosition) {
         setSelectionSave(transaction.cursorPosition);
     }
 
     function handle(step?: Step | null) {
-        if(!step) return;
+        if(!step) return null;
         switch (step.type) {
             case StepType.insertText:
-                handleInsertTextStep(step as InsertTextStep);
-                break;
+                return handleInsertTextStep(step as InsertTextStep);
             case StepType.deleteText:
-                handleDeleteTextStep(step as DeleteTextStep);
-                break
+                return handleDeleteTextStep(step as DeleteTextStep);
             case StepType.insertElement:
-                handleInsertElementStep(step as InsertElementStep);
-                break;
+                return handleInsertElementStep(step as InsertElementStep);
             case StepType.deleteElement:
-                handleDeleteElementStep(step as DeleteElementStep);
-                break;
+                return handleDeleteElementStep(step as DeleteElementStep);
             case StepType.move:
-                handleMoveStep(step as MoveStep);
-                break;
+                return handleMoveStep(step as MoveStep);
             case StepType.updateMarks:
-                handleUpdateMarksStep(step as UpdateMarksStep);
-                break;
+                return handleUpdateMarksStep(step as UpdateMarksStep);
             case StepType.updateAttributes:
-                handleUpdateAttributesStep(step as UpdateAttributes);
-                break;
+                return handleUpdateAttributesStep(step as UpdateAttributes);
+            default:
+                console.error("Unknown step type.");
+                return null;
         }
     }
 }
 
 function handleInsertTextStep(step: InsertTextStep) {
     const element = findNode(step.parentId);
-    if (!element) return;
+    if (!element) return null;
     
     const { node, relativeOffset } = nodeHelper.findTextNodeAtOffset(element, step.offset);
     if(node) {
@@ -107,11 +105,13 @@ function handleInsertTextStep(step: InsertTextStep) {
         const createdNode = document.createTextNode(step.text);
         element.appendChild(createdNode);
     }
+    
+    return element;
 }
 
 function handleDeleteTextStep(step: DeleteTextStep) {
     const element = findNode(step.parentId);
-    if (!element) return;
+    if (!element) return null;
     
     const { node, relativeOffset } = nodeHelper.findTextNodeAtOffset(element, step.offset);
     if(node) {
@@ -122,23 +122,27 @@ function handleDeleteTextStep(step: DeleteTextStep) {
     if (element.childNodes.length == 0) {
         element.remove();
     }
+    
+    return element;
 }
 
 function handleInsertElementStep(step: InsertElementStep) {
     const parent = findNode(step.parentId);
-    if (!parent) return;
+    if (!parent) return null;
 
     const previousSibling = step.previousSiblingId ? findNode(step.previousSiblingId) : null;
 
     const element = createElement(step.tagName, step.newNodeId, step.attributes);
     insertElement(element, parent, previousSibling);
+    return element;
 }
 
 function handleDeleteElementStep(step: DeleteElementStep) {
     const element = findNode(step.targetId);
-    if (!element) return;
+    if (!element) return null;
 
     element.remove();
+    return element;
 }
 
 function handleMoveStep(step: MoveStep) {
@@ -148,22 +152,24 @@ function handleMoveStep(step: MoveStep) {
         const previousSibling = step.previousSiblingId ? findNode(step.previousSiblingId) : null;
         insertElement(element, newParent, previousSibling);
     }
+    return element;
 }
 
 function handleUpdateMarksStep(step: UpdateMarksStep) {
     const element = findNode(step.nodeId);
-    if(!element) return;
+    if(!element) return null;
     
     element.style = '';
     for (let marksKey in step.marks) {
         // @ts-ignore / we trust C# to send valid CSS properties
         element.style[marksKey] = step.marks[marksKey];
     }
+    return element;
 }
 
 function handleUpdateAttributesStep(step: UpdateAttributes) {
     const element = findNode(step.nodeId);
-    if(!element) return;
+    if(!element) return null;
     
     for (let attr in element.attributes) {
         if (attr === "style" || attr === "data-dnode-id") continue;
@@ -173,6 +179,8 @@ function handleUpdateAttributesStep(step: UpdateAttributes) {
     for (let attr in step.attributes){
         element.setAttribute(attr, step.attributes[attr]);
     }
+    
+    return element;
 }
 
 function createElement(tagName: string, id: string, attributes: { [key:string] : string; } | null) {
