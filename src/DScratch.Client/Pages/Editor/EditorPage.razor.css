@@ -11,16 +11,15 @@
 }
 
 #doc-editor {
-    box-sizing: border-box;
-    flex-grow: 1;
     width: 100%;
+    min-height: calc(100% - var(--editor-menu-height));
     background-color: var(--editor-bg-app);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    overflow: auto;
 }
 
 .editor-menu {
+    position: sticky;
+    top: 0;
     height: var(--editor-menu-height);
     width: 100%;
     background-color: var(--editor-bg-surface);

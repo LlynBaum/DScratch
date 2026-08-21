@@ -28,7 +28,7 @@ export function update(modifiedNodes: HTMLElement[]) {
 
     if (sortedPages.length === 0) return;
     greedyFlow(sortedPages);
-}
+}   
 
 function greedyFlow(modifiedPages: HTMLElement[]) {
     let currentPage;
@@ -50,7 +50,11 @@ function splitOverflow(overflow: Overflow, targetPage: HTMLElement) {
     let lastNode = walker.lastChild() as Text | null;
     let currentNode = walker.previousNode() as Text | null;
     
-    if (!lastNode) return;
+    // No text, assume whole block must be moved
+    if (!lastNode) {
+        moveBlock(overflow, targetPage);
+        return;
+    }
     
     while (currentNode && !isOverflowing(currentNode)){
         lastNode = currentNode;
@@ -60,7 +64,12 @@ function splitOverflow(overflow: Overflow, targetPage: HTMLElement) {
     const index = findSplitIndex(lastNode, overflow.PageBottom);
     const wordSafeIndex = getWordSafeSplitIndex(lastNode.textContent, index);
 
-    if (wordSafeIndex >= lastNode.textContent.length) return;
+    if (wordSafeIndex >= lastNode.textContent.length) return; // TODO: wait in that case it probably is the next node, but that shouldn't be possible
+    
+    if (index === 0) {
+        moveBlock(overflow, targetPage);
+        return;
+    }
     
     const split = lastNode.splitText(wordSafeIndex);
     const span = split.parentElement;
@@ -111,12 +120,22 @@ function createPage(index: number) {
     return page;
 }
 
+function moveBlock(overflow: Overflow, targetPage: HTMLElement) {
+    const parent = targetPage.querySelector<HTMLElement>("div[contenteditable]")!;
+    
+    let currentElement: Element | null = overflow.BlockElement;
+    while (currentElement) {
+        parent.appendChild(currentElement);
+        currentElement = currentElement.nextElementSibling;
+    }
+}
+
 function getBottomOverflowingChildren(page: HTMLElement): Overflow | null {
     const style = window.getComputedStyle(page);
     const borderBottom = parseFloat(style.borderBottomWidth) || 0; // Take bottom margin into account
     const innerBottom = page.getBoundingClientRect().bottom - borderBottom;
 
-    const child = page.firstElementChild!.lastElementChild;
+    const child = page.firstElementChild!.lastElementChild; // TODO: it could also be any previous block that is already overflowing
     if (!child) return null;
     const childBottom = child.getBoundingClientRect().bottom;
     return {

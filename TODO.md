@@ -1,5 +1,6 @@
 # Current
 
+- CSS for pages, so they get aligned correctly
 - [ ] E2E Tests
 - [ ] Transaction collects modified nodes
 - [ ] Greedy Flow 

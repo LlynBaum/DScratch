@@ -7,10 +7,12 @@
 
     .page {
         background-color: var(--editor-bg-surface);
-        height: 80%;
+        height: calc((100vh - var(--editor-menu-height)) * 0.8);
         width: min-content;
         aspect-ratio: 210 / 297; /* A4 Aspect Ratio */
         border: 1px solid var(--editor-border-color);
+        
+        margin: 32px auto;
         
         & > div {
             box-sizing: border-box;
