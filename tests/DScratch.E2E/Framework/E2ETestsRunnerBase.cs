@@ -6,8 +6,11 @@ public class E2ETestsRunnerBase
 {
     private const int DefaultTimeoutSec = 2;
     
+    protected virtual bool EnableTracing { get; } = false;
+    
     private IPlaywright playwright = null!;
     private IBrowser browser = null!;
+    private IBrowserContext context = null!;
     protected IPage Page { get; private set; } = null!;
 
     [OneTimeSetUp]
@@ -24,6 +27,12 @@ public class E2ETestsRunnerBase
     [SetUp]
     public async Task Setup()
     {
+        context = await browser.NewContextAsync();
+        if (EnableTracing)
+        {
+            await context.Tracing.StartAsync();
+        }
+        
         Page = await browser.NewPageAsync();
         SetDefaultExpectTimeout(DefaultTimeoutSec * 1000);
         
@@ -33,6 +42,30 @@ public class E2ETestsRunnerBase
     [TearDown]
     public async Task TearDown() {
         await Page.CloseAsync();
+
+        if (EnableTracing)
+        {
+            var failed = TestContext.CurrentContext.Result.Outcome == NUnit.Framework.Interfaces.ResultState.Error
+                         || TestContext.CurrentContext.Result.Outcome == NUnit.Framework.Interfaces.ResultState.Failure;
+
+            var path = failed ? Path.Combine(
+                TestContext.CurrentContext.WorkDirectory,
+                "playwright-traces",
+                $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}.zip"
+            ) : null;
+        
+            await context.Tracing.StopAsync(new TracingStopOptions
+            {
+                Path = path
+            });
+
+            if (path is not null)
+            {
+                await TestContext.Out.WriteLineAsync($"Traces at '{path}'");
+            }
+        }
+        
+        await context.DisposeAsync();
     }
 
     [OneTimeTearDown]

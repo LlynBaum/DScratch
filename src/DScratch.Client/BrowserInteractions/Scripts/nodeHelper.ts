@@ -52,6 +52,10 @@ export function findNode(nodeId: string) {
     return document.querySelector<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
 }
 
+export function findNodeWithChild(parentId: string, childId: string) {
+    return document.querySelector<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${parentId}"]:has([${NODE_ID_ATTRIBUTE}="${childId}"])`);
+}
+
 export function getNodeId(element: Element) {
     return element.getAttribute(NODE_ID_ATTRIBUTE);
 }

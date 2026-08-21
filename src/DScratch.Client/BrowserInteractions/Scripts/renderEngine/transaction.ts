@@ -127,7 +127,10 @@ function handleDeleteTextStep(step: DeleteTextStep) {
 }
 
 function handleInsertElementStep(step: InsertElementStep) {
-    const parent = findNode(step.parentId);
+    const parent = step.previousSiblingId 
+        ? findNodeWithChild(step.parentId, step.previousSiblingId) 
+        : findNode(step.parentId);
+    
     if (!parent) return null;
 
     const previousSibling = step.previousSiblingId ? findNode(step.previousSiblingId) : null;
@@ -147,7 +150,10 @@ function handleDeleteElementStep(step: DeleteElementStep) {
 
 function handleMoveStep(step: MoveStep) {
     const element = findNode(step.targetNodeId);
-    const newParent = findNode(step.targetParentId);
+    const newParent = step.previousSiblingId
+        ? findNodeWithChild(step.targetParentId, step.previousSiblingId)
+        : findNode(step.targetParentId);
+    
     if (element && newParent) {
         const previousSibling = step.previousSiblingId ? findNode(step.previousSiblingId) : null;
         insertElement(element, newParent, previousSibling);
@@ -203,6 +209,14 @@ function findNode(nodeId: string) : HTMLElement | null {
     const element = nodeHelper.findNode(nodeId);
     if(!element) {
         console.error(new Error(`Could not find node '${nodeId}'.`));
+    }
+    return element;
+}
+
+function findNodeWithChild(parentId: string, childId: string) : HTMLElement | null {
+    const element = nodeHelper.findNodeWithChild(parentId, childId);
+    if(!element) {
+        console.error(new Error(`Could not find node '${parentId}' with a child ${childId}.`));
     }
     return element;
 }

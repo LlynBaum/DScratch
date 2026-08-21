@@ -10,6 +10,7 @@
   - [x] TS part
   - [ ] implement C# side 
 - [ ] Hard Page Break (CTRL + Enter, UI)
+- [ ] Transaction focus set should scroll focus into view
 
 # Features
 
