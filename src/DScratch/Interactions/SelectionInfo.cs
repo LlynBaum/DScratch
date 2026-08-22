@@ -1,6 +1,6 @@
 namespace DScratch.Interactions;
 
-public class SelectionInfo
+public record SelectionInfo
 {
     public SelectionDirection Direction { get; init; }
 

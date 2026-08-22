@@ -55,40 +55,50 @@ function splitOverflow(overflow: Overflow, targetPage: HTMLElement) {
         moveBlock(overflow, targetPage);
         return;
     }
-    
-    while (currentNode && !isOverflowing(currentNode)){
+
+    while (currentNode && isOverflowing(currentNode)){
         lastNode = currentNode;
         currentNode = walker.previousNode() as Text | null;
     }
-
-    const index = findSplitIndex(lastNode, overflow.PageBottom);
-    const wordSafeIndex = getWordSafeSplitIndex(lastNode.textContent, index);
-
-    if (wordSafeIndex >= lastNode.textContent.length) return; // TODO: wait in that case it probably is the next node, but that shouldn't be possible
     
+    splitText(lastNode, overflow, targetPage);
+    return;
+
+    function isOverflowing(node: Node): boolean {
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        return range.getBoundingClientRect().bottom > overflow.PageBottom;
+    }
+}
+
+function splitText(textNode: Text, overflow: Overflow, targetPage: HTMLElement) {
+    const index = findSplitIndex(textNode, overflow.PageBottom);
+    const wordSafeIndex = getWordSafeSplitIndex(textNode.textContent, index);
+
     if (index === 0) {
         moveBlock(overflow, targetPage);
         return;
     }
-    
-    const split = lastNode.splitText(wordSafeIndex);
-    const span = split.parentElement;
-    const splitElement = span?.cloneNode(false) as HTMLElement;
+
+    const split = textNode.splitText(wordSafeIndex);
+    const span = textNode.parentElement;
+    const splitElement = span!.cloneNode(false) as HTMLElement;
     splitElement.appendChild(split);
 
-    lastNode.parentElement!.setAttribute(SPLIT_ATTRIBUTE, "1");
-    splitElement.setAttribute(SPLIT_ATTRIBUTE, "2");
-
     let newElem = splitElement;
-    if (splitElement.parentElement !== overflow.BlockElement) {
-        const wrapper = splitElement.parentElement?.cloneNode(false) as HTMLElement;
-        wrapper.appendChild(splitElement);
+    if (span!.parentElement !== overflow.BlockElement) {
+        // This currently assumes there can be max 1 wrapper for text (e.g. 'a' tag). So not supper generic but probably enough. Tables or other complex elements in the future must be handled separately anyway.
+        const wrapper = span!.parentElement!.cloneNode(false) as HTMLElement;
+        wrapper.appendChild(span!);
         newElem = wrapper;
     }
 
     const parent = targetPage.querySelector<HTMLElement>("div[contenteditable]")!;
-    const splitBlock = overflow.BlockElement.cloneNode(false);
+    const splitBlock = overflow.BlockElement.cloneNode(false) as HTMLElement;
     parent.appendChild(splitBlock);
+
+    overflow.BlockElement.setAttribute(SPLIT_ATTRIBUTE, "1");
+    splitBlock.setAttribute(SPLIT_ATTRIBUTE, "2");
 
     splitBlock.appendChild(newElem);
     let currentElement = newElem.nextElementSibling;
@@ -96,13 +106,15 @@ function splitOverflow(overflow: Overflow, targetPage: HTMLElement) {
         splitBlock.appendChild(currentElement);
         currentElement = currentElement.nextElementSibling;
     }
-    
-    return;
-    
-    function isOverflowing(node: Node): boolean {
-        const range = document.createRange();
-        range.selectNodeContents(node);
-        return range.getBoundingClientRect().bottom > overflow.PageBottom;
+}
+
+function moveBlock(overflow: Overflow, targetPage: HTMLElement) {
+    const parent = targetPage.querySelector<HTMLElement>("div[contenteditable]")!;
+
+    let currentElement: Element | null = overflow.BlockElement;
+    while (currentElement) {
+        parent.appendChild(currentElement);
+        currentElement = currentElement.nextElementSibling;
     }
 }
 
@@ -120,27 +132,21 @@ function createPage(index: number) {
     return page;
 }
 
-function moveBlock(overflow: Overflow, targetPage: HTMLElement) {
-    const parent = targetPage.querySelector<HTMLElement>("div[contenteditable]")!;
-    
-    let currentElement: Element | null = overflow.BlockElement;
-    while (currentElement) {
-        parent.appendChild(currentElement);
-        currentElement = currentElement.nextElementSibling;
-    }
-}
-
 function getBottomOverflowingChildren(page: HTMLElement): Overflow | null {
     const style = window.getComputedStyle(page);
-    const borderBottom = parseFloat(style.borderBottomWidth) || 0; // Take bottom margin into account
+    const borderBottom = parseFloat(style.borderBottomWidth) || 0;
     const innerBottom = page.getBoundingClientRect().bottom - borderBottom;
 
-    const child = page.firstElementChild!.lastElementChild; // TODO: it could also be any previous block that is already overflowing
-    if (!child) return null;
-    const childBottom = child.getBoundingClientRect().bottom;
+    const lastBlockElement = page.firstElementChild!.lastElementChild; // TODO: it could also be any previous block that is already overflowing
+    if (!lastBlockElement) return null;
+    
+    const blockStyle = window.getComputedStyle(page);
+    const blockBorderBottom = parseFloat(blockStyle.borderBottomWidth) || 0;
+    const childBottom = lastBlockElement.getBoundingClientRect().bottom - blockBorderBottom;
+    
     return {
         IsOverflowing: childBottom > innerBottom,
-        BlockElement: child as HTMLElement,
+        BlockElement: lastBlockElement as HTMLElement,
         Page: page,
         PageBottom: innerBottom,
         ElementBottom: childBottom
