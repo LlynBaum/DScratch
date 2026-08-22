@@ -133,22 +133,20 @@ function createPage(index: number) {
 }
 
 function getBottomOverflowingChildren(page: HTMLElement): Overflow | null {
-    const style = window.getComputedStyle(page);
-    const borderBottom = parseFloat(style.borderBottomWidth) || 0;
-    const innerBottom = page.getBoundingClientRect().bottom - borderBottom;
+    const pageBottom = page.getBoundingClientRect().bottom;
 
     const lastBlockElement = page.firstElementChild!.lastElementChild; // TODO: it could also be any previous block that is already overflowing
     if (!lastBlockElement) return null;
     
     const blockStyle = window.getComputedStyle(page);
-    const blockBorderBottom = parseFloat(blockStyle.borderBottomWidth) || 0;
-    const childBottom = lastBlockElement.getBoundingClientRect().bottom - blockBorderBottom;
+    const marginBottom = parseFloat(blockStyle.marginBottom) || 0;
+    const childBottom = lastBlockElement.getBoundingClientRect().bottom + marginBottom;
     
     return {
-        IsOverflowing: childBottom > innerBottom,
+        IsOverflowing: childBottom > pageBottom,
         BlockElement: lastBlockElement as HTMLElement,
         Page: page,
-        PageBottom: innerBottom,
+        PageBottom: pageBottom,
         ElementBottom: childBottom
     };
 }
