@@ -21,7 +21,7 @@ export function getAbsolutOffset(parent: Element, targetNode: Node, relativeOffs
     }
     
     const splitPartIndex = getSplitPartIndex(parent);
-    if (splitPartIndex === "1") {
+    if (splitPartIndex === "2") {
         const counterPart = getSplitCounterPart(parent);
         absolutOffset += counterPart?.textContent.length ?? 0;
     }
@@ -77,6 +77,15 @@ export function findTextNodeAtOffset(parent: Element, offset: number): { node: N
 
 export function findNode(nodeId: string) {
     return document.querySelector<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
+}
+
+export function findNodeLast(nodeId: string) {
+    const elements = document.querySelectorAll<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
+    return elements[elements.length - 1];
+}
+
+export function findNodeAll(nodeId: string) {
+    return document.querySelectorAll<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
 }
 
 export function findNodeWithChild(parentId: string, childId: string) {

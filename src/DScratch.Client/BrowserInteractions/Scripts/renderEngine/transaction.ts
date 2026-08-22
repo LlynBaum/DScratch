@@ -63,7 +63,8 @@ interface UpdateAttributes extends Step {
 
 export function applyTransaction(transaction: TransactionResult){
     saveSelection();
-    const modifiedElements = transaction.steps.map(handle).filter(e => !!e);
+    const modifiedElements: HTMLElement[] = [];
+    transaction.steps.map(handle);
     paging.update(modifiedElements);
     if (transaction.cursorPosition) {
         setSelectionSave(transaction.cursorPosition);
@@ -72,23 +73,44 @@ export function applyTransaction(transaction: TransactionResult){
     function handle(step?: Step | null) {
         if(!step) return null;
         switch (step.type) {
-            case StepType.insertText:
-                return handleInsertTextStep(step as InsertTextStep);
-            case StepType.deleteText:
-                return handleDeleteTextStep(step as DeleteTextStep);
-            case StepType.insertElement:
-                return handleInsertElementStep(step as InsertElementStep);
-            case StepType.deleteElement:
-                return handleDeleteElementStep(step as DeleteElementStep);
-            case StepType.move:
-                return handleMoveStep(step as MoveStep);
-            case StepType.updateMarks:
-                return handleUpdateMarksStep(step as UpdateMarksStep);
-            case StepType.updateAttributes:
-                return handleUpdateAttributesStep(step as UpdateAttributes);
+            case StepType.insertText: {
+                const element = handleInsertTextStep(step as InsertTextStep);
+                element && modifiedElements.push(element);
+                break;
+            }
+            case StepType.deleteText: {
+                const element = handleDeleteTextStep(step as DeleteTextStep);
+                element && modifiedElements.push(element);
+                break;
+            }
+            case StepType.insertElement: {
+                const element = handleInsertElementStep(step as InsertElementStep);
+                element && modifiedElements.push(element);
+                break;
+            }
+            case StepType.deleteElement: {
+                const elements = handleDeleteElementStep(step as DeleteElementStep);
+                modifiedElements.push(...elements);
+                break;
+            }
+            case StepType.move: {
+                const elements = handleMoveStep(step as MoveStep);
+                modifiedElements.push(...elements);
+                break;
+            }
+            case StepType.updateMarks: {
+                const elements = handleUpdateMarksStep(step as UpdateMarksStep);
+                modifiedElements.push(...elements);
+                break;
+            }
+            case StepType.updateAttributes: {
+                const elements = handleUpdateAttributesStep(step as UpdateAttributes);
+                modifiedElements.push(...elements);
+                break;
+            }
             default:
                 console.error("Unknown step type.");
-                return null;
+                break;
         }
     }
 }
@@ -98,21 +120,23 @@ function handleInsertTextStep(step: InsertTextStep) {
     if (!element) return null;
     
     const { node, relativeOffset } = nodeHelper.findTextNodeAtOffset(element, step.offset);
-    if(node) {
+    if (node) {
         const text = node.textContent;
         node.textContent = text!.slice(0, relativeOffset) + step.text + text!.slice(relativeOffset);
-    } else {
-        const createdNode = document.createTextNode(step.text);
-        element.appendChild(createdNode);
+        return element;
     }
-    
-    return element;
+
+    const targetParent = nodeHelper.getSplitCounterPart(element) ?? element;
+    const createdNode = document.createTextNode(step.text);
+    targetParent.appendChild(createdNode);
+    return targetParent as HTMLElement;
 }
 
 function handleDeleteTextStep(step: DeleteTextStep) {
     const element = findNode(step.parentId);
     if (!element) return null;
     
+    // TODO: when deleting selection over different pages, only have to take into account that there might be more text somewhere else
     const { node, relativeOffset } = nodeHelper.findTextNodeAtOffset(element, step.offset);
     if(node) {
         const text = node.textContent;
@@ -133,7 +157,7 @@ function handleInsertElementStep(step: InsertElementStep) {
     
     if (!parent) return null;
 
-    const previousSibling = step.previousSiblingId ? findNode(step.previousSiblingId) : null;
+    const previousSibling = step.previousSiblingId ? findNodeLast(step.previousSiblingId) : null;
 
     const element = createElement(step.tagName, step.newNodeId, step.attributes);
     insertElement(element, parent, previousSibling);
@@ -141,52 +165,56 @@ function handleInsertElementStep(step: InsertElementStep) {
 }
 
 function handleDeleteElementStep(step: DeleteElementStep) {
-    const element = findNode(step.targetId);
-    if (!element) return null;
-
-    element.remove();
-    return element;
+    const elements = findNodeAll(step.targetId);
+    elements.forEach(e => e.remove());
+    return elements;
 }
 
 function handleMoveStep(step: MoveStep) {
-    const element = findNode(step.targetNodeId);
+    const elements = findNodeAll(step.targetNodeId);
     const newParent = step.previousSiblingId
         ? findNodeWithChild(step.targetParentId, step.previousSiblingId)
         : findNode(step.targetParentId);
     
-    if (element && newParent) {
-        const previousSibling = step.previousSiblingId ? findNode(step.previousSiblingId) : null;
-        insertElement(element, newParent, previousSibling);
+    if (elements.length > 0 && newParent) {
+        let previousSibling = step.previousSiblingId ? findNodeLast(step.previousSiblingId) : null;
+        elements.forEach(element => {
+            insertElement(element, newParent, previousSibling);
+            previousSibling = element;
+        });
     }
-    return element;
+    return elements;
 }
 
 function handleUpdateMarksStep(step: UpdateMarksStep) {
-    const element = findNode(step.nodeId);
-    if(!element) return null;
+    const elements = findNodeAll(step.nodeId);
     
-    element.style = '';
-    for (let marksKey in step.marks) {
-        // @ts-ignore / we trust C# to send valid CSS properties
-        element.style[marksKey] = step.marks[marksKey];
-    }
-    return element;
+    elements.forEach(element => {
+        element.style = '';
+        for (let marksKey in step.marks) {
+            // @ts-ignore / we trust C# to send valid CSS properties
+            element.style[marksKey] = step.marks[marksKey];
+        }
+    });
+    
+    return elements;
 }
 
 function handleUpdateAttributesStep(step: UpdateAttributes) {
-    const element = findNode(step.nodeId);
-    if(!element) return null;
+    const elements = findNodeAll(step.nodeId);
     
-    for (let attr in element.attributes) {
-        if (attr === "style" || attr === "data-dnode-id") continue;
-        element.removeAttribute(attr);
-    }
+    elements.forEach(element => {
+        for (let attr in element.attributes) {
+            if (attr === "style" || attr === "data-dnode-id") continue;
+            element.removeAttribute(attr);
+        }
+
+        for (let attr in step.attributes){
+            element.setAttribute(attr, step.attributes[attr]);
+        }
+    });
     
-    for (let attr in step.attributes){
-        element.setAttribute(attr, step.attributes[attr]);
-    }
-    
-    return element;
+    return elements;
 }
 
 function createElement(tagName: string, id: string, attributes: { [key:string] : string; } | null) {
@@ -207,6 +235,22 @@ function insertElement(element: Element, parent: Element, previousSibling: Eleme
 
 function findNode(nodeId: string) : HTMLElement | null {
     const element = nodeHelper.findNode(nodeId);
+    if(!element) {
+        console.error(new Error(`Could not find node '${nodeId}'.`));
+    }
+    return element;
+}
+
+function findNodeLast(nodeId: string) : HTMLElement | null {
+    const element = nodeHelper.findNodeLast(nodeId);
+    if(!element) {
+        console.error(new Error(`Could not find node '${nodeId}'.`));
+    }
+    return element;
+}
+
+function findNodeAll(nodeId: string) {
+    const element = nodeHelper.findNodeAll(nodeId);
     if(!element) {
         console.error(new Error(`Could not find node '${nodeId}'.`));
     }
