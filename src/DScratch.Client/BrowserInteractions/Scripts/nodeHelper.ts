@@ -19,6 +19,12 @@ export function getAbsolutOffset(parent: Element, targetNode: Node, relativeOffs
         absolutOffset += currentNode.nodeValue?.length || 0;
         currentNode = walker.nextNode();
     }
+    
+    const splitPartIndex = getSplitPartIndex(parent);
+    if (splitPartIndex === "1") {
+        const counterPart = getSplitCounterPart(parent);
+        absolutOffset += counterPart?.textContent.length ?? 0;
+    }
 
     return absolutOffset;
 }
@@ -30,22 +36,43 @@ export function getElementFromNode(node: Node): Element {
 }
 
 export function findTextNodeAtOffset(parent: Element, offset: number): { node: Node | null, relativeOffset: number } {
-    const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
+    const splitPartIndex = getSplitPartIndex(parent);
+    switch (splitPartIndex) {
+        case "1": {
+            const result = find(parent, offset);
+            if (result.node) return result;
+            let counterPart = getSplitCounterPart(parent);
+            return find(counterPart!, offset - parent.textContent.length);
+        }
+        case "2": {
+            let counterPart = getSplitCounterPart(parent);
+            const result = find(counterPart!, offset);
+            if (result.node) return result;
+            return find(parent, offset - counterPart!.textContent.length);
+        }
+        default:
+            return find(parent, offset);
+    }
 
-    let currentOffset = 0;
-    let currentNode = walker.nextNode() as Text | null;
+    function find(targetParent: Element, offset: number) {
+        const walker = document.createTreeWalker(targetParent, NodeFilter.SHOW_TEXT);
 
-    while (currentNode) {
-        const nodeLength = currentNode.textContent?.length || 0;
+        let currentOffset = 0;
+        let currentNode = walker.nextNode() as Text | null;
 
-        if (currentOffset + nodeLength >= offset) {
-            return { node: currentNode, relativeOffset: offset - currentOffset };
+        while (currentNode) {
+            const nodeLength = currentNode.textContent?.length || 0;
+
+            if (currentOffset + nodeLength >= offset) {
+                return { node: currentNode, relativeOffset: offset - currentOffset };
+            }
+
+            currentOffset += nodeLength;
+            currentNode = walker.nextNode() as Text | null;
         }
 
-        currentOffset += nodeLength;
-        currentNode = walker.nextNode() as Text | null;
+        return { node: null, relativeOffset: 0 };
     }
-    return { node: null, relativeOffset: 0 };
 }
 
 export function findNode(nodeId: string) {
@@ -58,4 +85,17 @@ export function findNodeWithChild(parentId: string, childId: string) {
 
 export function getNodeId(element: Element) {
     return element.getAttribute(NODE_ID_ATTRIBUTE);
+}
+
+export function getSplitPartIndex(domElement: Element) {
+    return domElement.closest("[data-split-part]")?.getAttribute("data-split-part") ?? null;
+}
+
+export function getSplitCounterPart(domElement: Element) {
+    const splitElement = domElement.closest("[data-split-part]");
+    const splitPart = splitElement?.getAttribute("data-split-part");
+    const splitCounterPart = splitPart === "1" ? "2" : "1";
+    
+    const nodeId = getNodeId(domElement);
+    return document.querySelector(`[data-split-part="${splitCounterPart}"] [${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
 }
