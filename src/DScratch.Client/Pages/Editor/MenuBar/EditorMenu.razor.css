@@ -8,7 +8,7 @@
     justify-content: flex-start;
     
     gap: var(--editor-spacing-xs);
-    padding: var(--editor-spacing-lg) var(--editor-spacing-lg);
+    padding: var(--editor-spacing-xl) var(--editor-spacing-lg);
 
     font-family: var(--editor-font-family);
 }

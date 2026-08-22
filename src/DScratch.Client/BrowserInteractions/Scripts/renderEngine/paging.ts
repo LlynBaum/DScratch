@@ -9,6 +9,7 @@ interface Overflow {
     Page: HTMLElement;
     PageBottom: number;
     ElementBottom: number;
+    Margin: number;
 }
 
 export function update(modifiedNodes: HTMLElement[]) {
@@ -37,7 +38,7 @@ function greedyFlow(modifiedPages: HTMLElement[]) {
         if (!overflow || !overflow.IsOverflowing) continue;
         
         const pageIndex = Number(currentPage.getAttribute(PAGE_INDEX_ATTRIBUTE));
-        const newPage = createPage(pageIndex + 1);
+        const newPage = createPage(pageIndex + 1); // TODO: if there is a next page, move text over instead of create page
         
         splitOverflow(overflow, newPage);
         
@@ -67,12 +68,13 @@ function splitOverflow(overflow: Overflow, targetPage: HTMLElement) {
     function isOverflowing(node: Node): boolean {
         const range = document.createRange();
         range.selectNodeContents(node);
-        return range.getBoundingClientRect().bottom > overflow.PageBottom;
+        const bottom = range.getBoundingClientRect().bottom + overflow.Margin;
+        return bottom > overflow.PageBottom;
     }
 }
 
 function splitText(textNode: Text, overflow: Overflow, targetPage: HTMLElement) {
-    const index = findSplitIndex(textNode, overflow.PageBottom);
+    const index = findSplitIndex(textNode, overflow);
     const wordSafeIndex = getWordSafeSplitIndex(textNode.textContent, index);
 
     if (index === 0) {
@@ -147,11 +149,12 @@ function getBottomOverflowingChildren(page: HTMLElement): Overflow | null {
         BlockElement: lastBlockElement as HTMLElement,
         Page: page,
         PageBottom: pageBottom,
-        ElementBottom: childBottom
+        ElementBottom: childBottom,
+        Margin: marginBottom
     };
 }
 
-function findSplitIndex(textNode: Text, pageBottom: number): number {
+function findSplitIndex(textNode: Text, overflow: Overflow): number {
     const range = document.createRange();
     const fullText = textNode.textContent ?? "";
 
@@ -167,8 +170,9 @@ function findSplitIndex(textNode: Text, pageBottom: number): number {
         range.setEnd(textNode, mid);
 
         const rect = range.getBoundingClientRect();
+        const bottom = rect.bottom + overflow.Margin
 
-        if (rect.bottom > pageBottom) {
+        if (bottom > overflow.PageBottom) {
             // This segment overflows, search left to find the earliest overflow point
             splitIndex = mid;
             high = mid - 1;

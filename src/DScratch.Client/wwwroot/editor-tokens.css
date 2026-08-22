@@ -40,6 +40,7 @@
     --editor-text-muted: var(--editor-color-neutral-500);
 
     /* Layout & Sizing */
+    --editor-page-height: 1080px;
     --editor-menu-height: 48px;
     --editor-spacing-xs: 4px;
     --editor-spacing-sm: 8px;
