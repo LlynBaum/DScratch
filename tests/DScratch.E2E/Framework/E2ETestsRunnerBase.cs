@@ -10,7 +10,6 @@ public class E2ETestsRunnerBase
     
     private IPlaywright playwright = null!;
     private IBrowser browser = null!;
-    private IBrowserContext context = null!;
     protected IPage Page { get; private set; } = null!;
 
     [OneTimeSetUp]
@@ -27,13 +26,17 @@ public class E2ETestsRunnerBase
     [SetUp]
     public async Task Setup()
     {
-        context = await browser.NewContextAsync();
+        Page = await browser.NewPageAsync();
         if (EnableTracing)
         {
-            await context.Tracing.StartAsync();
+            await Page.Context.Tracing.StartAsync(new TracingStartOptions
+            {
+                Screenshots = true,
+                Snapshots = true,
+                Sources = true
+            });
         }
         
-        Page = await browser.NewPageAsync();
         SetDefaultExpectTimeout(DefaultTimeoutSec * 1000);
         
         await Page.GotoAsync(E2ETestFixture.BaseUrl);
@@ -41,8 +44,6 @@ public class E2ETestsRunnerBase
 
     [TearDown]
     public async Task TearDown() {
-        await Page.CloseAsync();
-
         if (EnableTracing)
         {
             var failed = TestContext.CurrentContext.Result.Outcome == NUnit.Framework.Interfaces.ResultState.Error
@@ -54,7 +55,7 @@ public class E2ETestsRunnerBase
                 $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}.zip"
             ) : null;
         
-            await context.Tracing.StopAsync(new TracingStopOptions
+            await Page.Context.Tracing.StopAsync(new TracingStopOptions
             {
                 Path = path
             });
@@ -65,7 +66,7 @@ public class E2ETestsRunnerBase
             }
         }
         
-        await context.DisposeAsync();
+        await Page.CloseAsync();
     }
 
     [OneTimeTearDown]

@@ -43,7 +43,7 @@ export function findTextNodeAtOffset(parent: Element, offset: number): { node: N
             if (result.node) return result;
             let counterPart = getSplitCounterPart(parent);
             if (!counterPart) return result;
-            return find(counterPart!, offset - parent.textContent.length);
+            return find(counterPart!, offset - (parent.textContent?.length ?? 0));
         }
         case "2": {
             let counterPart = getSplitCounterPart(parent);
@@ -51,7 +51,7 @@ export function findTextNodeAtOffset(parent: Element, offset: number): { node: N
                 const result = find(counterPart, offset);
                 if (result.node) return result;
             }
-            return find(parent, offset - (counterPart?.textContent.length ?? 0));
+            return find(parent, offset - (counterPart?.textContent?.length ?? 0));
         }
         default:
             return find(parent, offset);
@@ -105,5 +105,5 @@ export function getSplitCounterPart(domElement: Element) {
     const splitCounterPart = splitPart === "1" ? "2" : "1";
     
     const nodeId = getNodeId(domElement);
-    return document.querySelector(`[data-split-part="${splitCounterPart}"] [${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
+    return document.querySelector(`[data-split-part="${splitCounterPart}"][${NODE_ID_ATTRIBUTE}="${nodeId}"], [data-split-part="${splitCounterPart}"] [${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
 }

@@ -12,7 +12,7 @@ public class PageOverflowTest : PlaywrightTestBase
     {
         await DefaultPage.ClickAsync();
 
-        for (var i = 0; i < 14; i++)
+        for (var i = 0; i < 28; i++)
         {
             await Page.EnterAsync();
             await Expect(Editor.EditorPage).ToHaveCountAsync(1);
@@ -21,15 +21,15 @@ public class PageOverflowTest : PlaywrightTestBase
 
         await Page.EnterAsync();
         await Expect(Editor.EditorPage).ToHaveCountAsync(2);
-        await Expect(Editor.EditorPage.Nth(0).Paragraph).ToHaveCountAsync(15);
+        await Expect(Editor.EditorPage.Nth(0).Paragraph).ToHaveCountAsync(29);
         await Expect(Editor.EditorPage.Nth(1).Paragraph).ToHaveCountAsync(1);
         
         var expectedSelection = new SelectionInfo
         {
             Direction = SelectionDirection.None,
-            FocusId = "Darki-15",
+            FocusId = "Darki-30",
             FocusOffset = 0,
-            AnchorId = "Darki-15",
+            AnchorId = "Darki-30",
             AnchorOffset = 0
         };
         
@@ -42,13 +42,13 @@ public class PageOverflowTest : PlaywrightTestBase
     public async Task CreatesNewPage_WhenTextOverflows_AndNextPageDoesNotExistYet()
     {
         const string firstPageText =
-            "akljfajslöfkjalöskjfölkajsölkfjölkajölkjölkjfölkjaöljsöldjfölkajölskjdfölkjalkjlkjlkjdslkfjljkd";
-        const string secondPageText = "kddjfkjdfjkdjfkdjfkj";
+            "jlökgfjslkfjasölkj dfölkaj sdlkfj aölksdj flök ajsdfölkj aölskdfj ölaksjdfölk jasöldkfj aölksjdf ölkajsödlfk jasölkdj fölkasj dfölkaj slök fjlköasdj flkasj dlfkjasölkdfj ölkasdjf lökasjdlökfjaslökd fjlökas jflkj öjlöj";
+        const string secondPageText = " dwww";
         const string overflowText = firstPageText + secondPageText;
 
         await DefaultPage.ClickAsync();
 
-        for (var i = 0; i < 14; i++)
+        for (var i = 0; i < 28; i++)
         {
             await Page.TypeAtCurrentCursorAsync(i.ToString());
             await Page.EnterAsync();
@@ -58,17 +58,17 @@ public class PageOverflowTest : PlaywrightTestBase
 
         await Page.TypeAtCurrentCursorAsync(overflowText);
         await Expect(Editor.EditorPage).ToHaveCountAsync(2);
-        await Expect(Editor.EditorPage.Nth(1).TextSpan.Last).ToHaveAttributeAsync("data-split-part", "1");
-        await Expect(Editor.EditorPage.Nth(1).TextSpan.Last).ToHaveTextAsync(firstPageText);
-        await Expect(Editor.EditorPage.Nth(2).TextSpan).ToHaveAttributeAsync("data-split-part", "2");
-        await Expect(Editor.EditorPage.Nth(2).TextSpan).ToHaveTextAsync(secondPageText);
+        await Expect(Editor.EditorPage.Nth(0).Paragraph.Last).ToHaveAttributeAsync("data-split-part", "1");
+        await Expect(Editor.EditorPage.Nth(0).TextSpan.Last).ToHaveTextAsync(firstPageText);
+        await Expect(Editor.EditorPage.Nth(1).Paragraph).ToHaveAttributeAsync("data-split-part", "2");
+        await Expect(Editor.EditorPage.Nth(1).TextSpan).ToHaveTextAsync(secondPageText);
         
         var expectedSelection = new SelectionInfo
         {
             Direction = SelectionDirection.None,
-            FocusId = "Darki-" + (28 + overflowText.Length),
+            FocusId = "Darki-76",
             FocusOffset = overflowText.Length,
-            AnchorId = "Darki-" + (28 + overflowText.Length),
+            AnchorId = "Darki-76",
             AnchorOffset = overflowText.Length
         };
         
