@@ -29,7 +29,7 @@ export function update(modifiedNodes: HTMLElement[]) {
 
     if (sortedPages.length === 0) return;
     greedyFlow(sortedPages);
-}   
+}
 
 function greedyFlow(modifiedPages: HTMLElement[]) {
     let currentPage;

@@ -42,13 +42,16 @@ export function findTextNodeAtOffset(parent: Element, offset: number): { node: N
             const result = find(parent, offset);
             if (result.node) return result;
             let counterPart = getSplitCounterPart(parent);
+            if (!counterPart) return result;
             return find(counterPart!, offset - parent.textContent.length);
         }
         case "2": {
             let counterPart = getSplitCounterPart(parent);
-            const result = find(counterPart!, offset);
-            if (result.node) return result;
-            return find(parent, offset - counterPart!.textContent.length);
+            if (counterPart) {
+                const result = find(counterPart, offset);
+                if (result.node) return result;
+            }
+            return find(parent, offset - (counterPart?.textContent.length ?? 0));
         }
         default:
             return find(parent, offset);
@@ -86,10 +89,6 @@ export function findNodeLast(nodeId: string) {
 
 export function findNodeAll(nodeId: string) {
     return document.querySelectorAll<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
-}
-
-export function findNodeWithChild(parentId: string, childId: string) {
-    return document.querySelector<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${parentId}"]:has([${NODE_ID_ATTRIBUTE}="${childId}"])`);
 }
 
 export function getNodeId(element: Element) {
