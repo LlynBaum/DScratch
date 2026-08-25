@@ -39,6 +39,24 @@ public class PageOverflowTest : PlaywrightTestBase
     }
     
     [Test]
+    public async Task MovesToNextPage_WhenBlockOverflows_AndNextPageExists()
+    {
+        await DefaultPage.ClickAsync();
+
+        for (var i = 0; i < 29; i++)
+        {
+            await Page.EnterAsync();
+        }
+
+        await Page.ArrowUp();
+        await Page.ArrowUp();
+        await Page.EnterAsync();
+        await Expect(Editor.EditorPage).ToHaveCountAsync(2);
+        await Expect(Editor.EditorPage.Nth(0).Paragraph).ToHaveCountAsync(29);
+        await Expect(Editor.EditorPage.Nth(1).Paragraph).ToHaveCountAsync(2);
+    }
+    
+    [Test]
     public async Task CreatesNewPage_WhenTextOverflows_AndNextPageDoesNotExistYet()
     {
         const string firstPageText =

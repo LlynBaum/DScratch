@@ -65,6 +65,11 @@ public static class DSelectors
         {
             await page.Keyboard.PressAsync("Enter");
         }
+
+        public async Task ArrowUp()
+        {
+            await page.Keyboard.PressAsync("ArrowUp");
+        }
         
         public async Task SetCursorAsync(string dataPathId, int offset)
         {

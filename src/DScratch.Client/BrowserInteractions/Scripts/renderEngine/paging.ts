@@ -43,9 +43,15 @@ function greedyFlow(modifiedPages: HTMLElement[]) {
         if (!overflow || !overflow.IsOverflowing) continue;
         
         const pageIndex = Number(currentPage.getAttribute(PAGE_INDEX_ATTRIBUTE));
-        const newPage = createPage(pageIndex + 1); // TODO: if there is a next page, move text over instead of create page
+        
+        let targetPage;
+        if (currentPage.nextElementSibling?.matches(`[${PAGE_INDEX_ATTRIBUTE}='${pageIndex + 1}']`)) {
+            targetPage = currentPage.nextElementSibling as HTMLElement;
+        } else {
+            targetPage = createPage(pageIndex + 1);
+        }
 
-        stabilize(overflow, newPage);
+        stabilize(overflow, targetPage);
         
        // currentPage.nextElementSibling && modifiedPages.push(currentPage.nextElementSibling as HTMLElement);
     }
@@ -106,9 +112,10 @@ function splitText(textNode: Text, overflow: Overflow, targetPage: HTMLElement) 
     } else {
         targetPage.firstElementChild!.append(...content);
     }
+    
+    // TODO: remove existing split parts before adding the new once
 
     overflow.BlockElement.setAttribute(SPLIT_ATTRIBUTE, "1");
-    
     for (const node of content) {
         if (node.nodeType === Node.ELEMENT_NODE) {
             (node as HTMLElement).setAttribute(SPLIT_ATTRIBUTE, "2");
