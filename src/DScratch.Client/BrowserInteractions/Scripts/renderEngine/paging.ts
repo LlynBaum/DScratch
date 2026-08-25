@@ -34,19 +34,24 @@ export function update(modifiedNodes: HTMLElement[]) {
 function greedyFlow(modifiedPages: HTMLElement[]) {
     let currentPage;
     while (currentPage = modifiedPages.pop()) {
+        // If the page was removed from the DOM, assume it underflowed and was empty, so we can safely skip it.
+        if (!currentPage.isConnected) {
+            continue;
+        }
+        
         const overflow = getBottomOverflowingChildren(currentPage);
         if (!overflow || !overflow.IsOverflowing) continue;
         
         const pageIndex = Number(currentPage.getAttribute(PAGE_INDEX_ATTRIBUTE));
         const newPage = createPage(pageIndex + 1); // TODO: if there is a next page, move text over instead of create page
+
+        stabilize(overflow, newPage);
         
-        splitOverflow(overflow, newPage);
-        
-       // currentPage.nextElementSibling && modifiedPages.push(currentPage.nextElementSibling as HTMLElement); TODO only do when next page already existed
+       // currentPage.nextElementSibling && modifiedPages.push(currentPage.nextElementSibling as HTMLElement);
     }
 }
 
-function splitOverflow(overflow: Overflow, targetPage: HTMLElement) {
+function stabilize(overflow: Overflow, targetPage: HTMLElement) {
     const walker = document.createTreeWalker(overflow.BlockElement, NodeFilter.SHOW_TEXT);
     let lastNode = walker.lastChild() as Text | null;
     let currentNode = walker.previousNode() as Text | null;
