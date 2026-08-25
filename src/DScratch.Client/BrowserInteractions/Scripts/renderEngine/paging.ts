@@ -17,7 +17,7 @@ export function update(modifiedNodes: HTMLElement[]) {
         new Set(
             modifiedNodes
                 .map(n => n.closest<HTMLElement>(`.page[${PAGE_INDEX_ATTRIBUTE}]`))
-                .filter((node): node is HTMLElement => node !== null)
+                .filter((node) => node !== null)
         )
     );
     
@@ -82,31 +82,33 @@ function splitText(textNode: Text, overflow: Overflow, targetPage: HTMLElement) 
         return;
     }
 
-    const split = textNode.splitText(wordSafeIndex);
-    const span = textNode.parentElement;
-    const splitElement = span!.cloneNode(false) as HTMLElement;
-    splitElement.appendChild(split);
-
-    let newElem = splitElement;
-    if (span!.parentElement !== overflow.BlockElement) {
-        // This currently assumes there can be max 1 wrapper for text (e.g. 'a' tag). So not supper generic but probably enough. Tables or other complex elements in the future must be handled separately anyway.
-        const wrapper = span!.parentElement!.cloneNode(false) as HTMLElement;
-        wrapper.appendChild(span!);
-        newElem = wrapper;
+    const range = new Range();
+    range.setStart(textNode, wordSafeIndex);
+    range.setEndAfter(overflow.Page.lastElementChild!);
+    
+    const overflowContent = range.extractContents();
+    
+    let content;
+    if (overflowContent && overflowContent.firstElementChild?.matches("[data-dnode-id='Root']")) {
+        content = overflowContent?.querySelectorAll("[data-dnode-id='Root'] > *");
+    } else {
+        content = overflowContent.childNodes;
     }
 
-    const parent = targetPage.querySelector<HTMLElement>("div[contenteditable]")!;
-    const splitBlock = overflow.BlockElement.cloneNode(false) as HTMLElement;
-    parent.appendChild(splitBlock);
+    const referenceNode = targetPage.firstElementChild!.firstElementChild ?? null;
+    if (referenceNode) {
+        referenceNode.before(...content);
+    } else {
+        targetPage.firstElementChild!.append(...content);
+    }
 
     overflow.BlockElement.setAttribute(SPLIT_ATTRIBUTE, "1");
-    splitBlock.setAttribute(SPLIT_ATTRIBUTE, "2");
-
-    splitBlock.appendChild(newElem);
-    let currentElement = newElem.nextElementSibling;
-    while (currentElement) {
-        splitBlock.appendChild(currentElement);
-        currentElement = currentElement.nextElementSibling;
+    
+    for (const node of content) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            (node as HTMLElement).setAttribute(SPLIT_ATTRIBUTE, "2");
+            break;
+        }
     }
 }
 
