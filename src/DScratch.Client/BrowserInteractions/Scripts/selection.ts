@@ -135,15 +135,12 @@ function setCursorPosition(parentId: string, offset: number) {
 
     const selection = window.getSelection();
     selection?.removeAllRanges();
+    
+    const targetNode = node ?? element;
+    const targetOffset = node ? relativeOffset : 0;
 
     const range = document.createRange();
-
-    if (node) {
-        range.setStart(node, relativeOffset);
-    } else {
-        range.setStart(element, 0);
-    }
-
+    range.setStart(targetNode, targetOffset);
     range.collapse(true);
     selection?.addRange(range);
 }
@@ -161,14 +158,25 @@ function setCursorSelection(selectionInfo: SelectionInfo) {
     const selection = window.getSelection();
     selection?.removeAllRanges();
 
-    const range = document.createRange();
+    const anchorNode = anchor.node ?? anchorElement;
+    const anchorOffset = anchor.node ? anchor.relativeOffset : 0;
+    const focusNode = focus.node ?? focusElement;
+    const focusOffset = focus.node ? focus.relativeOffset : 0;
 
-    const { start, end } = asStartEnd(anchor, focus);
-    range.setStart(start.node!, start.relativeOffset);
-    range.setEnd(end.node!, end.relativeOffset);
-    selection?.addRange(range);
+    if (selection?.setBaseAndExtent) {
+        selection.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
+    } else {
+        const range = document.createRange();
+        const { start, end } = asStartEnd(
+            { node: anchorNode, relativeOffset: anchorOffset },
+            { node: focusNode, relativeOffset: focusOffset }
+        );
+        range.setStart(start.node, start.relativeOffset);
+        range.setEnd(end.node, end.relativeOffset);
+        selection?.addRange(range);
+    }
     
-    function asStartEnd(anchor: { node: Node | null; relativeOffset: number }, focus: { node: Node | null; relativeOffset: number }) {
+    function asStartEnd(anchor: { node: Node; relativeOffset: number }, focus: { node: Node; relativeOffset: number }) {
         return selectionInfo.direction === "forward" 
             ? { start: anchor, end: focus }
             : { start: focus, end: anchor };

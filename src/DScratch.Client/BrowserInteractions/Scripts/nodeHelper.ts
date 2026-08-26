@@ -1,7 +1,8 @@
 const NODE_ID_ATTRIBUTE = "data-dnode-id";
 
 export function getAbsolutOffset(parent: Element, targetNode: Node, relativeOffset?: number) {
-    if(!relativeOffset) {
+    // 0 is falsy, but a valid relative option, since the rest can be at a split paragraph. So have to explicitly only check null and undefined
+    if(relativeOffset === undefined || relativeOffset === null) {
         return 0;
     }
 
@@ -23,7 +24,7 @@ export function getAbsolutOffset(parent: Element, targetNode: Node, relativeOffs
     const splitPartIndex = getSplitPartIndex(parent);
     if (splitPartIndex === "2") {
         const counterPart = getSplitCounterPart(parent);
-        absolutOffset += counterPart?.textContent.length ?? 0;
+        absolutOffset += counterPart?.textContent?.length ?? 0;
     }
 
     return absolutOffset;

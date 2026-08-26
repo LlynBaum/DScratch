@@ -75,32 +75,13 @@ public static class DSelectors
         {
             await page.EvaluateAsync("""
                  ([id, off]) => {
-                     // Find your text span element via its stable CRDT data attribute
-                     const element = document.querySelector(`[data-dnode-id='${id}']`);
-                     if (!element) throw new Error(`DNode with path ID '${id}' not found in the DOM.`);
-
-                     // Focus the root editable area first so the browser accepts the selection change
-                     const editableRoot = element.closest('[contenteditable]');
-                     if (editableRoot) editableRoot.focus();
-
-                     const range = document.createRange();
-                     const sel = window.getSelection();
-
-                     // Find the raw text node child inside your <span> container
-                     const textNode = element.firstChild;
-
-                     if (!textNode || textNode.nodeType !== Node.TEXT_NODE) {
-                         // Handle empty paragraphs/spans where no child text node exists yet
-                         range.setStart(element, 0);
-                     } else {
-                         // Cap the offset safely against the actual text length to prevent DOM errors
-                         const safeOffset = Math.min(off, textNode.textContent.length);
-                         range.setStart(textNode, safeOffset);
-                     }
-
-                     range.collapse(true); // collapse(true) means cursor mode, no highlight selection
-                     sel.removeAllRanges();
-                     sel.addRange(range);
+                     window.__dscratch_test__?.setSelection({
+                         direction: 'none',
+                         anchorId: id,
+                         anchorOffset: off,
+                         focusId: id,
+                         focusOffset: off
+                     });
                  }
                  """, 
                 new object[] { dataPathId, offset }
@@ -109,8 +90,9 @@ public static class DSelectors
         
         public async Task SetSelectionAsync(SelectionInfo selectionInfo)
         {
-            var payload = new object[] 
+            var payload = new object?[] 
             { 
+                selectionInfo.Direction.ToString().ToLowerInvariant(),
                 selectionInfo.AnchorId, 
                 selectionInfo.AnchorOffset, 
                 selectionInfo.FocusId, 
@@ -119,43 +101,14 @@ public static class DSelectors
 
             await page.EvaluateAsync("""
                 (args) => {
-                    const [anchorId, anchorOffset, focusId, focusOffset] = args;
-
-                    // 1. Locate both elements via your stable CRDT data attributes
-                    const anchorElement = document.querySelector(`[data-dnode-id='${anchorId}']`);
-                    const focusElement = document.querySelector(`[data-dnode-id='${focusId}']`);
-
-                    if (!anchorElement) throw new Error(`Anchor node with ID '${anchorId}' not found in DOM.`);
-                    if (!focusElement) throw new Error(`Focus node with ID '${focusId}' not found in DOM.`);
-
-                    // 2. Safely claim browser focus inside the contenteditable root boundary
-                    const editableRoot = anchorElement.closest('[contenteditable]');
-                    if (editableRoot) editableRoot.focus();
-
-                    // Helper to resolve whether to target a text node or a structural empty block container
-                    const resolveTarget = (element, offset) => {
-                        const textNode = element.firstChild;
-                        if (!textNode || textNode.nodeType !== Node.TEXT_NODE) {
-                            return { node: element, offset: 0 };
-                        }
-                        const safeOffset = Math.min(offset, textNode.textContent.length);
-                        return { node: textNode, offset: safeOffset };
-                    };
-
-                    const anchorTarget = resolveTarget(anchorElement, anchorOffset);
-                    const focusTarget = resolveTarget(focusElement, focusOffset);
-
-                    // 3. Apply the selection directly to the window view layer
-                    const sel = window.getSelection();
-                    sel.removeAllRanges();
-                    
-                    // setBaseAndExtent natively establishes forward vs backward directions!
-                    sel.setBaseAndExtent(
-                        anchorTarget.node, 
-                        anchorTarget.offset, 
-                        focusTarget.node, 
-                        focusTarget.offset
-                    );
+                    const [direction, anchorId, anchorOffset, focusId, focusOffset] = args;
+                    window.__dscratch_test__?.setSelection({
+                        direction: direction,
+                        anchorId: anchorId,
+                        anchorOffset: anchorOffset,
+                        focusId: focusId,
+                        focusOffset: focusOffset
+                    });
                 }
                 """, payload);
         }

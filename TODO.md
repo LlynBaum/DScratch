@@ -5,7 +5,7 @@
 - [ ] Greedy Flow 
   - [ ] Move page down if overflow 
     - [x] Use `Range.extractContent()`
-    - [ ] Move text to existing next page
+    - [ ] Move text to existing next page & evt to split paragraph
     - [ ] on overflow queue next page for greedyFlow
     - [ ] make split-part not binary, it can go from part 1 - infinity. A block can span over more than 2 pages
     - [ ] When moving stuff to next page, check for empty block that might can be removed from the DOM and are no longer split

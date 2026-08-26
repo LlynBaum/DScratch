@@ -1,7 +1,7 @@
 import { applyTransaction, TransactionResult } from "./renderEngine/transaction";
 import { registerInput } from "./userInteraction/inputs";
 import { registerLinks } from "./userInteraction/links";
-import {getEditorSelection, registerSelection, SelectionInfo} from "./selection";
+import {getEditorSelection, registerSelection, setSelection, SelectionInfo} from "./selection";
 import {registerMenu} from "./editorMenu";
 import * as renderEngineApi from "./renderEngine/renderEngineApi";
 
@@ -17,6 +17,9 @@ interface Editor {
 declare global {
     interface Window {
         editor: Editor;
+        __dscratch_test__?: {
+            setSelection: (selection: SelectionInfo) => void;
+        };
     }
 }
 
@@ -71,4 +74,8 @@ window.editor = {
     getEditorSelection: getEditorSelection,
     getPageNumbers: renderEngineApi.getPageNumbers,
     node: null,
+};
+
+window.__dscratch_test__ = {
+    setSelection: setSelection,
 };
