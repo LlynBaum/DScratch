@@ -72,6 +72,7 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.Forward,
             AnchorId = "Darki-2",
             AnchorOffset = 1,
             FocusId = "Darki-8",
@@ -110,6 +111,7 @@ public class SwitchBlockTypeTests : PlaywrightTestBase
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.Forward,
             AnchorId = "Darki-2",
             AnchorOffset = 1,
             FocusId = "Darki-8",

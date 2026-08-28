@@ -5,7 +5,7 @@ namespace DScratch.E2E.Tests.Paging;
 
 public class PageOverflowTest : PlaywrightTestBase
 {
-    protected override bool EnableTracing => true;
+    protected override bool EnableTracing => false;
 
     [Test]
     public async Task CreatesNewPage_WhenBlockOverflows_AndNextPageDoesNotExistYet()

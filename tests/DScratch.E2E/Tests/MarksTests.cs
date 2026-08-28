@@ -15,6 +15,7 @@ public class MarksTests : PlaywrightTestBase
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.Forward,
             AnchorId = "Darki-2",
             AnchorOffset = 2,
             FocusId = "Darki-7",
@@ -54,6 +55,7 @@ public class MarksTests : PlaywrightTestBase
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.Forward,
             AnchorId = "Darki-2",
             AnchorOffset = 2,
             FocusId = "Darki-7",
@@ -91,6 +93,7 @@ public class MarksTests : PlaywrightTestBase
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.Forward,
             AnchorId = "Darki-2",
             AnchorOffset = 1,
             FocusId = "Darki-2",
@@ -131,6 +134,7 @@ public class MarksTests : PlaywrightTestBase
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.Forward,
             AnchorId = "Darki-2",
             AnchorOffset = 0,
             FocusId = "Darki-2",
@@ -140,6 +144,7 @@ public class MarksTests : PlaywrightTestBase
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.Forward,
             AnchorId = "Darki-6",
             AnchorOffset = 0,
             FocusId = "Darki-6",
@@ -149,6 +154,7 @@ public class MarksTests : PlaywrightTestBase
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.Forward,
             AnchorId = "Darki-2",
             AnchorOffset = 1,
             FocusId = "Darki-6",
@@ -191,6 +197,7 @@ public class MarksTests : PlaywrightTestBase
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.Forward,
             AnchorId = "Darki-2",
             AnchorOffset = 2,
             FocusId = "Darki-2",
@@ -200,6 +207,7 @@ public class MarksTests : PlaywrightTestBase
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.Forward,
             AnchorId = "Darki-2",
             AnchorOffset = 0,
             FocusId = "Darki-12",
@@ -238,6 +246,7 @@ public class MarksTests : PlaywrightTestBase
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.None,
             AnchorId = "Darki-2",
             AnchorOffset = 2,
             FocusId = "Darki-2",
@@ -276,6 +285,7 @@ public class MarksTests : PlaywrightTestBase
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.None,
             AnchorId = "Darki-2",
             AnchorOffset = 2,
             FocusId = "Darki-2",
@@ -314,6 +324,7 @@ public class MarksTests : PlaywrightTestBase
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.Forward,
             AnchorId = "Darki-2",
             AnchorOffset = 0,
             FocusId = "Darki-2",
@@ -323,6 +334,7 @@ public class MarksTests : PlaywrightTestBase
         
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.None,
             AnchorId = "Darki-2",
             AnchorOffset = 2,
             FocusId = "Darki-2",
@@ -361,6 +373,7 @@ public class MarksTests : PlaywrightTestBase
         
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.Forward,
             AnchorId = "Darki-2",
             AnchorOffset = 0,
             FocusId = "Darki-2",
@@ -370,6 +383,7 @@ public class MarksTests : PlaywrightTestBase
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.None,
             AnchorId = "Darki-2",
             AnchorOffset = 2,
             FocusId = "Darki-2",
@@ -441,6 +455,7 @@ public class MarksTests : PlaywrightTestBase
         
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.Forward,
             AnchorId = "Darki-2",
             AnchorOffset = 1,
             FocusId = "Darki-2",

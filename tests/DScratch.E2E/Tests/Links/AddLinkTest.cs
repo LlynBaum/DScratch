@@ -50,6 +50,7 @@ public class AddLinkTest : PlaywrightTestBase
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.Forward,
             AnchorId = "Darki-2",
             AnchorOffset = 1,
             FocusId = "Darki-2",
@@ -98,6 +99,7 @@ public class AddLinkTest : PlaywrightTestBase
 
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.Forward,
             AnchorId = "Darki-2",
             AnchorOffset = 1,
             FocusId = "Darki-10",

@@ -21,6 +21,7 @@ public class EditLinkTest : PlaywrightTestBase
         await Expect(Page.Locator("#link-settings-popover")).ToBeVisibleAsync();
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.Backward,
             AnchorId = "Darki-6",
             AnchorOffset = 4,
             FocusId = "Darki-6",
@@ -30,6 +31,7 @@ public class EditLinkTest : PlaywrightTestBase
         
         await Page.SetSelectionAsync(new SelectionInfo
         {
+            Direction = SelectionDirection.None,
             AnchorId = "Darki-6",
             AnchorOffset = 3,
             FocusId = "Darki-6",
