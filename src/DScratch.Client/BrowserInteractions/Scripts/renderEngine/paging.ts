@@ -87,6 +87,8 @@ function stabilize(overflow: Overflow, targetPage: HTMLElement) {
 function splitText(textNode: Text, overflow: Overflow, targetPage: HTMLElement) {
     const index = findSplitIndex(textNode, overflow);
     const wordSafeIndex = getWordSafeSplitIndex(textNode.textContent, index);
+    
+    // TODO: remove existing split parts before adding the new once
 
     if (index === 0) {
         moveBlock(overflow, targetPage);
@@ -112,8 +114,11 @@ function splitText(textNode: Text, overflow: Overflow, targetPage: HTMLElement) 
     } else {
         targetPage.firstElementChild!.append(...content);
     }
-    
-    // TODO: remove existing split parts before adding the new once
+
+    const splitNodeInSamePage = findAdjacentNodes(targetPage);
+    if (splitNodeInSamePage) {
+        mergeNodes(splitNodeInSamePage);
+    }
 
     overflow.BlockElement.setAttribute(SPLIT_ATTRIBUTE, "1");
     for (const node of content) {
@@ -121,6 +126,31 @@ function splitText(textNode: Text, overflow: Overflow, targetPage: HTMLElement) 
             (node as HTMLElement).setAttribute(SPLIT_ATTRIBUTE, "2");
             break;
         }
+    }
+}
+
+function findAdjacentNodes(parent: Element) {
+    const elements = parent.querySelectorAll("[data-dnode-id]");
+
+    for (const el of elements) {
+        const next = el.nextElementSibling;
+        if (
+            next &&
+            next.hasAttribute("data-dnode-id") &&
+            el.getAttribute("data-dnode-id") === next.getAttribute("data-dnode-id")
+        ) {
+            return [el, next];
+        }
+    }
+
+    return null;
+}
+
+function mergeNodes(elements: Element[]) {
+    const firstElement = elements[0];
+    for (const el of elements.slice(1)) {
+        firstElement.append(...el.childNodes);
+        el.remove();
     }
 }
 

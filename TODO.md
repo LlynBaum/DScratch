@@ -17,6 +17,11 @@
 - [ ] Hard Page Break (CTRL + Enter, UI)
 - [ ] Transaction focus set should scroll focus into view
 
+
+Add Tests for:
+- Delete Selected Text, that spans over more than one page
+- General everything that can break when spanning over more than one page, test it
+
 # Features
 
 - [x] Marks
