@@ -66,12 +66,12 @@ export function getEditorSelection(): SelectionInfo | null {
     const focusElement = selection.focusNode && getElementFromNode(selection.focusNode);
 
     if (!anchorElement) return lastEditorSelection;
-    
+
     const anchorId = getNodeId(anchorElement);
     const anchorOffset = getAbsolutOffset(anchorElement, selection?.anchorNode!, selection?.anchorOffset);
     
     if (!anchorId) return lastEditorSelection;
-    
+
     const focusId = focusElement ? getNodeId(focusElement) : anchorId;
     const focusOffset = focusElement ? getAbsolutOffset(focusElement, selection?.focusNode!, selection?.focusOffset) : anchorOffset;
     
@@ -163,24 +163,7 @@ function setCursorSelection(selectionInfo: SelectionInfo) {
     const focusNode = focus.node ?? focusElement;
     const focusOffset = focus.node ? focus.relativeOffset : 0;
 
-    if (selection?.setBaseAndExtent) {
-        selection.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
-    } else {
-        const range = document.createRange();
-        const { start, end } = asStartEnd(
-            { node: anchorNode, relativeOffset: anchorOffset },
-            { node: focusNode, relativeOffset: focusOffset }
-        );
-        range.setStart(start.node, start.relativeOffset);
-        range.setEnd(end.node, end.relativeOffset);
-        selection?.addRange(range);
-    }
-    
-    function asStartEnd(anchor: { node: Node; relativeOffset: number }, focus: { node: Node; relativeOffset: number }) {
-        return selectionInfo.direction === "forward" 
-            ? { start: anchor, end: focus }
-            : { start: focus, end: anchor };
-    }
+    selection?.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
 }
 
 let timeout: any;

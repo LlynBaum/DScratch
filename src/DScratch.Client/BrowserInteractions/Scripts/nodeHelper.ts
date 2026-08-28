@@ -21,6 +21,10 @@ export function getAbsolutOffset(parent: Element, targetNode: Node, relativeOffs
         currentNode = walker.nextNode();
     }
     
+    if (!currentNode) {
+        return 0;
+    }
+    
     const splitPartIndex = getSplitPartIndex(parent);
     if (splitPartIndex === "2") {
         const counterPart = getSplitCounterPart(parent);

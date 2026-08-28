@@ -1,0 +1,20 @@
+blazor.web.wyu7y4jcvb.js:1 Debugging hotkey: Shift+Alt+D (when application has focus)
+editor.ts:45 editor ready!
+selection.ts:113 skip selection set - user move
+selection.ts:114 selection {direction: 'none', anchorId: 'Darki-2', anchorNodeId: {…}, anchorOffset: 1, focusId: 'Darki-2', …}anchorId: "Darki-2"anchorNodeId: {clock: 2, client: 'Darki', value: 'Darki-2', isRoot: false}anchorOffset: 1direction: "none"focusId: "Darki-2"focusNodeId: {clock: 2, client: 'Darki', value: 'Darki-2', isRoot: false}focusOffset: 1[[Prototype]]: Object
+selection.ts:115 snapshot {selection: Selection, absolutAnchorOffset: 0, anchorId: 'Darki-1', absolutFocusOffset: 0, focusId: 'Darki-1'}absolutAnchorOffset: 0absolutFocusOffset: 0anchorId: "Darki-1"focusId: "Darki-1"selection: Selection {anchorNode: p, anchorOffset: 0, focusNode: p, focusOffset: 0, isCollapsed: true, …}[[Prototype]]: Object
+selection.ts:113 skip selection set - user move
+selection.ts:114 selection {direction: 'none', anchorId: 'Darki-2', anchorNodeId: {…}, anchorOffset: 2, focusId: 'Darki-2', …}anchorId: "Darki-2"anchorNodeId: {clock: 2, client: 'Darki', value: 'Darki-2', isRoot: false}anchorOffset: 2direction: "none"focusId: "Darki-2"focusNodeId: {clock: 2, client: 'Darki', value: 'Darki-2', isRoot: false}focusOffset: 2[[Prototype]]: Object
+selection.ts:115 snapshot {selection: Selection, absolutAnchorOffset: 1, anchorId: 'Darki-2', absolutFocusOffset: 1, focusId: 'Darki-2'}absolutAnchorOffset: 1absolutFocusOffset: 1anchorId: "Darki-2"focusId: "Darki-2"selection: Selection {anchorNode: span, anchorOffset: 0, focusNode: span, focusOffset: 0, isCollapsed: true, …}[[Prototype]]: Object
+selection.ts:113 skip selection set - user move
+selection.ts:114 selection {direction: 'none', anchorId: 'Darki-2', anchorNodeId: {…}, anchorOffset: 3, focusId: 'Darki-2', …}
+selection.ts:115 snapshot {selection: Selection, absolutAnchorOffset: 2, anchorId: 'Darki-2', absolutFocusOffset: 2, focusId: 'Darki-2'}
+selection.ts:113 skip selection set - user move
+selection.ts:114 selection {direction: 'none', anchorId: 'Darki-2', anchorNodeId: {…}, anchorOffset: 4, focusId: 'Darki-2', …}
+selection.ts:115 snapshot {selection: Selection, absolutAnchorOffset: 3, anchorId: 'Darki-2', absolutFocusOffset: 3, focusId: 'Darki-2'}
+selection.ts:113 skip selection set - user move
+selection.ts:114 selection {direction: 'none', anchorId: 'Darki-2', anchorNodeId: {…}, anchorOffset: 5, focusId: 'Darki-2', …}
+selection.ts:115 snapshot {selection: Selection, absolutAnchorOffset: 4, anchorId: 'Darki-2', absolutFocusOffset: 4, focusId: 'Darki-2'}
+selection.ts:113 skip selection set - user move
+selection.ts:114 selection {direction: 'none', anchorId: 'Darki-2', anchorNodeId: {…}, anchorOffset: 6, focusId: 'Darki-2', …}
+selection.ts:115 snapshot {selection: Selection, absolutAnchorOffset: 5, anchorId: 'Darki-2', absolutFocusOffset: 5, focusId: 'Darki-2'}
