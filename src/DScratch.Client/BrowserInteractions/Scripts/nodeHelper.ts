@@ -87,12 +87,17 @@ export function findNode(nodeId: string) {
     return document.querySelector<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
 }
 
-export function findNodeLast(nodeId: string) {
+export function findLastNode(nodeId: string) {
     const elements = document.querySelectorAll<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
     return elements[elements.length - 1];
 }
 
-export function findNodeAll(nodeId: string) {
+export function findLastNodeWithSibling(nodeId: string, siblingId: string) {
+    const elements = document.querySelectorAll<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${nodeId}"]:has([${NODE_ID_ATTRIBUTE}="${siblingId}"])`);
+    return elements[elements.length - 1];
+}
+
+export function findAllNode(nodeId: string) {
     return document.querySelectorAll<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
 }
 

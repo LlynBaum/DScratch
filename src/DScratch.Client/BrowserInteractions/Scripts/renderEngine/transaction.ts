@@ -152,10 +152,13 @@ function handleDeleteTextStep(step: DeleteTextStep) {
 }
 
 function handleInsertElementStep(step: InsertElementStep) {
-    const parent = findNodeLast(step.parentId);
+    const parent = step.previousSiblingId 
+        ? findLastNodeWithSibling(step.parentId, step.previousSiblingId) 
+        : findLastNode(step.parentId);
+     
     if (!parent) return null;
 
-    const previousSibling = step.previousSiblingId ? findNodeLast(step.previousSiblingId) : null;
+    const previousSibling = step.previousSiblingId ? findLastNode(step.previousSiblingId) : null;
 
     const element = createElement(step.tagName, step.newNodeId, step.attributes);
     insertElement(element, parent, previousSibling);
@@ -163,17 +166,19 @@ function handleInsertElementStep(step: InsertElementStep) {
 }
 
 function handleDeleteElementStep(step: DeleteElementStep) {
-    const elements = findNodeAll(step.targetId);
+    const elements = findAllNode(step.targetId);
     elements.forEach(e => e.remove());
     return elements;
 }
 
 function handleMoveStep(step: MoveStep) {
-    const elements = findNodeAll(step.targetNodeId);
-    const newParent = findNodeLast(step.targetParentId);
+    const elements = findAllNode(step.targetNodeId);
+    const newParent = step.previousSiblingId
+        ? findLastNodeWithSibling(step.targetParentId, step.previousSiblingId)
+        : findLastNode(step.targetParentId);
     
     if (elements.length > 0 && newParent) {
-        let previousSibling = step.previousSiblingId ? findNodeLast(step.previousSiblingId) : null;
+        let previousSibling = step.previousSiblingId ? findLastNode(step.previousSiblingId) : null;
         elements.forEach(element => {
             insertElement(element, newParent, previousSibling);
             previousSibling = element;
@@ -183,7 +188,7 @@ function handleMoveStep(step: MoveStep) {
 }
 
 function handleUpdateMarksStep(step: UpdateMarksStep) {
-    const elements = findNodeAll(step.nodeId);
+    const elements = findAllNode(step.nodeId);
     
     elements.forEach(element => {
         element.style = '';
@@ -197,7 +202,7 @@ function handleUpdateMarksStep(step: UpdateMarksStep) {
 }
 
 function handleUpdateAttributesStep(step: UpdateAttributes) {
-    const elements = findNodeAll(step.nodeId);
+    const elements = findAllNode(step.nodeId);
     
     elements.forEach(element => {
         for (let attr in element.attributes) {
@@ -237,16 +242,24 @@ function findNode(nodeId: string) : HTMLElement | null {
     return element;
 }
 
-function findNodeLast(nodeId: string) : HTMLElement | null {
-    const element = nodeHelper.findNodeLast(nodeId);
+function findLastNode(nodeId: string) : HTMLElement | null {
+    const element = nodeHelper.findLastNode(nodeId);
     if(!element) {
         console.error(new Error(`Could not find node '${nodeId}'.`));
     }
     return element;
 }
 
-function findNodeAll(nodeId: string) {
-    const element = nodeHelper.findNodeAll(nodeId);
+function findLastNodeWithSibling(nodeId: string, siblingId: string) {
+    const element = nodeHelper.findLastNodeWithSibling(nodeId, siblingId);
+    if(!element) {
+        console.error(new Error(`Could not find node '${nodeId}' with sibling '${siblingId}'.`));
+    }
+    return element;
+}
+
+function findAllNode(nodeId: string) {
+    const element = nodeHelper.findAllNode(nodeId);
     if(!element) {
         console.error(new Error(`Could not find node '${nodeId}'.`));
     }

@@ -31,7 +31,14 @@ public class BrowserEventHelper(
                 return;
             }
 
-            await jsInvoker.ApplyTransaction(result);
+            try
+            {
+                await jsInvoker.ApplyTransaction(result);
+            }
+            catch (Exception e)
+            {
+                logger.LogError("Transaction failed: {Message}", e.Message);
+            }
 
             editorDebugService.NotifyDocumentChanged(new DebugTransactionInfo(result, keyPressInfo));
             if (editorDebugService.IsDebugEnabled)

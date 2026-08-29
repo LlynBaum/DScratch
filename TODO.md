@@ -17,10 +17,11 @@
 - [ ] Hard Page Break (CTRL + Enter, UI)
 - [ ] Transaction focus set should scroll focus into view
 
+## Random stuff
 
-Add Tests for:
-- Delete Selected Text, that spans over more than one page
-- General everything that can break when spanning over more than one page, test it
+- Pulling things up when space between last node and page bottom is larger than 0 (maybe optimization with line height?)
+- when pulling stuff up, first check the start of a node, if not enough space, skip. If enough space check end of node.
+  If enough space, same for next node. Else binary search within. Speeds things probably a lot up.
 
 # Features
 

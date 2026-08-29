@@ -159,8 +159,9 @@ function moveBlock(overflow: Overflow, targetPage: HTMLElement) {
 
     let currentElement: Element | null = overflow.BlockElement;
     while (currentElement) {
-        parent.appendChild(currentElement);
+        const el = currentElement;
         currentElement = currentElement.nextElementSibling;
+        parent.insertAdjacentElement("afterbegin", el);
     }
 }
 
