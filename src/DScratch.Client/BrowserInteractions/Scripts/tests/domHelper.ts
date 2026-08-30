@@ -1,6 +1,6 @@
 export function createEditorFixture(options: { pageCount?: number; paragraphsPerPage?: number } = {}) {
     const pageCount = options.pageCount ?? 1;
-    const paragraphsPerPage = options.paragraphsPerPage ?? 0;
+    const paragraphsPerPage = options.paragraphsPerPage ?? 1;
 
     document.body.innerHTML = `
         <div id="doc-editor">
@@ -32,6 +32,13 @@ export function createEditorFixture(options: { pageCount?: number; paragraphsPer
     };
 
     return editorNode;
+}
+
+export function insertText(parentId: string, id: string, text: string) {
+    const parent = document.querySelector(`[data-dnode-id='${parentId}']`);
+    parent!.innerHTML += `
+        <span data-dnode-id="${id}">${text}</span>
+    `;
 }
 
 export function createSplittedParagraph(pageIndex: number, nodeId: string) {

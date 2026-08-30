@@ -1,3 +1,4 @@
+// @ts-ignore / rider seems to hate that import, but it is actually the correct import suggested by vitest
 import { page } from 'vitest/browser';
 import { expect, test, beforeEach, vi } from 'vitest';
 import * as domHelper from "../domHelper";
@@ -68,7 +69,7 @@ test('inserts element after given sibling in given parent', async () => {
 });
 
 test("insert element after last split part of given sibling", async () => {
-    domHelper.createEditorFixture({ pageCount: 1, paragraphsPerPage: 1 });
+    domHelper.createEditorFixture();
     domHelper.createSplittedParagraph(1, "ps-1");
 
     transaction.applyTransaction({
@@ -94,7 +95,7 @@ test("insert element after last split part of given sibling", async () => {
 });
 
 test("insert element inside a split part block", async () => {
-    domHelper.createEditorFixture({ pageCount: 1, paragraphsPerPage: 1 });
+    domHelper.createEditorFixture();
     domHelper.createSplittedParagraph(1, "ps-1");
 
     transaction.applyTransaction({
