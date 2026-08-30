@@ -68,7 +68,6 @@ public class PageOverflowTest : PlaywrightTestBase
 
         for (var i = 0; i < 28; i++)
         {
-            await Page.TypeAtCurrentCursorAsync(i.ToString());
             await Page.EnterAsync();
             await Expect(Editor.EditorPage).ToHaveCountAsync(1);
             await Expect(Editor.EditorPage.Paragraph).ToHaveCountAsync(i + 2);
@@ -107,7 +106,6 @@ public class PageOverflowTest : PlaywrightTestBase
 
         for (var i = 0; i < 28; i++)
         {
-            await Page.TypeAtCurrentCursorAsync(i.ToString());
             await Page.EnterAsync();
             await Expect(Editor.EditorPage).ToHaveCountAsync(1);
             await Expect(Editor.EditorPage.Paragraph).ToHaveCountAsync(i + 2);
@@ -150,7 +148,6 @@ public class PageOverflowTest : PlaywrightTestBase
 
         for (var i = 0; i < 28; i++)
         {
-            await Page.TypeAtCurrentCursorAsync(i.ToString());
             await Page.EnterAsync();
             await Expect(Editor.EditorPage).ToHaveCountAsync(1);
             await Expect(Editor.EditorPage.Paragraph).ToHaveCountAsync(i + 2);

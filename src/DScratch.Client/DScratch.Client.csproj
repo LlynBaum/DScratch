@@ -40,5 +40,9 @@
       <AdditionalFiles Include="Pages\Editor\Debugging\DebugTransaction.razor" />
       <AdditionalFiles Include="Pages\Editor\Debugging\DebugTreePanel.razor" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <None Remove="BrowserInteractions\Scripts\tests\vitest.config.ts" />
+    </ItemGroup>
 
 </Project>

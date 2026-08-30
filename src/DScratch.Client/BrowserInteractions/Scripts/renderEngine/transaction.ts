@@ -2,7 +2,7 @@ import {saveSelection, SelectionInfo, setSelectionSave} from "../selection";
 import * as nodeHelper from "../nodeHelper";
 import * as paging from "./paging";
 
-enum StepType {
+export enum StepType {
     insertText = "insertText",
     deleteText = "deleteText",
     insertElement = "insertElement",
@@ -17,23 +17,23 @@ export interface TransactionResult {
     cursorPosition: SelectionInfo | null;
 }
 
-interface Step {
+export interface Step {
     type: StepType;
 }
 
-interface InsertTextStep extends Step {
+export interface InsertTextStep extends Step {
     parentId: string;
     offset: number;
     text: string;
 }
 
-interface DeleteTextStep extends Step {
+export interface DeleteTextStep extends Step {
     parentId: string; 
     offset: number; 
     length: number;
 }
 
-interface InsertElementStep extends Step {
+export interface InsertElementStep extends Step {
     parentId: string;
     previousSiblingId: string | null;
     tagName: string;
@@ -41,22 +41,22 @@ interface InsertElementStep extends Step {
     attributes: { [key:string] : string; } | null;
 }
 
-interface DeleteElementStep extends Step {
+export interface DeleteElementStep extends Step {
     targetId: string;
 }
 
-interface MoveStep extends Step {
+export interface MoveStep extends Step {
     targetNodeId: string;
     targetParentId: string;
     previousSiblingId: string | null;
 }
 
-interface UpdateMarksStep extends Step {
+export interface UpdateMarksStep extends Step {
     nodeId: string;
     marks: { [key:string] : string; };
 }
 
-interface UpdateAttributes extends Step {
+export interface UpdateAttributes extends Step {
     nodeId: string;
     attributes: { [key:string] : string; };
 }
@@ -119,6 +119,7 @@ function handleInsertTextStep(step: InsertTextStep) {
     const element = findNode(step.parentId);
     if (!element) return null;
     
+    // TODO: maybe findTextNodeAtOffset should take the NodeId instead of an element. 
     const { node, relativeOffset } = nodeHelper.findTextNodeAtOffset(element, step.offset);
     if (node) {
         const text = node.textContent;
@@ -136,7 +137,7 @@ function handleDeleteTextStep(step: DeleteTextStep) {
     const element = findNode(step.parentId);
     if (!element) return null;
     
-    // TODO: when deleting selection over different pages, only have to take into account that there might be more text somewhere else
+    // TODO: when deleting selection over different pages, also have to take into account that there might be more text somewhere else
     const { node, relativeOffset } = nodeHelper.findTextNodeAtOffset(element, step.offset);
     // Idea, just use nodeHelper.findTextNodeAtOffset(element, step.offset + step.length) and then delete everything in between.
     if(node) {
@@ -158,7 +159,7 @@ function handleInsertElementStep(step: InsertElementStep) {
      
     if (!parent) return null;
 
-    const previousSibling = step.previousSiblingId ? findLastNode(step.previousSiblingId) : null;
+    const previousSibling = step.previousSiblingId ? findLastNode(step.previousSiblingId) : null; // TODO: this might break. It should look for the sibling within the newParent only
 
     const element = createElement(step.tagName, step.newNodeId, step.attributes);
     insertElement(element, parent, previousSibling);
@@ -178,7 +179,7 @@ function handleMoveStep(step: MoveStep) {
         : findLastNode(step.targetParentId);
     
     if (elements.length > 0 && newParent) {
-        let previousSibling = step.previousSiblingId ? findLastNode(step.previousSiblingId) : null;
+        let previousSibling = step.previousSiblingId ? findLastNode(step.previousSiblingId) : null; // TODO: this might break. It should look for the sibling within the newParent only
         elements.forEach(element => {
             insertElement(element, newParent, previousSibling);
             previousSibling = element;
