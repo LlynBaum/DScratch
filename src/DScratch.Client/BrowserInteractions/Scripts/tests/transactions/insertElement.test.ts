@@ -97,6 +97,16 @@ test("insert element after last split part of given sibling", async () => {
 test("insert element inside a split part block", async () => {
     domHelper.createEditorFixture();
     domHelper.createSplittedParagraph(1, "ps-1");
+    domHelper.insertText("Hello", {
+        parentId: "ps-1",
+        id: "ps-1-text",
+        splitPart: 1
+    });
+    domHelper.insertText(" World!", {
+        parentId: "ps-1",
+        id: "ps-1-text",
+        splitPart: 2
+    });
 
     transaction.applyTransaction({
         cursorPosition: null,

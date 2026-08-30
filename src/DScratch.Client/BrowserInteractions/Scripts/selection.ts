@@ -41,7 +41,7 @@ export function snapshotSelection(selectionInfo: SelectionInfo) {
     }
 }
 
-export function resetSnapshot() {
+function resetSnapshot() {
     snapshot = null;
 }
 
@@ -191,7 +191,7 @@ export function showFakeSelection() {
 
     const { start, end } = lastEditorSelection.direction === "forward"
         ? { start: anchor, end: focus }
-            : { start: focus, end: anchor };
+        : { start: focus, end: anchor };
     
     if (!start.node || !end.node) return;
 
