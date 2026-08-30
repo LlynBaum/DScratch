@@ -84,7 +84,12 @@ export function findTextNodeAtOffset(parent: Element, offset: number): { node: N
 }
 
 export function findNode(nodeId: string) {
-    return document.querySelector<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
+    return findNodeIn(window.editor.node!, nodeId);
+}
+
+export function findNodeIn(parent: Element, nodeId: string) {
+    return parent.querySelector<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
+    
 }
 
 export function findLastNode(nodeId: string) {

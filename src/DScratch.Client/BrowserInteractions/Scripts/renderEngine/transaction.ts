@@ -159,7 +159,9 @@ function handleInsertElementStep(step: InsertElementStep) {
      
     if (!parent) return null;
 
-    const previousSibling = step.previousSiblingId ? findLastNode(step.previousSiblingId) : null; // TODO: this might break. It should look for the sibling within the newParent only
+    const previousSibling = step.previousSiblingId 
+        ? findNodeIn(parent, step.previousSiblingId) 
+        : null;
 
     const element = createElement(step.tagName, step.newNodeId, step.attributes);
     insertElement(element, parent, previousSibling);
@@ -179,7 +181,7 @@ function handleMoveStep(step: MoveStep) {
         : findLastNode(step.targetParentId);
     
     if (elements.length > 0 && newParent) {
-        let previousSibling = step.previousSiblingId ? findLastNode(step.previousSiblingId) : null; // TODO: this might break. It should look for the sibling within the newParent only
+        let previousSibling = step.previousSiblingId ? findNodeIn(newParent, step.previousSiblingId) : null;
         elements.forEach(element => {
             insertElement(element, newParent, previousSibling);
             previousSibling = element;
@@ -231,7 +233,7 @@ function createElement(tagName: string, id: string, attributes: { [key:string] :
 }
 
 function insertElement(element: Element, parent: Element, previousSibling: Element | null) {
-    const referenceNode = previousSibling ? previousSibling.nextSibling : parent.firstChild;
+    const referenceNode = previousSibling ? previousSibling.nextElementSibling : parent.firstElementChild;
     parent.insertBefore(element, referenceNode);
 }
 
@@ -239,6 +241,14 @@ function findNode(nodeId: string) : HTMLElement | null {
     const element = nodeHelper.findNode(nodeId);
     if(!element) {
         console.error(new Error(`Could not find node '${nodeId}'.`));
+    }
+    return element;
+}
+
+function findNodeIn(parent: Element, nodeId: string){
+    const element = nodeHelper.findNodeIn(parent, nodeId);
+    if(!element) {
+        console.error(new Error(`Could not find node '${nodeId}' in element ${parent}.`));
     }
     return element;
 }

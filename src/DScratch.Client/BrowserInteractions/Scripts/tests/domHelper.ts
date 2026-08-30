@@ -33,3 +33,23 @@ export function createEditorFixture(options: { pageCount?: number; paragraphsPer
 
     return editorNode;
 }
+
+export function createSplittedParagraph(pageIndex: number, nodeId: string) {
+    const page = document.querySelector<HTMLElement>(`[data-page-index="${pageIndex}"]`);
+    
+    page!.innerHTML += `
+    <p data-dnode-id="${nodeId}" data-split-part="1">
+        <span data-dnode-id="${nodeId}-text">jlökgfjslkfjasölkj dfölkaj sdlkfj aölksdj flök ajsdfölkj aölskdfj ölaksjdfölk jasöldkfj aölksjdf ölkajsödlfk jasölkdj fölkasj dfölkaj slök fjlköasdj flkasj dlfkjasölkdfj ölkasdjf lökasjdlökfjaslökd fjlökas jflkj öjlöj</span> 
+    </p>
+    `;
+    
+    page?.insertAdjacentHTML("afterend", `
+    <div class="page" data-page-index="${pageIndex + 1}">
+      <div data-dnode-id="Root" contenteditable>
+        <p data-dnode-id="${nodeId}" data-split-part="2">
+            <span data-dnode-id="${nodeId}-text"> dwww</span> 
+        </p>
+      </div>
+    </div>
+    `);
+}
