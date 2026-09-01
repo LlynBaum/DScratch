@@ -140,7 +140,7 @@ function handleDeleteTextStep(step: DeleteTextStep) {
     // TODO: when deleting selection over different pages, also have to take into account that there might be more text somewhere else
     const { node, relativeOffset } = nodeHelper.findTextNodeAtOffset(element, step.offset);
     // Idea, just use nodeHelper.findTextNodeAtOffset(element, step.offset + step.length) and then delete everything in between.
-    if(node) {
+    if (node) {
         const text = node.textContent;
         node.textContent = text!.slice(0, relativeOffset) + text!.slice(relativeOffset + step.length);
     }
