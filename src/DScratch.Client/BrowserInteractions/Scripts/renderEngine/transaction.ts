@@ -127,7 +127,7 @@ function handleInsertTextStep(step: InsertTextStep) {
         return element;
     }
 
-    const targetParent = nodeHelper.getSplitCounterPart(element) ?? element;
+    const targetParent = findLastNode(step.parentId)!;
     const createdNode = document.createTextNode(step.text);
     targetParent.appendChild(createdNode);
     return targetParent as HTMLElement;
