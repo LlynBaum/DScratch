@@ -28,7 +28,7 @@ beforeEach(() => {
 });
 
 test("sets selection to node when no native cursor movement", () => {
-    domHelper.createEditorFixture({ paragraphsPerPage: 2 });
+    domHelper.createEditorFixture({ paragraphsPerPage: 2, includeText: true });
     selection.snapshotSelection({
         direction: "none",
         anchorId: "p-1-1",
@@ -62,7 +62,7 @@ test("sets selection to node when no native cursor movement", () => {
 });
 
 test("does nothing when cursor was moved natively to other node", () => {
-    domHelper.createEditorFixture({ paragraphsPerPage: 3 });
+    domHelper.createEditorFixture({ paragraphsPerPage: 3, includeText: true });
     selection.snapshotSelection({
         direction: "none",
         anchorId: "p-1-1",

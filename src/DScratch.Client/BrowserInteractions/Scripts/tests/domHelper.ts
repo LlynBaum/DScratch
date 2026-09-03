@@ -1,6 +1,7 @@
-export function createEditorFixture(options: { pageCount?: number; paragraphsPerPage?: number } = {}) {
+export function createEditorFixture(options: { pageCount?: number; paragraphsPerPage?: number, includeText?: boolean } = {}) {
     const pageCount = options.pageCount ?? 1;
     const paragraphsPerPage = options.paragraphsPerPage ?? 1;
+    const includeParagraphText = options.includeText ?? false;
 
     document.body.innerHTML = `
         <div id="doc-editor">
@@ -8,7 +9,9 @@ export function createEditorFixture(options: { pageCount?: number; paragraphsPer
             <div class="page" data-page-index="${i + 1}">
               <div data-dnode-id="Root" contenteditable>
                 ${Array.from({length: paragraphsPerPage}, (_, p) => `
-                  <p data-dnode-id="p-${i + 1}-${p + 1}">Paragraph ${p + 1}</p>
+                  <p data-dnode-id="p-${i + 1}-${p + 1}">
+                    ${includeParagraphText ? `<span data-dnode-id="p-${i + 1}-${p + 1}-text">Paragraph ${p + 1}</span>` : ''}
+                  </p>
                 `).join('')}
               </div>
             </div>

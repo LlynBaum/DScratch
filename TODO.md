@@ -24,6 +24,11 @@
 - when pulling stuff up, first check the start of a node, if not enough space, skip. If enough space check end of node.
   If enough space, same for next node. Else binary search within. Speeds things probably a lot up.
 
+
+TextNodes are currently not CRDT ready... if oyu merge nodes and the take one by its id, and you get a node with a different id
+because the given id was in the range of that Node, it should take that into account and adjust the given offset.
+Else the offset is wrong, because it was calculated based on a node that started at another id.
+
 # Features
 
 - [x] Marks

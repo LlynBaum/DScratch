@@ -145,7 +145,7 @@ function handleDeleteTextStep(step: DeleteTextStep) {
         node.textContent = text!.slice(0, relativeOffset) + text!.slice(relativeOffset + step.length);
     }
     
-    if (element.childNodes.length == 0) {
+    if (element.textContent.length === 0) {
         element.remove();
     }
     

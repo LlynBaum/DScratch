@@ -34,7 +34,7 @@ test("delete text in middle of Text DNode", async () => {
     await expect.element(page.getByPageNumber(1).getByCSS("span[data-dnode-id]")).toBeVisible();
     await expect.element(page.getByPageNumber(1).getByCSS("span[data-dnode-id]")).toHaveTextContent("heo");
 
-    const el = document.querySelector<HTMLElement>("p[data-dnode-id='t-1']");
+    const el = document.querySelector<HTMLElement>("[data-dnode-id='t-1']");
     expect(paging.update).toHaveBeenCalledExactlyOnceWith([el]);
 });
 
@@ -62,7 +62,7 @@ test("delete text at end of Text DNode", async () => {
     await expect.element(page.getByPageNumber(1).getByCSS("span[data-dnode-id]")).toBeVisible();
     await expect.element(page.getByPageNumber(1).getByCSS("span[data-dnode-id]")).toHaveTextContent("hel");
 
-    const el = document.querySelector<HTMLElement>("p[data-dnode-id='t-1']");
+    const el = document.querySelector<HTMLElement>("[data-dnode-id='t-1']");
     expect(paging.update).toHaveBeenCalledExactlyOnceWith([el]);
 });
 
@@ -90,7 +90,7 @@ test("delete text at start of Text DNode", async () => {
     await expect.element(page.getByPageNumber(1).getByCSS("span[data-dnode-id]")).toBeVisible();
     await expect.element(page.getByPageNumber(1).getByCSS("span[data-dnode-id]")).toHaveTextContent("llo");
 
-    const el = document.querySelector<HTMLElement>("p[data-dnode-id='t-1']");
+    const el = document.querySelector<HTMLElement>("[data-dnode-id='t-1']");
     expect(paging.update).toHaveBeenCalledExactlyOnceWith([el]);
 });
 
@@ -101,7 +101,7 @@ test("delete all text int Text DNode", async () => {
         id: "t-1"
     });
     
-    const deletedElement = document.querySelector<HTMLElement>("p[data-dnode-id='t-1']");
+    const deletedElement = document.querySelector<HTMLElement>("[data-dnode-id='t-1']");
 
     transaction.applyTransaction({
         cursorPosition: null,
