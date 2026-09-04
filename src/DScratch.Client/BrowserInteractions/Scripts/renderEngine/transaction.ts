@@ -208,9 +208,9 @@ function handleUpdateAttributesStep(step: UpdateAttributes) {
     const elements = findAllNode(step.nodeId);
     
     elements.forEach(element => {
-        for (let attr in element.attributes) {
-            if (attr === "style" || attr === "data-dnode-id") continue;
-            element.removeAttribute(attr);
+        for (let attr of element.attributes) {
+            if (attr.name === "style" || attr.name === "data-dnode-id") continue;
+            element.removeAttribute(attr.name);
         }
 
         for (let attr in step.attributes){
