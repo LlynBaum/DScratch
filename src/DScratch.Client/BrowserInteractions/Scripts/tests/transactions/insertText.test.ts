@@ -4,7 +4,6 @@ import {beforeEach, expect, test, vi} from 'vitest';
 import * as domHelper from "../domHelper";
 import * as transaction from "../../renderEngine/transaction";
 import {InsertTextStep, StepType} from "../../renderEngine/transaction";
-import {insertText} from "../domHelper";
 import * as paging from "../../renderEngine/paging";
 
 beforeEach(() => { vi.clearAllMocks(); });
@@ -14,7 +13,7 @@ vi.mock('../../renderEngine/paging', () => ({
 
 test("inserts text into empty parent", async () => {
     domHelper.createEditorFixture();
-    insertText("", {
+    domHelper.insertText("", {
         parentId: "p-1-1",
         id: "t-1"
     });
@@ -39,7 +38,7 @@ test("inserts text into empty parent", async () => {
 
 test("inserts text before existing text", async () => {
     domHelper.createEditorFixture();
-    insertText("World!", {
+    domHelper.insertText("World!", {
         parentId: "p-1-1",
         id: "t-1"
     });
@@ -64,7 +63,7 @@ test("inserts text before existing text", async () => {
 
 test("inserts text after existing text", async () => {
     domHelper.createEditorFixture();
-    insertText("Hello", {
+    domHelper.insertText("Hello", {
         parentId: "p-1-1",
         id: "t-1"
     });
@@ -89,7 +88,7 @@ test("inserts text after existing text", async () => {
 
 test("inserts text at given offset", async () => {
     domHelper.createEditorFixture();
-    insertText("Hello!", {
+    domHelper.insertText("Hello!", {
         parentId: "p-1-1",
         id: "t-1"
     });
@@ -116,13 +115,13 @@ test("inserts text at given offset in first split part", async () => {
     domHelper.createEditorFixture();
     domHelper.createSplittedParagraph(1, "pt-1");
     
-    insertText("Heo", {
+    domHelper.insertText("Heo", {
         parentId: "pt-1",
         id: "t-1",
         splitPart: 1
     });
     
-    insertText("World!", {
+    domHelper.insertText("World!", {
         parentId: "pt-1",
         id: "t-1",
         splitPart: 2
@@ -151,13 +150,13 @@ test("inserts text at end of first split part", async () => {
     domHelper.createEditorFixture();
     domHelper.createSplittedParagraph(1, "pt-1");
 
-    insertText("He", {
+    domHelper.insertText("He", {
         parentId: "pt-1",
         id: "t-1",
         splitPart: 1
     });
 
-    insertText("World!", {
+    domHelper.insertText("World!", {
         parentId: "pt-1",
         id: "t-1",
         splitPart: 2
@@ -186,13 +185,13 @@ test("inserts text at given offset in second split part", async () => {
     domHelper.createEditorFixture();
     domHelper.createSplittedParagraph(1, "pt-1");
 
-    insertText("Hello", {
+    domHelper.insertText("Hello", {
         parentId: "pt-1",
         id: "t-1",
         splitPart: 1
     });
 
-    insertText("Wd!", {
+    domHelper.insertText("Wd!", {
         parentId: "pt-1",
         id: "t-1",
         splitPart: 2
