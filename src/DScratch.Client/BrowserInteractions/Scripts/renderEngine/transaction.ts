@@ -63,7 +63,7 @@ export interface UpdateAttributes extends Step {
 
 export function applyTransaction(transaction: TransactionResult){
     saveSelection();
-    const modifiedElements: HTMLElement[] = [];
+    const modifiedElements: Element[] = [];
     transaction.steps.map(handle);
     paging.update(modifiedElements);
     if (transaction.cursorPosition) {
@@ -124,7 +124,7 @@ function handleInsertTextStep(step: InsertTextStep) {
     if (node) {
         const text = node.textContent;
         node.textContent = text!.slice(0, relativeOffset) + step.text + text!.slice(relativeOffset);
-        return element;
+        return node.nodeType === Node.ELEMENT_NODE ? node as Element : node.parentElement;
     }
 
     const targetParent = findLastNode(step.parentId)!;

@@ -12,7 +12,7 @@ interface Overflow {
     Margin: number;
 }
 
-export function update(modifiedNodes: HTMLElement[]) {
+export function update(modifiedNodes: Element[]) {
     const uniquePages = Array.from(
         new Set(
             modifiedNodes
