@@ -1,6 +1,9 @@
+// @ts-ignore / rider seems to hate that import, but it is actually the correct import suggested by vitest
+import { locators, type Locator } from 'vitest/browser';
+
 import '../../../wwwroot/editor-tokens.css';
 import '../../../wwwroot/document-styles.css';
-import { locators, type Locator } from 'vitest/browser';
+import '../../../Pages/Editor/EditorPage.razor.css';
 
 declare module 'vitest/browser' {
     interface LocatorSelectors {

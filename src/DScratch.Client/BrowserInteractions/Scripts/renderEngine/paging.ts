@@ -1,7 +1,7 @@
 const PAGE_INDEX_ATTRIBUTE = "data-page-index";
 const SPLIT_ATTRIBUTE = "data-split-part";
 
-const pageTemplate =  document.getElementById("page-template") as HTMLTemplateElement;
+
 
 interface Overflow {
     IsOverflowing: boolean;
@@ -166,7 +166,7 @@ function moveBlock(overflow: Overflow, targetPage: HTMLElement) {
 }
 
 function createPage(index: number) {
-    const page = document.importNode(pageTemplate.content, true).firstElementChild as HTMLElement;
+    const page = document.importNode(getPageTemplate().content, true).firstElementChild as HTMLElement;
     page.setAttribute(PAGE_INDEX_ATTRIBUTE, index.toString());
     const nextPage = document.querySelector<HTMLElement>(`[${PAGE_INDEX_ATTRIBUTE}='${index - 1}']`)?.nextElementSibling;
     
@@ -240,4 +240,8 @@ function getWordSafeSplitIndex(textContent: string, index: number) {
     if (index <= 0 || index >= textContent.length) return index;
     const lastSpace = textContent.lastIndexOf(" ", index);
     return lastSpace > 0 ? lastSpace : index;
+}
+
+function getPageTemplate() {
+    return document.getElementById("page-template") as HTMLTemplateElement;
 }
