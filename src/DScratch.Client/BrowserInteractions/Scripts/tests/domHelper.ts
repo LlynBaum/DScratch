@@ -33,6 +33,30 @@ export function createEditorFixture(options: { pageCount?: number; paragraphsPer
     return editorNode;
 }
 
+export function insertPage(newPageIndex: number) {
+    const previousPage = document.querySelector<HTMLElement>(`[data-page-index="${newPageIndex - 1}"]`);
+    previousPage?.insertAdjacentHTML("afterend", `
+      <div class="page" data-page-index="${newPageIndex}">
+        <div data-dnode-id="Root" contenteditable></div>
+      </div>
+    `);
+}
+
+export function insertParagraph(id: string, pageNumber: number, previousSiblingId?: string) {
+    const parent = document.querySelector(`[data-page-index='${pageNumber}']`);
+    
+    if (previousSiblingId) {
+        const previousSingling = parent!.querySelector<HTMLElement>(`[data-dnode-id='${previousSiblingId}']`)!;
+        previousSingling.insertAdjacentHTML("afterend", `
+          <p data-dnode-id="${id}" data-split-part="2"></p>
+        `);
+    } else {
+        parent?.insertAdjacentHTML("afterbegin", `
+          <p data-dnode-id="${id}" data-split-part="2"></p>
+        `);
+    }
+}
+
 export function insertText(text: string, options: {
     parentId: string, 
     id: string,
