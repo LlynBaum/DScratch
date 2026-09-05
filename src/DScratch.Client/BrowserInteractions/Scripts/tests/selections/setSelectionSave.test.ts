@@ -31,25 +31,25 @@ test("sets selection to node when no native cursor movement", () => {
     domHelper.createEditorFixture({ paragraphsPerPage: 2, includeText: true });
     selection.snapshotSelection({
         direction: "none",
-        anchorId: "p-1-1",
+        anchorId: "p-1-1-text",
         anchorOffset: 0,
-        focusId: "p-1-1",
+        focusId: "p-1-1-text",
         focusOffset: 0
     });
 
-    const node = document.querySelector("[data-dnode-id='p-1-1']")!;
+    const node = document.querySelector("[data-dnode-id='p-1-1-text']")!;
     setNativeCursor(node, 0);
     
     selection.saveSelection();
     selection.setSelectionSave({
         direction: "none",
-        anchorId: "p-1-2",
+        anchorId: "p-1-2-text",
         anchorOffset: 0,
-        focusId: "p-1-2",
+        focusId: "p-1-2-text",
         focusOffset: 0
     });
     
-    const targetNode = document.querySelector("[data-dnode-id='p-1-2']")?.firstChild!;
+    const targetNode = document.querySelector("[data-dnode-id='p-1-2-text']")!.firstChild;
     const sel = getDomSelection();
     expect(sel).not.toBeNull();
     expect(sel).toEqual({
@@ -65,13 +65,13 @@ test("does nothing when cursor was moved natively to other node", () => {
     domHelper.createEditorFixture({ paragraphsPerPage: 3, includeText: true });
     selection.snapshotSelection({
         direction: "none",
-        anchorId: "p-1-1",
+        anchorId: "p-1-1-text",
         anchorOffset: 0,
-        focusId: "p-1-1",
+        focusId: "p-1-1-text",
         focusOffset: 0
     });
     
-    const node = document.querySelector("[data-dnode-id='p-1-2']")!;
+    const node = document.querySelector("[data-dnode-id='p-1-2-text']")!;
     setNativeCursor(node, 0);
     
     selection.saveSelection();

@@ -2,7 +2,9 @@
 import { locators, type Locator } from 'vitest/browser';
 
 import '../../../wwwroot/editor-tokens.css';
+import '../../../wwwroot/document-tokens.css';
 import '../../../wwwroot/document-styles.css';
+import '../../../../DScratch.Host/wwwroot/app.css';
 import '../../../Pages/Editor/EditorPage.razor.css';
 
 declare module 'vitest/browser' {

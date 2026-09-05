@@ -1,5 +1,5 @@
 // @ts-ignore / rider seems to hate that import, but it is actually the correct import suggested by vitest
-import { page, utils } from 'vitest/browser';
+import { page } from 'vitest/browser';
 import { expect, test } from 'vitest';
 import * as domHelper from "../domHelper";
 import * as paging from "../../renderEngine/paging";
@@ -23,8 +23,7 @@ test("moves overflow block to new page", async () => {
 });
 
 test("moves overflow text to new page", async () => {
-   domHelper.createEditorFixture({ paragraphsPerPage: 29, includeText: true });
-   document.querySelector<HTMLElement>("[data-dnode-id='p-1-29-text']")!.remove();
+   domHelper.createEditorFixture({ paragraphsPerPage: 29 });
    domHelper.insertText(TEXT, {
       parentId: "p-1-29",
       id: "t-1"

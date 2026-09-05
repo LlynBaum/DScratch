@@ -8,11 +8,7 @@ export function createEditorFixture(options: { pageCount?: number; paragraphsPer
           ${Array.from({length: pageCount}, (_, i) => `
             <div class="page" data-page-index="${i + 1}">
               <div data-dnode-id="Root" contenteditable>
-                ${Array.from({length: paragraphsPerPage}, (_, p) => `
-                  <p data-dnode-id="p-${i + 1}-${p + 1}">
-                    ${includeParagraphText ? `<span data-dnode-id="p-${i + 1}-${p + 1}-text">Paragraph ${p + 1}</span>` : ''}
-                  </p>
-                `).join('')}
+                ${Array.from({length: paragraphsPerPage}, (_, p) => `<p data-dnode-id="p-${i + 1}-${p + 1}">${includeParagraphText ? `<span data-dnode-id="p-${i + 1}-${p + 1}-text">Paragraph ${p + 1}</span>` : ''}</p>`).join('')}
               </div>
             </div>
           `).join('')}
