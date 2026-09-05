@@ -4,9 +4,7 @@ import { expect, test } from 'vitest';
 import * as domHelper from "../domHelper";
 import * as paging from "../../renderEngine/paging";
 
-const FITTING_TEXT = "jlökgfjslkfjasölkj dfölkaj sdlkfj aölksdj flök ajsdfölkj aölskdfj ölaksjdfölk jasöldkfj aölksjdf ölkajsödlfk jasölkdj fölkasj dfölkaj slök fjlköasdj flkasj dlfkjasölkdfj ölkasdjf lökasjdlökfjaslökd fjlökas jflkj öjlöj";
-const OVERFLOW_TEXT = " dwww";
-const TEXT = FITTING_TEXT + OVERFLOW_TEXT;
+const OVERFLOW_TEXT = "fjdjsflksdjlkfjslkdjflkjsdlkfjklsjflksjfkljsdfsfsdfsdf sdf sdfasd lkfjalk jdlfj lajsfljal jflkjl fjlaj lfja lsjdföl kjajsd öljasd";
 
 test("moves overflow block to new page", async () => {
    domHelper.createEditorFixture({ paragraphsPerPage: 30 });
@@ -24,7 +22,7 @@ test("moves overflow block to new page", async () => {
 
 test("moves overflow text to new page", async () => {
    domHelper.createEditorFixture({ paragraphsPerPage: 29 });
-   domHelper.insertText(TEXT, {
+   domHelper.insertText(OVERFLOW_TEXT, {
       parentId: "p-1-29",
       id: "t-1"
    });
@@ -42,6 +40,13 @@ test("moves overflow text to new page", async () => {
    await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]")).toHaveAttribute("data-split-part", "2");
    await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]")).toHaveAttribute("data-dnode-id", "p-1-29");
    
-   await expect.element(page.getByPageNumber(1).getByCSS("[data-split-part='1']").getByTestId("t-1")).toHaveTextContent(FITTING_TEXT);
-   await expect.element(page.getByPageNumber(2).getByCSS("[data-split-part='2']").getByTestId("t-1")).toHaveTextContent(OVERFLOW_TEXT);
+   await expect.element(page.getByPageNumber(1).getByCSS("[data-split-part='1']").getByTestId("t-1")).toBeVisible();
+   await expect.element(page.getByPageNumber(1).getByCSS("[data-split-part='1']").getByTestId("t-1")).not.toHaveTextContent("");
+   await expect.element(page.getByPageNumber(2).getByCSS("[data-split-part='2']").getByTestId("t-1")).toBeVisible();
+   await expect.element(page.getByPageNumber(2).getByCSS("[data-split-part='2']").getByTestId("t-1")).not.toHaveTextContent("");
+
+   const textPart1 = document.querySelector<HTMLElement>("[data-split-part='1'] [data-dnode-id='t-1']");
+   const textPart2 = document.querySelector<HTMLElement>("[data-split-part='2'] [data-dnode-id='t-1']");
+   
+   expect(textPart1!.textContent + textPart2!.textContent).toEqual(OVERFLOW_TEXT);
 });

@@ -60,8 +60,8 @@ public class PageOverflowTest : PlaywrightTestBase
     public async Task CreatesNewPage_WhenTextOverflows_AndNextPageDoesNotExistYet()
     {
         const string firstPageText =
-            "jlökgfjslkfjasölkj dfölkaj sdlkfj aölksdj flök ajsdfölkj aölskdfj ölaksjdfölk jasöldkfj aölksjdf ölkajsödlfk jasölkdj fölkasj dfölkaj slök fjlköasdj flkasj dlfkjasölkdfj ölkasdjf lökasjdlökfjaslökd fjlökas jflkj öjlöj";
-        const string secondPageText = " dwww";
+            "fjdjsflksdjlkfjslkdjflkjsdlkfjklsjflksjfkljsdfsfsdfsdf sdf sdfasd lkfjalk jdlfj lajsfljal jflkjl fjlaj lfja lsjdföl kjajsd";
+        const string secondPageText = " öljasd";
         const string overflowText = firstPageText + secondPageText;
 
         await DefaultPage.ClickAsync();

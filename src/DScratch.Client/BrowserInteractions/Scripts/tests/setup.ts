@@ -7,7 +7,7 @@ import '../../../wwwroot/document-styles.css';
 import '../../../../DScratch.Host/wwwroot/app.css';
 import '../../../Pages/Editor/EditorPage.razor.css';
 
-declare module 'vitest/browser' {
+declare module "vitest/browser" {
     interface LocatorSelectors {
         getByCSS(css: string): Locator;
         getByPageNumber(pageNumber: number): Locator;
