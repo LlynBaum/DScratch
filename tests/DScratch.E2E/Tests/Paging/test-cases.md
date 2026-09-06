@@ -8,10 +8,13 @@
 - ~~Block overflows to next existing page~~
 - ~~Two blocks overflow, both are moved to next page~~
 - ~~Two blocks overflow, one partly, both are moved to next page~~
-- Overflowing paragraph, typing in first page, moves newly overflown text to next page and puts it into the same element as the already overflown text
-- moving overflow to next existing page, triggers stabilize on that page
+- ~~Overflowing paragraph, typing in first page, moves newly overflown text to next page and puts it into the same element as the already overflown text~~
+- ~~moving overflow to next existing page, triggers stabilize on that page~~
 - Block overflowing over more than 2 pages
+  - Test Selection set & get
+  - test transactions (I guess only delete text is effected)
 - Last paragraph on page has two TextNodes, write in first TextNode, moves second TextNode over to next Page. Second TextNode will be removed when moved over all the text
+- test somehow that it stops as soon as it hits a page that does not overflow anymore
 
 # Underflow
 
