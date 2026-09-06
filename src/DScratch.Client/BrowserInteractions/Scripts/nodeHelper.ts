@@ -6,32 +6,43 @@ export function getAbsolutOffset(parent: Element, targetNode: Node, relativeOffs
         return 0;
     }
 
-    const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
+    const nodes = getAllNodes(parent);
 
-    let absolutOffset = 0;
-    let currentNode = walker.nextNode();
+    const targetElement = targetNode.nodeType === Node.ELEMENT_NODE 
+        ? targetNode as Element 
+        : targetNode.parentElement!;
+    
+    const partIndex = getSplitPartIndex(targetElement);
 
-    while (currentNode) {
-        if(currentNode == targetNode) {
-            absolutOffset += relativeOffset;
-            break;
+    const relativeParent = nodes.find(n => getSplitPartIndex(n) === partIndex) ?? parent;
+    let absolutOffset = findRelativeOffset(relativeParent);
+    
+    const previousNodes = nodes.filter(n => {
+        const index = getSplitPartIndex(n);
+        return !!index && !!partIndex && index < partIndex;
+    });
+
+    previousNodes.forEach(n => absolutOffset += n.textContent.length);
+    return absolutOffset;
+    
+    function findRelativeOffset(parentElement: Element) {
+        const walker = document.createTreeWalker(parentElement, NodeFilter.SHOW_TEXT);
+
+        let absolutOffset = 0;
+        let currentNode = walker.nextNode();
+
+        while (currentNode) {
+            if(currentNode == targetNode) {
+                absolutOffset += relativeOffset!;
+                break;
+            }
+
+            absolutOffset += currentNode.nodeValue?.length || 0;
+            currentNode = walker.nextNode();
         }
 
-        absolutOffset += currentNode.nodeValue?.length || 0;
-        currentNode = walker.nextNode();
+        return !currentNode ? 0 : absolutOffset;
     }
-    
-    if (!currentNode) {
-        return 0;
-    }
-    
-    const splitPartIndex = getSplitPartIndex(parent);
-    if (splitPartIndex === "2") {
-        const counterPart = getSplitCounterPart(parent);
-        absolutOffset += counterPart?.textContent?.length ?? 0;
-    }
-
-    return absolutOffset;
 }
 
 export function getElementFromNode(node: Node): Element {
@@ -41,26 +52,29 @@ export function getElementFromNode(node: Node): Element {
 }
 
 export function findTextNodeAtOffset(parent: Element, offset: number): { node: Node | null, relativeOffset: number } {
-    const splitPartIndex = getSplitPartIndex(parent);
-    switch (splitPartIndex) {
-        case "1": {
-            const result = find(parent, offset);
-            if (result.node) return result;
-            let counterPart = getSplitCounterPart(parent);
-            if (!counterPart) return result;
-            return find(counterPart!, offset - (parent.textContent?.length ?? 0));
+    const nodes = getAllNodes(parent);
+    
+    let remainingOffset = offset;
+    for (const node of nodes) {
+        const contentLength = node.textContent.length;
+        
+        if (contentLength < remainingOffset) {
+            remainingOffset -= contentLength;
+            continue;
         }
-        case "2": {
-            let counterPart = getSplitCounterPart(parent);
-            if (counterPart) {
-                const result = find(counterPart, offset);
-                if (result.node) return result;
-            }
-            return find(parent, offset - (counterPart?.textContent?.length ?? 0));
+        
+        const result = find(node, remainingOffset);
+        if (result.node) {
+            return result;
         }
-        default:
-            return find(parent, offset);
+
+        remainingOffset -= contentLength;
     }
+    
+    return {
+        node: null,
+        relativeOffset: 0
+    };
 
     function find(targetParent: Element, offset: number) {
         const walker = document.createTreeWalker(targetParent, NodeFilter.SHOW_TEXT);
@@ -110,15 +124,13 @@ export function getNodeId(element: Element) {
     return element.getAttribute(NODE_ID_ATTRIBUTE);
 }
 
-export function getSplitPartIndex(domElement: Element) {
-    return domElement.closest("[data-split-part]")?.getAttribute("data-split-part") ?? null;
+export function getSplitPartIndex(node: Node) {
+    const domElement = node.nodeType === Node.ELEMENT_NODE ? node as Element : node.parentElement!;
+    const result = domElement.closest("[data-split-part]")?.getAttribute("data-split-part") ?? null;
+    return result ? Number(result) : null;
 }
 
-export function getSplitCounterPart(domElement: Element) {
-    const splitElement = domElement.closest("[data-split-part]");
-    const splitPart = splitElement?.getAttribute("data-split-part");
-    const splitCounterPart = splitPart === "1" ? "2" : "1";
-    
+export function getAllNodes(domElement: Element) {
     const nodeId = getNodeId(domElement);
-    return document.querySelector(`[data-split-part="${splitCounterPart}"][${NODE_ID_ATTRIBUTE}="${nodeId}"], [data-split-part="${splitCounterPart}"] [${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
+    return [...document.querySelectorAll<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${nodeId}"]`)];
 }

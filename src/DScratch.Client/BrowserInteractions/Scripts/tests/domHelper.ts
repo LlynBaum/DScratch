@@ -86,6 +86,6 @@ export function createSplittedParagraph(pageIndex: number, nodeId: string, split
           </div>
         `);
 
-        previousPage = document.querySelector(`[data-page-index=${pageIndex + 1 + i}]`);
+        previousPage = document.querySelector(`[data-page-index="${pageIndex + 1 + i}"]`);
     }
 }

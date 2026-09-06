@@ -1,6 +1,7 @@
 import {saveSelection, SelectionInfo, setSelectionSave} from "../selection";
 import * as nodeHelper from "../nodeHelper";
 import * as paging from "./paging";
+import {getSplitPartIndex} from "../nodeHelper";
 
 export enum StepType {
     insertText = "insertText",
@@ -80,7 +81,7 @@ export function applyTransaction(transaction: TransactionResult){
             }
             case StepType.deleteText: {
                 const element = handleDeleteTextStep(step as DeleteTextStep);
-                element && modifiedElements.push(element);
+                element && modifiedElements.push(...element);
                 break;
             }
             case StepType.insertElement: {
@@ -133,23 +134,65 @@ function handleInsertTextStep(step: InsertTextStep) {
     return targetParent as HTMLElement;
 }
 
-function handleDeleteTextStep(step: DeleteTextStep) {
+function handleDeleteTextStep(step: DeleteTextStep): Element[] | null {
     const element = findNode(step.parentId);
     if (!element) return null;
+
+    const start = nodeHelper.findTextNodeAtOffset(element, step.offset);
+    const end = nodeHelper.findTextNodeAtOffset(element, step.offset + step.length);
     
-    // TODO: when deleting selection over different pages, also have to take into account that there might be more text somewhere else
-    const { node, relativeOffset } = nodeHelper.findTextNodeAtOffset(element, step.offset);
-    // Idea, just use nodeHelper.findTextNodeAtOffset(element, step.offset + step.length) and then delete everything in between.
-    if (node) {
-        const text = node.textContent;
-        node.textContent = text!.slice(0, relativeOffset) + text!.slice(relativeOffset + step.length);
+    if (!start.node || !end.node) {
+        return null;
     }
     
-    if (element.textContent.length === 0) {
-        element.remove();
+    if (start.node === end.node) {
+        const text = start.node.textContent;
+        start.node.textContent = text!.slice(0, start.relativeOffset) + text!.slice(start.relativeOffset + step.length);
+
+        const parentElement = start.node.parentElement!;
+        if (parentElement.textContent.length === 0) {
+            parentElement.remove();
+        }
+        
+        return [parentElement];
+    }
+
+    start.node.textContent = start.node.textContent!.slice(0, start.relativeOffset);
+    end.node.textContent = end.node.textContent!.slice(start.relativeOffset);
+    
+    let currentNode = start.node.nextSibling;
+    while (currentNode || currentNode === end.node) {
+        const n = currentNode;
+        currentNode = n.nextSibling;
+        n.remove();
     }
     
-    return element;
+    const elements = nodeHelper.getAllNodes(element);
+    
+    if (elements.length > 1) {
+        const stratPartIndex = getSplitPartIndex(start.node)!;
+        const endPartIndex = getSplitPartIndex(end.node)!;
+        elements.filter(n => {
+            const index = getSplitPartIndex(n)!;
+            return stratPartIndex < index && index < endPartIndex;
+        }).forEach(e => e.remove());
+    }
+    
+    const startElement = start.node.parentElement!;
+    const endElement = end.node.parentElement!;
+    
+    if (startElement?.textContent.length === 0) {
+        startElement.remove();
+    }
+
+    if (startElement === endElement) {
+        return [startElement];
+    }
+
+    if (endElement?.textContent.length === 0) {
+        endElement.remove();
+    }
+    return [startElement, endElement];
 }
 
 function handleInsertElementStep(step: InsertElementStep) {

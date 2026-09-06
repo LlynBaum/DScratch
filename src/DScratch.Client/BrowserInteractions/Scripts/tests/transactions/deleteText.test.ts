@@ -198,7 +198,7 @@ test("delete text that spans over split part two and three", async () => {
     await expect.element(page.getByPageNumber(3).getByCSS("span[data-dnode-id]")).toHaveTextContent("ld!");
 
     const textElements = document.querySelectorAll<HTMLElement>("[data-dnode-id='t-1']");
-    expect(paging.update).toHaveBeenCalledExactlyOnceWith([...textElements]);
+    expect(paging.update).toHaveBeenCalledExactlyOnceWith([textElements[1], textElements[2]]);
 });
 
 test("delete text that spans over three split parts", async () => {
@@ -237,7 +237,7 @@ test("delete text that spans over three split parts", async () => {
     await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]")).toBeVisible();
     await expect.element(page.getByPageNumber(3).getByCSS("p[data-dnode-id]")).toBeVisible();
     await expect.element(page.getByPageNumber(1).getByCSS("span[data-dnode-id]")).toHaveTextContent("Hel");
-    await expect.element(page.getByPageNumber(2).getByCSS("span[data-dnode-id]")).toHaveTextContent("");
+    await expect.element(page.getByPageNumber(2).getByCSS("span[data-dnode-id]")).not.toBeInTheDocument();
     await expect.element(page.getByPageNumber(3).getByCSS("span[data-dnode-id]")).toHaveTextContent("d!");
 
     const textElements = document.querySelectorAll<HTMLElement>("[data-dnode-id='t-1']");
