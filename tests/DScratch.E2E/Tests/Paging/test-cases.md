@@ -20,8 +20,8 @@ TBD
 # Split Part Tests
 
 - Delete Selected Text, that spans over more than one page works the same
-  - Including overwrite with text, 
-  - Including overwrite with new paragraph
-- Setting selection works on split parts
-- Getting selection works on split parts
-- All transaction steps work on split parts
+  - Including overwrite with text (requires Underflow and E2E)
+  - Including overwrite with new paragraph (requires Underflow and E2E)
+- ~~Setting selection works on split parts~~
+- ~~Getting selection works on split parts~~
+- ~~All transaction steps work on split parts~~
