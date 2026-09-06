@@ -17,6 +17,9 @@ test("moves overflow block to new page", async () => {
    
    await expect.element(page.getByPageNumber(1).getByCSS("p[data-dnode-id]")).toHaveLength(29);
    await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]")).toHaveLength(1);
+   
+   await expect.element(page.getByPageNumber(1).getByCSS("p[data-dnode-id]").last()).not.toHaveAttribute("data-split-part");
+   await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]")).not.toHaveAttribute("data-split-part");
    await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]")).toHaveAttribute("data-dnode-id", "p-1-30");
 });
 

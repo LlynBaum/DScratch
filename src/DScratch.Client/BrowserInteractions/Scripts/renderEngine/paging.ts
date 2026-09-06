@@ -42,15 +42,7 @@ function greedyFlow(modifiedPages: HTMLElement[]) {
         const overflow = getBottomOverflowingChildren(currentPage);
         if (!overflow || !overflow.IsOverflowing) continue;
         
-        const pageIndex = Number(currentPage.getAttribute(PAGE_INDEX_ATTRIBUTE));
-        
-        let targetPage;
-        if (currentPage.nextElementSibling?.matches(`[${PAGE_INDEX_ATTRIBUTE}='${pageIndex + 1}']`)) {
-            targetPage = currentPage.nextElementSibling as HTMLElement;
-        } else {
-            targetPage = createPage(pageIndex + 1);
-        }
-
+        const targetPage = getOrCreateNextPage(currentPage);
         stabilize(overflow, targetPage);
         
        // currentPage.nextElementSibling && modifiedPages.push(currentPage.nextElementSibling as HTMLElement);
@@ -165,20 +157,6 @@ function moveBlock(overflow: Overflow, targetPage: HTMLElement) {
     }
 }
 
-function createPage(index: number) {
-    const page = document.importNode(getPageTemplate().content, true).firstElementChild as HTMLElement;
-    page.setAttribute(PAGE_INDEX_ATTRIBUTE, index.toString());
-    const nextPage = document.querySelector<HTMLElement>(`[${PAGE_INDEX_ATTRIBUTE}='${index - 1}']`)?.nextElementSibling;
-    
-    if (nextPage) {
-        window.editor.node?.insertBefore(page, nextPage);
-    } else {
-        window.editor.node?.appendChild(page);
-    }
-    
-    return page;
-}
-
 function getBottomOverflowingChildren(page: HTMLElement): Overflow | null {
     const pageContent = page.firstElementChild as HTMLElement;
     if (!pageContent) return null;
@@ -244,4 +222,28 @@ function getWordSafeSplitIndex(textContent: string, index: number) {
 
 function getPageTemplate() {
     return document.getElementById("page-template") as HTMLTemplateElement;
+}
+
+function getOrCreateNextPage(currentPage: HTMLElement) {
+    const pageIndex = Number(currentPage.getAttribute(PAGE_INDEX_ATTRIBUTE));
+    
+    if (currentPage.nextElementSibling?.matches(`[${PAGE_INDEX_ATTRIBUTE}='${pageIndex + 1}']`)) {
+        return currentPage.nextElementSibling as HTMLElement;
+    } else {
+        return createPage(pageIndex + 1);
+    }
+}
+
+function createPage(index: number) {
+    const page = document.importNode(getPageTemplate().content, true).firstElementChild as HTMLElement;
+    page.setAttribute(PAGE_INDEX_ATTRIBUTE, index.toString());
+    const nextPage = document.querySelector<HTMLElement>(`[${PAGE_INDEX_ATTRIBUTE}='${index - 1}']`)?.nextElementSibling;
+
+    if (nextPage) {
+        window.editor.node?.insertBefore(page, nextPage);
+    } else {
+        window.editor.node?.appendChild(page);
+    }
+
+    return page;
 }
