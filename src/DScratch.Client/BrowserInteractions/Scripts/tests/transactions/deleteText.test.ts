@@ -157,3 +157,89 @@ test("delete text that spans over two split parts", async () => {
     const textElements = document.querySelectorAll<HTMLElement>("[data-dnode-id='t-1']");
     expect(paging.update).toHaveBeenCalledExactlyOnceWith([...textElements]);
 });
+
+test("delete text that spans over split part two and three", async () => {
+    domHelper.createEditorFixture({ paragraphsPerPage: 0 });
+    domHelper.createSplittedParagraph(1, "pt-1", 2);
+    domHelper.insertText("Hello", {
+        parentId: "pt-1",
+        id: "t-1",
+        splitPart: 1
+    });
+    domHelper.insertText("new", {
+        parentId: "pt-1",
+        id: "t-1",
+        splitPart: 2
+    });
+    domHelper.insertText("World!", {
+        parentId: "pt-1",
+        id: "t-1",
+        splitPart: 3
+    });
+
+    transaction.applyTransaction({
+        cursorPosition: null,
+        steps: [
+            {
+                type: transaction.StepType.deleteText,
+                parentId: "t-1",
+                offset: 7,
+                length: 4
+            } as transaction.DeleteTextStep
+        ]
+    });
+
+    await expect.element(page.DPage()).toHaveLength(3);
+    await expect.element(page.getByPageNumber(1).getByCSS("p[data-dnode-id]")).toBeVisible();
+    await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]")).toBeVisible();
+    await expect.element(page.getByPageNumber(3).getByCSS("p[data-dnode-id]")).toBeVisible();
+    await expect.element(page.getByPageNumber(1).getByCSS("span[data-dnode-id]")).toHaveTextContent("Hello");
+    await expect.element(page.getByPageNumber(2).getByCSS("span[data-dnode-id]")).toHaveTextContent("ne");
+    await expect.element(page.getByPageNumber(3).getByCSS("span[data-dnode-id]")).toHaveTextContent("ld!");
+
+    const textElements = document.querySelectorAll<HTMLElement>("[data-dnode-id='t-1']");
+    expect(paging.update).toHaveBeenCalledExactlyOnceWith([...textElements]);
+});
+
+test("delete text that spans over three split parts", async () => {
+    domHelper.createEditorFixture({ paragraphsPerPage: 0 });
+    domHelper.createSplittedParagraph(1, "pt-1", 2);
+    domHelper.insertText("Hello", {
+        parentId: "pt-1",
+        id: "t-1",
+        splitPart: 1
+    });
+    domHelper.insertText("new", {
+        parentId: "pt-1",
+        id: "t-1",
+        splitPart: 2
+    });
+    domHelper.insertText("World!", {
+        parentId: "pt-1",
+        id: "t-1",
+        splitPart: 3
+    });
+
+    transaction.applyTransaction({
+        cursorPosition: null,
+        steps: [
+            {
+                type: transaction.StepType.deleteText,
+                parentId: "t-1",
+                offset: 3,
+                length: 9
+            } as transaction.DeleteTextStep
+        ]
+    });
+
+    await expect.element(page.DPage()).toHaveLength(3);
+    await expect.element(page.getByPageNumber(1).getByCSS("p[data-dnode-id]")).toBeVisible();
+    await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]")).toBeVisible();
+    await expect.element(page.getByPageNumber(3).getByCSS("p[data-dnode-id]")).toBeVisible();
+    await expect.element(page.getByPageNumber(1).getByCSS("span[data-dnode-id]")).toHaveTextContent("Hel");
+    await expect.element(page.getByPageNumber(2).getByCSS("span[data-dnode-id]")).toHaveTextContent("");
+    await expect.element(page.getByPageNumber(3).getByCSS("span[data-dnode-id]")).toHaveTextContent("d!");
+
+    const textElements = document.querySelectorAll<HTMLElement>("[data-dnode-id='t-1']");
+    expect(paging.update).toHaveBeenCalledExactlyOnceWith([...textElements]);
+});

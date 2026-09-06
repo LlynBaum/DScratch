@@ -71,16 +71,21 @@ export function insertText(text: string, options: {
     `;
 }
 
-export function createSplittedParagraph(pageIndex: number, nodeId: string) {
+export function createSplittedParagraph(pageIndex: number, nodeId: string, splitPartCount?: number) {
     const page = document.querySelector<HTMLElement>(`[data-page-index="${pageIndex}"]`);
     
     page!.firstElementChild!.innerHTML += `<p data-dnode-id="${nodeId}" data-split-part="1"></p>`;
     
-    page?.insertAdjacentHTML("afterend", `
-      <div class="page" data-page-index="${pageIndex + 1}">
-        <div data-dnode-id="Root" contenteditable>
-          <p data-dnode-id="${nodeId}" data-split-part="2"></p>
-        </div>
-      </div>
-    `);
+    let previousPage = page;
+    for (let i = 0; i < (splitPartCount ?? 1); i++) {
+        previousPage?.insertAdjacentHTML("afterend", `
+          <div class="page" data-page-index="${pageIndex + 1 + i}">
+            <div data-dnode-id="Root" contenteditable>
+              <p data-dnode-id="${nodeId}" data-split-part="${2 + i}"></p>
+            </div>
+          </div>
+        `);
+
+        previousPage = document.querySelector(`[data-page-index=${pageIndex + 1 + i}]`);
+    }
 }

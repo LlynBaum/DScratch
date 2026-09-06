@@ -73,3 +73,29 @@ test.each([0, 1])("returns expected node and relativeOffset in split-part 2 (par
     expect(absolutOffset.node).toBe(parent[1].firstChild);
     expect(absolutOffset.relativeOffset).toBe(2);
 });
+
+test.each([0, 1, 2])("returns expected node and relativeOffset in split-part 3 (parentIndex %i)", async (parentIndex: number) => {
+    domHelper.createEditorFixture();
+    domHelper.createSplittedParagraph(1, "ps-1", 2);
+    domHelper.insertText("Hello", {
+        parentId: "ps-1",
+        id: "t-1",
+        splitPart: 1
+    });
+    domHelper.insertText("new", {
+        parentId: "ps-1",
+        id: "t-1",
+        splitPart: 2
+    });
+    domHelper.insertText("World!", {
+        parentId: "ps-1",
+        id: "t-1",
+        splitPart: 3
+    });
+
+    const parent = document.querySelectorAll<HTMLElement>("[data-dnode-id='t-1']");
+    const absolutOffset = nodeHelper.findTextNodeAtOffset(parent[parentIndex], 10);
+
+    expect(absolutOffset.node).toBe(parent[2].firstChild);
+    expect(absolutOffset.relativeOffset).toBe(2);
+});

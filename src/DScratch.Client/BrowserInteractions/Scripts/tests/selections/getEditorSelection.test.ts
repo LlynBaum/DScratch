@@ -139,3 +139,37 @@ test('calculates absolute offset across split parts when cursor is on page 2 (sp
         focusOffset: 9,
     });
 });
+
+test('calculates absolute offset across split parts when cursor is on page 3 (split part 3)', () => {
+    domHelper.createEditorFixture();
+    domHelper.createSplittedParagraph(1, "ps-1", 2);
+    domHelper.insertText("Hello", {
+        parentId: "ps-1",
+        id: "t-1",
+        splitPart: 1
+    });
+    domHelper.insertText("new", {
+        parentId: "ps-1",
+        id: "t-1",
+        splitPart: 2
+    });
+    domHelper.insertText("World!", {
+        parentId: "ps-1",
+        id: "t-1",
+        splitPart: 3
+    });
+    
+    const part3 = document.querySelector<HTMLElement>("[data-split-part='3'] [data-dnode-id='t-1']")!;
+    const textNodePart3 = part3.firstChild!;
+
+    setNativeCursor(textNodePart3, 3);
+
+    const sel = selection.getEditorSelection();
+    expect(sel).toEqual({
+        direction: "none",
+        anchorId: "t-1",
+        anchorOffset: 11,
+        focusId: "t-1",
+        focusOffset: 11,
+    });
+});

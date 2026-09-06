@@ -69,3 +69,28 @@ test("returns absolute offset relative to split parent in split-part 2", async (
 
     expect(absolutOffset).toBe(7);
 });
+
+test("returns absolute offset relative to split parent in split-part 3", async () => {
+    domHelper.createEditorFixture();
+    domHelper.createSplittedParagraph(1, "ps-1", 2);
+    domHelper.insertText("Hello", {
+        parentId: "ps-1",
+        id: "t-1",
+        splitPart: 1
+    });
+    domHelper.insertText("new", {
+        parentId: "ps-1",
+        id: "t-1",
+        splitPart: 2
+    });
+    domHelper.insertText("World!", {
+        parentId: "ps-1",
+        id: "t-1",
+        splitPart: 3
+    });
+
+    const parent = document.querySelectorAll<HTMLElement>("[data-dnode-id='t-1']")[2];
+    const absolutOffset = nodeHelper.getAbsolutOffset(parent, parent.firstChild!, 2);
+
+    expect(absolutOffset).toBe(10);
+});
