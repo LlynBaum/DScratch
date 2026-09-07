@@ -40,6 +40,7 @@ function greedyFlow(modifiedPages: HTMLElement[]) {
         }
         
         const overflow = getBottomOverflowingChildren(currentPage);
+        console.log(overflow)
         if (!overflow || !overflow.IsOverflowing) continue;
         
         const targetPage = getOrCreateNextPage(currentPage);
@@ -153,7 +154,7 @@ function moveBlock(overflow: Overflow, targetPage: HTMLElement) {
     while (currentElement) {
         const el = currentElement;
         currentElement = currentElement.nextElementSibling;
-        parent.insertAdjacentElement("afterbegin", el);
+        parent.appendChild(el);
     }
 }
 
@@ -166,21 +167,37 @@ function getBottomOverflowingChildren(page: HTMLElement): Overflow | null {
     const paddingBottom = parseFloat(pageContentStyle.paddingBottom) || 0;
     const pageBottom = pageContentRect.bottom - paddingBottom;
 
-    const lastBlockElement = pageContent.lastElementChild as HTMLElement; // TODO: it could also be any previous block that is already overflowing
+    const lastBlockElement = pageContent.lastElementChild as HTMLElement;
     if (!lastBlockElement) return null;
     
-    const blockStyle = window.getComputedStyle(lastBlockElement);
-    const marginBottom = parseFloat(blockStyle.marginBottom) || 0;
-    const childBottom = lastBlockElement.getBoundingClientRect().bottom + marginBottom;
+    return getLastOverflowingBlock(lastBlockElement);
     
-    return {
-        IsOverflowing: childBottom > pageBottom,
-        BlockElement: lastBlockElement,
-        Page: page,
-        PageBottom: pageBottom,
-        ElementBottom: childBottom,
-        Margin: marginBottom
-    };
+    function getLastOverflowingBlock(startBlock: HTMLElement) : Overflow {
+        let overflow = getOverflowInfo(startBlock);
+        while (overflow.BlockElement.previousElementSibling) {
+            const nextOverflowInfo = getOverflowInfo(overflow.BlockElement.previousElementSibling as HTMLElement);
+            if (!nextOverflowInfo.IsOverflowing) return overflow;
+            
+            overflow = nextOverflowInfo;
+        }
+        
+        return overflow;
+    }
+    
+    function getOverflowInfo(element: HTMLElement): Overflow {
+        const blockStyle = window.getComputedStyle(element);
+        const marginBottom = parseFloat(blockStyle.marginBottom) || 0;
+        const childBottom = element.getBoundingClientRect().bottom + marginBottom;
+
+        return  {
+            IsOverflowing: childBottom > pageBottom,
+            BlockElement: element,
+            Page: page,
+            PageBottom: pageBottom,
+            ElementBottom: childBottom,
+            Margin: marginBottom
+        };
+    }
 }
 
 function findSplitIndex(textNode: Text, overflow: Overflow): number {
