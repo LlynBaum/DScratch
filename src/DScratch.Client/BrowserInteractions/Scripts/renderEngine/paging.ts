@@ -217,7 +217,7 @@ function findSplitIndex(textNode: Text, overflow: Overflow): number {
 function getWordSafeSplitIndex(textContent: string, index: number) {
     if (index <= 0 || index >= textContent.length) return index;
     const lastSpace = textContent.lastIndexOf(" ", index);
-    return lastSpace > 0 ? lastSpace : index; // TODO: space should stay on old page and not be moved to new page
+    return lastSpace > 0 ? Math.min(lastSpace + 1, index) : index;
 }
 
 function getPageTemplate() {
