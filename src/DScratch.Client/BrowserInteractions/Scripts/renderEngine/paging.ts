@@ -45,7 +45,7 @@ function greedyFlow(modifiedPages: HTMLElement[]) {
         const targetPage = getOrCreateNextPage(currentPage);
         stabilize(overflow, targetPage);
         
-       // currentPage.nextElementSibling && modifiedPages.push(currentPage.nextElementSibling as HTMLElement);
+       currentPage.nextElementSibling && modifiedPages.push(currentPage.nextElementSibling as HTMLElement);
     }
 }
 
