@@ -6,7 +6,7 @@ export function getAbsolutOffset(parent: Element, targetNode: Node, relativeOffs
         return 0;
     }
 
-    const nodes = getAllNodes(parent);
+    const nodes = getAllNodesWithSameId(parent);
 
     const targetElement = targetNode.nodeType === Node.ELEMENT_NODE 
         ? targetNode as Element 
@@ -52,7 +52,7 @@ export function getElementFromNode(node: Node): Element {
 }
 
 export function findTextNodeAtOffset(parent: Element, offset: number): { node: Node | null, relativeOffset: number } {
-    const nodes = getAllNodes(parent);
+    const nodes = getAllNodesWithSameId(parent);
     
     let remainingOffset = offset;
     for (const node of nodes) {
@@ -130,7 +130,7 @@ export function getSplitPartIndex(node: Node) {
     return result ? Number(result) : null;
 }
 
-export function getAllNodes(domElement: Element) {
+export function getAllNodesWithSameId(domElement: Element) {
     const nodeId = getNodeId(domElement);
     return [...document.querySelectorAll<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${nodeId}"]`)];
 }

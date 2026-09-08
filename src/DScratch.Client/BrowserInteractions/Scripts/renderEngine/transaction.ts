@@ -167,7 +167,7 @@ function handleDeleteTextStep(step: DeleteTextStep): Element[] | null {
         n.remove();
     }
     
-    const elements = nodeHelper.getAllNodes(element);
+    const elements = nodeHelper.getAllNodesWithSameId(element);
     
     if (elements.length > 1) {
         const stratPartIndex = getSplitPartIndex(start.node)!;

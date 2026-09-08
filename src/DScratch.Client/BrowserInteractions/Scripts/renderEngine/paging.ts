@@ -1,7 +1,7 @@
+import * as nodeHelper from "../nodeHelper";
+
 const PAGE_INDEX_ATTRIBUTE = "data-page-index";
 const SPLIT_ATTRIBUTE = "data-split-part";
-
-
 
 interface Overflow {
     IsOverflowing: boolean;
@@ -80,7 +80,10 @@ function splitText(textNode: Text, overflow: Overflow, targetPage: HTMLElement) 
     const index = findSplitIndex(textNode, overflow);
     const wordSafeIndex = getWordSafeSplitIndex(textNode.textContent, index);
     
-    // TODO: remove existing split parts before adding the new once
+    const existingSplitNode = overflow.Page.querySelector("[data-split-part]");
+    if (existingSplitNode) {
+        nodeHelper.getAllNodesWithSameId(existingSplitNode).forEach(n => n.removeAttribute("data-split-part"));
+    }
 
     if (index === 0) {
         moveBlock(overflow, targetPage);
@@ -107,9 +110,15 @@ function splitText(textNode: Text, overflow: Overflow, targetPage: HTMLElement) 
         targetPage.firstElementChild!.append(...content);
     }
 
-    const splitNodeInSamePage = findAdjacentNodes(targetPage);
-    if (splitNodeInSamePage) {
+    let splitNodeInSamePage = findAdjacentNodes(targetPage);
+    while (splitNodeInSamePage) {
         mergeNodes(splitNodeInSamePage);
+        splitNodeInSamePage = findAdjacentNodes(targetPage);
+    }
+    
+    if (overflow.BlockElement.childElementCount === 0) {
+        overflow.BlockElement.remove();
+        return;
     }
 
     overflow.BlockElement.setAttribute(SPLIT_ATTRIBUTE, "1");
