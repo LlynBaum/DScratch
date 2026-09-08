@@ -19,10 +19,10 @@ test("moves overflow block to new page", async () => {
 
     await expect.element(page.getByPageNumber(1).getByCSS("p[data-dnode-id]")).toHaveLength(29);
     await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]")).toHaveLength(2);
-    await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]").nth((0))).not.toHaveAttribute("data-split-part");
     await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]").nth(0)).toHaveAttribute("data-dnode-id", "p-1-30");
-    await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]").nth((1))).not.toHaveAttribute("data-split-part");
+    await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]").nth((0))).not.toHaveAttribute("data-split-part");
     await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]").nth(1)).toHaveAttribute("data-dnode-id", "p-1");
+    await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]").nth((1))).not.toHaveAttribute("data-split-part");
 });
 
 test("moves overflow text to new page", async () => {

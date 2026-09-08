@@ -77,7 +77,7 @@ test("move overflow to next existing page, stabilizes next page too", async () =
     expect(textPart1!.textContent + textPart2!.textContent + textPart3!.textContent).toEqual(PAGE_LONG_TEXT + PAGE_LONG_TEXT + "Hello");
 });
 
-test("", async () => {
+test("stops stabilizing when page does not overflow anymore", async () => {
     domHelper.createEditorFixture({ paragraphsPerPage: 0, pageCount: 3 });
     
     let previousSibling1: string | undefined = undefined;

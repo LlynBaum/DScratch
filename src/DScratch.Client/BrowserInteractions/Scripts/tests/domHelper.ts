@@ -43,16 +43,16 @@ export function insertPage(newPageIndex: number) {
 }
 
 export function insertParagraph(id: string, pageNumber: number, previousSiblingId?: string) {
-    const parent = document.querySelector(`[data-page-index='${pageNumber}']`);
+    const parent = document.querySelector(`[data-page-index='${pageNumber}'] [contenteditable]`);
     
     if (previousSiblingId) {
         const previousSingling = parent!.querySelector<HTMLElement>(`[data-dnode-id='${previousSiblingId}']`)!;
         previousSingling.insertAdjacentHTML("afterend", `
-          <p data-dnode-id="${id}" data-split-part="2"></p>
+          <p data-dnode-id="${id}"></p>
         `);
     } else {
         parent?.insertAdjacentHTML("afterbegin", `
-          <p data-dnode-id="${id}" data-split-part="2"></p>
+          <p data-dnode-id="${id}"></p>
         `);
     }
 }

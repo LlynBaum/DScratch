@@ -40,7 +40,6 @@ function greedyFlow(modifiedPages: HTMLElement[]) {
         }
         
         const overflow = getBottomOverflowingChildren(currentPage);
-        console.log(overflow)
         if (!overflow || !overflow.IsOverflowing) continue;
         
         const targetPage = getOrCreateNextPage(currentPage);
@@ -149,12 +148,13 @@ function mergeNodes(elements: Element[]) {
 
 function moveBlock(overflow: Overflow, targetPage: HTMLElement) {
     const parent = targetPage.querySelector<HTMLElement>("div[contenteditable]")!;
-
+    const previous = parent.firstElementChild;
+    
     let currentElement: Element | null = overflow.BlockElement;
     while (currentElement) {
         const el = currentElement;
         currentElement = currentElement.nextElementSibling;
-        parent.appendChild(el);
+        parent.insertBefore(el, previous);
     }
 }
 
