@@ -20,7 +20,7 @@ test("move overflow to new page, stabilizes new page too", async () => {
     await expect.element(page.getByPageNumber(3).getByCSS("p[data-dnode-id]")).toHaveLength(2);
 });
 
-test("move overflow to next existing page, stabilizes next page too", async () => {
+test("move overflow blocks to next existing page, stabilizes next page too", async () => {
     domHelper.createEditorFixture({ pageCount: 2, paragraphsPerPage: 30 });
 
     const textElement = document.querySelector<HTMLElement>("[data-dnode-id='p-1-30']")!;
@@ -36,9 +36,9 @@ test("move overflow to next existing page, stabilizes next page too", async () =
     await expect.element(page.getByPageNumber(3).getByCSS("p[data-dnode-id]")).toHaveLength(2);
 });
 
-const PAGE_LONG_TEXT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ".repeat(20);
+const PAGE_LONG_TEXT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ".repeat(10);
 
-test("move overflow to next existing page, stabilizes next page too", async () => {
+test("move overflow text to next existing page, stabilizes next page too", async () => {
     domHelper.createEditorFixture({ paragraphsPerPage: 0 });
     domHelper.createSplittedParagraph(1, "pt-1", 2);
     
