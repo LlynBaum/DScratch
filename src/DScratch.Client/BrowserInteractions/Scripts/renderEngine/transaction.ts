@@ -156,9 +156,9 @@ function handleDeleteTextStep(step: DeleteTextStep): Element[] | null {
         
         return [parentElement];
     }
-
+    
     start.node.textContent = start.node.textContent!.slice(0, start.relativeOffset);
-    end.node.textContent = end.node.textContent!.slice(start.relativeOffset);
+    end.node.textContent = end.node.textContent!.slice(end.relativeOffset);
     
     let currentNode = start.node.nextSibling;
     while (currentNode || currentNode === end.node) {

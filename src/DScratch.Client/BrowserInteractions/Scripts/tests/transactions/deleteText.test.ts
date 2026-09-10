@@ -243,3 +243,77 @@ test("delete text that spans over three split parts", async () => {
     const textElements = document.querySelectorAll<HTMLElement>("[data-dnode-id='t-1']");
     expect(paging.update).toHaveBeenCalledExactlyOnceWith([...textElements]);
 });
+
+test("delete text node in first split part, if it has no text anymore", async () => {
+    domHelper.createEditorFixture({ paragraphsPerPage: 0 });
+    domHelper.createSplittedParagraph(1, "pt-1");
+    domHelper.insertText("Hello", {
+        parentId: "pt-1",
+        id: "t-1",
+        splitPart: 1
+    });
+    domHelper.insertText("World!", {
+        parentId: "pt-1",
+        id: "t-1",
+        splitPart: 2
+    });
+    
+    const textElements = document.querySelectorAll<HTMLElement>("[data-dnode-id='t-1']");
+
+    transaction.applyTransaction({
+        cursorPosition: null,
+        steps: [
+            {
+                type: transaction.StepType.deleteText,
+                parentId: "t-1",
+                offset: 0,
+                length: 8
+            } as transaction.DeleteTextStep
+        ]
+    });
+
+    await expect.element(page.DPage()).toHaveLength(2);
+    await expect.element(page.getByPageNumber(1).getByCSS("p[data-dnode-id]")).toBeVisible();
+    await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]")).toBeVisible();
+    await expect.element(page.getByPageNumber(1).getByCSS("span[data-dnode-id]")).not.toBeInTheDocument();
+    await expect.element(page.getByPageNumber(2).getByCSS("span[data-dnode-id]")).toHaveTextContent("ld!");
+
+    expect(paging.update).toHaveBeenCalledExactlyOnceWith([...textElements]);
+});
+
+test("delete text node in last split part, if it has no text anymore", async () => {
+    domHelper.createEditorFixture({ paragraphsPerPage: 0 });
+    domHelper.createSplittedParagraph(1, "pt-1");
+    domHelper.insertText("Hello", {
+        parentId: "pt-1",
+        id: "t-1",
+        splitPart: 1
+    });
+    domHelper.insertText("World!", {
+        parentId: "pt-1",
+        id: "t-1",
+        splitPart: 2
+    });
+    
+    const textElements = document.querySelectorAll<HTMLElement>("[data-dnode-id='t-1']");
+
+    transaction.applyTransaction({
+        cursorPosition: null,
+        steps: [
+            {
+                type: transaction.StepType.deleteText,
+                parentId: "t-1",
+                offset: 3,
+                length: 8
+            } as transaction.DeleteTextStep
+        ]
+    });
+
+    await expect.element(page.DPage()).toHaveLength(2);
+    await expect.element(page.getByPageNumber(1).getByCSS("p[data-dnode-id]")).toBeVisible();
+    await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]")).toBeVisible();
+    await expect.element(page.getByPageNumber(1).getByCSS("span[data-dnode-id]")).toHaveTextContent("Hel");
+    await expect.element(page.getByPageNumber(2).getByCSS("span[data-dnode-id]")).not.toBeInTheDocument();
+
+    expect(paging.update).toHaveBeenCalledExactlyOnceWith([...textElements]);
+});

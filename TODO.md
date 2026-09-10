@@ -19,15 +19,24 @@
 
 ## Random stuff
 
-- First check for Hard Page Breaks, if found move everything after. Else check ofr Over or Underflow, push or pull content and go to next page
+- First check for Hard Page Breaks, if found move everything after. Else check for Over or Underflow, push or pull content and go to next page
 - Pulling things up when space between last node and page bottom is larger than 0 (maybe optimization with line height?)
 - when pulling stuff up, first check the start of a node, if not enough space, skip. If enough space check end of node.
   If enough space, same for next node. Else binary search within. Speeds things probably a lot up.
 
+### TextNodes CRDT Fix
 
 TextNodes are currently not CRDT ready... if oyu merge nodes and the take one by its id, and you get a node with a different id
 because the given id was in the range of that Node, it should take that into account and adjust the given offset.
 Else the offset is wrong, because it was calculated based on a node that started at another id.
+
+### Cursor
+
+Cursor feels broken right now. There are a few weird things:
+- Clicking in an empty document sets the cursor to the very beginning instead of the very end of all text.
+- Clicking within text (or in the document?) in a Paragraph that is split, the cursor suddenly jumps to the start of the para.
+- You can not move with arrow key between pages (also selection doesn't work with arrow keys in that case)
+- Selection with Mouse is shitty broken. When you select text over multiple paragraphs, it just doesn't work
 
 # Features
 
