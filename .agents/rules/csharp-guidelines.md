@@ -6,9 +6,9 @@ These rules apply to all code modifications and additions within this workspace.
 Refer to the [Architecture.md](../../docs/Architecture.md) file for details. Code should be split cleanly according to the following roles:
 *   **Core Library (`src/DScratch`)**: The "brain", domain model, and absolute source of truth. It manages the document tree using CRDTs, handles text modifications, performs document calculations, and generates transactions/diffs. It has no dependencies on Blazor or browser-specific APIs.
 *   **Client UI (`src/DScratch.Client`)**: Acts as a rendering pipe and input forwarder. It handles Blazor components, UI rendering, and events that require browser-specific interactions.
-*   **TypeScript Layer (`src/DScratch.Client/BrowserInteractions/Scripts`)**: Directly accesses Browser APIs (e.g. intercepting input events via `beforeInput` with `preventDefault`), handles selections/cursors, and applies DOM changes. Note: Always edit TS source files in this directory; they are compiled/bundled to the `wwwroot` directory. Do not edit compiled bundles in `wwwroot/js` directly.
+*   **TypeScript Layer & Render Engine (`src/DScratch.Client/BrowserInteractions/Scripts`)**: Directly accesses Browser APIs (e.g. intercepting input events via `beforeinput` with `preventDefault`), executes StepDiff mutations, handles selections/cursors, and **manages physical document layout & multi-page splitting (`paging.ts`)**. Note: Always edit TS source files in this directory; they are compiled/bundled to the `dist` directory. Do not edit compiled bundles directly.
 *   **ASP.NET Host (`src/DScratch.Host`)**: Handles routing, serving WASM/static assets, and Server-Side Prerendering (SSR).
-*   **Tests (`tests/DScratch.Tests` and `tests/DScratch.E2E`)**: Contains unit tests (NUnit) and Playwright E2E tests.
+*   **Tests**: Contains C# unit tests (`tests/DScratch.Tests`), Vitest in-browser TypeScript tests (`src/DScratch.Client/.../Scripts`), and Playwright E2E tests (`tests/DScratch.E2E`).
 
 
 ## 2. Coding Standards
@@ -21,6 +21,7 @@ Refer to the [Architecture.md](../../docs/Architecture.md) file for details. Cod
     *   `camelCase` for local variables, method parameters, and private fields.
 
 ## 3. Testing & Verification
-*   **Unit Tests**: Whenever modifying core editor logic or client states, run `dotnet test tests/DScratch.Tests` to verify correctness.
-*   **E2E Tests**: Make sure new features or elements are covered by E2E tests when applicable.
+*   **TypeScript Unit Tests**: When modifying DOM operations, selection mapping, or pagination/layouting logic, run `npm test` from `src/DScratch.Client/BrowserInteractions/Scripts`.
+*   **Core .NET Unit Tests**: Whenever modifying core editor logic, CRDT trees, or client states, run `dotnet test tests/DScratch.Tests` to verify correctness.
+*   **E2E Tests**: Make sure new features or elements are covered by E2E tests when applicable (`dotnet test tests/DScratch.E2E`).
 *   Never assume changes work without verifying that the unit tests build and pass successfully.

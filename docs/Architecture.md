@@ -15,13 +15,14 @@ DScratch solves this with a **C#-Authoritative, Diff-Driven Model**:
 - **C# as the Single Source of Truth**: The C# WASM layer holds an in-memory Conflict-Free Replicated Data Type (CRDT) document tree, executes formatting/structural logic, and enforces all document invariants.
 - **Controlled `contenteditable`**: The browser's native mutation engine is completely intercepted via `beforeinput` (`event.preventDefault()`), preventing arbitrary DOM alterations by the browser.
 - **Atomic Diff Synchronization**: C# computes minimal, declarative `StepDiff` instructions that a lightweight TypeScript bridge applies to the live DOM.
-- **Accurate Selection Preservation**: Custom coordinate mapping translates DOM ranges to stable CRDT node offsets and restores caret positions seamlessly across asynchronous event loops.
+- **TypeScript-Owned Physical Layout & Pagination**: Document pagination, text wrapping, and page-overflow splitting depend on browser-native font metrics and the CSS box model (`getBoundingClientRect()`). TypeScript owns physical layout stabilization, dynamic page creation, and multi-page node splitting while C# remains strictly authoritative over logical content.
+- **Accurate Selection Preservation**: Custom coordinate mapping translates DOM ranges across split page parts to stable CRDT node offsets and restores caret positions seamlessly across asynchronous event loops.
 
 ```mermaid
 graph TD
     subgraph Browser DOM
         Input[User Input Event] -->|beforeinput preventDefault| TS[TypeScript Bridge]
-        TS -->|DOM Mutations| DOM[Live ContentEditable DOM]
+        TS -->|DOM Mutations & Layout Stabilization| DOM[Live ContentEditable DOM & Pages]
     end
 
     subgraph Blazor WebAssembly Client
@@ -68,7 +69,7 @@ DScratch/
 | :--- | :--- | :--- | :--- |
 | **DScratch Core** | .NET 9 Standard | Document CRDT representation, tree walking, node indexing, transaction execution, mark calculation, and cleanup logic. | [`DScratchDocument`](file:///home/darki/Developement/DScratch/src/DScratch/DScratchDocument.cs), [`CrdtLookupTable`](file:///home/darki/Developement/DScratch/src/DScratch/CrdtLookupTable.cs), [`DTransaction`](file:///home/darki/Developement/DScratch/src/DScratch/Transactions/DTransaction.cs), [`StepDiff`](file:///home/darki/Developement/DScratch/src/DScratch/Transactions/StepDiff.cs) |
 | **DScratch Client** | Blazor WASM | UI chrome, toolbars, format buttons, popovers, debug panels, and C# $\leftrightarrow$ JS interop dispatching. | [`BrowserEventHelper`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/BrowserEventHelper.cs), [`EditorCommandDispatcher`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/EditorCommandDispatcher.cs), [`DJsInvoker`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/DJsInvoker.cs) |
-| **TypeScript Bridge** | TypeScript (ESBuild) | `beforeinput` interception, Selection $\leftrightarrow$ CRDT coordinate mapping, granular DOM mutations, CSS highlight overlays. | [`editor.ts`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/Scripts/editor.ts), [`transaction.ts`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/Scripts/renderEngine/transaction.ts), [`selection.ts`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/Scripts/selection.ts), [`inputs.ts`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/Scripts/userInteraction/inputs.ts) |
+| **TypeScript Bridge & Render Engine** | TypeScript (ESBuild) | `beforeinput` interception, StepDiff execution, **physical page layout & overflow splitting**, Selection $\leftrightarrow$ CRDT coordinate mapping, CSS highlight overlays. | [`editor.ts`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/Scripts/editor.ts), [`paging.ts`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/Scripts/renderEngine/paging.ts), [`transaction.ts`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/Scripts/renderEngine/transaction.ts), [`selection.ts`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/Scripts/selection.ts), [`inputs.ts`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/Scripts/userInteraction/inputs.ts) |
 | **ASP.NET Core Host** | ASP.NET Core | Host pipeline, static asset delivery, server-side pre-rendering (SSR), health checks (`/health`), and future P2P signaling. | [`Program.cs`](file:///home/darki/Developement/DScratch/src/DScratch.Host/Program.cs), [`App.razor`](file:///home/darki/Developement/DScratch/src/DScratch.Host/Components/App.razor) |
 
 ---
@@ -106,12 +107,14 @@ sequenceDiagram
     BE->>JS: ApplyTransaction(TransactionResult)
     JS->>TS: applyTransaction(transaction)
     TS->>DOM: Execute DOM Step Diffs (insertText, deleteText, etc.)
+    TS->>TS: paging.update(modifiedNodes)
+    TS->>DOM: Stabilize overflows / split paragraphs / create pages
     TS->>TS: setSelectionSave(cursorPosition)
     TS->>DOM: Update caret position
 ```
 
 > [!NOTE]
-> By calling `event.preventDefault()` immediately in `beforeinput`, native browser mutation is cancelled. The DOM is updated strictly in step 13 when TypeScript receives the validated diffs from C#.
+> By calling `event.preventDefault()` immediately in `beforeinput`, native browser mutation is cancelled. The DOM is updated strictly when TypeScript receives the validated diffs from C#, followed immediately by client-side pagination stabilization (`paging.update`).
 
 ---
 
@@ -329,38 +332,91 @@ The browser client interacts with the DOM using a dedicated TypeScript engine lo
 ```
 Scripts/
 ├── editor.ts               # Editor initialization and global window.editor bridge
-├── nodeHelper.ts           # DOM lookup by data-dnode-id and text offset calculation
+├── nodeHelper.ts           # DOM lookup by data-dnode-id, split-part resolution, text offset math
 ├── selection.ts            # Selection snapshotting, coordinate translation, fake selection
 ├── editorMenu.ts           # Popovers (Link adding/editing) & CSS Anchor Positioning
 ├── renderEngine/
-│   └── transaction.ts      # StepDiff execution against the DOM
+│   ├── transaction.ts      # StepDiff execution against the DOM
+│   ├── paging.ts           # Document layout, pagination, overflow detection & text splitting
+│   └── renderEngineApi.ts  # Public render engine queries (node-to-page indexing)
 └── userInteraction/
     ├── inputs.ts           # beforeinput listener and inputType dispatcher
     └── links.ts            # Anchor element click handling
 ```
 
 ### 6.1 DOM Representation
-Every managed DOM element contains a `data-dnode-id` attribute matching its CRDT `NodeId`:
+Every managed DOM element contains a `data-dnode-id` attribute matching its CRDT `NodeId`. When blocks span across page boundaries, they are tagged with `data-split-part`:
 
 ```html
 <div id="doc-editor">
-    <div data-dnode-id="Root" contenteditable="">
-        <p data-dnode-id="client1-100">
-            <span data-dnode-id="client1-101">Welcome to </span>
-            <a data-dnode-id="client1-102" href="https://github.com">
-                <span data-dnode-id="client1-103" style="font-weight: bold;">DScratch</span>
-            </a>
-            <span data-dnode-id="client1-104">!</span>
-        </p>
+    <!-- Page 1 -->
+    <div class="page" data-page-index="1">
+        <div data-dnode-id="Root" contenteditable="">
+            <p data-dnode-id="client1-100" data-split-part="1">
+                <span data-dnode-id="client1-101">Welcome to DScratch! This paragraph starts on page 1 </span>
+            </p>
+        </div>
+    </div>
+    <!-- Page 2 -->
+    <div class="page" data-page-index="2">
+        <div data-dnode-id="Root" contenteditable="">
+            <p data-dnode-id="client1-100" data-split-part="2">
+                <span data-dnode-id="client1-101">and seamlessly continues onto page 2.</span>
+            </p>
+        </div>
     </div>
 </div>
 ```
 
 ### 6.2 Selection & Caret Synchronization
 Handling selection during asynchronous WASM round-trips is critical:
-1. **DOM $\rightarrow$ SelectionInfo**: [`getEditorSelection()`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/Scripts/selection.ts) inspects `window.getSelection()`, identifies the enclosing `[data-dnode-id]` elements, and computes character offsets relative to the node boundary.
+1. **DOM $\rightarrow$ SelectionInfo**: [`getEditorSelection()`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/Scripts/selection.ts) inspects `window.getSelection()`, identifies the enclosing `[data-dnode-id]` elements, and computes character offsets relative to the node boundary. For nodes in `data-split-part="2"`, it adds the text length of `data-split-part="1"` to compute unified absolute offsets.
 2. **Snapshotting**: When an input event starts, [`snapshotSelection()`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/Scripts/selection.ts) saves the caret position.
-3. **Safe Restoration**: In [`setSelectionSave()`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/Scripts/selection.ts), when C# returns the updated cursor position, TypeScript checks if the user has moved their selection natively during the C# computation. If not, it applies the new range using `document.createRange()`.
+3. **Safe Restoration**: In [`setSelectionSave()`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/Scripts/selection.ts), when C# returns the updated cursor position, TypeScript checks if the user has moved their selection natively during the C# computation. If not, it translates absolute offsets across split parts via [`findTextNodeAtOffset()`](file:///home/darki/Developement/DScratch/src/DScratch.Client/BrowserInteractions/Scripts/nodeHelper.ts) and applies the range.
+
+### 6.3 Layout & Pagination Engine (`paging.ts`)
+
+A key architectural distinction in DScratch is that **C# is responsible for the logical document tree, while TypeScript is responsible for physical page layout and pagination**.
+
+#### Why Layout Belongs in TypeScript
+- **Browser-Native Geometry**: Accurate text wrapping, line breaking, font metrics, and box dimensions (`aspect-ratio: 210/297`, `1080px` A4 pages) are computed directly by the browser's layout engine.
+- **Pure Logical Model in C#**: Keeping physical page geometry out of C# ensures the CRDT data model remains clean, lightweight, and decoupled from headless browser layout emulation.
+
+#### Pagination & Overflow Flow (`greedyFlow`)
+Whenever a transaction mutates the DOM, `paging.update(modifiedNodes)` scans the affected `.page[data-page-index]` containers:
+
+```mermaid
+flowchart TD
+    Update[paging.update modifiedNodes] --> FindPages[Collect unique affected pages]
+    FindPages --> Greedy[greedyFlow: Process pages in order]
+    Greedy --> CheckOverflow{getBottomOverflowingChildren: childBottom > pageBottom?}
+    CheckOverflow -->|No| Done[Page stabilized]
+    CheckOverflow -->|Yes| TargetPage[Get or create next page container]
+    TargetPage --> HasText{Does block contain text?}
+    HasText -->|No| MoveBlock[moveBlock: Move entire block to next page]
+    HasText -->|Yes| FindSplit[findSplitIndex: Binary search via Range.getBoundingClientRect]
+    FindSplit --> WordSafe[getWordSafeSplitIndex: Snap to nearest whitespace]
+    WordSafe --> Split[splitText: range.extractContents & append to target page]
+    Split --> TagParts[Tag data-split-part='1' and '2']
+    TagParts --> Merge[findAdjacentNodes & mergeNodes on target page if needed]
+    Merge --> Greedy
+```
+
+#### Key Layout Mechanisms
+1. **Overflow Detection (`getBottomOverflowingChildren`)**:
+   Calculates `pageBottom = pageContentRect.bottom - paddingBottom` against the bottom bound of the last child block (`childBottom = lastBlock.bottom + marginBottom`).
+2. **Binary Search Text Splitting (`findSplitIndex` & `splitText`)**:
+   When a paragraph overflows across the bottom edge of a page, a binary search creates sub-ranges using `document.createRange()` to locate the exact character offset that fits. `getWordSafeSplitIndex` ensures words are never split mid-token.
+3. **Virtual Split Parts (`data-split-part`)**:
+   When a paragraph splits across pages:
+   - Part 1 on page $N$ is tagged with `data-split-part="1"`.
+   - Part 2 on page $N+1$ is tagged with `data-split-part="2"`.
+   - Both DOM elements maintain the exact same `data-dnode-id`.
+   - `nodeHelper.ts` and `selection.ts` calculate absolute offsets by accumulating `counterPart.textContent.length`, ensuring continuous character coordinates across page splits.
+4. **Adjacent Node Merging (`findAdjacentNodes` & `mergeNodes`)**:
+   When deletions or reverse edits cause text to pull back or merge on a page, adjacent split nodes with matching `data-dnode-id` attributes are coalesced into a single element.
+5. **Dynamic Page Lifecycle (`createPage`)**:
+   New pages are dynamically cloned from `<template id="page-template">`, stamped with `data-page-index`, and inserted into `#doc-editor`.
 
 ---
 
@@ -381,8 +437,11 @@ mindmap
     C# WASM Core
       CRDT Document Tree
       Deterministic Mutation Engine
-    TypeScript Bridge
+      Logical Single Source of Truth
+    TypeScript Bridge & Render Engine
       Diff-based DOM Mutations
+      Browser-Native Layout & Pagination (paging.ts)
+      Multi-Page Text Splitting (data-split-part)
       Absolute Selection Tracking
       Document Inline Menus (tied to MenuBar)
     Blazor UI

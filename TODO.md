@@ -5,11 +5,11 @@
 - [ ] Greedy Flow 
   - [ ] Move page down if overflow 
     - [x] Use `Range.extractContent()`
-    - [ ] Move text to existing next page & evt to split paragraph
-    - [ ] on overflow queue next page for greedyFlow
-    - [ ] make split-part not binary, it can go from part 1 - infinity. A block can span over more than 2 pages
-    - [ ] When moving stuff to next page, check for empty block that might can be removed from the DOM and are no longer split
-    - [ ] check overflow not only for last element, look for the first element that overflows
+    - [x] Move text to existing next page & evt to split paragraph
+    - [x] on overflow queue next page for greedyFlow
+    - [x] make split-part not binary, it can go from part 1 - infinity. A block can span over more than 2 pages
+    - [x] When moving stuff to next page, check for empty block that might can be removed from the DOM and are no longer split
+    - [x] check overflow not only for last element, look for the first element that overflows
   - [ ] Move stuff up if underflow
 - [ ] Page Number API for C#
   - [x] TS part
