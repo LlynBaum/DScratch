@@ -38,6 +38,11 @@ Cursor feels broken right now. There are a few weird things:
 - You can not move with arrow key between pages (also selection doesn't work with arrow keys in that case)
 - Selection with Mouse is shitty broken. When you select text over multiple paragraphs, it just doesn't work
 
+### TextNode split Transaction Step
+
+Instead of adding the step diffs at the start, it could add a IStep where execute does nothing except returning the StepDiff for that Split.
+With that it would split the node in the DOM at the same time as in C#, so it would be safe to move around a node and then split it (currently nod possible)
+
 # Features
 
 - [x] Marks
@@ -55,8 +60,8 @@ Cursor feels broken right now. There are a few weird things:
   - For now just Links 
 - [ ] Pages
   - [ ] Extend Layout Engine to automatically make pages
-  - [ ] Add custom page Break UI & CTRL + Enter
-  - [ ] New Line without new Paragraph (currently backend can't hanlde so browser just does stuff and backend breaks)
+  - [ ] Add custom page Break UI & (CTRL + Enter if natively supported by browser, else wait for Shortcuts)
+  - [ ] New Line without new Paragraph
 - [ ] Save Files and Load them
   - [ ] Starting Page
     - Create new Document
@@ -109,7 +114,6 @@ Cursor feels broken right now. There are a few weird things:
 
 - Color picker is not that nice to use. The cursor is not set anymore when clicking away. So you have to remember where you were
 - Make Popovers better, they are in middle of page when targeting a paragraph
-- why does selection with the mouse not work that great? Is that just a problem of the browser?
 - Inserting a node is not completely safe. What if you try to insert with same origin and rightOrigin? Well it will break. So this should be a safe action. Best if the InsertChild in the DNode can do it on their own.
 
 # Improvements?

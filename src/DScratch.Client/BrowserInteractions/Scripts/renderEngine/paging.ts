@@ -32,7 +32,7 @@ export function update(modifiedNodes: Element[]) {
 }
 
 function greedyFlow(modifiedPages: HTMLElement[]) {
-    let currentPage;
+    let currentPage : HTMLElement | undefined;
     while (currentPage = modifiedPages.pop()) {
         // If the page was removed from the DOM, assume it underflowed and was empty, so we can safely skip it.
         if (!currentPage.isConnected) {
@@ -44,8 +44,20 @@ function greedyFlow(modifiedPages: HTMLElement[]) {
         
         const targetPage = getOrCreateNextPage(currentPage);
         stabilize(overflow, targetPage);
+        queueNextPage(currentPage);
+    }
+    
+    function queueNextPage(currentPage: HTMLElement) {
+        const nextPage = currentPage.nextElementSibling;
+        if (!nextPage) return;
         
-       currentPage.nextElementSibling && modifiedPages.push(currentPage.nextElementSibling as HTMLElement);
+        if (modifiedPages.length > 0) {
+            const nextPageIndex = nextPage.getAttribute(PAGE_INDEX_ATTRIBUTE);
+            const nextInQueueIndex = modifiedPages[modifiedPages.length - 1].getAttribute(PAGE_INDEX_ATTRIBUTE);
+            if (nextPageIndex === nextInQueueIndex) return;
+        }
+
+        modifiedPages.push(nextPage as HTMLElement);
     }
 }
 
