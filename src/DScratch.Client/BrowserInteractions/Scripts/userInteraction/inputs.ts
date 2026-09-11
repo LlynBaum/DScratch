@@ -14,10 +14,6 @@ export function registerInput() {
 }
 
 async function handleInput(event: InputEvent) {
-    if (!handledTypes.includes(event.inputType)) {
-        return; // Let the browser handle unsupported inputs natively for now
-    }
-    
     event.preventDefault();
     if (isInvalidUserAction()) {
         return;

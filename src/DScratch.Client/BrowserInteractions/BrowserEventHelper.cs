@@ -23,33 +23,28 @@ public class BrowserEventHelper(
         }
         
         var handler = serviceProvider.GetKeyedService<IEditorEventHandler>(keyPressInfo.InputType);
-        if (handler is not null)
+        if (handler is null) return;
+
+        var result = handler.Handle(keyPressInfo);
+        if (result.IsEmpty)
         {
-            var result = handler.Handle(keyPressInfo);
-            if (result.IsEmpty)
-            {
-                return;
-            }
-
-            try
-            {
-                await jsInvoker.ApplyTransaction(result);
-            }
-            catch (Exception e)
-            {
-                logger.LogError("Transaction failed: {Message}", e.Message);
-            }
-
-            editorDebugService.NotifyDocumentChanged(new DebugTransactionInfo(result, keyPressInfo));
-            if (editorDebugService.IsDebugEnabled)
-            {
-                var visualizer = new TreeVisualizers.DocumentVisualizer(dScratchService.Document);
-                visualizer.Print();
-            }
+            return;
         }
-        else
+
+        try
         {
-            logger.LogWarning("No handler registered for input type: {InputType}", keyPressInfo.InputType);
+            await jsInvoker.ApplyTransaction(result);
+        }
+        catch (Exception e)
+        {
+            logger.LogError("Transaction failed: {Message}", e.Message);
+        }
+
+        editorDebugService.NotifyDocumentChanged(new DebugTransactionInfo(result, keyPressInfo));
+        if (editorDebugService.IsDebugEnabled)
+        {
+            var visualizer = new TreeVisualizers.DocumentVisualizer(dScratchService.Document);
+            visualizer.Print();
         }
     }
 
