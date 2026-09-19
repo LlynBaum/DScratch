@@ -20,4 +20,10 @@ public sealed class DJsInvoker(IJSRuntime jsRuntime)
     {
         return await jsRuntime.InvokeAsync<SelectionInfo>(ScriptConstants.GetEditorSelectionJs);
     }
+
+    public async Task<Dictionary<string, int>> GetPageNumbers(IReadOnlyList<string> nodeIds)
+    {
+        var result = await jsRuntime.InvokeAsync<IReadOnlyList<(string nodeId, int pageNumber)>>(ScriptConstants.GetPageNumbersJs, nodeIds);
+        return result.ToDictionary(r => r.nodeId, r => r.pageNumber);
+    }
 }
