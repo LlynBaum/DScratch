@@ -73,19 +73,14 @@ public static class DSelectors
         
         public async Task SetCursorAsync(string dataPathId, int offset)
         {
-            await page.EvaluateAsync("""
-                 ([id, off]) => {
-                     window.__dscratch_test__?.setSelection({
-                         direction: 'none',
-                         anchorId: id,
-                         anchorOffset: off,
-                         focusId: id,
-                         focusOffset: off
-                     });
-                 }
-                 """, 
-                new object[] { dataPathId, offset }
-            );
+            await page.SetSelectionAsync(new()
+            {
+                Direction = SelectionDirection.None,
+                AnchorId = dataPathId,
+                AnchorOffset = offset,
+                FocusId = dataPathId,
+                FocusOffset = offset
+            });
         }
         
         public async Task SetSelectionAsync(SelectionInfo selectionInfo)

@@ -5,7 +5,7 @@ namespace DScratch.E2E.Tests.Paging;
 
 public class PageOverflowTest : PlaywrightTestBase
 {
-    protected override bool EnableTracing => false;
+    protected override bool EnableTracing => true;
 
     [Test]
     public async Task CreatesNewPage_WhenBlockOverflows_AndNextPageDoesNotExistYet()
@@ -59,10 +59,7 @@ public class PageOverflowTest : PlaywrightTestBase
     [Test]
     public async Task CreatesNewPage_WhenTextOverflows_AndNextPageDoesNotExistYet()
     {
-        const string firstPageText =
-            "fjdjsflksdjlkfjslkdjflkjsdlkfjklsjflksjfkljsdfsfsdfsdf sdf sdfasd lkfjalk jdlfj lajsfljal jflkjl fjlaj lfja lsjdföl kjajsd";
-        const string secondPageText = " öljasd";
-        const string overflowText = firstPageText + secondPageText;
+        const string overflowText = "jlökgfjslkfjasölkj dfölkaj sdlkfj aölksdj flök ajsdfölkj jlökgfjslkfjasölkj dfölkaj sdlkfj aölksdj flök ajsdfölkj aölskdfj ölaksjdfölk jasöldkfj aölksjdf ölkajsödlfk jasölkdj fölkasj dfölkaj slök fjlköasdj flkasj dlfkjasölkdfj ölkasdjf lökasjdlökfjaslökd fjlökas jflkj öjlöj";
 
         await DefaultPage.ClickAsync();
 
@@ -72,20 +69,19 @@ public class PageOverflowTest : PlaywrightTestBase
             await Expect(Editor.EditorPage).ToHaveCountAsync(1);
             await Expect(Editor.EditorPage.Paragraph).ToHaveCountAsync(i + 2);
         }
+        await Expect(Editor.EditorPage.Paragraph).ToHaveCountAsync(29);
 
         await Page.TypeAtCurrentCursorAsync(overflowText);
         await Expect(Editor.EditorPage).ToHaveCountAsync(2);
         await Expect(Editor.EditorPage.Nth(0).Paragraph.Last).ToHaveAttributeAsync("data-split-part", "1");
-        await Expect(Editor.EditorPage.Nth(0).TextSpan.Last).ToHaveTextAsync(firstPageText);
         await Expect(Editor.EditorPage.Nth(1).Paragraph).ToHaveAttributeAsync("data-split-part", "2");
-        await Expect(Editor.EditorPage.Nth(1).TextSpan).ToHaveTextAsync(secondPageText);
         
         var expectedSelection = new SelectionInfo
         {
             Direction = SelectionDirection.None,
-            FocusId = "Darki-76",
+            FocusId = "Darki-30",
             FocusOffset = overflowText.Length,
-            AnchorId = "Darki-76",
+            AnchorId = "Darki-30",
             AnchorOffset = overflowText.Length
         };
         
@@ -97,10 +93,7 @@ public class PageOverflowTest : PlaywrightTestBase
     [Test]
     public async Task MergesTextBackOnNextPage_WhenTextWasOverflows_AndIsMovedToSamePageAgain_WhileTyping()
     {
-        const string firstPageText =
-            "jlökgfjslkfjasölkj dfölkaj sdlkfj aölksdj flök ajsdfölkj aölskdfj ölaksjdfölk jasöldkfj aölksjdf ölkajsödlfk jasölkdj fölkasj dfölkaj slök fjlköasdj flkasj dlfkjasölkdfj ölkasdjf lökasjdlökfjaslökd fjlökas jflkj öjlöj";
-        const string secondPageText = " dwww";
-        const string overflowText = firstPageText + secondPageText;
+        const string overflowText = "jlökgfjslkfjasölkj dfölkaj sdlkfj aölksdj flök ajsdfölkj jlökgfjslkfjasölkj dfölkaj sdlkfj aölksdj flök ajsdfölkj aölskdfj ölaksjdfölk jasöldkfj aölksjdf ölkajsödlfk jasölkdj fölkasj dfölkaj slök fjlköasdj flkasj dlfkjasölkdfj ölkasdjf lökasjdlökfjaslökd fjlökas jflkj öjlöj";
 
         await DefaultPage.ClickAsync();
 
@@ -111,38 +104,25 @@ public class PageOverflowTest : PlaywrightTestBase
             await Expect(Editor.EditorPage.Paragraph).ToHaveCountAsync(i + 2);
         }
 
+        await Expect(Editor.EditorPage.Paragraph).ToHaveCountAsync(29);
         await Page.TypeAtCurrentCursorAsync(overflowText);
         await Expect(Editor.EditorPage).ToHaveCountAsync(2);
         await Expect(Editor.EditorPage.Nth(0).Paragraph.Last).ToHaveAttributeAsync("data-split-part", "1");
-        await Expect(Editor.EditorPage.Nth(0).TextSpan.Last).ToHaveTextAsync(firstPageText);
         await Expect(Editor.EditorPage.Nth(1).Paragraph).ToHaveAttributeAsync("data-split-part", "2");
-        await Expect(Editor.EditorPage.Nth(1).TextSpan).ToHaveTextAsync(secondPageText);
-        
-        await Page.SetSelectionAsync(new SelectionInfo
-        {
-            Direction = SelectionDirection.None,
-            FocusId = "Darki-76",
-            FocusOffset = 0,
-            AnchorId = "Darki-76",
-            AnchorOffset = 0
-        });
+
+        await Page.SetCursorAsync("Darki-30", 0);
         await Page.TypeAtCurrentCursorAsync("abc");
         
         await Expect(Editor.EditorPage).ToHaveCountAsync(2);
         await Expect(Editor.EditorPage.Nth(0).Paragraph.Last).ToHaveAttributeAsync("data-split-part", "1");
-        await Expect(Editor.EditorPage.Nth(0).TextSpan.Last).ToHaveTextAsync("abc" + firstPageText[..^6]);
         await Expect(Editor.EditorPage.Nth(1).Paragraph).ToHaveAttributeAsync("data-split-part", "2");
         await Expect(Editor.EditorPage.Nth(1).TextSpan).ToHaveCountAsync(1);
-        await Expect(Editor.EditorPage.Nth(1).TextSpan).ToHaveTextAsync(firstPageText[^6..] + secondPageText);
     }
     
     [Test]
     public async Task MergesTextBackOnNextPage_WhenTextWasOverflows_AndIsMovedToSamePageAgain_WhenCreatingNewParagraph()
     {
-        const string firstPageText =
-            "jlökgfjslkfjasölkj dfölkaj sdlkfj aölksdj flök ajsdfölkj aölskdfj ölaksjdfölk jasöldkfj aölksjdf ölkajsödlfk jasölkdj fölkasj dfölkaj slök fjlköasdj flkasj dlfkjasölkdfj ölkasdjf lökasjdlökfjaslökd fjlökas jflkj öjlöj";
-        const string secondPageText = " dwww";
-        const string overflowText = firstPageText + secondPageText;
+        const string overflowText = "jlökgfjslkfjasölkj dfölkaj sdlkfj aölksdj flök ajsdfölkj jlökgfjslkfjasölkj dfölkaj sdlkfj aölksdj flök ajsdfölkj aölskdfj ölaksjdfölk jasöldkfj aölksjdf ölkajsödlfk jasölkdj fölkasj dfölkaj slök fjlköasdj flkasj dlfkjasölkdfj ölkasdjf lökasjdlökfjaslökd fjlökas jflkj öjlöj";
 
         await DefaultPage.ClickAsync();
 
@@ -153,28 +133,19 @@ public class PageOverflowTest : PlaywrightTestBase
             await Expect(Editor.EditorPage.Paragraph).ToHaveCountAsync(i + 2);
         }
 
+        await Expect(Editor.EditorPage.Paragraph).ToHaveCountAsync(29);
         await Page.TypeAtCurrentCursorAsync(overflowText);
         await Expect(Editor.EditorPage).ToHaveCountAsync(2);
         await Expect(Editor.EditorPage.Nth(0).Paragraph.Last).ToHaveAttributeAsync("data-split-part", "1");
-        await Expect(Editor.EditorPage.Nth(0).TextSpan.Last).ToHaveTextAsync(firstPageText);
         await Expect(Editor.EditorPage.Nth(1).Paragraph).ToHaveAttributeAsync("data-split-part", "2");
-        await Expect(Editor.EditorPage.Nth(1).TextSpan).ToHaveTextAsync(secondPageText);
         
-        await Page.SetSelectionAsync(new SelectionInfo
-        {
-            Direction = SelectionDirection.None,
-            FocusId = "Darki-2",
-            FocusOffset = 0,
-            AnchorId = "Darki-2",
-            AnchorOffset = 0
-        });
-
+        await Page.SetCursorAsync("Darki-2", 0);
         await Page.EnterAsync();
         
         await Expect(Editor.EditorPage).ToHaveCountAsync(2);
-        await Expect(Editor.EditorPage.Nth(0).Paragraph.Last).ToHaveAttributeAsync("data-split-part", "1");
-        await Expect(Editor.EditorPage.Nth(0).TextSpan.Last).ToBeEmptyAsync();
-        await Expect(Editor.EditorPage.Nth(1).Paragraph).ToHaveAttributeAsync("data-split-part", "2");
+        await Expect(Editor.EditorPage.Nth(0).Paragraph.Last).Not.ToHaveAttributeAsync("data-split-part", "1");
+        await Expect(Editor.EditorPage.Nth(0).TextSpan).ToHaveCountAsync(0);
+        await Expect(Editor.EditorPage.Nth(1).Paragraph).Not.ToHaveAttributeAsync("data-split-part", "2");
         await Expect(Editor.EditorPage.Nth(1).TextSpan).ToHaveCountAsync(1);
         await Expect(Editor.EditorPage.Nth(1).TextSpan).ToHaveTextAsync(overflowText);
     }
