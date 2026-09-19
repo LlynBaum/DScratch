@@ -1,19 +1,16 @@
 # Current
 
-- [ ] E2E Tests
+- [ ] TextNode split Transaction Step
+- [ ] remove HTML Tag on the Node itself
+
+- [x] E2E Tests
 - [x] Transaction collects modified nodes
 - [ ] Greedy Flow 
-  - [ ] Move page down if overflow 
-    - [x] Use `Range.extractContent()`
-    - [x] Move text to existing next page & evt to split paragraph
-    - [x] on overflow queue next page for greedyFlow
-    - [x] make split-part not binary, it can go from part 1 - infinity. A block can span over more than 2 pages
-    - [x] When moving stuff to next page, check for empty block that might can be removed from the DOM and are no longer split
-    - [x] check overflow not only for last element, look for the first element that overflows
+  - [x] Move page down if overflow
   - [ ] Move stuff up if underflow
-- [ ] Page Number API for C#
+- [x] Page Number API for C#
   - [x] TS part
-  - [ ] implement C# side 
+  - [x] implement C# side 
 - [ ] Hard Page Break (CTRL + Enter, UI)
 - [ ] Transaction focus set should scroll focus into view
 
