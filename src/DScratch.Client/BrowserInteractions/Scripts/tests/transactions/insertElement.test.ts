@@ -129,3 +129,40 @@ test("insert element inside a split part block", async () => {
     const el = document.querySelector<HTMLElement>("[data-dnode-id='t-1']");
     expect(paging.update).toHaveBeenCalledExactlyOnceWith([el]);
 });
+
+test('inserts element as first child of given split parent', async () => {
+    domHelper.createEditorFixture({ pageCount: 1, paragraphsPerPage: 0 });
+    domHelper.createSplittedParagraph(1, "p-1");
+    domHelper.insertText("a", {
+        splitPart: 1,
+        parentId: "p-1",
+        id: "t-1"
+    });
+    domHelper.insertText("a", {
+        splitPart: 2,
+        parentId: "p-1",
+        id: "t-2"
+    });
+
+    transaction.applyTransaction({
+        cursorPosition: null,
+        steps: [
+            {
+                type: transaction.StepType.insertElement,
+                parentId: "p-1",
+                newNodeId: "text-1",
+                previousSiblingId: null,
+                tagName: "span",
+                attributes: null
+            } as transaction.InsertElementStep
+        ]
+    });
+    
+    await expect.element(page.DPage()).toHaveLength(2);
+    await expect.element(page.getByPageNumber(1).getByCSS("p[data-dnode-id]").getByCSS("span[data-dnode-id]").nth(0)).toHaveAttribute("data-dnode-id", "text-1");
+    await expect.element(page.getByPageNumber(1).getByCSS("p[data-dnode-id]").getByCSS("span[data-dnode-id]").nth(1)).toHaveAttribute("data-dnode-id", "t-1");
+    await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]").getByCSS("span[data-dnode-id]").nth(0)).toHaveAttribute("data-dnode-id", "t-2");
+
+    const el = document.querySelector<HTMLElement>("span[data-dnode-id='text-1']");
+    expect(paging.update).toHaveBeenCalledExactlyOnceWith([el]);
+});

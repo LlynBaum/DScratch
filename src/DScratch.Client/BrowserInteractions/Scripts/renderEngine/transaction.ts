@@ -198,7 +198,7 @@ function handleDeleteTextStep(step: DeleteTextStep): Element[] | null {
 function handleInsertElementStep(step: InsertElementStep) {
     const parent = step.previousSiblingId 
         ? findLastNodeWithSibling(step.parentId, step.previousSiblingId) 
-        : findLastNode(step.parentId);
+        : findFirstNode(step.parentId);
      
     if (!parent) return null;
 
@@ -221,7 +221,7 @@ function handleMoveStep(step: MoveStep) {
     const elements = findAllNode(step.targetNodeId);
     const newParent = step.previousSiblingId
         ? findLastNodeWithSibling(step.targetParentId, step.previousSiblingId)
-        : findLastNode(step.targetParentId);
+        : findFirstNode(step.targetParentId);
     
     if (elements.length > 0 && newParent) {
         let previousSibling = step.previousSiblingId ? findNodeIn(newParent, step.previousSiblingId) : null;
@@ -292,6 +292,14 @@ function findNodeIn(parent: Element, nodeId: string){
     const element = nodeHelper.findNodeIn(parent, nodeId);
     if(!element) {
         console.error(new Error(`Could not find node '${nodeId}' in element ${parent}.`));
+    }
+    return element;
+}
+
+function findFirstNode(nodeId: string) : HTMLElement | null {
+    const element = nodeHelper.findFirstNode(nodeId);
+    if(!element) {
+        console.error(new Error(`Could not find node '${nodeId}'.`));
     }
     return element;
 }

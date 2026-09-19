@@ -106,6 +106,10 @@ export function findNodeIn(parent: Element, nodeId: string) {
     
 }
 
+export function findFirstNode(nodeId: string) {
+    return document.querySelector<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
+}
+
 export function findLastNode(nodeId: string) {
     const elements = document.querySelectorAll<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
     return elements[elements.length - 1];
