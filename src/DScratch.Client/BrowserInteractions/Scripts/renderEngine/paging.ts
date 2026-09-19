@@ -69,6 +69,7 @@ function stabilize(overflow: Overflow, targetPage: HTMLElement) {
     // No text, assume whole block must be moved
     if (!lastNode) {
         moveBlock(overflow, targetPage);
+        mergeAdjacentNodes(targetPage);
         return;
     }
 
@@ -99,6 +100,7 @@ function splitText(textNode: Text, overflow: Overflow, targetPage: HTMLElement) 
 
     if (index === 0) {
         moveBlock(overflow, targetPage);
+        mergeAdjacentNodes(targetPage);
         return;
     }
 
@@ -122,11 +124,7 @@ function splitText(textNode: Text, overflow: Overflow, targetPage: HTMLElement) 
         targetPage.firstElementChild!.append(...content);
     }
 
-    let splitNodeInSamePage = findAdjacentNodes(targetPage);
-    while (splitNodeInSamePage) {
-        mergeNodes(splitNodeInSamePage);
-        splitNodeInSamePage = findAdjacentNodes(targetPage);
-    }
+    mergeAdjacentNodes(targetPage);
     
     if (overflow.BlockElement.childElementCount === 0) {
         overflow.BlockElement.remove();
@@ -139,6 +137,14 @@ function splitText(textNode: Text, overflow: Overflow, targetPage: HTMLElement) 
             (node as HTMLElement).setAttribute(SPLIT_ATTRIBUTE, "2");
             break;
         }
+    }
+}
+
+function mergeAdjacentNodes(targetPage: Element) {
+    let splitNodeInSamePage = findAdjacentNodes(targetPage);
+    while (splitNodeInSamePage) {
+        mergeNodes(splitNodeInSamePage);
+        splitNodeInSamePage = findAdjacentNodes(targetPage);
     }
 }
 

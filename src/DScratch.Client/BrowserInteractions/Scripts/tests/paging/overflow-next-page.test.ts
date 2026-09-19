@@ -267,3 +267,36 @@ test("Moves block and text to next page, without splitting", async () => {
     const text = document.querySelector<HTMLElement>("[data-dnode-id='t-1']");
     expect(text!.textContent).toEqual(OVERFLOW_TEXT);
 });
+
+test("Moving all text from first to second page, merges paragraph on second page to one", async () => {
+    domHelper.createEditorFixture({ paragraphsPerPage: 29 });
+    domHelper.createSplittedParagraph(1, "p-30");
+    domHelper.insertText("abc", {
+        parentId: "p-30",
+        id: "t-1",
+        splitPart: 1
+    });
+    domHelper.insertText("def", {
+        parentId: "p-30",
+        id: "t-1",
+        splitPart: 2
+    });
+
+    const textElement = document.querySelector<HTMLElement>("[data-dnode-id='t-1']")!;
+    paging.update([textElement]);
+
+    await expect.element(page.getByPageNumber(1)).toBeVisible();
+    await expect.element(page.getByPageNumber(2)).toBeVisible();
+    await expect.element(page.getByPageNumber(1).getByCSS("p[data-dnode-id]")).toHaveLength(29);
+    await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]")).toHaveLength(1);
+
+    await expect.element(page.getByPageNumber(1).getByCSS("p[data-dnode-id]").last()).not.toHaveAttribute("data-split-part");
+    await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]").nth(0)).not.toHaveAttribute("data-split-part");
+    await expect.element(page.getByPageNumber(2).getByCSS("p[data-dnode-id]").nth(0)).toHaveAttribute("data-dnode-id", "p-30");
+
+    await expect.element(page.getByTestId("t-1")).toHaveLength(1);
+    await expect.element(page.getByTestId("t-1")).not.toHaveTextContent("");
+
+    const text = document.querySelector<HTMLElement>("[data-dnode-id='t-1']");
+    expect(text!.textContent).toEqual("abcdef");
+});

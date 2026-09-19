@@ -4,7 +4,6 @@ type PageNumberByNode = Array<{ nodeId: string, pageNumber: number }>;
 
 export type GetPageNumbersFunc = (nodeIds: string[]) => PageNumberByNode;
 
-
 export function getPageNumbers(nodeIds: string[]): PageNumberByNode {
     const result: PageNumberByNode = [];
     
