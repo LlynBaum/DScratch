@@ -15,7 +15,7 @@ public class NodeRenderExtensionsTests
         public void WhenParentIsNull_FallbackToRoot()
         {
             // Arrange - Single node, manual setup is fine
-            var node = new TestInlineElementNode(new NodeId(), null, null);
+            var node = new ParagraphNode(new NodeId(), null, null);
 
             // Act
             var result = node.ToInsertSteps();
@@ -38,9 +38,9 @@ public class NodeRenderExtensionsTests
             // Arrange - Single node, manual setup is fine
             var builder = new TreeBuilder();
 
-            var origin = builder.TestBlockElementNode();
-            builder.TestBlockElementNode().Delete();
-            var node = builder.TestBlockElementNode();
+            var origin = builder.Paragraph();
+            builder.Paragraph().Delete();
+            var node = builder.Paragraph();
 
             // Act
             var result = node.ToInsertSteps();
@@ -92,7 +92,7 @@ public class NodeRenderExtensionsTests
                 Assert.That(insertParagraph.ParentId, Is.EqualTo("Test-0"));
                 Assert.That(insertParagraph.PreviousSiblingId, Is.EqualTo("Test-1"));
                 Assert.That(insertParagraph.NewNodeId, Is.EqualTo("Test-2"));
-                Assert.That(insertParagraph.TagName, Is.EqualTo(paragraph.TagName));
+                Assert.That(insertParagraph.TagName, Is.EqualTo("p"));
                 
                 var updateMarkParagraph = (StepDiff.UpdateMarksDiff)result[1];
                 Assert.That(updateMarkParagraph.NodeId, Is.EqualTo("Test-2"));
@@ -102,7 +102,7 @@ public class NodeRenderExtensionsTests
                 Assert.That(textRun.ParentId, Is.EqualTo("Test-2"));
                 Assert.That(textRun.PreviousSiblingId, Is.Null);
                 Assert.That(textRun.NewNodeId, Is.EqualTo("Test-3"));
-                Assert.That(textRun.TagName, Is.EqualTo(paragraph.FirstChild!.TagName));
+                Assert.That(textRun.TagName, Is.EqualTo("span"));
                 
                 var insertText = (StepDiff.InsertTextDiff)result[3];
                 Assert.That(insertText.ParentId, Is.EqualTo("Test-3"));
@@ -133,7 +133,7 @@ public class NodeRenderExtensionsTests
                     p.Text("a"); // 3: TextNode
                     
                     // 4: TestInlineElementNode
-                    p.TestInlineElementNode(te =>
+                    p.Link("", "",  te =>
                     {
                         te.Text("b"); // 5: TextNode
                         te.Text("f").Delete();

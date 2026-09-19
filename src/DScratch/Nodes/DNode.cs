@@ -5,8 +5,6 @@ namespace DScratch.Nodes;
 
 public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null) : IDNode
 {
-    public abstract string TagName { get; }
-    
     private readonly List<DNode> allChildNodes = childNodes ?? [];
     
     private readonly Dictionary<MarkKey, string> marks = new Dictionary<MarkKey, string>();

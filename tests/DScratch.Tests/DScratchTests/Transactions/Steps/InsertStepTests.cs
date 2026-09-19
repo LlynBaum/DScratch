@@ -85,15 +85,15 @@ public class InsertStepTests
         // Arrange
         var builder = new TreeBuilder();
         builder.TestNode(); // ID "0"
-        TestInlineElementNode node5 = null!;
-        builder.TestNode(t => // ID "1"
+        ParagraphNode node5 = null!;
+        builder.Paragraph(t => // ID "1"
         {
-            t.TestNode(); // ID "2"
-            t.TestNode(); // ID "3"
-            node5 = t.TestInlineElementNode(); // ID "4"
+            t.Text(" "); // ID "2"
+            t.Text(" "); // ID "3"
+            node5 = ((TreeBuilder)t).Paragraph(); // ID "4"
         });
         
-        var node = new TestInlineElementNode(new NodeId("Test", -1), null, null);
+        var node = new TextNode(new NodeId("Test", -1), null, null, " ");
         
         // Act
         var step = new InsertStep(node, node5);

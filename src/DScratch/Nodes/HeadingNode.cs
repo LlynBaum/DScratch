@@ -6,8 +6,6 @@ public class HeadingNode(HeadingLevel headingLevel, NodeId id, DNode? origin, DN
     : DNode(id, origin, rightOrigin, childNodes), IBlockElement
 {
     public HeadingLevel HeadingLevel { get; } = headingLevel;
-
-    public override string TagName => $"h{(int)HeadingLevel}";
     
     public int GetTextLength() => DNodeHelper.GetTextLength(this);
     

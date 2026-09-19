@@ -6,13 +6,6 @@ namespace DScratch.Tests.DScratchTests.Nodes;
 public class ParagraphNodeTests
 {
     [Test]
-    public void TagName_ReturnsExpectedDomElementName()
-    {
-        var paragraph = new ParagraphNode(new NodeId(), null, null);
-        Assert.That(paragraph.TagName, Is.EqualTo("p"));
-    }
-    
-    [Test]
     public void InsertChild_ThrowsInvalidOperationException_WhenNodeIsNotText()
     {
         // Arrange

@@ -52,7 +52,7 @@ public class DTransactionTests
     {
         // Act
         var nodeId = new NodeId("Test", 1);
-        var node = new TestInlineElementNode(nodeId, null, null);
+        var node = new ParagraphNode(nodeId, null, null);
         
         // Act
         Transaction.Insert(node, TreeBuilder.Root);

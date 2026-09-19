@@ -1,4 +1,5 @@
 using DScratch.Interactions.UserStates;
+using DScratch.Rendering;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DScratch;

@@ -1,8 +1,5 @@
 # Current
 
-- [ ] TextNode split Transaction Step
-- [ ] remove HTML Tag on the Node itself
-
 - [x] E2E Tests
 - [x] Transaction collects modified nodes
 - [ ] Greedy Flow 
@@ -23,7 +20,7 @@
 
 ### TextNodes CRDT Fix
 
-TextNodes are currently not CRDT ready... if oyu merge nodes and the take one by its id, and you get a node with a different id
+TextNodes are currently not CRDT ready... if you merge nodes and the take one by its id, and you get a node with a different id
 because the given id was in the range of that Node, it should take that into account and adjust the given offset.
 Else the offset is wrong, because it was calculated based on a node that started at another id.
 
@@ -34,11 +31,6 @@ Cursor feels broken right now. There are a few weird things:
 - Clicking within text (or in the document?) in a Paragraph that is split, the cursor suddenly jumps to the start of the para.
 - You can not move with arrow key between pages (also selection doesn't work with arrow keys in that case)
 - Selection with Mouse is shitty broken. When you select text over multiple paragraphs, it just doesn't work
-
-### TextNode split Transaction Step
-
-Instead of adding the step diffs at the start, it could add a IStep where execute does nothing except returning the StepDiff for that Split.
-With that it would split the node in the DOM at the same time as in C#, so it would be safe to move around a node and then split it (currently nod possible)
 
 # Features
 
@@ -116,4 +108,3 @@ With that it would split the node in the DOM at the same time as in C#, so it wo
 # Improvements?
 
 - Command Handler get from DI via the Command without direct references is a bit, meh. Sure it allows me currently to always prepare the base stuff for all command handlers beforehand. But I could also make a base class instead
-- HTML Tag on the Node itself is not so nice. Would be better if this is purely done by the rendering part.
