@@ -218,7 +218,7 @@ public class DNodeTests
         {
             var child1 = parent.ChildNodes[0];
             Assert.That(child1.Id, Is.EqualTo(node.Id));
-            Assert.That(child1.RightOrigin?.Id, Is.EqualTo(insert.Id));
+            Assert.That(child1.RightOrigin?.Id, Is.Null);
             
             var child2 = parent.ChildNodes[1];
             Assert.That(child2.Id, Is.EqualTo(insert.Id));
@@ -227,8 +227,58 @@ public class DNodeTests
             
             var child3 = parent.ChildNodes[2];
             Assert.That(child3.Id, Is.EqualTo(node2.Id));
-            Assert.That(child3.Origin?.Id, Is.EqualTo(insert.Id));
+            Assert.That(child3.Origin?.Id, Is.EqualTo(node.Id));
         }
+    }
+
+    [Test]
+    public void NextSibling_ReturnsExpectedNodes()
+    {
+        // Arrange
+        var builder = new TreeBuilder();
+        DNode node = null!;
+        DNode node2 = null!;
+        var parent = builder.TestNode(t =>
+        {
+            node = t.TestNode();
+            node2 = t.TestNode();
+        });
+        
+        
+        // Act & Assert
+        var first = parent.FirstChild!;
+        Assert.That(first, Is.EqualTo(node));
+        
+        var next = first.NextSibling();
+        Assert.That(next, Is.EqualTo(node2));
+        
+        var next2 = next.NextSibling();
+        Assert.That(next2, Is.Null);
+    }
+    
+    [Test]
+    public void PreviousSibling_ReturnsExpectedNodes()
+    {
+        // Arrange
+        var builder = new TreeBuilder();
+        DNode node = null!;
+        DNode node2 = null!;
+        var parent = builder.TestNode(t =>
+        {
+            node = t.TestNode();
+            node2 = t.TestNode();
+        });
+        
+        
+        // Act & Assert
+        var last = parent.LastChild!;
+        Assert.That(last, Is.EqualTo(node2));
+        
+        var prev = last.PreviousSibling();
+        Assert.That(prev, Is.EqualTo(node));
+        
+        var prev2 = prev.PreviousSibling();
+        Assert.That(prev2, Is.Null);
     }
     
     [Test]

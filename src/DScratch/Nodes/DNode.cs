@@ -79,14 +79,14 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
 
     public DNode? NextSibling()
     {
-        var idx = allChildNodes.FindIndex(n => n.Id == Id);
-        return idx + 1 < allChildNodes.Count ? allChildNodes[idx + 1] : null;
+        var idx = Parent!.allChildNodes.FindIndex(n => n.Id == Id);
+        return idx + 1 < Parent.allChildNodes.Count ? Parent.allChildNodes[idx + 1] : null;
     }
 
     public DNode? PreviousSibling()
     {
-        var idx = allChildNodes.FindIndex(n => n.Id == Id);
-        return idx > 0 ? allChildNodes[idx - 1] : null;
+        var idx = Parent!.allChildNodes.FindIndex(n => n.Id == Id);
+        return idx > 0 ? Parent.allChildNodes[idx - 1] : null;
     }
     
     public DNode? PreviousActiveSibling()

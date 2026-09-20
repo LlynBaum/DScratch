@@ -73,7 +73,7 @@ public class TreeBuilderTests
         using (Assert.EnterMultipleScope()) // paragraph2
         {
             Assert.That(paragraph2.Origin, Is.EqualTo(paragraph1));
-            Assert.That(paragraph2.RightOrigin, Is.EqualTo(blockElement));
+            Assert.That(paragraph2.RightOrigin, Is.Null);
             
             Assert.That(paragraph2.ChildNodes, Has.Count.EqualTo(3));
             Assert.That(paragraph2.ChildNodes, Is.EquivalentTo([text1P2, text2P2, text3P2]));
@@ -81,12 +81,12 @@ public class TreeBuilderTests
             Assert.That(text1P2.TextContent, Is.EqualTo("t1"));
             Assert.That(text1P2.Parent, Is.EqualTo(paragraph2));
             Assert.That(text1P2.Origin, Is.Null);
-            Assert.That(text1P2.RightOrigin, Is.EqualTo(text2P2));
+            Assert.That(text1P2.RightOrigin, Is.Null);
             
             Assert.That(text2P2.TextContent, Is.EqualTo("t2"));
             Assert.That(text2P2.Parent, Is.EqualTo(paragraph2));
             Assert.That(text2P2.Origin, Is.EqualTo(text1P2));
-            Assert.That(text2P2.RightOrigin, Is.EqualTo(text3P2));
+            Assert.That(text2P2.RightOrigin, Is.Null);
             
             Assert.That(text3P2.TextContent, Is.EqualTo("t3"));
             Assert.That(text3P2.Parent, Is.EqualTo(paragraph2));
@@ -97,7 +97,7 @@ public class TreeBuilderTests
         using (Assert.EnterMultipleScope()) // blockElement
         {
             Assert.That(blockElement.Origin, Is.EqualTo(paragraph2));
-            Assert.That(blockElement.RightOrigin, Is.EqualTo(testNode));
+            Assert.That(blockElement.RightOrigin, Is.Null);
             
             Assert.That(blockElement.ChildNodes, Has.Count.EqualTo(2));
             Assert.That(blockElement.ChildNodes, Is.EquivalentTo([(DNode)inlineElement, paragraph3]));
@@ -105,7 +105,7 @@ public class TreeBuilderTests
             Assert.That(inlineElement.ChildNodes, Has.Count.EqualTo(1));
             Assert.That(inlineElement.ChildNodes, Is.EquivalentTo([textInlineElement]));
             Assert.That(inlineElement.Origin, Is.Null);
-            Assert.That(inlineElement.RightOrigin, Is.EqualTo(paragraph3));
+            Assert.That(inlineElement.RightOrigin, Is.Null);
             Assert.That(textInlineElement.Parent, Is.EqualTo(inlineElement));
             Assert.That(textInlineElement.TextContent, Is.EqualTo("inline text"));
             

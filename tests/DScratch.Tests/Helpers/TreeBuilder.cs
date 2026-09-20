@@ -48,14 +48,14 @@ public class TreeBuilder : TreeBuilder.ITextTreeBuilder
     
     public TextNode Text(string value)
     {
-        var text = factory.String(value, null, null);
+        var text = factory.String(value, previousChild, null);
         Append(text);
         return text;
     }
 
     public LinkNode Link(string href, string target = "_self", Action<ITextTreeBuilder>? configureChildNodes = null)
     {
-        var link = factory.LinkNode(null, null, href, target);
+        var link = factory.LinkNode(previousChild, null, href, target);
         configureChildNodes?.Invoke(GetChildTreeBuilder(link));
         Append(link);
         return link;
@@ -63,7 +63,7 @@ public class TreeBuilder : TreeBuilder.ITextTreeBuilder
 
     public ParagraphNode Paragraph(Action<ITextTreeBuilder>? configureChildNodes = null)
     {
-        var paragraph = factory.Paragraph(null, null);
+        var paragraph = factory.Paragraph(previousChild, null);
         configureChildNodes?.Invoke(GetChildTreeBuilder(paragraph));
         Append(paragraph);
         return paragraph;
@@ -71,7 +71,7 @@ public class TreeBuilder : TreeBuilder.ITextTreeBuilder
 
     public HeadingNode Heading(HeadingLevel headingLevel, Action<ITextTreeBuilder>? configureChildNodes = null)
     {
-        var heading = factory.Heading(headingLevel, null, null);
+        var heading = factory.Heading(headingLevel, previousChild, null);
         configureChildNodes?.Invoke(GetChildTreeBuilder(heading));
         Append(heading);
         return heading; 
@@ -79,7 +79,7 @@ public class TreeBuilder : TreeBuilder.ITextTreeBuilder
 
     public TestNode TestNode(Action<TreeBuilder>? configureChildNodes = null)
     {
-        var testNode = new TestNode(IdGenerator.GetNextId(), null, null);
+        var testNode = new TestNode(IdGenerator.GetNextId(), previousChild, null);
         configureChildNodes?.Invoke(GetChildTreeBuilder(testNode));
         Append(testNode);
         return testNode;
@@ -87,7 +87,7 @@ public class TreeBuilder : TreeBuilder.ITextTreeBuilder
     
     public TestInlineElementNode TestInlineElementNode(Action<TreeBuilder>? configureChildNodes = null)
     {
-        var testNode = new TestInlineElementNode(IdGenerator.GetNextId(), null, null);
+        var testNode = new TestInlineElementNode(IdGenerator.GetNextId(), previousChild, null);
         configureChildNodes?.Invoke(GetChildTreeBuilder(testNode));
         Append(testNode);
         return testNode;
