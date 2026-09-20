@@ -46,6 +46,8 @@ public readonly record struct NodeId
 
     public bool IsBefore(NodeId nodeId)
     {
-        throw new NotImplementedException();
+        if (IsRoot) return true;
+        if (nodeId.IsRoot) return false;
+        return string.CompareOrdinal(Value, nodeId.Value) < 0;
     }
 }

@@ -50,7 +50,7 @@ public class TreeWalker<TFilter>(DNode parent, bool includeDeleted = false)
     
     public TFilter? NextSibling()
     {
-        var next = Current?.RightOrigin;
+        var next = Current?.NextSibling();
         while (next is not null)
         {
             if (next is TFilter filteredNode)
@@ -60,7 +60,7 @@ public class TreeWalker<TFilter>(DNode parent, bool includeDeleted = false)
                 return filteredNode;
             }
 
-            next = next.RightOrigin;
+            next = next.NextSibling();
         }
 
         Current = null;
@@ -79,7 +79,7 @@ public class TreeWalker<TFilter>(DNode parent, bool includeDeleted = false)
                 return filteredNode;
             }
 
-            next = next.RightOrigin;
+            next = next.NextSibling();
         }
 
         Current = null;
@@ -124,7 +124,7 @@ public class TreeWalker<TFilter1, TFilter2>(DNode parent, bool includeDeleted = 
     
     public (TFilter1?, TFilter2?) NextSibling()
     {
-        var next = Current?.RightOrigin;
+        var next = Current?.NextSibling();
         while (next is not null)
         {
             switch (next)
@@ -136,7 +136,7 @@ public class TreeWalker<TFilter1, TFilter2>(DNode parent, bool includeDeleted = 
                     Current = next;
                     return (default, filter2);
                 default:
-                    next = Current?.RightOrigin;
+                    next = next.NextSibling();
                     break;
             }
         }
@@ -168,9 +168,10 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
         var node = current;
         while (node is not null)
         {
-            if (node.RightOrigin is not null)
+            var nextSibling = node.NextSibling();
+            if (nextSibling is not null)
             {
-                node = node.RightOrigin;
+                node = nextSibling;
                 break;
             }
 
@@ -187,12 +188,13 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
     
     protected DNode? Previous(DNode? current)
     {
-        if (current?.Origin is null)
+        var prevSibling = current?.PreviousSibling();
+        if (prevSibling is null)
         {
             return current?.Parent == Parent ? null : current?.Parent;
         }
         
-        var node = current.Origin;
+        var node = prevSibling;
         while (node is not null)
         {
             var lastChild = LastChildOrDefault(node);

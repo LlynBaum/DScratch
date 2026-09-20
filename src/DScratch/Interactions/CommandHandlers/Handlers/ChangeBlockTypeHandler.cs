@@ -69,7 +69,7 @@ public class ChangeBlockTypeHandler(IDScratchService dScratchService) : CommandB
         while (current is not null && current.Id != rightOrigin.Id)
         {
             result.Add(current);
-            current = current.RightOrigin;
+            current = current.NextSibling();
         }
 
         if (current is not null) result.Add(current);

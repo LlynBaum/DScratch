@@ -57,11 +57,11 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
             if (selectionInfo.AnchorOffset > 0)
             {
                 textOrigin = textNode;
-                textRightOrigin = transaction.SplitText(textNode, selectionInfo.AnchorOffset) ?? textNode.RightOrigin;
+                textRightOrigin = transaction.SplitText(textNode, selectionInfo.AnchorOffset) ?? textNode.NextSibling();
             }
             else
             {
-                textOrigin = textNode.Origin;
+                textOrigin = textNode.PreviousSibling();
                 textRightOrigin = textNode;
             }
             parent = textOrigin?.Parent ?? textRightOrigin?.Parent!;
@@ -95,11 +95,11 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
                 : throw new ArgumentException($"Expected TextNode at {origin.Id}")
             : origin;
         
-        var startLink = transaction.NodeFactory.LinkNode(startNode?.Origin, null, command.Href, command.Target);
+        var startLink = transaction.NodeFactory.LinkNode(startNode?.PreviousSibling(), null, command.Href, command.Target);
         transaction.Insert(startLink, origin.Parent!);
         transaction.MoveRange(startNode, null, startLink, null);
         
-        var currentBlock = origin.GetNearestBlock().RightOrigin;
+        var currentBlock = origin.GetNearestBlock().NextSibling();
         var endBlock = rightOrigin.GetNearestBlock();
 
         while (currentBlock is not null && currentBlock.Id != endBlock.Id)
@@ -108,7 +108,7 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
             transaction.Insert(link, currentBlock);
             transaction.MoveRange(currentBlock.FirstChild, null, link, null);
             
-            currentBlock = currentBlock.RightOrigin;
+            currentBlock = currentBlock.NextSibling();
         }
 
         DNode? endNode;
@@ -124,10 +124,10 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         }
         else
         {
-            endNode = rightOrigin.Origin;
+            endNode = rightOrigin.PreviousSibling();
         }
         
-        var endLink = transaction.NodeFactory.LinkNode(endNode, endNode?.RightOrigin, command.Href, command.Target);
+        var endLink = transaction.NodeFactory.LinkNode(endNode, endNode?.NextSibling(), command.Href, command.Target);
         transaction.Insert(endLink, endBlock);
         transaction.MoveRange(null, endNode, endLink, null);
 
@@ -153,7 +153,7 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         DNode rightOrigin)
     {
         var nodes = GetSelectedNodes(transaction, selectionInfo, origin, rightOrigin);
-        var linkNode = transaction.NodeFactory.LinkNode(nodes.Origin.Node?.Origin, nodes.RightOrigin.Node?.RightOrigin, command.Href, command.Target);
+        var linkNode = transaction.NodeFactory.LinkNode(nodes.Origin.Node?.PreviousSibling(), nodes.RightOrigin.Node?.NextSibling(), command.Href, command.Target);
         var parent = nodes.Origin.Node?.Parent ?? nodes.RightOrigin.Node?.Parent!;
         transaction.Insert(linkNode, parent);
         transaction.MoveRange(nodes.Origin.Node, nodes.RightOrigin.Node, linkNode, null);
@@ -206,10 +206,15 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         }
         else
         {
-            endTextNode = walker.Node?.Origin is not null && SelectionHelper.NearestTextNode(walker.Node.Origin) is
-                { HasFoundNode: true } n
-                ? n.Node
-                : throw new ArgumentException($"Expected TextNode near {walker.Node?.Origin?.Id}");
+            var prevNode = walker.Node?.PreviousSibling();
+            if (prevNode is not null && SelectionHelper.NearestTextNode(prevNode) is { HasFoundNode: true } n)
+            {
+                endTextNode = n.Node;
+            }
+            else
+            {
+                throw new ArgumentException($"Expected TextNode near {prevNode?.Id}");
+            }
         }
         
         return new DNodeSearchResult(DNodeInfo.From(start, 0), DNodeInfo.From(endTextNode, endTextNode.Length));

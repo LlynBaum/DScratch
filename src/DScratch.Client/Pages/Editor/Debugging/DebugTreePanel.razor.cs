@@ -37,7 +37,7 @@ public partial class DebugTreePanel(IEditorDebugService debugService, IDScratchS
     private List<TreeNodeViewModel> BuildTreeNodes(DNode root)
     {
         var list = new List<TreeNodeViewModel>();
-        int indent = 0;
+        var indent = 0;
         
         var current = root;
         var visited = new HashSet<DNode>();
@@ -70,9 +70,10 @@ public partial class DebugTreePanel(IEditorDebugService debugService, IDScratchS
                 var node = current;
                 while (node is not null)
                 {
-                    if (node.RightOrigin is not null)
+                    var nextNode = node.NextSibling();
+                    if (nextNode is not null)
                     {
-                        current = node.RightOrigin;
+                        current = nextNode;
                         break;
                     }
                     indent -= 1;

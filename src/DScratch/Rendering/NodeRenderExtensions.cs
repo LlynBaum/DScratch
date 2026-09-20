@@ -51,7 +51,7 @@ internal static class NodeRenderExtensions
         return [
             new StepDiff.InsertElementDiff(
                 ParentId: parentId.Value,
-                PreviousSiblingId: textNode.Origin?.Id.Value,
+                PreviousSiblingId: textNode.PreviousActiveSibling()?.Id.Value,
                 TagName: NodeHtmlLookup.GetHtmlTag(textNode),
                 NewNodeId: textNode.Id.Value),
             new StepDiff.InsertTextDiff(

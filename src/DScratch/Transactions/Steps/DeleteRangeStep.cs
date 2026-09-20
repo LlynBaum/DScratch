@@ -19,7 +19,7 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
                 current.Delete();
                 transaction.NotifyNodeChange(current);
                 steps.Add(current.ToDeleteSteps());
-                current = current.RightOrigin;
+                current = current.NextSibling();
             }
         }
         else if (start is null)
@@ -30,7 +30,7 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
                 current.Delete();
                 transaction.NotifyNodeChange(current);
                 steps.Add(current.ToDeleteSteps());
-                current = current.Origin;
+                current = current.PreviousSibling();
             }
         }
         else
@@ -41,7 +41,7 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
                 current.Delete();
                 transaction.NotifyNodeChange(current);
                 steps.Add(current.ToDeleteSteps());
-                current = current.RightOrigin;
+                current = current.NextSibling();
             }
 
             if (current is not null)

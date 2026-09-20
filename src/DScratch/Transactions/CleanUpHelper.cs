@@ -7,7 +7,7 @@ public static class CleanUpHelper
 {
     public static bool CanMergeWithOrigin(TextNode node, out TextNode origin)
     {
-        if (node.Origin is not TextNode originTextNode)
+        if (node.PreviousSibling() is not TextNode originTextNode)
         {
             origin = null!;
             return false;
@@ -21,7 +21,7 @@ public static class CleanUpHelper
     
     public static bool CanMergeWithRightOrigin(TextNode node, out TextNode rightOrigin)
     {
-        if (node.RightOrigin is not TextNode rightOriginTextNode)
+        if (node.NextSibling() is not TextNode rightOriginTextNode)
         {
             rightOrigin = null!;
             return false;

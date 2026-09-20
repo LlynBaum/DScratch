@@ -59,27 +59,29 @@ public class InsertTextHandler(IDScratchService dScratchService) : EventWithSele
         
         if (nodeSearchResult.Origin.HasFoundNode)
         {
-            var marks = GetMarksFrom(nodeSearchResult.Origin.Node);
+            var originNode = nodeSearchResult.Origin.Node;
+            var marks = GetMarksFrom(originNode);
             var textNode = transaction.NodeFactory.String(
                 value: keyPressInfo.Data,
-                origin: nodeSearchResult.Origin.Node,
-                rightOrigin: nodeSearchResult.Origin.Node.RightOrigin,
+                origin: originNode,
+                rightOrigin: originNode.NextSibling(),
                 initMarks: marks);
 
-            var parent = nodeSearchResult.Origin.Node.Parent;
+            var parent = originNode.Parent;
             transaction.Insert(textNode, parent!);
             transaction.AddCursorPosition(textNode.Id, textNode.Length);
         }
         else if (nodeSearchResult.RightOrigin.HasFoundNode)
         {
-            var marks = GetMarksFrom(nodeSearchResult.RightOrigin.Node);
+            var rightNode = nodeSearchResult.RightOrigin.Node;
+            var marks = GetMarksFrom(rightNode);
             var textNode = transaction.NodeFactory.String(
                 value: keyPressInfo.Data,
-                origin: nodeSearchResult.RightOrigin.Node.Origin,
-                rightOrigin: nodeSearchResult.RightOrigin.Node,
+                origin: rightNode.PreviousSibling(),
+                rightOrigin: rightNode,
                 initMarks: marks);
 
-            var parent = nodeSearchResult.RightOrigin.Node.Parent;
+            var parent = rightNode.Parent;
             transaction.Insert(textNode, parent!);
             transaction.AddCursorPosition(textNode.Id, textNode.Length);
         }

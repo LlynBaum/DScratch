@@ -57,14 +57,14 @@ public static class DeleteSelection
             }
             else
             {
-                deleteEnd = rightOrigin.Origin;
+                deleteEnd = rightOrigin.PreviousSibling();
             }
         }
         
-        transaction.DeleteRange(deleteStart ?? nodeSearchResult.Origin.Node?.RightOrigin, deleteEnd);
+        transaction.DeleteRange(deleteStart ?? nodeSearchResult.Origin.Node?.NextSibling(), deleteEnd);
         return new DNodeSearchResult(
             Origin: new DNodeInfo(nodeSearchResult.Origin.Node, nodeSearchResult.Origin.Offset), 
-            RightOrigin: new DNodeInfo(rightOrigin?.RightOrigin, relativeRightOriginOffset));
+            RightOrigin: new DNodeInfo(rightOrigin?.NextSibling(), relativeRightOriginOffset));
     }
 
     private static DNodeSearchResult DeleteAndMerge(NodeSearchResult<TextNode> nodeSearchResult, ITransaction transaction)
@@ -78,11 +78,11 @@ public static class DeleteSelection
         transaction.DeleteRange(deleteStart, null);
         transaction.DeleteRange(null, nodeSearchResult.RightOrigin.Node);
         
-        transaction.MoveRange(nodeSearchResult.RightOrigin.Node?.RightOrigin, null, deleteStart?.Parent!, deleteStart?.Parent?.LastChild);
-        transaction.DeleteRange(deleteStart?.Parent?.RightOrigin, nodeSearchResult.RightOrigin.Node?.Parent);
+        transaction.MoveRange(nodeSearchResult.RightOrigin.Node?.NextSibling(), null, deleteStart?.Parent!, deleteStart?.Parent?.LastChild);
+        transaction.DeleteRange(deleteStart?.Parent?.NextSibling(), nodeSearchResult.RightOrigin.Node?.Parent);
         
         return new DNodeSearchResult(
-            Origin: new DNodeInfo(deleteStart?.Origin, nodeSearchResult.Origin.AbsoluteOffsetIfPresent ?? 0), 
-            RightOrigin: new DNodeInfo(nodeSearchResult.RightOrigin.Node?.RightOrigin, nodeSearchResult.RightOrigin.AbsoluteOffsetIfPresent ?? 0));
+            Origin: new DNodeInfo(deleteStart?.PreviousSibling(), nodeSearchResult.Origin.AbsoluteOffsetIfPresent ?? 0), 
+            RightOrigin: new DNodeInfo(nodeSearchResult.RightOrigin.Node?.NextSibling(), nodeSearchResult.RightOrigin.AbsoluteOffsetIfPresent ?? 0));
     }
 }

@@ -54,9 +54,10 @@ public class TreeVisualizer(DNode root)
         var node = current;
         while (node is not null)
         {
-            if (node.RightOrigin is not null)
+            var nextSibling = node.NextSibling();
+            if (nextSibling is not null)
             {
-                node = node.RightOrigin;
+                node = nextSibling;
                 break;
             }
 

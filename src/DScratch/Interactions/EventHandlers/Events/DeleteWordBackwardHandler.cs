@@ -15,12 +15,13 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : Event
         var targetSelection = SimpleDeleteBackwards(keyPressInfo, transaction, anchorTextNode);
         if (targetSelection.HasFoundNode)
         {
-            transaction.AddCursorPosition(targetSelection.Node.Origin?.Id ?? targetSelection.Node.Id, targetSelection.Offset);
+            var prevNode = targetSelection.Node.PreviousSibling();
+            transaction.AddCursorPosition(prevNode?.Id ?? targetSelection.Node.Id, targetSelection.Offset);
         }
-        else if (!targetSelection.HasFoundNode && anchorTextNode.GetNearestBlock() is { Origin: not null } parent)
+        else if (!targetSelection.HasFoundNode && anchorTextNode.GetNearestBlock() is { } parent && parent.PreviousSibling() is { } prevParent)
         {
             transaction.AddCursorPosition(anchorTextNode.Id, 0); 
-            transaction.MoveRange(parent.FirstChild, null, parent.Origin, parent.Origin.LastChild);
+            transaction.MoveRange(parent.FirstChild, null, prevParent, prevParent.LastChild);
             transaction.Delete(parent);
         }
 
@@ -29,16 +30,17 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : Event
 
     protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
     {
-        if (anchorNode.Origin is null) return;
+        var prevSibling = anchorNode.PreviousSibling();
+        if (prevSibling is null) return;
 
         transaction.Delete(anchorNode);
-        if (SelectionHelper.NearestTextNode(anchorNode.Origin) is { HasFoundNode: true } nodeInfo)
+        if (SelectionHelper.NearestTextNode(prevSibling) is { HasFoundNode: true } nodeInfo)
         {
             transaction.AddCursorPosition(nodeInfo.Node.Id, nodeInfo.Offset);
         }
         else
         {
-            transaction.AddCursorPosition(anchorNode.Origin.Id, 0);
+            transaction.AddCursorPosition(prevSibling.Id, 0);
         }
     }
 
@@ -97,8 +99,9 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : Event
         }
 
         if (word is not null) transaction.Delete(word);
-        return word?.Origin is not null
-            ? SelectionHelper.NearestTextNode(word.Origin)
+        var prevWord = word?.PreviousSibling();
+        return prevWord is not null
+            ? SelectionHelper.NearestTextNode(prevWord)
             : new DNodeInfo(word?.Parent ?? walker.Parent, 0);
     }
 }

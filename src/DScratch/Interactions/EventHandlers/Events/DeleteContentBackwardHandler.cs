@@ -17,10 +17,10 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : Ev
         {
             transaction.AddCursorPosition(targetSelection.Node!.Id, targetSelection.Offset);
         }
-        else if (anchorTextNode.GetNearestBlock() is { Origin: not null } parent)
+        else if (anchorTextNode.GetNearestBlock() is { } parent && parent.PreviousSibling() is { } prevParent)
         {
             transaction.AddCursorPosition(anchorTextNode.Id, 0); 
-            transaction.MoveRange(parent.FirstChild, null, parent.Origin, parent.Origin.LastChild);
+            transaction.MoveRange(parent.FirstChild, null, prevParent, prevParent.LastChild);
             transaction.Delete(parent);
         }
 
@@ -29,16 +29,17 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : Ev
 
     protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
     {
-        if (anchorNode.Origin is null) return;
+        var prevSibling = anchorNode.PreviousSibling();
+        if (prevSibling is null) return;
 
         transaction.Delete(anchorNode);
-        if (SelectionHelper.NearestTextNode(anchorNode.Origin) is { HasFoundNode: true } nodeInfo)
+        if (SelectionHelper.NearestTextNode(prevSibling) is { HasFoundNode: true } nodeInfo)
         {
             transaction.AddCursorPosition(nodeInfo.Node.Id, nodeInfo.Offset);
         }
         else
         {
-            transaction.AddCursorPosition(anchorNode.Origin.Id, 0);
+            transaction.AddCursorPosition(prevSibling.Id, 0);
         }
     }
 
@@ -53,8 +54,9 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : Ev
         var nodeToDelete = transaction.SplitText(targetTextNode, targetTextNode.Length - 1)!;
         transaction.Delete(nodeToDelete);
 
-        return nodeToDelete.Origin is not null
-            ? SelectionHelper.NearestTextNode(nodeToDelete.Origin)
+        var prevNode = nodeToDelete.PreviousSibling();
+        return prevNode is not null
+            ? SelectionHelper.NearestTextNode(prevNode)
             : new DNodeInfo(nodeToDelete.Parent, 0);
     }
 }

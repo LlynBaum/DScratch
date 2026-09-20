@@ -17,11 +17,11 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : Eve
         {
             transaction.AddCursorPosition(targetSelection.Node.Id, targetSelection.Offset);
         }
-        else if (anchorTextNode.GetNearestBlock() is { RightOrigin: not null } parent)
+        else if (anchorTextNode.GetNearestBlock() is { } parent && parent.NextSibling() is { } nextBlock)
         {
             transaction.AddCursorPosition(anchorTextNode.Id, anchorTextNode.Length); 
-            transaction.MoveRange(parent.RightOrigin.FirstChild, null, parent, parent.LastChild);
-            transaction.Delete(parent.RightOrigin);
+            transaction.MoveRange(nextBlock.FirstChild, null, parent, parent.LastChild);
+            transaction.Delete(nextBlock);
         }
 
         return DNodeSearchResult.Empty;
@@ -29,10 +29,11 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : Eve
 
     protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
     {
-        if (anchorNode.RightOrigin is null) return;
+        var nextSibling = anchorNode.NextSibling();
+        if (nextSibling is null) return;
         
         transaction.Delete(anchorNode);
-        transaction.AddCursorPosition(anchorNode.RightOrigin.Id, 0);
+        transaction.AddCursorPosition(nextSibling.Id, 0);
     }
 
     private static DNodeInfo SimpleDeleteForward(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
