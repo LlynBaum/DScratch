@@ -15,7 +15,7 @@ public class TestTransactionFake : ITransaction, IRunningTransaction
     
     public DNode Root { get; } = null!;
 
-    public INodeFactory NodeFactory { get; } = null!;
+    public INodeFactory NodeFactory { get; } = new DNodeFactory(new TestNodeIdGenerator());
 
     public TransactionResult Commit()
     {

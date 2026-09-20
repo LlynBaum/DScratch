@@ -14,8 +14,8 @@ public class NodeRenderExtensionsTests
         [Test]
         public void WhenParentIsNull_FallbackToRoot()
         {
-            // Arrange - Single node, manual setup is fine
-            var node = new ParagraphNode(new NodeId(), null, null);
+            // Arrange
+            var node = new TreeBuilder().Paragraph();
 
             // Act
             var result = node.ToInsertSteps();

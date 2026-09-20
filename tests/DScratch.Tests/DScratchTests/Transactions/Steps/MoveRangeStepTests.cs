@@ -46,7 +46,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text2, text4, newParent, newSibling);
-        var result = step.Execute(transactionFake, null!);
+        var result = step.Execute(transactionFake, builder.CreateDocument());
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -122,7 +122,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text3, null, newParent, newSibling);
-        var result = step.Execute(transactionFake, null!);
+        var result = step.Execute(transactionFake, builder.CreateDocument());
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -198,7 +198,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(null, text3, newParent, newSibling);
-        var result = step.Execute(transactionFake, null!);
+        var result = step.Execute(transactionFake, builder.CreateDocument());
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -274,7 +274,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text2, text4, newParent, null);
-        var result = step.Execute(transactionFake, null!);
+        var result = step.Execute(transactionFake, builder.CreateDocument());
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -351,7 +351,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text3, null, newParent, null);
-        var result = step.Execute(transactionFake, null!);
+        var result = step.Execute(transactionFake, builder.CreateDocument());
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -427,7 +427,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(text3, null, newParent, sibling2);
-        var result = step.Execute(transactionFake, null!);
+        var result = step.Execute(transactionFake, builder.CreateDocument());
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -503,7 +503,7 @@ public class MoveRangeStepTests
         
         // Act
         var step = new MoveRangeStep(null, text3, newParent, null);
-        var result = step.Execute(transactionFake, null!);
+        var result = step.Execute(transactionFake, builder.CreateDocument());
 
         // Assert
         using (Assert.EnterMultipleScope())

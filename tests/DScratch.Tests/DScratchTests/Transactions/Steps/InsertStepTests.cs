@@ -42,8 +42,8 @@ public class InsertStepTests
             Assert.That(node.Parent?.Id.Clock, Is.EqualTo(1));
             Assert.That(node2.ChildNodes[1].Id.Clock, Is.EqualTo(-1));
             
-            Assert.That(node3.RightOrigin!.Id.Clock, Is.EqualTo(-1));
-            Assert.That(node4.Origin?.Id.Clock, Is.EqualTo(-1));
+            Assert.That(node3.NextSibling()!.Id.Clock, Is.EqualTo(-1));
+            Assert.That(node4.PreviousSibling()?.Id.Clock, Is.EqualTo(-1));
             
             Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
@@ -73,7 +73,7 @@ public class InsertStepTests
         {
             Assert.That(node.Parent?.Id.Clock, Is.EqualTo(1));
             Assert.That(node2.ChildNodes[2].Id.Clock, Is.EqualTo(-1));
-            Assert.That(node4.RightOrigin!.Id.Clock, Is.EqualTo(-1));
+            Assert.That(node4.NextSibling()!.Id.Clock, Is.EqualTo(-1));
             
             Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
@@ -85,12 +85,12 @@ public class InsertStepTests
         // Arrange
         var builder = new TreeBuilder();
         builder.TestNode(); // ID "0"
-        ParagraphNode node5 = null!;
+        LinkNode node5 = null!;
         builder.Paragraph(t => // ID "1"
         {
             t.Text(" "); // ID "2"
             t.Text(" "); // ID "3"
-            node5 = ((TreeBuilder)t).Paragraph(); // ID "4"
+            node5 = t.Link("", ""); // ID "4"
         });
         
         var node = new TextNode(new NodeId("Test", -1), null, null, " ");
@@ -131,7 +131,7 @@ public class InsertStepTests
         {
             Assert.That(node2.ChildNodes, Has.Count.EqualTo(2));
             Assert.That(node4.TextContent, Is.EqualTo("ab"));
-            Assert.That(node4.RightOrigin!.Id.Clock, Is.EqualTo(4));
+            Assert.That(node4.NextSibling()!.Id.Clock, Is.EqualTo(4));
             
             Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
@@ -159,7 +159,7 @@ public class InsertStepTests
         {
             Assert.That(node2.ChildNodes, Has.Count.EqualTo(2));
             Assert.That(node4.TextContent, Is.EqualTo("ab"));
-            Assert.That(node4.RightOrigin!.Id.Clock, Is.EqualTo(3));
+            Assert.That(node4.NextSibling()!.Id.Clock, Is.EqualTo(3));
             
             Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
@@ -187,7 +187,7 @@ public class InsertStepTests
         {
             Assert.That(node2.ChildNodes, Has.Count.EqualTo(2));
             Assert.That(node4.TextContent, Is.EqualTo("ab"));
-            Assert.That(node4.Origin!.Id.Clock, Is.EqualTo(3));
+            Assert.That(node4.PreviousSibling()!.Id.Clock, Is.EqualTo(3));
             
             Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }

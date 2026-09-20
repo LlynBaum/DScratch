@@ -24,6 +24,9 @@ TextNodes are currently not CRDT ready... if you merge nodes and the take one by
 because the given id was in the range of that Node, it should take that into account and adjust the given offset.
 Else the offset is wrong, because it was calculated based on a node that started at another id.
 
+Also, inserting doesn't work if the TextNodes are not split already... so it has to be made sure that the TextNodes are already correctly split before InsertChild
+or InsertChild can split TextNodes.
+
 ### Cursor
 
 Cursor feels broken right now. There are a few weird things:
@@ -103,7 +106,6 @@ Cursor feels broken right now. There are a few weird things:
 
 - Color picker is not that nice to use. The cursor is not set anymore when clicking away. So you have to remember where you were
 - Make Popovers better, they are in middle of page when targeting a paragraph
-- Inserting a node is not completely safe. What if you try to insert with same origin and rightOrigin? Well it will break. So this should be a safe action. Best if the InsertChild in the DNode can do it on their own.
 
 # Improvements?
 
