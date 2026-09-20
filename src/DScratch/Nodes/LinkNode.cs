@@ -28,7 +28,7 @@ public class LinkNode(NodeId id, DNode? origin, DNode? rightOrigin, string href,
         };
     }
 
-    public override Dictionary<string, string>? GetAttributes()
+    public override Dictionary<string, string> GetAttributes()
     {
         return new Dictionary<string, string>
         {

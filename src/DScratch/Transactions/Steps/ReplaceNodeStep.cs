@@ -9,7 +9,7 @@ public class ReplaceNodeStep(DNode node, Func<DNode, DNode> copyFactory) : IStep
     {
         var parent = node.Parent!;
         var newNode = copyFactory(node);
-        newNode.ClaimChildNodes();
+        newNode.ClaimChildNodes(); // TODO: childs must be recreates as well
 
         parent.RemoveChild(node);
         parent.InsertChild(newNode);

@@ -59,7 +59,7 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
             if (currentOriginIdx < originIdx)
             {
                 allChildNodes.Insert(index, node);
-                break;
+                return;
             }
             
             if (currentOriginIdx == originIdx)
@@ -67,12 +67,14 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
                 if (node.Id.IsBefore(currentNode.Id))
                 {
                     allChildNodes.Insert(index, node);
-                    break;
+                    return;
                 }
             }
             
             index++;
         }
+        
+        allChildNodes.Insert(index, node);
     }
 
     public DNode? NextSibling()
@@ -85,6 +87,15 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
     {
         var idx = allChildNodes.FindIndex(n => n.Id == Id);
         return idx > 0 ? allChildNodes[idx - 1] : null;
+    }
+    
+    public DNode? PreviousActiveSibling()
+    {
+        var previous = PreviousSibling();
+        if (previous is null) return null;
+        return !previous.IsDeleted 
+            ? previous 
+            : previous.PreviousActiveSibling();
     }
     
     internal void CopyMarks(IEnumerable<KeyValuePair<MarkKey, string>> initMarks)
@@ -109,13 +120,6 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
     public override string ToString()
     {
         return $"[{Id}] - {GetType().Name}";
-    }
-
-    public DNode? GetFirstActiveOrigin()
-    {
-        return Origin?.IsDeleted is false 
-            ? Origin 
-            : Origin?.GetFirstActiveOrigin();
     }
 
     public DNode GetNearestBlock()
@@ -150,7 +154,7 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
         return result;
     }
 
-    public void ClaimChildNodes()
+    public void ClaimChildNodes() // TODO: remove
     {
         foreach (var childNode in ChildNodes)
         {

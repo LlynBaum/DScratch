@@ -19,7 +19,7 @@ internal static class NodeRenderExtensions
                 LinkNode linkNode => [
                     new StepDiff.InsertElementDiff(
                         ParentId: parentId.Value,
-                        PreviousSiblingId: node.GetFirstActiveOrigin()?.Id.Value,
+                        PreviousSiblingId: node.PreviousActiveSibling()?.Id.Value,
                         TagName: NodeHtmlLookup.GetHtmlTag(node),
                         NewNodeId: node.Id.Value, 
                         Attributes: new Dictionary<string, string> { { "href", linkNode.Href }, { "target", linkNode.Target } }),
@@ -28,7 +28,7 @@ internal static class NodeRenderExtensions
                 ],
                 IElement =>
                 [
-                    new StepDiff.InsertElementDiff(parentId.Value, node.GetFirstActiveOrigin()?.Id.Value, NodeHtmlLookup.GetHtmlTag(node), node.Id.Value),
+                    new StepDiff.InsertElementDiff(parentId.Value, node.PreviousActiveSibling()?.Id.Value, NodeHtmlLookup.GetHtmlTag(node), node.Id.Value),
                     node.ToMarkUpdate(),
                     ..node.ActiveChildNodes.SelectMany(c => c.ToInsertSteps())
                 ],
