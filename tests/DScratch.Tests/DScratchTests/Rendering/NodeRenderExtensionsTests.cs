@@ -238,7 +238,7 @@ public class NodeRenderExtensionsTests
         {
             // Arrange - Single node setup
             var testNode = TestNode.Empty();
-            testNode.Parent = TestNode.Empty();
+            testNode.InsertChild(TestNode.Empty());
             
             // Assert
             Assert.Throws<ArgumentException>(Act);
@@ -271,49 +271,6 @@ public class NodeRenderExtensionsTests
             Assert.That(result, Is.TypeOf<StepDiff.DeleteElementDiff>());
             var step = (StepDiff.DeleteElementDiff)result;
             Assert.That(step.TargetId, Is.EqualTo("Test-1"));
-        }
-    }
-    
-    private class ToMoveStep
-    {
-        [Test]
-        public void BlockElement_ReturnsExpectedSteps()
-        {
-            // Arrange
-            var builder = new TreeBuilder();
-            TestBlockElementNode testElement = null!;
-            TestBlockElementNode targetSibling = null!;
-            
-            // 0: Parent Element
-            builder.TestBlockElementNode(t =>
-            {
-                t.TestBlockElementNode();
-                testElement = t.TestBlockElementNode();
-                t.TestBlockElementNode();
-            });
-            var targetParent = builder.TestBlockElementNode(t =>
-            {
-                targetSibling = t.TestBlockElementNode();
-                t.TestBlockElementNode();
-            });
-
-            // Act
-            testElement.Origin = targetSibling;
-            testElement.RightOrigin = targetSibling.RightOrigin;
-            targetParent.InsertChild(testElement);
-            var result = testElement.ToMoveStep();
-            
-            // Assert
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result, Is.TypeOf<StepDiff.MoveDiff>());
-            
-            var step = (StepDiff.MoveDiff)result;
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(step.TargetNodeId, Is.EqualTo("Test-2"));
-                Assert.That(step.TargetParentId, Is.EqualTo("Test-4"));
-                Assert.That(step.PreviousSiblingId, Is.EqualTo("Test-5"));
-            }
         }
     }
 }

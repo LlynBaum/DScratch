@@ -43,4 +43,9 @@ public readonly record struct NodeId
     {
         return nodeId.Client == Client && Clock + 1 == nodeId.Clock;
     }
+
+    public bool IsBefore(NodeId nodeId)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -11,13 +11,13 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
     
     public NodeId Id { get; } = id;
     
-    public DNode? Origin { get; internal set; } = origin;
+    public DNode? Origin { get; } = origin;
 
-    public DNode? RightOrigin { get; internal set; } = rightOrigin;
+    public DNode? RightOrigin { get; } = rightOrigin;
 
     public bool IsDeleted { get; private set; }
 
-    public DNode? Parent { get; internal set; }
+    public DNode? Parent { get; private set; }
 
     public DNode? ParentElement => Parent is IElement or null ? Parent : Parent.ParentElement;
     
@@ -30,19 +30,8 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
     public DNode? LastChild => ActiveChildNodes.LastOrDefault();
 
     public IReadOnlyDictionary<MarkKey, string> Marks => marks;
-
-    internal void Remove()
-    {
-        Origin?.RightOrigin = RightOrigin;
-        RightOrigin?.Origin = Origin;
-        Parent?.RemoveChild(this);
-        
-        Parent = null;
-        RightOrigin = null;
-        Origin = null;
-    }
     
-    private void RemoveChild(DNode node)
+    internal void RemoveChild(DNode node)
     {
         var index = allChildNodes.FindIndex(n => n.Id == node.Id);
         allChildNodes.RemoveAt(index);
@@ -54,42 +43,48 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
         allChildNodes.ForEach(n => n.Delete());
     }
 
-    internal void AppendChild(DNode node)
-    {
-        node.Parent = this;
-        allChildNodes.Add(node);
-    }
-    
     internal virtual void InsertChild(DNode node)
     {
         node.Parent = this;
-        
-        if (node.Origin is null)
+
+        var originIdx = node.Origin is not null ? allChildNodes.FindIndex(n => n.Id == node.Origin.Id) : -1;
+        var rightOriginIdx = node.RightOrigin is not null ? allChildNodes.FindIndex(n => n.Id == node.RightOrigin.Id) : allChildNodes.Count;
+
+        var index = originIdx + 1;
+        while (index < rightOriginIdx)
         {
-            allChildNodes.FirstOrDefault()?.Origin = node;
-            allChildNodes.Insert(0, node);
-        }
-        else
-        {
-            var origin = node.Origin;
-            origin.RightOrigin?.Origin = node;
-            origin.RightOrigin = node;
+            var currentNode = allChildNodes[index];
+            var currentOriginIdx = currentNode.Origin is not null ? allChildNodes.FindIndex(n => n.Id == currentNode.Id) : -1;
+
+            if (currentOriginIdx < originIdx)
+            {
+                allChildNodes.Insert(index, node);
+                break;
+            }
             
-            var index = allChildNodes.FindIndex(n => n.Id == origin.Id);
-            allChildNodes.Insert(index + 1, node);
+            if (currentOriginIdx == originIdx)
+            {
+                if (node.Id.IsBefore(currentNode.Id))
+                {
+                    allChildNodes.Insert(index, node);
+                    break;
+                }
+            }
+            
+            index++;
         }
-    }
-    
-    public int IndexOf(IDNode node)
-    {
-        return ActiveChildNodes.ToList().FindIndex(n => n.Id == node.Id);
     }
 
-    public DNode? ChildAt(int index)
+    public DNode? NextSibling()
     {
-        return index < 0 
-            ? null 
-            : ActiveChildNodes.Skip(index).FirstOrDefault();
+        var idx = allChildNodes.FindIndex(n => n.Id == Id);
+        return idx + 1 < allChildNodes.Count ? allChildNodes[idx + 1] : null;
+    }
+
+    public DNode? PreviousSibling()
+    {
+        var idx = allChildNodes.FindIndex(n => n.Id == Id);
+        return idx > 0 ? allChildNodes[idx - 1] : null;
     }
     
     internal void CopyMarks(IEnumerable<KeyValuePair<MarkKey, string>> initMarks)

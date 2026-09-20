@@ -11,11 +11,13 @@ public interface INodeFactory
 
     ParagraphNode ParagraphFrom(DNode node);
 
-    HeadingNode Heading(HeadingLevel headingLevel, DNode? origin, DNode? rightOrigin);
+    HeadingNode Heading(HeadingLevel headingLevel, DNode? origin, DNode? rightOrigin, IReadOnlyDictionary<MarkKey, string>? initMarks = null);
 
     HeadingNode HeadingFrom(DNode node, HeadingLevel headingLevel);
 
     LinkNode LinkNode(DNode? origin, DNode? rightOrigin, string href, string target, IReadOnlyDictionary<MarkKey, string>? initMarks = null);
     
     TextNode String(string value, DNode? origin, DNode? rightOrigin, IReadOnlyDictionary<MarkKey, string>? initMarks = null);
+    
+    DNode Recreate(DNode node, DNode? origin, DNode? rightOrigin);
 }

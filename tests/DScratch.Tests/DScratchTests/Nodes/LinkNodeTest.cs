@@ -10,10 +10,7 @@ public class LinkNodeTest
     {
         // Arrange
         var paragraph = new LinkNode(new NodeId(), null, null, "dscratch.darki.dev", "_self");
-        var node = new TestNode(new NodeId(), null, null)
-        {
-            Parent = paragraph
-        };
+        var node = new TestNode(new NodeId(), null, null);
 
         // Assert
         Assert.Throws<InvalidOperationException>(Act);

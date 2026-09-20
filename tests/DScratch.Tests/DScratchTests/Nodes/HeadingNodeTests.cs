@@ -10,10 +10,7 @@ public class HeadingNodeTests
     {
         // Arrange
         var heading = new HeadingNode(HeadingLevel.Level1, new NodeId(), null, null);
-        var node = new TestNode(new NodeId(), null, null)
-        {
-            Parent = heading
-        };
+        var node = new TestNode(new NodeId(), null, null);
 
         // Assert
         Assert.Throws<InvalidOperationException>(Act);

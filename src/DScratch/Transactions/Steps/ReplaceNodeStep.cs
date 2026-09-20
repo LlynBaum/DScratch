@@ -11,7 +11,7 @@ public class ReplaceNodeStep(DNode node, Func<DNode, DNode> copyFactory) : IStep
         var newNode = copyFactory(node);
         newNode.ClaimChildNodes();
 
-        node.Remove();
+        parent.RemoveChild(node);
         parent.InsertChild(newNode);
         
         document.RemoveNode(node);

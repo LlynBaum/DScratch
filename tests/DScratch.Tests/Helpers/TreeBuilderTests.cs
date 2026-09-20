@@ -62,7 +62,7 @@ public class TreeBuilderTests
         using (Assert.EnterMultipleScope()) // paragraph1
         {
             Assert.That(paragraph1.Origin, Is.Null);
-            Assert.That(paragraph1.RightOrigin, Is.EqualTo(paragraph2));
+            Assert.That(paragraph1.RightOrigin, Is.Null);
             
             Assert.That(paragraph1.ChildNodes, Has.Count.EqualTo(1));
             Assert.That(paragraph1.FirstChild, Is.EqualTo(textP1));

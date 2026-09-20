@@ -145,7 +145,7 @@ internal class DTransaction(
                 cursorPosition = CleanUpHelper.AdjustSelection(cursorPosition, node, origin);
 
                 origin.AddText(node.TextContent);
-                node.Remove();
+                node.Parent!.RemoveChild(node);
                 document.RemoveNode(node);
             }
             else if (CleanUpHelper.CanMergeWithRightOrigin(node, out var rightOrigin))
@@ -164,7 +164,7 @@ internal class DTransaction(
                 cursorPosition = CleanUpHelper.AdjustSelection(cursorPosition, rightOrigin, node);
                 
                 node.AddText(rightOrigin.TextContent);
-                rightOrigin.Remove();
+                rightOrigin.Parent!.RemoveChild(rightOrigin);
                 document.RemoveNode(rightOrigin);
             }
         }

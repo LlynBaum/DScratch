@@ -44,18 +44,6 @@ internal static class NodeRenderExtensions
                 _ => new StepDiff.DeleteElementDiff(node.Id.Value)
             };
         }
-
-        public StepDiff? ToMoveStep()
-        {
-            return node switch
-            {
-                RootNode => null,
-                _ => new StepDiff.MoveDiff(
-                    TargetNodeId: node.Id.Value,
-                    TargetParentId: node.ParentElement!.Id.Value,
-                    PreviousSiblingId: node.GetFirstActiveOrigin()?.Id.Value)
-            };
-        }
     }
 
     private static StepDiff[] InsertTextNode(TextNode textNode, NodeId parentId)

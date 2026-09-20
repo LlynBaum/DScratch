@@ -10,10 +10,7 @@ public class ParagraphNodeTests
     {
         // Arrange
         var paragraph = new ParagraphNode(new NodeId(), null, null);
-        var node = new TestNode(new NodeId(), null, null)
-        {
-            Parent = paragraph
-        };
+        var node = new TestNode(new NodeId(), null, null);
 
         // Assert
         Assert.Throws<InvalidOperationException>(Act);

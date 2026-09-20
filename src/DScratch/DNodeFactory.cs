@@ -19,9 +19,11 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
         return new ParagraphNode(node.Id, node.Origin, node.RightOrigin, [..node.ChildNodes]);
     }
     
-    public HeadingNode Heading(HeadingLevel headingLevel, DNode? origin, DNode? rightOrigin)
+    public HeadingNode Heading(HeadingLevel headingLevel, DNode? origin, DNode? rightOrigin, IReadOnlyDictionary<MarkKey, string>? initMarks = null)
     {
-        return new HeadingNode(headingLevel, nodeIdGenerator.GetNextId(), origin, rightOrigin);
+        var node = new HeadingNode(headingLevel, nodeIdGenerator.GetNextId(), origin, rightOrigin);
+        if(initMarks is not null) node.CopyMarks(initMarks);
+        return node;
     }
 
     public HeadingNode HeadingFrom(DNode node, HeadingLevel headingLevel)
@@ -48,5 +50,17 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
         textNode.AddText(value);
         if(initMarks is not null) textNode.CopyMarks(initMarks);
         return textNode;
+    }
+
+    public DNode Recreate(DNode node, DNode? origin, DNode? rightOrigin)
+    {
+        return node switch
+        {
+            ParagraphNode => Paragraph(origin, rightOrigin, node.Marks),
+            HeadingNode headingNode => Heading(headingNode.HeadingLevel, origin, rightOrigin, node.Marks),
+            LinkNode linkNode => LinkNode(origin, rightOrigin, linkNode.Href, linkNode.Target, node.Marks),
+            TextNode textNode => String(textNode.TextContent, origin, rightOrigin, node.Marks),
+            _ => throw new ArgumentOutOfRangeException(nameof(node), node, $"Can not recreate a Node of type '{node.GetType().Name}'.")
+        };
     }
 }

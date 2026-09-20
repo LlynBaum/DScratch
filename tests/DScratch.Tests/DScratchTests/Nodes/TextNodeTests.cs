@@ -149,10 +149,7 @@ public class TextNodeTests
     {
         // Arrange
         var testNode = new TextNode(new NodeId("Test", 1), null, null);
-        var node = new TestNode(new NodeId("Test", 2), null, null)
-        {
-            Parent = testNode
-        };
+        var node = new TestNode(new NodeId("Test", 2), null, null);
 
         // Assert
         Assert.Throws<InvalidOperationException>(Act);

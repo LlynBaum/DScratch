@@ -113,35 +113,6 @@ public class DNodeTests
             Assert.That(nodes[2].IsDeleted, Is.True);
         });
     }
-    
-    [Test]
-    public void Remove_RemovesNodeFromTree()
-    {
-        // Arrange
-        var builder = new TreeBuilder();
-        DNode node = null!;
-        DNode node2 = null!;
-        DNode node3 = null!;
-
-        var parent = builder.TestNode(t =>
-        {
-            node = t.TestNode();
-            node2 = t.TestNode();
-            node3 = t.TestNode();
-        });
-        
-        // Act
-        node2.Remove();
-        
-        // Assert
-        Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
-        Assert.That(parent.ChildNodes, Is.EquivalentTo([node, node3]));
-        Assert.That(node2.Origin, Is.Null);
-        Assert.That(node2.RightOrigin, Is.Null);
-        
-        Assert.That(node.RightOrigin!.Id, Is.EqualTo(node3.Id));
-        Assert.That(node3.Origin!.Id, Is.EqualTo(node.Id));
-    }
 
     [Test]
     public void InsertChild_SetsParentToItSelf()
@@ -188,10 +159,7 @@ public class DNodeTests
             node = t.TestNode();
         });
         
-        var insertBuilder = new TreeBuilder();
-        var insert = insertBuilder.TestNode();
-        insert.Origin = null;
-        insert.RightOrigin = node;
+        var insert = new TestNode(new NodeId(), null, node);
         
         // Act
         parent.InsertChild(insert);
@@ -212,10 +180,7 @@ public class DNodeTests
             node = t.TestNode();
         });
         
-        var insertBuilder = new TreeBuilder();
-        var insert = insertBuilder.TestNode();
-        insert.Origin = node;
-        insert.RightOrigin = null;
+        var insert = new TestNode(new NodeId(), node, null);
         
         // Act
         parent.InsertChild(insert);
@@ -242,10 +207,7 @@ public class DNodeTests
             node2 = t.TestNode();
         });
 
-        var insertBuilder = new TreeBuilder();
-        var insert = insertBuilder.TestNode();
-        insert.Origin = node;
-        insert.RightOrigin = node2;
+        var insert = new TestNode(new NodeId(), node, node2);
         
         // Act
         parent.InsertChild(insert);
@@ -267,121 +229,6 @@ public class DNodeTests
             Assert.That(child3.Id, Is.EqualTo(node2.Id));
             Assert.That(child3.Origin?.Id, Is.EqualTo(insert.Id));
         }
-    }
-
-    [Test]
-    public void IndexOf_ReturnsIndexOfGivenChildNode()
-    {
-        // Arrange
-        var builder = new TreeBuilder();
-        DNode node2 = null!;
-        var parent = builder.TestNode(t =>
-        {
-            t.TestNode();
-            node2 = t.TestNode();
-        });
-        
-        // Act
-        var result = parent.IndexOf(node2);
-        
-        // Assert
-        Assert.That(result, Is.EqualTo(1));
-    }
-    
-    [Test]
-    public void IndexOf_ReturnsNegativeOne_WhenChildIsDeleted()
-    {
-        // Arrange
-        var builder = new TreeBuilder();
-        DNode node2 = null!;
-        var parent = builder.TestNode(t =>
-        {
-            t.TestNode();
-            node2 = t.TestNode();
-        });
-        
-        node2.Delete();
-        
-        // Act
-        var result = parent.IndexOf(node2);
-        
-        // Assert
-        Assert.That(result, Is.EqualTo(-1));
-    }
-    
-    [Test]
-    public void IndexOf_ReturnsNegativeOne_WhenChildIsNotFound()
-    {
-        // Arrange
-        var builder = new TreeBuilder();
-        var parent = builder.TestNode(t =>
-        {
-            t.TestNode();
-        });
-        
-        var insertBuilder = new TreeBuilder();
-        var node2 = insertBuilder.TestNode();
-        
-        // Act
-        var result = parent.IndexOf(node2);
-        
-        // Assert
-        Assert.That(result, Is.EqualTo(-1));
-    }
-    
-    [Test]
-    public void ChildAt_ReturnsExpectedChild()
-    {
-        // Arrange
-        var builder = new TreeBuilder();
-        DNode node2 = null!;
-        var parent = builder.TestNode(t =>
-        {
-            t.TestNode();
-            node2 = t.TestNode();
-        });
-        
-        // Act
-        var result = parent.ChildAt(1);
-        
-        // Assert
-        Assert.That(result, Is.EqualTo(node2));
-    }
-    
-    [Test]
-    public void ChildAt_ReturnsNull_WhenIndexIsOutOfBounds()
-    {
-        // Arrange
-        var builder = new TreeBuilder();
-        var parent = builder.TestNode(t =>
-        {
-            t.TestNode();
-            t.TestNode();
-        });
-        
-        // Act
-        var result = parent.ChildAt(2);
-        
-        // Assert
-        Assert.That(result, Is.Null);
-    }
-    
-    [Test]
-    public void ChildAt_ReturnsNull_WhenIndexIsBelowZero()
-    {
-        // Arrange
-        var builder = new TreeBuilder();
-        var parent = builder.TestNode(t =>
-        {
-            t.TestNode();
-            t.TestNode();
-        });
-        
-        // Act
-        var result = parent.ChildAt(-1);
-        
-        // Assert
-        Assert.That(result, Is.Null);
     }
     
     [Test]

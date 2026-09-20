@@ -95,7 +95,7 @@ public class TreeBuilder : TreeBuilder.ITextTreeBuilder
     
     public TestBlockElementNode TestBlockElementNode(Action<TreeBuilder>? configureChildNodes = null)
     {
-        var testNode = new TestBlockElementNode(IdGenerator.GetNextId(), null, null);
+        var testNode = new TestBlockElementNode(IdGenerator.GetNextId(), previousChild, null);
         configureChildNodes?.Invoke(GetChildTreeBuilder(testNode));
         Append(testNode);
         return testNode;
@@ -103,11 +103,8 @@ public class TreeBuilder : TreeBuilder.ITextTreeBuilder
 
     private void Append(DNode node)
     {
-        parent.AppendChild(node);
-        node.Origin = previousChild;
-        previousChild?.RightOrigin = node;
+        parent.InsertChild(node);
         previousChild = node;
-        
         NodeAdded?.Invoke(node);
     }
 
