@@ -73,11 +73,10 @@ public class DeleteContentForwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            TextNode textNode2 = null!;
             var parent = builder.TestInlineElementNode(t =>
             {
                 textNode = t.Text("ab");
-                textNode2 = t.Text("c");
+                t.Text("c");
             });
 
             // Act
@@ -87,9 +86,9 @@ public class DeleteContentForwardHandlerTests
             Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(textNode.IsDeleted, Is.False);
-                Assert.That(textNode.RightOrigin!.IsDeleted, Is.True);
-                Assert.That(textNode2.IsDeleted, Is.False);
+                Assert.That(parent.ChildNodes[0].IsDeleted, Is.False);
+                Assert.That(parent.ChildNodes[1].IsDeleted, Is.True);
+                Assert.That(parent.ChildNodes[2].IsDeleted, Is.False);
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 1);

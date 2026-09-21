@@ -54,8 +54,8 @@ public partial class DebugTreePanel(IEditorDebugService debugService, IDScratchS
                 Type = current.GetType().Name,
                 Indent = indent,
                 IsDeleted = current.IsDeleted,
-                OriginId = current.Origin?.Id.Value ?? "null",
-                RightOriginId = current.RightOrigin?.Id.Value ?? "null",
+                OriginId = current.Origin?.Value ?? "null",
+                RightOriginId = current.RightOrigin?.Value ?? "null",
                 TextContent = text,
                 Href = href
             });

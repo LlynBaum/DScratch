@@ -2,7 +2,7 @@ using DScratch.Nodes.NodeTypes;
 
 namespace DScratch.Nodes;
 
-public class LinkNode(NodeId id, DNode? origin, DNode? rightOrigin, string href, string target, List<DNode>? childNodes = null) 
+public class LinkNode(NodeId id, NodeId? origin, NodeId? rightOrigin, string href, string target, List<DNode>? childNodes = null) 
     : DNode(id, origin, rightOrigin, childNodes), IInlineElement
 {
     public string Href { get; private set; } = href;

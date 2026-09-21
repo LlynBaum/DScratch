@@ -53,10 +53,10 @@ public class MoveRangeStepTests
         {
             Assert.That(text1.Parent, Is.EqualTo(parent));
             Assert.That(text1.Origin, Is.Null);
-            Assert.That(text1.RightOrigin, Is.EqualTo(text5));
+            Assert.That(text1.RightOrigin, Is.EqualTo(text5.Id));
         
             Assert.That(text5.Parent, Is.EqualTo(parent));
-            Assert.That(text5.Origin, Is.EqualTo(text1));
+            Assert.That(text5.Origin, Is.EqualTo(text1.Id));
             Assert.That(text5.RightOrigin, Is.Null);
         }
 
@@ -64,22 +64,22 @@ public class MoveRangeStepTests
         {
             Assert.That(newSibling.Parent, Is.EqualTo(newParent));
             Assert.That(newSibling.Origin, Is.Null);
-            Assert.That(newSibling.RightOrigin, Is.EqualTo(text2));
+            Assert.That(newSibling.RightOrigin, Is.EqualTo(text2.Id));
             
             Assert.That(text2.Parent, Is.EqualTo(newParent));
-            Assert.That(text2.Origin, Is.EqualTo(newSibling));
-            Assert.That(text2.RightOrigin, Is.EqualTo(text3));
+            Assert.That(text2.Origin, Is.EqualTo(newSibling.Id));
+            Assert.That(text2.RightOrigin, Is.EqualTo(text3.Id));
             
             Assert.That(text3.Parent, Is.EqualTo(newParent));
-            Assert.That(text3.Origin, Is.EqualTo(text2));
-            Assert.That(text3.RightOrigin, Is.EqualTo(text4));
+            Assert.That(text3.Origin, Is.EqualTo(text2.Id));
+            Assert.That(text3.RightOrigin, Is.EqualTo(text4.Id));
         
             Assert.That(text4.Parent, Is.EqualTo(newParent));
-            Assert.That(text4.Origin, Is.EqualTo(text3));
-            Assert.That(text4.RightOrigin, Is.EqualTo(sibling2));
+            Assert.That(text4.Origin, Is.EqualTo(text3.Id));
+            Assert.That(text4.RightOrigin, Is.EqualTo(sibling2.Id));
             
             Assert.That(sibling2.Parent, Is.EqualTo(newParent));
-            Assert.That(sibling2.Origin, Is.EqualTo(text4));
+            Assert.That(sibling2.Origin, Is.EqualTo(text4.Id));
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
             
@@ -129,10 +129,10 @@ public class MoveRangeStepTests
         {
             Assert.That(text1.Parent, Is.EqualTo(parent));
             Assert.That(text1.Origin, Is.Null);
-            Assert.That(text1.RightOrigin, Is.EqualTo(text2));
+            Assert.That(text1.RightOrigin, Is.EqualTo(text2.Id));
         
             Assert.That(text2.Parent, Is.EqualTo(parent));
-            Assert.That(text2.Origin, Is.EqualTo(text1));
+            Assert.That(text2.Origin, Is.EqualTo(text1.Id));
             Assert.That(text2.RightOrigin, Is.Null);
         }
 
@@ -140,22 +140,22 @@ public class MoveRangeStepTests
         {
             Assert.That(newSibling.Parent, Is.EqualTo(newParent));
             Assert.That(newSibling.Origin, Is.Null);
-            Assert.That(newSibling.RightOrigin, Is.EqualTo(text3));
+            Assert.That(newSibling.RightOrigin, Is.EqualTo(text3.Id));
             
             Assert.That(text3.Parent, Is.EqualTo(newParent));
-            Assert.That(text3.Origin, Is.EqualTo(newSibling));
-            Assert.That(text3.RightOrigin, Is.EqualTo(text4));
+            Assert.That(text3.Origin, Is.EqualTo(newSibling.Id));
+            Assert.That(text3.RightOrigin, Is.EqualTo(text4.Id));
             
             Assert.That(text4.Parent, Is.EqualTo(newParent));
-            Assert.That(text4.Origin, Is.EqualTo(text3));
-            Assert.That(text4.RightOrigin, Is.EqualTo(text5));
+            Assert.That(text4.Origin, Is.EqualTo(text3.Id));
+            Assert.That(text4.RightOrigin, Is.EqualTo(text5.Id));
         
             Assert.That(text5.Parent, Is.EqualTo(newParent));
-            Assert.That(text5.Origin, Is.EqualTo(text4));
-            Assert.That(text5.RightOrigin, Is.EqualTo(sibling2));
+            Assert.That(text5.Origin, Is.EqualTo(text4.Id));
+            Assert.That(text5.RightOrigin, Is.EqualTo(sibling2.Id));
             
             Assert.That(sibling2.Parent, Is.EqualTo(newParent));
-            Assert.That(sibling2.Origin, Is.EqualTo(text5));
+            Assert.That(sibling2.Origin, Is.EqualTo(text5.Id));
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
             
@@ -205,10 +205,10 @@ public class MoveRangeStepTests
         {
             Assert.That(text4.Parent, Is.EqualTo(parent));
             Assert.That(text4.Origin, Is.Null);
-            Assert.That(text4.RightOrigin, Is.EqualTo(text5));
+            Assert.That(text4.RightOrigin, Is.EqualTo(text5.Id));
         
             Assert.That(text5.Parent, Is.EqualTo(parent));
-            Assert.That(text5.Origin, Is.EqualTo(text4));
+            Assert.That(text5.Origin, Is.EqualTo(text4.Id));
             Assert.That(text5.RightOrigin, Is.Null);
         }
 
@@ -216,22 +216,22 @@ public class MoveRangeStepTests
         {
             Assert.That(newSibling.Parent, Is.EqualTo(newParent));
             Assert.That(newSibling.Origin, Is.Null);
-            Assert.That(newSibling.RightOrigin, Is.EqualTo(text1));
+            Assert.That(newSibling.RightOrigin, Is.EqualTo(text1.Id));
             
             Assert.That(text1.Parent, Is.EqualTo(newParent));
-            Assert.That(text1.Origin, Is.EqualTo(newSibling));
-            Assert.That(text1.RightOrigin, Is.EqualTo(text2));
+            Assert.That(text1.Origin, Is.EqualTo(newSibling.Id));
+            Assert.That(text1.RightOrigin, Is.EqualTo(text2.Id));
             
             Assert.That(text2.Parent, Is.EqualTo(newParent));
-            Assert.That(text2.Origin, Is.EqualTo(text1));
-            Assert.That(text2.RightOrigin, Is.EqualTo(text3));
+            Assert.That(text2.Origin, Is.EqualTo(text1.Id));
+            Assert.That(text2.RightOrigin, Is.EqualTo(text3.Id));
         
             Assert.That(text3.Parent, Is.EqualTo(newParent));
-            Assert.That(text3.Origin, Is.EqualTo(text2));
-            Assert.That(text3.RightOrigin, Is.EqualTo(sibling2));
+            Assert.That(text3.Origin, Is.EqualTo(text2.Id));
+            Assert.That(text3.RightOrigin, Is.EqualTo(sibling2.Id));
             
             Assert.That(sibling2.Parent, Is.EqualTo(newParent));
-            Assert.That(sibling2.Origin, Is.EqualTo(text3));
+            Assert.That(sibling2.Origin, Is.EqualTo(text3.Id));
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
             
@@ -281,10 +281,10 @@ public class MoveRangeStepTests
         {
             Assert.That(text1.Parent, Is.EqualTo(parent));
             Assert.That(text1.Origin, Is.Null);
-            Assert.That(text1.RightOrigin, Is.EqualTo(text5));
+            Assert.That(text1.RightOrigin, Is.EqualTo(text5.Id));
         
             Assert.That(text5.Parent, Is.EqualTo(parent));
-            Assert.That(text5.Origin, Is.EqualTo(text1));
+            Assert.That(text5.Origin, Is.EqualTo(text1.Id));
             Assert.That(text5.RightOrigin, Is.Null);
         }
 
@@ -292,22 +292,22 @@ public class MoveRangeStepTests
         {
             Assert.That(text2.Parent, Is.EqualTo(newParent));
             Assert.That(text2.Origin, Is.Null);
-            Assert.That(text2.RightOrigin, Is.EqualTo(text3));
+            Assert.That(text2.RightOrigin, Is.EqualTo(text3.Id));
             
             Assert.That(text3.Parent, Is.EqualTo(newParent));
-            Assert.That(text3.Origin, Is.EqualTo(text2));
-            Assert.That(text3.RightOrigin, Is.EqualTo(text4));
+            Assert.That(text3.Origin, Is.EqualTo(text2.Id));
+            Assert.That(text3.RightOrigin, Is.EqualTo(text4.Id));
         
             Assert.That(text4.Parent, Is.EqualTo(newParent));
-            Assert.That(text4.Origin, Is.EqualTo(text3));
-            Assert.That(text4.RightOrigin, Is.EqualTo(sibling1));
+            Assert.That(text4.Origin, Is.EqualTo(text3.Id));
+            Assert.That(text4.RightOrigin, Is.EqualTo(sibling1.Id));
             
             Assert.That(sibling1.Parent, Is.EqualTo(newParent));
-            Assert.That(sibling1.Origin, Is.EqualTo(text4));
-            Assert.That(sibling1.RightOrigin, Is.EqualTo(sibling2));
+            Assert.That(sibling1.Origin, Is.EqualTo(text4.Id));
+            Assert.That(sibling1.RightOrigin, Is.EqualTo(sibling2.Id));
             
             Assert.That(sibling2.Parent, Is.EqualTo(newParent));
-            Assert.That(sibling2.Origin, Is.EqualTo(sibling1));
+            Assert.That(sibling2.Origin, Is.EqualTo(sibling1.Id));
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
 
@@ -358,10 +358,10 @@ public class MoveRangeStepTests
         {
             Assert.That(text1.Parent, Is.EqualTo(parent));
             Assert.That(text1.Origin, Is.Null);
-            Assert.That(text1.RightOrigin, Is.EqualTo(text2));
+            Assert.That(text1.RightOrigin, Is.EqualTo(text2.Id));
         
             Assert.That(text2.Parent, Is.EqualTo(parent));
-            Assert.That(text2.Origin, Is.EqualTo(text1));
+            Assert.That(text2.Origin, Is.EqualTo(text1.Id));
             Assert.That(text2.RightOrigin, Is.Null);
         }
 
@@ -369,22 +369,22 @@ public class MoveRangeStepTests
         {
             Assert.That(text3.Parent, Is.EqualTo(newParent));
             Assert.That(text3.Origin, Is.Null);
-            Assert.That(text3.RightOrigin, Is.EqualTo(text4));
+            Assert.That(text3.RightOrigin, Is.EqualTo(text4.Id));
             
             Assert.That(text4.Parent, Is.EqualTo(newParent));
-            Assert.That(text4.Origin, Is.EqualTo(text3));
-            Assert.That(text4.RightOrigin, Is.EqualTo(text5));
+            Assert.That(text4.Origin, Is.EqualTo(text3.Id));
+            Assert.That(text4.RightOrigin, Is.EqualTo(text5.Id));
         
             Assert.That(text5.Parent, Is.EqualTo(newParent));
-            Assert.That(text5.Origin, Is.EqualTo(text4));
-            Assert.That(text5.RightOrigin, Is.EqualTo(sibling1));
+            Assert.That(text5.Origin, Is.EqualTo(text4.Id));
+            Assert.That(text5.RightOrigin, Is.EqualTo(sibling1.Id));
             
             Assert.That(sibling1.Parent, Is.EqualTo(newParent));
-            Assert.That(sibling1.Origin, Is.EqualTo(text5));
-            Assert.That(sibling1.RightOrigin, Is.EqualTo(sibling2));
+            Assert.That(sibling1.Origin, Is.EqualTo(text5.Id));
+            Assert.That(sibling1.RightOrigin, Is.EqualTo(sibling2.Id));
             
             Assert.That(sibling2.Parent, Is.EqualTo(newParent));
-            Assert.That(sibling2.Origin, Is.EqualTo(sibling1));
+            Assert.That(sibling2.Origin, Is.EqualTo(sibling1.Id));
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
             
@@ -434,10 +434,10 @@ public class MoveRangeStepTests
         {
             Assert.That(text1.Parent, Is.EqualTo(parent));
             Assert.That(text1.Origin, Is.Null);
-            Assert.That(text1.RightOrigin, Is.EqualTo(text2));
+            Assert.That(text1.RightOrigin, Is.EqualTo(text2.Id));
         
             Assert.That(text2.Parent, Is.EqualTo(parent));
-            Assert.That(text2.Origin, Is.EqualTo(text1));
+            Assert.That(text2.Origin, Is.EqualTo(text1.Id));
             Assert.That(text2.RightOrigin, Is.Null);
         }
 
@@ -445,22 +445,22 @@ public class MoveRangeStepTests
         {
             Assert.That(sibling1.Parent, Is.EqualTo(newParent));
             Assert.That(sibling1.Origin, Is.Null);
-            Assert.That(sibling1.RightOrigin, Is.EqualTo(sibling2));
+            Assert.That(sibling1.RightOrigin, Is.EqualTo(sibling2.Id));
             
             Assert.That(sibling2.Parent, Is.EqualTo(newParent));
-            Assert.That(sibling2.Origin, Is.EqualTo(sibling1));
-            Assert.That(sibling2.RightOrigin, Is.EqualTo(text3));
+            Assert.That(sibling2.Origin, Is.EqualTo(sibling1.Id));
+            Assert.That(sibling2.RightOrigin, Is.EqualTo(text3.Id));
             
             Assert.That(text3.Parent, Is.EqualTo(newParent));
-            Assert.That(text3.Origin, Is.EqualTo(sibling2));
-            Assert.That(text3.RightOrigin, Is.EqualTo(text4));
+            Assert.That(text3.Origin, Is.EqualTo(sibling2.Id));
+            Assert.That(text3.RightOrigin, Is.EqualTo(text4.Id));
             
             Assert.That(text4.Parent, Is.EqualTo(newParent));
-            Assert.That(text4.Origin, Is.EqualTo(text3));
-            Assert.That(text4.RightOrigin, Is.EqualTo(text5));
+            Assert.That(text4.Origin, Is.EqualTo(text3.Id));
+            Assert.That(text4.RightOrigin, Is.EqualTo(text5.Id));
         
             Assert.That(text5.Parent, Is.EqualTo(newParent));
-            Assert.That(text5.Origin, Is.EqualTo(text4));
+            Assert.That(text5.Origin, Is.EqualTo(text4.Id));
             Assert.That(text5.RightOrigin, Is.Null);
         }
             
@@ -510,10 +510,10 @@ public class MoveRangeStepTests
         {
             Assert.That(text4.Parent, Is.EqualTo(parent));
             Assert.That(text4.Origin, Is.Null);
-            Assert.That(text4.RightOrigin, Is.EqualTo(text5));
+            Assert.That(text4.RightOrigin, Is.EqualTo(text5.Id));
         
             Assert.That(text5.Parent, Is.EqualTo(parent));
-            Assert.That(text5.Origin, Is.EqualTo(text4));
+            Assert.That(text5.Origin, Is.EqualTo(text4.Id));
             Assert.That(text5.RightOrigin, Is.Null);
         }
 
@@ -521,22 +521,22 @@ public class MoveRangeStepTests
         {
             Assert.That(text1.Parent, Is.EqualTo(newParent));
             Assert.That(text1.Origin, Is.Null);
-            Assert.That(text1.RightOrigin, Is.EqualTo(text2));
+            Assert.That(text1.RightOrigin, Is.EqualTo(text2.Id));
             
             Assert.That(text2.Parent, Is.EqualTo(newParent));
-            Assert.That(text2.Origin, Is.EqualTo(text1));
-            Assert.That(text2.RightOrigin, Is.EqualTo(text3));
+            Assert.That(text2.Origin, Is.EqualTo(text1.Id));
+            Assert.That(text2.RightOrigin, Is.EqualTo(text3.Id));
         
             Assert.That(text3.Parent, Is.EqualTo(newParent));
-            Assert.That(text3.Origin, Is.EqualTo(text2));
-            Assert.That(text3.RightOrigin, Is.EqualTo(sibling1));
+            Assert.That(text3.Origin, Is.EqualTo(text2.Id));
+            Assert.That(text3.RightOrigin, Is.EqualTo(sibling1.Id));
             
             Assert.That(sibling1.Parent, Is.EqualTo(newParent));
-            Assert.That(sibling1.Origin, Is.EqualTo(text3));
-            Assert.That(sibling1.RightOrigin, Is.EqualTo(sibling2));
+            Assert.That(sibling1.Origin, Is.EqualTo(text3.Id));
+            Assert.That(sibling1.RightOrigin, Is.EqualTo(sibling2.Id));
             
             Assert.That(sibling2.Parent, Is.EqualTo(newParent));
-            Assert.That(sibling2.Origin, Is.EqualTo(sibling1));
+            Assert.That(sibling2.Origin, Is.EqualTo(sibling1.Id));
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
 

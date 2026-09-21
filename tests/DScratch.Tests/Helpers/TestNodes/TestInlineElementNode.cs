@@ -3,7 +3,7 @@ using DScratch.Nodes.NodeTypes;
 
 namespace DScratch.Tests.Helpers.TestNodes;
 
-public class TestInlineElementNode(NodeId id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null) 
+public class TestInlineElementNode(NodeId id, NodeId? origin, NodeId? rightOrigin, List<DNode>? childNodes = null) 
     : DNode(id, origin, rightOrigin, childNodes), IInlineElement
 {
     public static TestInlineElementNode Empty()

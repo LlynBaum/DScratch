@@ -27,8 +27,8 @@ public class TreeVisualizer(DNode root)
     {
         var deletedChar = node.IsDeleted ? " X" : "";
         
-        var originId = node.Origin is not null ? node.Origin.Id.Value : "null";
-        var rightOriginId = node.RightOrigin is not null ? node.RightOrigin.Id.Value : "null";
+        var originId = node.Origin is not null ? node.Origin?.Value : "null";
+        var rightOriginId = node.RightOrigin is not null ? node.RightOrigin?.Value : "null";
         switch (node)
         {
             case TextNode textNode:

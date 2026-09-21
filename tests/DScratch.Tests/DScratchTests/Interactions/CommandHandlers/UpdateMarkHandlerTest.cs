@@ -67,15 +67,15 @@ public class UpdateMarkHandlerTest
         }
         
         Assert.That(command.ExecuteCall, Is.EquivalentTo([
-            start.RightOrigin,
-            start.RightOrigin!.RightOrigin,
-            end.Origin,
-            end
+            parent1.ChildNodes[1].Id,
+            parent1.ChildNodes[2].Id,
+            parent2.ChildNodes[0].Id,
+            parent2.ChildNodes[1].Id,
         ]));
         
         AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
         {
-            AnchorId = start.RightOrigin!.Id.Value,
+            AnchorId = start.RightOrigin!.Value.Value,
             AnchorOffset = 0,
             FocusId = end.Id.Value,
             FocusOffset = 1
@@ -108,15 +108,15 @@ public class UpdateMarkHandlerTest
         }
 
         Assert.That(command.ExecuteCall, Is.EquivalentTo([
-            start.RightOrigin,
-            end
+            parent.ChildNodes[1].Id,
+            parent.ChildNodes[2].Id
         ]));
         
         AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
         {
             AnchorId = end.Id.Value,
             AnchorOffset = 1,
-            FocusId = start.RightOrigin!.Id.Value,
+            FocusId = start.RightOrigin!.Value.Value,
             FocusOffset = 0,
             Direction = SelectionDirection.Backward
         });
@@ -204,11 +204,11 @@ public class UpdateMarkHandlerTest
     {
         public bool AddPendingCalled { get; private set; } = false;
 
-        public readonly List<DNode> ExecuteCall = [];
+        public readonly List<NodeId> ExecuteCall = [];
         
         public void Execute(ITransaction transaction, DNode anchor, IEnumerable<DNode> nodes)
         {
-            ExecuteCall.AddRange(nodes);
+            ExecuteCall.AddRange(nodes.Select(n => n.Id));
         }
 
         public void AddPending(IUserStateService userStateService)

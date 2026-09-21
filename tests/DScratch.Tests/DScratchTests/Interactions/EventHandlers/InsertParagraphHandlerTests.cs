@@ -42,14 +42,15 @@ public class InsertParagraphHandlerTests
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode.Id, 0));
 
             // Assert
+            Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(2));
             Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
             using (Assert.EnterMultipleScope())
             {
+                Assert.That(builder.Root.ChildNodes[1], Is.EqualTo(parent));
                 Assert.That(((TextNode)parent.FirstChild!).TextContent, Is.EqualTo("abc"));
 
-                Assert.That(parent.Origin, Is.Not.Null);
-                Assert.That(parent.Origin!.RightOrigin, Is.EqualTo(parent));
-                Assert.That(parent.Origin.ChildNodes, Has.Count.Zero);
+                Assert.That(builder.Root.ChildNodes[0].RightOrigin, Is.EqualTo(parent.Id));
+                Assert.That(builder.Root.ChildNodes[0].ChildNodes, Has.Count.Zero);
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
@@ -184,9 +185,10 @@ public class InsertParagraphHandlerTests
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode2.Id, 1));
             
             // Assert
-            Assert.That(parent.RightOrigin, Is.Not.Null);
-            Assert.That(parent.RightOrigin, Is.TypeOf<ParagraphNode>());
-            Assert.That(parent.RightOrigin.Marks, Is.EquivalentTo(new Dictionary<MarkKey, string>
+            Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(2));
+            Assert.That(builder.Root.ChildNodes[1], Is.EqualTo(parent));
+            Assert.That(builder.Root.ChildNodes[0], Is.TypeOf<ParagraphNode>());
+            Assert.That(builder.Root.ChildNodes[0].Marks, Is.EquivalentTo(new Dictionary<MarkKey, string>
             {
                 { MarkKey.Color, "#000" },
                 { MarkKey.FontWeight, "bold" }
@@ -213,9 +215,10 @@ public class InsertParagraphHandlerTests
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(textNode2.Id, 0));
             
             // Assert
-            Assert.That(parent.Origin, Is.Not.Null);
-            Assert.That(parent.Origin, Is.TypeOf<ParagraphNode>());
-            Assert.That(parent.Origin.Marks, Is.EquivalentTo(new Dictionary<MarkKey, string>
+            Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(2));
+            Assert.That(builder.Root.ChildNodes[0], Is.EqualTo(parent));
+            Assert.That(builder.Root.ChildNodes[1], Is.TypeOf<ParagraphNode>());
+            Assert.That(builder.Root.ChildNodes[1].Marks, Is.EquivalentTo(new Dictionary<MarkKey, string>
             {
                 { MarkKey.FontWeight, "bold" }
             }));

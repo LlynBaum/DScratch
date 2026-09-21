@@ -76,8 +76,8 @@ public class DeleteWordBackwardHandlerTests
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
             }
             
-            Assert.That(text.RightOrigin, Is.TypeOf<TextNode>());
-            var remainingText = (TextNode)text.RightOrigin!;
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+            var remainingText = (TextNode)parent.ChildNodes[1];
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(remainingText.IsDeleted, Is.False);
@@ -108,8 +108,8 @@ public class DeleteWordBackwardHandlerTests
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
             }
             
-            Assert.That(text.RightOrigin, Is.TypeOf<TextNode>());
-            var tombstone = (TextNode)text.RightOrigin!;
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+            var tombstone = (TextNode)parent.ChildNodes[1];
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(tombstone.IsDeleted, Is.True);

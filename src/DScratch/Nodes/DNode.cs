@@ -3,7 +3,7 @@ using DScratch.Nodes.NodeTypes;
 
 namespace DScratch.Nodes;
 
-public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<DNode>? childNodes = null) : IDNode
+public abstract class DNode(NodeId id, NodeId? origin, NodeId? rightOrigin, List<DNode>? childNodes = null) : IDNode
 {
     private readonly List<DNode> allChildNodes = childNodes ?? [];
     
@@ -11,9 +11,9 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
     
     public NodeId Id { get; } = id;
     
-    public DNode? Origin { get; } = origin;
+    public NodeId? Origin { get; } = origin;
 
-    public DNode? RightOrigin { get; } = rightOrigin;
+    public NodeId? RightOrigin { get; } = rightOrigin;
 
     public bool IsDeleted { get; private set; }
 
@@ -47,8 +47,8 @@ public abstract class DNode(NodeId id, DNode? origin, DNode? rightOrigin, List<D
     {
         node.Parent = this;
 
-        var originIdx = node.Origin is not null ? allChildNodes.FindIndex(n => n.Id == node.Origin.Id) : -1;
-        var rightOriginIdx = node.RightOrigin is not null ? allChildNodes.FindIndex(n => n.Id == node.RightOrigin.Id) : allChildNodes.Count;
+        var originIdx = node.Origin is not null ? allChildNodes.FindIndex(n => n.Id == node.Origin) : -1;
+        var rightOriginIdx = node.RightOrigin is not null ? allChildNodes.FindIndex(n => n.Id == node.RightOrigin) : allChildNodes.Count;
 
         var index = originIdx + 1;
         while (index < rightOriginIdx)

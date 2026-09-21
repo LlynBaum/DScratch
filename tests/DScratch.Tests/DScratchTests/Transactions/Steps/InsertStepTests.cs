@@ -1,6 +1,5 @@
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
-using DScratch.Tests.Helpers.TestNodes;
 using DScratch.Transactions.Steps;
 
 namespace DScratch.Tests.DScratchTests.Transactions.Steps;
@@ -30,7 +29,7 @@ public class InsertStepTests
             t.Text("a");         // ID "4"
         });
 
-        var node = new TextNode(new NodeId("Test", -1), node3, node4);     
+        var node = new TextNode(new NodeId("Test", -1), node3.Id, node4.Id);     
         
         // Act
         var step = new InsertStep(node, node2);
@@ -62,7 +61,7 @@ public class InsertStepTests
             node4 = t.Text("a"); // ID "3"
         });
 
-        var node = new TextNode(new NodeId("Test", -1), node4, null);        
+        var node = new TextNode(new NodeId("Test", -1), node4.Id, null);        
         
         // Act
         var step = new InsertStep(node, node2);
@@ -120,7 +119,7 @@ public class InsertStepTests
             node4 = t.Text("ab"); // ID "1"
         });
 
-        var node = new TextNode(new NodeId(node4.LastId.Client, node4.LastId.Clock + 2), node4, null, "c");
+        var node = new TextNode(new NodeId(node4.LastId.Client, node4.LastId.Clock + 2), node4.Id, null, "c");
         
         // Act
         var step = new InsertStep(node, node2);
@@ -148,7 +147,7 @@ public class InsertStepTests
             node4 = t.Text("ab"); // ID "1"
         });
 
-        var node = new TextNode(new NodeId("whatever", node4.LastId.Clock + 1), node4, null, "c");
+        var node = new TextNode(new NodeId("whatever", node4.LastId.Clock + 1), node4.Id, null, "c");
         
         // Act
         var step = new InsertStep(node, node2);
@@ -176,7 +175,7 @@ public class InsertStepTests
             node4 = t.Text("ab"); // ID "1"
         });
 
-        var node = new TextNode(new NodeId(node4.LastId.Client, node4.LastId.Clock + 1), null, node4, "c");
+        var node = new TextNode(new NodeId(node4.LastId.Client, node4.LastId.Clock + 1), null, node4.Id, "c");
         
         // Act
         var step = new InsertStep(node, node2);

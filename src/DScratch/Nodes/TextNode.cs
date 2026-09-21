@@ -1,6 +1,6 @@
 namespace DScratch.Nodes;
 
-public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string content = "") 
+public class TextNode(NodeId id, NodeId? origin, NodeId? rightOrigin, string content = "") 
     : DNode(id, origin, rightOrigin)
 {
     public int Length => TextContent.Length;
@@ -29,7 +29,7 @@ public class TextNode(NodeId id, DNode? origin, DNode? rightOrigin, string conte
 
         TextContent = remainingText;
         
-        var newNode = new TextNode(takeId.Invoke(otherText.Length), this, RightOrigin)
+        var newNode = new TextNode(takeId.Invoke(otherText.Length), Id, RightOrigin)
         {
             TextContent = otherText
         };

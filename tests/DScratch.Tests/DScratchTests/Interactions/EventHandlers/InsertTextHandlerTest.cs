@@ -581,7 +581,7 @@ public class InsertTextHandlerTest
         {
             // Arrange
             TextNode node = null!;
-            builder.Paragraph(t =>
+            var parent = builder.Paragraph(t =>
             {
                 node = t.Text("a");
             });
@@ -593,7 +593,7 @@ public class InsertTextHandlerTest
             
             // Assert
             Assert.That(node.RightOrigin, Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)node.RightOrigin).Marks, Is.EquivalentTo(node.Marks));
+            Assert.That(((TextNode)parent.ChildNodes[1]).Marks, Is.EquivalentTo(node.Marks));
         }
         
         [Test]
@@ -602,7 +602,7 @@ public class InsertTextHandlerTest
             // Arrange
             TextNode node = null!;
             TextNode right = null!;
-            builder.Paragraph(t =>
+            var parent = builder.Paragraph(t =>
             {
                 node = t.Text("a");
                 right = t.Text("a");
@@ -616,7 +616,7 @@ public class InsertTextHandlerTest
             
             // Assert
             Assert.That(node.RightOrigin, Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)node.RightOrigin).Marks, Is.EquivalentTo(node.Marks));
+            Assert.That(((TextNode)parent.ChildNodes[1]).Marks, Is.EquivalentTo(node.Marks));
         }
 
         [Test]
@@ -624,7 +624,7 @@ public class InsertTextHandlerTest
         {
             // Arrange
             TextNode node = null!;
-            builder.Paragraph(t =>
+            var parent = builder.Paragraph(t =>
             {
                 node = t.Text("a");
             });
@@ -636,7 +636,7 @@ public class InsertTextHandlerTest
             
             // Assert
             Assert.That(node.Origin, Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)node.Origin).Marks, Is.EquivalentTo(new Dictionary<MarkKey, string> { { MarkKey.FontWeight, "bold" } }));
+            Assert.That(((TextNode)parent.ChildNodes[0]).Marks, Is.EquivalentTo(new Dictionary<MarkKey, string> { { MarkKey.FontWeight, "bold" } }));
         }
         
         [Test]
@@ -682,7 +682,7 @@ public class InsertTextHandlerTest
         {
             // Arrange
             TextNode node = null!;
-            builder.Paragraph(t =>
+            var parent = builder.Paragraph(t =>
             {
                 node = t.Text("a");
             });
@@ -695,7 +695,7 @@ public class InsertTextHandlerTest
             
             // Assert
             Assert.That(node.RightOrigin, Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)node.RightOrigin).Marks, Is.EquivalentTo(new Dictionary<MarkKey, string> { { MarkKey.FontStyle, "italic" }, { MarkKey.FontWeight, "bold" } }));
+            Assert.That(((TextNode)parent.ChildNodes[1]).Marks, Is.EquivalentTo(new Dictionary<MarkKey, string> { { MarkKey.FontStyle, "italic" }, { MarkKey.FontWeight, "bold" } }));
         }
         
         [Test]
@@ -703,7 +703,7 @@ public class InsertTextHandlerTest
         {
             // Arrange
             TextNode node = null!;
-            builder.Paragraph(t =>
+            var parent = builder.Paragraph(t =>
             {
                 node = t.Text("a");
             });
@@ -716,7 +716,7 @@ public class InsertTextHandlerTest
             
             // Assert
             Assert.That(node.RightOrigin, Is.TypeOf<TextNode>());
-            Assert.That(((TextNode)node.RightOrigin).Marks, Is.EquivalentTo(new Dictionary<MarkKey, string> { { MarkKey.Color, "b" } }));
+            Assert.That(((TextNode)parent.ChildNodes[1]).Marks, Is.EquivalentTo(new Dictionary<MarkKey, string> { { MarkKey.Color, "b" } }));
         }
     }
 }

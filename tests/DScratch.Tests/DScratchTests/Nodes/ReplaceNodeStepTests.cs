@@ -39,8 +39,8 @@ public class ReplaceNodeStepTests
             Assert.That(testee.Id, Is.EqualTo(nodeToReplace.Id));
             Assert.That(testee.HeadingLevel, Is.EqualTo(HeadingLevel.Level1));
             Assert.That(testee.Parent, Is.EqualTo(builder.Root));
-            Assert.That(testee.Origin, Is.EqualTo(origin));
-            Assert.That(testee.RightOrigin, Is.EqualTo(rightOrigin));
+            Assert.That(testee.Origin, Is.EqualTo(origin.Id));
+            Assert.That(testee.RightOrigin, Is.EqualTo(rightOrigin.Id));
             Assert.That(testee.ChildNodes, Is.EquivalentTo([child]));
 
             Assert.That(nodeToReplace.Parent, Is.Null);

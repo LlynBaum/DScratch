@@ -81,12 +81,12 @@ public class TextNodeTests
             Assert.That(testNode.FirstChild!.Origin, Is.Null);
             Assert.That(testNode.FirstChild.RightOrigin, Is.Null);
             
-            Assert.That(textNode.Origin, Is.EqualTo(testNode.FirstChild));
+            Assert.That(textNode.Origin, Is.EqualTo(testNode.FirstChild.Id));
             Assert.That(textNode.RightOrigin, Is.Null);
-            Assert.That(result.Origin, Is.EqualTo(textNode));
+            Assert.That(result.Origin, Is.EqualTo(textNode.Id));
             Assert.That(result.RightOrigin, Is.Null);
             
-            Assert.That(testNode.LastChild!.Origin, Is.EqualTo(textNode));
+            Assert.That(testNode.LastChild!.Origin, Is.EqualTo(textNode.Id));
             Assert.That(testNode.LastChild.RightOrigin, Is.Null);
             
             Assert.That(textNode.Marks, Is.EqualTo(result.Marks));

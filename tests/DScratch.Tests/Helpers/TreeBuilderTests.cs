@@ -72,7 +72,7 @@ public class TreeBuilderTests
         
         using (Assert.EnterMultipleScope()) // paragraph2
         {
-            Assert.That(paragraph2.Origin, Is.EqualTo(paragraph1));
+            Assert.That(paragraph2.Origin, Is.EqualTo(paragraph1.Id));
             Assert.That(paragraph2.RightOrigin, Is.Null);
             
             Assert.That(paragraph2.ChildNodes, Has.Count.EqualTo(3));
@@ -85,18 +85,18 @@ public class TreeBuilderTests
             
             Assert.That(text2P2.TextContent, Is.EqualTo("t2"));
             Assert.That(text2P2.Parent, Is.EqualTo(paragraph2));
-            Assert.That(text2P2.Origin, Is.EqualTo(text1P2));
+            Assert.That(text2P2.Origin, Is.EqualTo(text1P2.Id));
             Assert.That(text2P2.RightOrigin, Is.Null);
             
             Assert.That(text3P2.TextContent, Is.EqualTo("t3"));
             Assert.That(text3P2.Parent, Is.EqualTo(paragraph2));
-            Assert.That(text3P2.Origin, Is.EqualTo(text2P2));
+            Assert.That(text3P2.Origin, Is.EqualTo(text2P2.Id));
             Assert.That(text3P2.RightOrigin, Is.Null);
         }
         
         using (Assert.EnterMultipleScope()) // blockElement
         {
-            Assert.That(blockElement.Origin, Is.EqualTo(paragraph2));
+            Assert.That(blockElement.Origin, Is.EqualTo(paragraph2.Id));
             Assert.That(blockElement.RightOrigin, Is.Null);
             
             Assert.That(blockElement.ChildNodes, Has.Count.EqualTo(2));
@@ -112,7 +112,7 @@ public class TreeBuilderTests
             
             Assert.That(paragraph3.ChildNodes, Has.Count.EqualTo(1));
             Assert.That(paragraph3.ChildNodes, Is.EquivalentTo([textP3]));
-            Assert.That(paragraph3.Origin, Is.EqualTo(inlineElement));
+            Assert.That(paragraph3.Origin, Is.EqualTo(inlineElement.Id));
             Assert.That(paragraph3.RightOrigin, Is.Null);
             Assert.That(textP3.Parent, Is.EqualTo(paragraph3));
             Assert.That(textP3.TextContent, Is.EqualTo("abc"));
@@ -120,7 +120,7 @@ public class TreeBuilderTests
         
         using (Assert.EnterMultipleScope()) // Root Elements
         {
-            Assert.That(testNode.Origin, Is.EqualTo(blockElement));
+            Assert.That(testNode.Origin, Is.EqualTo(blockElement.Id));
             Assert.That(testNode.RightOrigin, Is.Null);
         }
     }

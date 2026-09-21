@@ -98,8 +98,8 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
             }
 
-            Assert.That(text.RightOrigin, Is.TypeOf<TextNode>());
-            var tombstone = (TextNode)text.RightOrigin!;
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+            var tombstone = (TextNode)parent.ChildNodes[1];
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(tombstone.IsDeleted, Is.True);
@@ -130,15 +130,15 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
             }
             
-            Assert.That(text.RightOrigin, Is.TypeOf<TextNode>());
-            var remainingText = (TextNode)text.RightOrigin!;
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
+            var remainingText = (TextNode)parent.ChildNodes[1];
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(remainingText.IsDeleted, Is.False);
                 Assert.That(remainingText.TextContent, Is.EqualTo(" "));
             }
             
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.RightOrigin.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.RightOrigin!.Value, 0);
         }
         
         [Test]
@@ -157,7 +157,7 @@ public class DeleteWordForwardHandlerTests
 
             // Assert
             Assert.That(text.IsDeleted, Is.True);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Origin!.Id, 1);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Origin!.Value, 1);
         }
         
         [Test]
@@ -176,7 +176,7 @@ public class DeleteWordForwardHandlerTests
 
             // Assert
             Assert.That(text.IsDeleted, Is.True);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Origin!.Id, 2);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Origin!.Value, 2);
         }
         
         [Test]

@@ -79,7 +79,7 @@ public class TreeBuilder : TreeBuilder.ITextTreeBuilder
 
     public TestNode TestNode(Action<TreeBuilder>? configureChildNodes = null)
     {
-        var testNode = new TestNode(IdGenerator.GetNextId(), previousChild, null);
+        var testNode = new TestNode(IdGenerator.GetNextId(), previousChild?.Id, null);
         configureChildNodes?.Invoke(GetChildTreeBuilder(testNode));
         Append(testNode);
         return testNode;
@@ -87,7 +87,7 @@ public class TreeBuilder : TreeBuilder.ITextTreeBuilder
     
     public TestInlineElementNode TestInlineElementNode(Action<TreeBuilder>? configureChildNodes = null)
     {
-        var testNode = new TestInlineElementNode(IdGenerator.GetNextId(), previousChild, null);
+        var testNode = new TestInlineElementNode(IdGenerator.GetNextId(), previousChild?.Id, null);
         configureChildNodes?.Invoke(GetChildTreeBuilder(testNode));
         Append(testNode);
         return testNode;
@@ -95,7 +95,7 @@ public class TreeBuilder : TreeBuilder.ITextTreeBuilder
     
     public TestBlockElementNode TestBlockElementNode(Action<TreeBuilder>? configureChildNodes = null)
     {
-        var testNode = new TestBlockElementNode(IdGenerator.GetNextId(), previousChild, null);
+        var testNode = new TestBlockElementNode(IdGenerator.GetNextId(), previousChild?.Id, null);
         configureChildNodes?.Invoke(GetChildTreeBuilder(testNode));
         Append(testNode);
         return testNode;

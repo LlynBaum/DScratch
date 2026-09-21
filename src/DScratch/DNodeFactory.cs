@@ -9,7 +9,7 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
     
     public ParagraphNode Paragraph(DNode? origin, DNode? rightOrigin, IReadOnlyDictionary<MarkKey, string>? initMarks = null)
     {
-        var node = new ParagraphNode(nodeIdGenerator.GetNextId(), origin, rightOrigin);
+        var node = new ParagraphNode(nodeIdGenerator.GetNextId(), origin?.Id, rightOrigin?.Id);
         if(initMarks is not null) node.CopyMarks(initMarks);
         return node;
     }
@@ -21,7 +21,7 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
     
     public HeadingNode Heading(HeadingLevel headingLevel, DNode? origin, DNode? rightOrigin, IReadOnlyDictionary<MarkKey, string>? initMarks = null)
     {
-        var node = new HeadingNode(headingLevel, nodeIdGenerator.GetNextId(), origin, rightOrigin);
+        var node = new HeadingNode(headingLevel, nodeIdGenerator.GetNextId(), origin?.Id, rightOrigin?.Id);
         if(initMarks is not null) node.CopyMarks(initMarks);
         return node;
     }
@@ -33,7 +33,7 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
 
     public LinkNode LinkNode(DNode? origin, DNode? rightOrigin, string href, string target, IReadOnlyDictionary<MarkKey, string>? initMarks = null)
     {
-        var node = new LinkNode(nodeIdGenerator.GetNextId(), origin, rightOrigin, href, target);
+        var node = new LinkNode(nodeIdGenerator.GetNextId(), origin?.Id, rightOrigin?.Id, href, target);
         if(initMarks is not null) node.CopyMarks(initMarks);
         return node;
     }
@@ -46,7 +46,7 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
         }
         
         var nodeId = nodeIdGenerator.TakeIds(value.Length);
-        var textNode = new TextNode(nodeId, origin, rightOrigin);
+        var textNode = new TextNode(nodeId, origin?.Id, rightOrigin?.Id);
         textNode.AddText(value);
         if(initMarks is not null) textNode.CopyMarks(initMarks);
         return textNode;

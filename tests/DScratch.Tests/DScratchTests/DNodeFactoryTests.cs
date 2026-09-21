@@ -18,8 +18,8 @@ public class DNodeFactoryTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result.Id.Clock, Is.EqualTo(0));
-            Assert.That(result.Origin, Is.EqualTo(testNode));
-            Assert.That(result.RightOrigin, Is.EqualTo(testNode2));
+            Assert.That(result.Origin, Is.EqualTo(testNode.Id));
+            Assert.That(result.RightOrigin, Is.EqualTo(testNode2.Id));
         }
     }
     
@@ -33,14 +33,14 @@ public class DNodeFactoryTests
         var rightOrigin = TestNode.Empty();
         var child = TestNode.Empty();
         
-        var testNode = new ParagraphNode(id, origin, rightOrigin, [child]);
+        var testNode = new ParagraphNode(id, origin.Id, rightOrigin.Id, [child]);
         var result = factory.ParagraphFrom(testNode);
         
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result.Id, Is.EqualTo(id));
-            Assert.That(result.Origin, Is.EqualTo(origin));
-            Assert.That(result.RightOrigin, Is.EqualTo(rightOrigin));
+            Assert.That(result.Origin, Is.EqualTo(origin.Id));
+            Assert.That(result.RightOrigin, Is.EqualTo(rightOrigin.Id));
             Assert.That(result.ChildNodes, Is.EquivalentTo([child]));
         }
     }
@@ -63,8 +63,8 @@ public class DNodeFactoryTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result.Id.Clock, Is.EqualTo(0));
-            Assert.That(result.Origin, Is.EqualTo(testNode));
-            Assert.That(result.RightOrigin, Is.EqualTo(testNode2));
+            Assert.That(result.Origin, Is.EqualTo(testNode.Id));
+            Assert.That(result.RightOrigin, Is.EqualTo(testNode2.Id));
             Assert.That(result.HeadingLevel, Is.EqualTo(headingLevel));
         }
     }
@@ -79,14 +79,14 @@ public class DNodeFactoryTests
         var rightOrigin = TestNode.Empty();
         var child = TestNode.Empty();
         
-        var testNode = new HeadingNode(HeadingLevel.Level1, id, origin, rightOrigin, [child]);
+        var testNode = new HeadingNode(HeadingLevel.Level1, id, origin.Id, rightOrigin.Id, [child]);
         var result = factory.HeadingFrom(testNode, HeadingLevel.Level2);
         
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result.Id, Is.EqualTo(id));
-            Assert.That(result.Origin, Is.EqualTo(origin));
-            Assert.That(result.RightOrigin, Is.EqualTo(rightOrigin));
+            Assert.That(result.Origin, Is.EqualTo(origin.Id));
+            Assert.That(result.RightOrigin, Is.EqualTo(rightOrigin.Id));
             Assert.That(result.ChildNodes, Is.EquivalentTo([child]));
             Assert.That(result.HeadingLevel, Is.EqualTo(HeadingLevel.Level2));
         }
@@ -107,8 +107,8 @@ public class DNodeFactoryTests
         {
             Assert.That(result.Id.Clock, Is.EqualTo(0));
             Assert.That(result.TextContent, Is.EqualTo("abc"));
-            Assert.That(result.Origin, Is.EqualTo(testNode));
-            Assert.That(result.RightOrigin, Is.EqualTo(testNode2));
+            Assert.That(result.Origin, Is.EqualTo(testNode.Id));
+            Assert.That(result.RightOrigin, Is.EqualTo(testNode2.Id));
             
             Assert.That(nodeIdGen.GetNextId().Clock, Is.EqualTo(3));
         }
@@ -145,8 +145,8 @@ public class DNodeFactoryTests
             Assert.That(result.Id.Clock, Is.EqualTo(0));
             Assert.That(result.Href, Is.EqualTo("www.ggogle.com"));
             Assert.That(result.Target, Is.EqualTo("_blank"));
-            Assert.That(result.Origin, Is.EqualTo(testNode));
-            Assert.That(result.RightOrigin, Is.EqualTo(testNode2));
+            Assert.That(result.Origin, Is.EqualTo(testNode.Id));
+            Assert.That(result.RightOrigin, Is.EqualTo(testNode2.Id));
         }
     }
 }

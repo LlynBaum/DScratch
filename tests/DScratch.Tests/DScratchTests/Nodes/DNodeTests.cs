@@ -159,7 +159,7 @@ public class DNodeTests
             node = t.TestNode();
         });
         
-        var insert = new TestNode(new NodeId(), null, node);
+        var insert = new TestNode(new NodeId(), null, node.Id);
         
         // Act
         parent.InsertChild(insert);
@@ -180,7 +180,7 @@ public class DNodeTests
             node = t.TestNode();
         });
         
-        var insert = new TestNode(new NodeId(), node, null);
+        var insert = new TestNode(new NodeId(), node.Id, null);
         
         // Act
         parent.InsertChild(insert);
@@ -207,7 +207,7 @@ public class DNodeTests
             node2 = t.TestNode();
         });
 
-        var insert = new TestNode(new NodeId(), node, node2);
+        var insert = new TestNode(new NodeId(), node.Id, node2.Id);
         
         // Act
         parent.InsertChild(insert);
@@ -218,16 +218,16 @@ public class DNodeTests
         {
             var child1 = parent.ChildNodes[0];
             Assert.That(child1.Id, Is.EqualTo(node.Id));
-            Assert.That(child1.RightOrigin?.Id, Is.Null);
+            Assert.That(child1.RightOrigin, Is.Null);
             
             var child2 = parent.ChildNodes[1];
             Assert.That(child2.Id, Is.EqualTo(insert.Id));
-            Assert.That(child2.Origin?.Id, Is.EqualTo(node.Id));
-            Assert.That(child2.RightOrigin?.Id, Is.EqualTo(node2.Id));
+            Assert.That(child2.Origin, Is.EqualTo(node.Id));
+            Assert.That(child2.RightOrigin, Is.EqualTo(node2.Id));
             
             var child3 = parent.ChildNodes[2];
             Assert.That(child3.Id, Is.EqualTo(node2.Id));
-            Assert.That(child3.Origin?.Id, Is.EqualTo(node.Id));
+            Assert.That(child3.Origin, Is.EqualTo(node.Id));
         }
     }
 
