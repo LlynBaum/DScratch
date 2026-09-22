@@ -54,6 +54,18 @@ public class InsertTextHandlerTest
                 Assert.That(((TextNode)parent.LastChild!).TextContent, Is.EqualTo("abc"));
             }
 
+            using (Assert.EnterMultipleScope())
+            {
+                var text1 = (TextNode)parent.ChildNodes[0];
+                var text2 = parent.ChildNodes[1];
+                
+                Assert.That(text1.Origin, Is.Null);
+                Assert.That(text1.RightOrigin, Is.Null);
+                
+                Assert.That(text2.Origin, Is.EqualTo(text1.LastId));
+                Assert.That(text2.RightOrigin, Is.Null);
+            }
+
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.LastChild.Id, 3);
         }
         
@@ -77,6 +89,18 @@ public class InsertTextHandlerTest
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
                 Assert.That(parent.LastChild, Is.TypeOf<TextNode>());
                 Assert.That(((TextNode)parent.LastChild!).TextContent, Is.EqualTo("abc"));
+            }
+            
+            using (Assert.EnterMultipleScope())
+            {
+                var text1 = (TextNode)parent.ChildNodes[0];
+                var text2 = parent.ChildNodes[1];
+                
+                Assert.That(text1.Origin, Is.Null);
+                Assert.That(text1.RightOrigin, Is.Null);
+                
+                Assert.That(text2.Origin, Is.EqualTo(text1.LastId));
+                Assert.That(text2.RightOrigin, Is.Null);
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.LastChild.Id, 3);
@@ -102,6 +126,18 @@ public class InsertTextHandlerTest
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
                 Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
                 Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("abc"));
+            }
+            
+            using (Assert.EnterMultipleScope())
+            {
+                var text1 = (TextNode)parent.ChildNodes[0];
+                var text2 = parent.ChildNodes[1];
+                
+                Assert.That(text1.Origin, Is.Null);
+                Assert.That(text1.RightOrigin, Is.Null);
+                
+                Assert.That(text2.Origin, Is.EqualTo(text1.LastId));
+                Assert.That(text2.RightOrigin, Is.Null);
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
@@ -130,6 +166,22 @@ public class InsertTextHandlerTest
                 Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("x"));
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("abc"));
             }
+            
+            using (Assert.EnterMultipleScope())
+            {
+                var text1 = (TextNode)parent.ChildNodes[0];
+                var text2 = (TextNode)parent.ChildNodes[1];
+                var text3 = (TextNode)parent.ChildNodes[2];
+                
+                Assert.That(text1.Origin, Is.Null);
+                Assert.That(text1.RightOrigin, Is.Null);
+                
+                Assert.That(text2.Origin, Is.EqualTo(text1.LastId));
+                Assert.That(text2.RightOrigin, Is.Null);
+                
+                Assert.That(text3.Origin, Is.EqualTo(text2.LastId));
+                Assert.That(text3.RightOrigin, Is.Null);
+            }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[2].Id, 3);
         }
@@ -156,6 +208,22 @@ public class InsertTextHandlerTest
                 Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("abc"));
             }
+            
+            using (Assert.EnterMultipleScope())
+            {
+                var text1 = (TextNode)parent.ChildNodes[0];
+                var text2 = (TextNode)parent.ChildNodes[1];
+                var text3 = (TextNode)parent.ChildNodes[2];
+                
+                Assert.That(text1.Origin, Is.Null);
+                Assert.That(text1.RightOrigin, Is.Null);
+                
+                Assert.That(text2.Origin, Is.EqualTo(text1.LastId));
+                Assert.That(text2.RightOrigin, Is.Null);
+                
+                Assert.That(text3.Origin, Is.EqualTo(text2.LastId));
+                Assert.That(text3.RightOrigin, Is.Null);
+            }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[2].Id, 3);
         }
@@ -180,6 +248,22 @@ public class InsertTextHandlerTest
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
                 Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
                 Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("abc"));
+            }
+            
+            using (Assert.EnterMultipleScope())
+            {
+                var text1 = (TextNode)parent.ChildNodes[0];
+                var text2 = (TextNode)parent.ChildNodes[1];
+                var text3 = (TextNode)parent.ChildNodes[2];
+                
+                Assert.That(text1.Origin, Is.Null);
+                Assert.That(text1.RightOrigin, Is.Null);
+                
+                Assert.That(text2.Origin, Is.EqualTo(text1.LastId));
+                Assert.That(text2.RightOrigin, Is.EqualTo(text3.Id));
+                
+                Assert.That(text3.Origin, Is.EqualTo(text1.LastId));
+                Assert.That(text3.RightOrigin, Is.Null);
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
@@ -211,6 +295,22 @@ public class InsertTextHandlerTest
                 
                 Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("b"));
+            }
+            
+            using (Assert.EnterMultipleScope())
+            {
+                var text1 = (TextNode)parent.ChildNodes[0];
+                var text2 = (TextNode)parent.ChildNodes[1];
+                var text3 = (TextNode)parent.ChildNodes[2];
+                
+                Assert.That(text1.Origin, Is.Null);
+                Assert.That(text1.RightOrigin, Is.Null);
+                
+                Assert.That(text2.Origin, Is.EqualTo(text1.LastId));
+                Assert.That(text2.RightOrigin, Is.Null);
+                
+                Assert.That(text3.Origin, Is.EqualTo(text2.LastId));
+                Assert.That(text3.RightOrigin, Is.Null);
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
@@ -265,6 +365,34 @@ public class InsertTextHandlerTest
                 Assert.That(parent.ChildNodes[5], Is.TypeOf<TextNode>());
                 Assert.That(((TextNode)parent.ChildNodes[5]).TextContent, Is.EqualTo("ghi"));
             }
+            
+            using (Assert.EnterMultipleScope())
+            {
+                var text1 = (TextNode)parent.ChildNodes[0];
+                var text2 = (TextNode)parent.ChildNodes[1];
+                var text3 = (TextNode)parent.ChildNodes[2];
+                var text4 = (TextNode)parent.ChildNodes[3];
+                var text5 = (TextNode)parent.ChildNodes[4];
+                var text6 = (TextNode)parent.ChildNodes[5];
+                
+                Assert.That(text1.Origin, Is.Null);
+                Assert.That(text1.RightOrigin, Is.Null);
+                
+                Assert.That(text2.Origin, Is.EqualTo(text1.LastId));
+                Assert.That(text2.RightOrigin, Is.EqualTo(text3.Id));
+                
+                Assert.That(text3.Origin, Is.EqualTo(text1.LastId));
+                Assert.That(text3.RightOrigin, Is.Null);
+                
+                Assert.That(text4.Origin, Is.EqualTo(text3.LastId));
+                Assert.That(text4.RightOrigin, Is.Null);
+                
+                Assert.That(text5.Origin, Is.EqualTo(text4.LastId));
+                Assert.That(text5.RightOrigin, Is.Null);
+                
+                Assert.That(text6.Origin, Is.EqualTo(text5.LastId));
+                Assert.That(text6.RightOrigin, Is.Null);
+            }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
@@ -300,6 +428,26 @@ public class InsertTextHandlerTest
                 Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
                 Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("ghi"));
             }
+            
+            using (Assert.EnterMultipleScope())
+            {
+                var text1 = (TextNode)parent.ChildNodes[0];
+                var text2 = parent.ChildNodes[1];
+                var text3 = (TextNode)parent.ChildNodes[2];
+                var text4 = parent.ChildNodes[3];
+                
+                Assert.That(text1.Origin, Is.Null);
+                Assert.That(text1.RightOrigin, Is.Null);
+                
+                Assert.That(text2.Origin, Is.EqualTo(text1.Id));
+                Assert.That(text2.RightOrigin, Is.EqualTo(text3.LastId));
+                
+                Assert.That(text3.Origin, Is.EqualTo(text1.LastId));
+                Assert.That(text3.RightOrigin, Is.Null);
+                
+                Assert.That(text4.Origin, Is.EqualTo(text3.LastId));
+                Assert.That(text4.RightOrigin, Is.Null);
+            }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
@@ -329,6 +477,26 @@ public class InsertTextHandlerTest
 
                 Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
                 Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("ef"));
+            }
+            
+            using (Assert.EnterMultipleScope())
+            {
+                var text1 = (TextNode)parent.ChildNodes[0];
+                var text2 = parent.ChildNodes[1];
+                var text3 = (TextNode)parent.ChildNodes[2];
+                var text4 = parent.ChildNodes[3];
+                
+                Assert.That(text1.Origin, Is.Null);
+                Assert.That(text1.RightOrigin, Is.Null);
+                
+                Assert.That(text2.Origin, Is.EqualTo(text1.LastId));
+                Assert.That(text2.RightOrigin, Is.EqualTo(text3.Id));
+                
+                Assert.That(text3.Origin, Is.EqualTo(text1.LastId));
+                Assert.That(text3.RightOrigin, Is.Null);
+                
+                Assert.That(text4.Origin, Is.EqualTo(text3.LastId));
+                Assert.That(text4.RightOrigin, Is.Null);
             }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
@@ -371,12 +539,32 @@ public class InsertTextHandlerTest
                 Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("xyz"));
             }
+            
+            using (Assert.EnterMultipleScope())
+            {
+                var text1 = (TextNode)parent.ChildNodes[0];
+                var text2 = (TextNode)parent.ChildNodes[1];
+                var text3 = (TextNode)parent.ChildNodes[2];
+                var text4 = parent.ChildNodes[3];
+                
+                Assert.That(text1.Origin, Is.Null);
+                Assert.That(text1.RightOrigin, Is.Null);
+                
+                Assert.That(text2.Origin, Is.EqualTo(text1.LastId));
+                Assert.That(text2.RightOrigin, Is.Null);
+                
+                Assert.That(text3.Origin, Is.EqualTo(text2.LastId));
+                Assert.That(text3.RightOrigin, Is.EqualTo(text4.Id));
+                
+                Assert.That(text4.Origin, Is.EqualTo(text2.LastId));
+                Assert.That(text4.RightOrigin, Is.Null);
+            }
 
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[2].Id, 3);
         }
     }
     
-    private class MergeParagraphs : InsertTextHandlerTest
+    private class MergeParagraphs : InsertTextHandlerTest // TODO: assert origin ids
     {
         [Test]
         public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverTwoParagraphs()

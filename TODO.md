@@ -25,7 +25,8 @@ because the given id was in the range of that Node, it should take that into acc
 Else the offset is wrong, because it was calculated based on a node that started at another id.
 
 Also, inserting doesn't work if the TextNodes are not split already... so it has to be made sure that the TextNodes are already correctly split before InsertChild
-or InsertChild can split TextNodes.
+or InsertChild can split TextNodes. Nodes should use a method `HasId()` and TextNode overrides to a "containsId" like method.
+However when i use a TextNode as a Origin, it must use the LatId, but currently it uses Id.
 
 ### Cursor
 

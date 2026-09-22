@@ -29,7 +29,7 @@ public class TextNode(NodeId id, NodeId? origin, NodeId? rightOrigin, string con
 
         TextContent = remainingText;
         
-        var newNode = new TextNode(takeId.Invoke(otherText.Length), Id, RightOrigin)
+        var newNode = new TextNode(takeId.Invoke(otherText.Length), LastId, RightOrigin)
         {
             TextContent = otherText
         };
