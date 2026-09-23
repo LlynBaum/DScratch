@@ -178,16 +178,6 @@ else
                                                 <span class="data-label">Target ID:</span> <span class="data-value text-red-600 font-bold">@deleteElement.TargetId</span>
                                             </div>
                                             break;
-                                        case StepDiff.Move:
-                                            var move = (StepDiff.MoveDiff)step;
-                                            <div class="diff-data-line">
-                                                <span class="data-label">Target:</span> <span class="data-value font-bold">@move.TargetNodeId</span>
-                                                <span class="data-separator">→</span>
-                                                <span class="data-label">Parent:</span> <span class="data-value">@move.TargetParentId</span>
-                                                <span class="data-separator">|</span>
-                                                <span class="data-label">Prev:</span> <span class="data-value">@move.PreviousSiblingId</span>
-                                            </div>
-                                            break;
                                         case StepDiff.UpdateMarks:
                                             var updateMark = (StepDiff.UpdateMarksDiff)step;
                                             <div class="diff-data-line">

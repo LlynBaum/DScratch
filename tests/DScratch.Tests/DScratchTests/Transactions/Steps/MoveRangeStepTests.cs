@@ -85,9 +85,12 @@ public class MoveRangeStepTests
             
         Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text2, text3, text4]));
         AssertHelper.ThatStepsEqualTo(result, expected: [
-            Is.TypeOf<StepDiff.MoveDiff>(),
-            Is.TypeOf<StepDiff.MoveDiff>(),
-            Is.TypeOf<StepDiff.MoveDiff>()
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>(),
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>(),
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>()
         ]);
     }
     
@@ -161,9 +164,12 @@ public class MoveRangeStepTests
             
         Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text3, text4, text5]));
         AssertHelper.ThatStepsEqualTo(result, expected: [
-            Is.TypeOf<StepDiff.MoveDiff>(),
-            Is.TypeOf<StepDiff.MoveDiff>(),
-            Is.TypeOf<StepDiff.MoveDiff>()
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>(),
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>(),
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>()
         ]);
     }
     
@@ -237,9 +243,12 @@ public class MoveRangeStepTests
             
         Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text1, text2, text3]));
         AssertHelper.ThatStepsEqualTo(result, expected: [
-            Is.TypeOf<StepDiff.MoveDiff>(),
-            Is.TypeOf<StepDiff.MoveDiff>(),
-            Is.TypeOf<StepDiff.MoveDiff>()
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>(),
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>(),
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>()
         ]);
     }
     
@@ -313,9 +322,12 @@ public class MoveRangeStepTests
 
         Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text2, text3, text4]));
         AssertHelper.ThatStepsEqualTo(result, expected: [
-            Is.TypeOf<StepDiff.MoveDiff>(),
-            Is.TypeOf<StepDiff.MoveDiff>(),
-            Is.TypeOf<StepDiff.MoveDiff>()
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>(),
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>(),
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>()
         ]);
     }
     
@@ -390,8 +402,10 @@ public class MoveRangeStepTests
             
         Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text3, text4, text5]));
         AssertHelper.ThatStepsEqualTo(result, expected: [
-            Is.TypeOf<StepDiff.MoveDiff>(),
-            Is.TypeOf<StepDiff.MoveDiff>()
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>(),
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>()
         ]);
     }
     
@@ -466,8 +480,10 @@ public class MoveRangeStepTests
             
         Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text3, text4, text5]));
         AssertHelper.ThatStepsEqualTo(result, expected: [
-            Is.TypeOf<StepDiff.MoveDiff>(),
-            Is.TypeOf<StepDiff.MoveDiff>()
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>(),
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>()
         ]);
     }
     
@@ -542,8 +558,10 @@ public class MoveRangeStepTests
 
         Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text1, text2, text3]));
         AssertHelper.ThatStepsEqualTo(result, expected: [
-            Is.TypeOf<StepDiff.MoveDiff>(),
-            Is.TypeOf<StepDiff.MoveDiff>()
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>(),
+            Is.TypeOf<StepDiff.DeleteElementDiff>(),
+            Is.TypeOf<StepDiff.InsertElementDiff>()
         ]);
     }
 }

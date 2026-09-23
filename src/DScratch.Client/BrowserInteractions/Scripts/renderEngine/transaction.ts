@@ -8,7 +8,6 @@ export enum StepType {
     deleteText = "deleteText",
     insertElement = "insertElement",
     deleteElement = "deleteElement",
-    move = "move",
     updateMarks = "updateMarks",
     updateAttributes = "updateAttributes"
 }
@@ -44,12 +43,6 @@ export interface InsertElementStep extends Step {
 
 export interface DeleteElementStep extends Step {
     targetId: string;
-}
-
-export interface MoveStep extends Step {
-    targetNodeId: string;
-    targetParentId: string;
-    previousSiblingId: string | null;
 }
 
 export interface UpdateMarksStep extends Step {
@@ -91,11 +84,6 @@ export function applyTransaction(transaction: TransactionResult){
             }
             case StepType.deleteElement: {
                 const elements = handleDeleteElementStep(step as DeleteElementStep);
-                modifiedElements.push(...elements);
-                break;
-            }
-            case StepType.move: {
-                const elements = handleMoveStep(step as MoveStep);
                 modifiedElements.push(...elements);
                 break;
             }
@@ -214,22 +202,6 @@ function handleInsertElementStep(step: InsertElementStep) {
 function handleDeleteElementStep(step: DeleteElementStep) {
     const elements = findAllNode(step.targetId);
     elements.forEach(e => e.remove());
-    return elements;
-}
-
-function handleMoveStep(step: MoveStep) {
-    const elements = findAllNode(step.targetNodeId);
-    const newParent = step.previousSiblingId
-        ? findLastNodeWithSibling(step.targetParentId, step.previousSiblingId)
-        : findFirstNode(step.targetParentId);
-    
-    if (elements.length > 0 && newParent) {
-        let previousSibling = step.previousSiblingId ? findNodeIn(newParent, step.previousSiblingId) : null;
-        elements.forEach(element => {
-            insertElement(element, newParent, previousSibling);
-            previousSibling = element;
-        });
-    }
     return elements;
 }
 

@@ -48,6 +48,7 @@
       <None Remove="BrowserInteractions\Scripts\tests\nodeHelper.test.ts" />
       <None Remove="BrowserInteractions\Scripts\tests\selection.test.ts" />
       <None Remove="BrowserInteractions\Scripts\tests\transactions\pagingMock.ts" />
+      <None Remove="BrowserInteractions\Scripts\tests\transactions\move.test.ts" />
     </ItemGroup>
 
 </Project>
