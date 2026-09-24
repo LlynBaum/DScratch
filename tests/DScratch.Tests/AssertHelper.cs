@@ -11,9 +11,9 @@ public static class AssertHelper
         Assert.That(actual, Has.Count.EqualTo(expected.Length), $"Expected actual to contain {expected.Length} steps, but got {actual.Count}");
         using (Assert.EnterMultipleScope())
         {
-            foreach (var (first, second) in actual.Zip(expected))
+            foreach (var (index, value) in actual.Zip(expected).Index())
             {
-                Assert.That(first, second, $"Expected {first?.Type ?? "null"} to be of expected type.");
+                Assert.That(value.First, value.Second, $"Expected {value.First?.Type ?? "null"} to be of expected type at {index}.");
             }
         }
     }

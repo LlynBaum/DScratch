@@ -32,6 +32,9 @@ public class ReplaceNodeStepTests
         // Assert
         Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(3));
         Assert.That(builder.Root.ChildNodes[1], Is.TypeOf<HeadingNode>());
+        
+        Assert.That(builder.Root.ChildNodes[0], Is.EqualTo(origin));
+        Assert.That(builder.Root.ChildNodes[2], Is.EqualTo(rightOrigin));
 
         var testee = (HeadingNode)builder.Root.ChildNodes[1];
         using (Assert.EnterMultipleScope())
@@ -40,12 +43,8 @@ public class ReplaceNodeStepTests
             Assert.That(testee.HeadingLevel, Is.EqualTo(HeadingLevel.Level1));
             Assert.That(testee.Parent, Is.EqualTo(builder.Root));
             Assert.That(testee.Origin, Is.EqualTo(origin.Id));
-            Assert.That(testee.RightOrigin, Is.EqualTo(rightOrigin.Id));
+            Assert.That(testee.RightOrigin, Is.Null);
             Assert.That(testee.ChildNodes, Is.EquivalentTo([child]));
-
-            Assert.That(nodeToReplace.Parent, Is.Null);
-            Assert.That(nodeToReplace.Origin, Is.Null);
-            Assert.That(nodeToReplace.RightOrigin, Is.Null);
         }
     }
 }

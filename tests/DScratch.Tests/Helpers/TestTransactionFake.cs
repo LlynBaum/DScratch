@@ -5,8 +5,18 @@ using DScratch.Transactions;
 
 namespace DScratch.Tests.Helpers;
 
-public class TestTransactionFake : ITransaction, IRunningTransaction
+internal class TestTransactionFake : ITransaction, IRunningTransaction
 {
+    public TestTransactionFake()
+    {
+        NodeFactory = new DNodeFactory(new TestNodeIdGenerator());
+    }
+    
+    public TestTransactionFake(INodeIdGenerator nodeIdGenerator)
+    {
+        NodeFactory = new DNodeFactory(nodeIdGenerator);
+    }
+    
     public IReadOnlyList<DNode> ChangedNodes => changedNodes;
 
     private readonly List<DNode> changedNodes = [];
@@ -15,7 +25,7 @@ public class TestTransactionFake : ITransaction, IRunningTransaction
     
     public DNode Root { get; } = null!;
 
-    public INodeFactory NodeFactory { get; } = new DNodeFactory(new TestNodeIdGenerator());
+    public INodeFactory NodeFactory { get; }
 
     public TransactionResult Commit()
     {

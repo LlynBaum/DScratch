@@ -153,8 +153,15 @@ public abstract class DNode(NodeId id, NodeId? origin, NodeId? rightOrigin, List
 
         return result;
     }
+    
+    public void ReplaceChild(DNode node, DNode newNode)
+    {
+        var index = allChildNodes.FindIndex(n => n.Id == node.Id);
+        allChildNodes[index] = newNode;
+        newNode.Parent = this;
+    }
 
-    public void ClaimChildNodes() // TODO: remove
+    public void ClaimChildNodes()
     {
         foreach (var childNode in ChildNodes)
         {

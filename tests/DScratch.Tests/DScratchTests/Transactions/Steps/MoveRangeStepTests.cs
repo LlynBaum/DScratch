@@ -7,19 +7,20 @@ namespace DScratch.Tests.DScratchTests.Transactions.Steps;
 
 public class MoveRangeStepTests
 {
+    private TreeBuilder builder;
     private TestTransactionFake transactionFake;
 
     [SetUp]
     public void SetUp()
     {
-        transactionFake = new TestTransactionFake();
+        builder = new TreeBuilder();
+        transactionFake = new TestTransactionFake(builder.IdGenerator);
     }
     
     [Test]
     public void GivenNode_IsMovedToNewParent_AndSiblingsAreUpdated()
     {
         // Arrange
-        var builder = new TreeBuilder();
         TextNode text1 = null!;
         TextNode text2 = null!;
         TextNode text3 = null!;
@@ -49,48 +50,79 @@ public class MoveRangeStepTests
         var result = step.Execute(transactionFake, builder.CreateDocument());
 
         // Assert
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
         using (Assert.EnterMultipleScope())
         {
             Assert.That(text1.Parent, Is.EqualTo(parent));
             Assert.That(text1.Origin, Is.Null);
-            Assert.That(text1.RightOrigin, Is.EqualTo(text5.Id));
+            Assert.That(text1.RightOrigin, Is.Null);
+            
+            Assert.That(text2.Parent, Is.EqualTo(parent));
+            Assert.That(text2.Origin, Is.EqualTo(text1.Id));
+            Assert.That(text2.RightOrigin, Is.Null);
+            
+            Assert.That(text3.Parent, Is.EqualTo(parent));
+            Assert.That(text3.Origin, Is.EqualTo(text2.Id));
+            Assert.That(text3.RightOrigin, Is.Null);
+        
+            Assert.That(text4.Parent, Is.EqualTo(parent));
+            Assert.That(text4.Origin, Is.EqualTo(text3.Id));
+            Assert.That(text4.RightOrigin, Is.Null);
         
             Assert.That(text5.Parent, Is.EqualTo(parent));
-            Assert.That(text5.Origin, Is.EqualTo(text1.Id));
+            Assert.That(text5.Origin, Is.EqualTo(text4.Id));
             Assert.That(text5.RightOrigin, Is.Null);
         }
 
+        Assert.That(newParent.ChildNodes, Has.Count.EqualTo(5));
+        Assert.That(newParent.ChildNodes[0], Is.EqualTo(newSibling));
+        Assert.That(newParent.ChildNodes[4], Is.EqualTo(sibling2));
+        
         using (Assert.EnterMultipleScope())
         {
             Assert.That(newSibling.Parent, Is.EqualTo(newParent));
             Assert.That(newSibling.Origin, Is.Null);
-            Assert.That(newSibling.RightOrigin, Is.EqualTo(text2.Id));
+            Assert.That(newSibling.RightOrigin, Is.Null);
             
-            Assert.That(text2.Parent, Is.EqualTo(newParent));
-            Assert.That(text2.Origin, Is.EqualTo(newSibling.Id));
-            Assert.That(text2.RightOrigin, Is.EqualTo(text3.Id));
+            Assert.That(newParent.ChildNodes[1].Parent, Is.EqualTo(newParent));
+            Assert.That(newParent.ChildNodes[1].Origin, Is.EqualTo(newSibling.Id));
+            Assert.That(newParent.ChildNodes[1].RightOrigin, Is.EqualTo(sibling2.Id));
             
-            Assert.That(text3.Parent, Is.EqualTo(newParent));
-            Assert.That(text3.Origin, Is.EqualTo(text2.Id));
-            Assert.That(text3.RightOrigin, Is.EqualTo(text4.Id));
+            Assert.That(newParent.ChildNodes[2].Parent, Is.EqualTo(newParent));
+            Assert.That(newParent.ChildNodes[2].Origin, Is.EqualTo(newParent.ChildNodes[1].Id));
+            Assert.That(newParent.ChildNodes[2].RightOrigin, Is.EqualTo(sibling2.Id));
         
-            Assert.That(text4.Parent, Is.EqualTo(newParent));
-            Assert.That(text4.Origin, Is.EqualTo(text3.Id));
-            Assert.That(text4.RightOrigin, Is.EqualTo(sibling2.Id));
+            Assert.That(newParent.ChildNodes[3].Parent, Is.EqualTo(newParent));
+            Assert.That(newParent.ChildNodes[3].Origin, Is.EqualTo(newParent.ChildNodes[2].Id));
+            Assert.That(newParent.ChildNodes[3].RightOrigin, Is.EqualTo(sibling2.Id));
             
             Assert.That(sibling2.Parent, Is.EqualTo(newParent));
-            Assert.That(sibling2.Origin, Is.EqualTo(text4.Id));
+            Assert.That(sibling2.Origin, Is.EqualTo(newSibling.Id));
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
             
-        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([text2, text3, text4]));
+        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+            text2, 
+            newParent.ChildNodes[1],
+            text3,
+            newParent.ChildNodes[2], 
+            text4,
+            newParent.ChildNodes[3]
+        ]));
+        
         AssertHelper.ThatStepsEqualTo(result, expected: [
             Is.TypeOf<StepDiff.DeleteElementDiff>(),
             Is.TypeOf<StepDiff.InsertElementDiff>(),
+            Is.TypeOf<StepDiff.InsertTextDiff>(),
+            Is.TypeOf<StepDiff.UpdateMarksDiff>(),
             Is.TypeOf<StepDiff.DeleteElementDiff>(),
             Is.TypeOf<StepDiff.InsertElementDiff>(),
+            Is.TypeOf<StepDiff.InsertTextDiff>(),
+            Is.TypeOf<StepDiff.UpdateMarksDiff>(),
             Is.TypeOf<StepDiff.DeleteElementDiff>(),
-            Is.TypeOf<StepDiff.InsertElementDiff>()
+            Is.TypeOf<StepDiff.InsertElementDiff>(),
+            Is.TypeOf<StepDiff.InsertTextDiff>(),
+            Is.TypeOf<StepDiff.UpdateMarksDiff>(),
         ]);
     }
     
@@ -98,7 +130,6 @@ public class MoveRangeStepTests
     public void GivenNode_IsMovedToNewParent_AndSiblingsAreUpdated_WithNoEnd()
     {
         // Arrange
-        var builder = new TreeBuilder();
         TextNode text1 = null!;
         TextNode text2 = null!;
         TextNode text3 = null!;
@@ -177,7 +208,6 @@ public class MoveRangeStepTests
     public void GivenNode_IsMovedToNewParent_AndSiblingsAreUpdated_WithNoStart()
     {
         // Arrange
-        var builder = new TreeBuilder();
         TextNode text1 = null!;
         TextNode text2 = null!;
         TextNode text3 = null!;
@@ -256,7 +286,6 @@ public class MoveRangeStepTests
     public void GivenNode_IsMovedToNewParent_AndSiblingsAreUpdated_NoTargetSibling()
     {
         // Arrange
-        var builder = new TreeBuilder();
         TextNode text1 = null!;
         TextNode text2 = null!;
         TextNode text3 = null!;
@@ -335,7 +364,6 @@ public class MoveRangeStepTests
     public void GivenNode_IsMovedToNewParent_AndSiblingsAreUpdated_WithNoEnd_NoTargetSibling()
     {
         // Arrange
-        var builder = new TreeBuilder();
         TextNode text1 = null!;
         TextNode text2 = null!;
         TextNode text3 = null!;
@@ -413,7 +441,6 @@ public class MoveRangeStepTests
     public void GivenNode_IsMovedToNewParent_AndSiblingsAreUpdated_WithNoEnd_AndTargetSibling()
     {
         // Arrange
-        var builder = new TreeBuilder();
         TextNode text1 = null!;
         TextNode text2 = null!;
         TextNode text3 = null!;
@@ -491,7 +518,6 @@ public class MoveRangeStepTests
     public void GivenNode_IsMovedToNewParent_AndSiblingsAreUpdated_WithNoStart_NoTargetSibling()
     {
         // Arrange
-        var builder = new TreeBuilder();
         TextNode text1 = null!;
         TextNode text2 = null!;
         TextNode text3 = null!;

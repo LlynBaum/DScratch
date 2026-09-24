@@ -7,12 +7,10 @@ public class ReplaceNodeStep(DNode node, Func<DNode, DNode> copyFactory) : IStep
 {
     public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
     {
-        var parent = node.Parent!;
         var newNode = copyFactory(node);
-        newNode.ClaimChildNodes(); // TODO: childs must be recreates as well
+        newNode.ClaimChildNodes();
 
-        parent.RemoveChild(node);
-        parent.InsertChild(newNode);
+        node.Parent!.ReplaceChild(node, newNode);
         
         document.RemoveNode(node);
         document.AddNode(newNode);
