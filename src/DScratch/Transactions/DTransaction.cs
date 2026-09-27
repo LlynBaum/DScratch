@@ -129,7 +129,7 @@ internal class DTransaction(
         
         foreach (var node in nodes.OfType<TextNode>())
         {
-            if (CleanUpHelper.CanMergeWithOrigin(node, out var origin))
+            if (CleanUpHelper.CanMergeWithPrevious(node, out var origin))
             {
                 if (!origin.IsDeleted)
                 {
@@ -148,7 +148,7 @@ internal class DTransaction(
                 node.Parent!.RemoveChild(node);
                 document.RemoveNode(node);
             }
-            else if (CleanUpHelper.CanMergeWithRightOrigin(node, out var rightOrigin))
+            else if (CleanUpHelper.CanMergeWithNext(node, out var rightOrigin))
             {
                 if (!rightOrigin.IsDeleted)
                 {

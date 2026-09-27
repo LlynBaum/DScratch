@@ -3,34 +3,38 @@ using DScratch.Nodes;
 
 namespace DScratch.Transactions;
 
-public static class CleanUpHelper
+public static class CleanUpHelper // TODO: test the merge also for the new RightOrigin and Origin check
 {
-    public static bool CanMergeWithOrigin(TextNode node, out TextNode origin)
+    public static bool CanMergeWithPrevious(TextNode node, out TextNode origin)
     {
-        if (node.PreviousSibling() is not TextNode originTextNode)
+        if (node.PreviousSibling() is not TextNode previousTextNode)
         {
             origin = null!;
             return false;
         }
         
-        origin = originTextNode;
-        return originTextNode.IsDeleted == node.IsDeleted 
-               && originTextNode.LastId.IsContinuesTo(node.Id) 
-               && originTextNode.Marks.SequenceEqual(node.Marks); // TODO: key only comparer
+        origin = previousTextNode;
+        return previousTextNode.IsDeleted == node.IsDeleted
+               && previousTextNode.LastId == node.Origin
+               && node.RightOrigin == previousTextNode.RightOrigin
+               && previousTextNode.LastId.IsContinuesTo(node.Id)
+               && previousTextNode.Marks.SequenceEqual(node.Marks); // TODO: key only comparer
     }
     
-    public static bool CanMergeWithRightOrigin(TextNode node, out TextNode rightOrigin)
+    public static bool CanMergeWithNext(TextNode node, out TextNode rightOrigin)
     {
-        if (node.NextSibling() is not TextNode rightOriginTextNode)
+        if (node.NextSibling() is not TextNode nextTextNode)
         {
             rightOrigin = null!;
             return false;
         }
         
-        rightOrigin = rightOriginTextNode;
-        return rightOriginTextNode.IsDeleted == node.IsDeleted 
-               && node.LastId.IsContinuesTo(rightOriginTextNode.Id)
-               && rightOriginTextNode.Marks.SequenceEqual(node.Marks);
+        rightOrigin = nextTextNode;
+        return nextTextNode.IsDeleted == node.IsDeleted 
+               && node.LastId == nextTextNode.Origin
+               && node.RightOrigin == nextTextNode.RightOrigin
+               && node.LastId.IsContinuesTo(nextTextNode.Id)
+               && nextTextNode.Marks.SequenceEqual(node.Marks);
     }
     
     public static SelectionInfo? AdjustSelection(SelectionInfo? selectionInfo, TextNode oldNode, TextNode targetNode)
