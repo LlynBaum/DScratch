@@ -10,29 +10,41 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
         if (start is null && end is null) return [];
 
         var existingFirstChild = targetOrigin is null ? targetParent.FirstChild : null;
+        var startNode = start;
+        var endNode = end;
         
         if (end is null)
         {
-            return MoveFrom(transaction, document, existingFirstChild);
+            endNode = startNode!.Parent!.LastChild;
         }
         
         if (start is null)
         {
-            return MoveTo(transaction, document, existingFirstChild);
+            startNode = end!.Parent!.FirstChild;
         }
 
-        return start.Parent!.Id == end.Parent!.Id 
-            ? MoveFromTo(transaction, document, existingFirstChild) 
-            : throw new ArgumentException("Start and End node must be of the same parent.");
+        return startNode!.Parent!.Id != endNode!.Parent!.Id 
+            ? throw new ArgumentException("Start and End node must be of the same parent.") 
+            : MoveNodes(
+                startNode: startNode, 
+                endNode: endNode,
+                transaction: transaction,
+                document: document, 
+                existingFirstChild: existingFirstChild);
     }
 
-    private IReadOnlyList<StepDiff?> MoveFromTo(IRunningTransaction transaction, DScratchDocument document, DNode? existingFirstChild)
+    private List<StepDiff?> MoveNodes(
+        DNode? startNode,
+        DNode? endNode,
+        IRunningTransaction transaction,
+        DScratchDocument document, 
+        DNode? existingFirstChild)
     {
         var steps = new List<StepDiff?>();
         
         var previousOrigin = targetOrigin;
-        var current = start;
-        while (current is not null && current.Id != end!.Id)
+        var current = startNode;
+        while (current is not null && current.Id != endNode!.Id)
         {
             if (!current.IsDeleted)
             {
@@ -58,56 +70,6 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                 document: document);
         }
 
-        return steps;
-    }
-
-    private List<StepDiff?> MoveTo(IRunningTransaction transaction, DScratchDocument document, DNode? existingFirstChild)
-    {
-        var steps = new List<StepDiff?>();
-        
-        var previousOrigin = targetOrigin?.NextSibling();
-        var current = end;
-        while (current is not null)
-        {
-            var origin = previousOrigin ?? existingFirstChild;
-
-            if (!current.IsDeleted)
-            {
-                previousOrigin = MoveNode(
-                    current: current, 
-                    origin: origin,
-                    rightOrigin: origin?.PreviousSibling(),
-                    transaction: transaction, 
-                    steps: steps,
-                    document: document);
-            }
-            current = current.NextSibling();
-        }
-        
-        return steps;
-    }
-
-    private List<StepDiff?> MoveFrom(IRunningTransaction transaction, DScratchDocument document, DNode? existingFirstChild)
-    {
-        var steps = new List<StepDiff?>();
-        
-        var previousOrigin = targetOrigin;
-        var current = start;
-        while (current is not null)
-        {
-            if (!current.IsDeleted)
-            {
-                previousOrigin = MoveNode(
-                    current: current, 
-                    origin: previousOrigin,
-                    rightOrigin: previousOrigin?.NextSibling() ?? existingFirstChild,
-                    transaction: transaction, 
-                    steps: steps,
-                    document: document);
-            }
-            current = current.NextSibling();
-        }
-        
         return steps;
     }
 

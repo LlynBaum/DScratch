@@ -261,7 +261,7 @@ public class MoveRangeStepTests
             var node3 = (TextNode)newParent.ChildNodes[3];
             Assert.That(node3.Parent, Is.EqualTo(newParent));
             Assert.That(node3.Origin, Is.EqualTo(node2.Id));
-            Assert.That(node3.RightOrigin, Is.EqualTo(newSibling.Id));
+            Assert.That(node3.RightOrigin, Is.EqualTo(sibling2.Id));
             Assert.That(node3.TextContent, Is.EqualTo("c"));
             
             Assert.That(sibling2.Parent, Is.EqualTo(newParent));
@@ -575,7 +575,7 @@ public class MoveRangeStepTests
         }
         
         Assert.That(newParent.ChildNodes, Has.Count.EqualTo(4));
-        Assert.That(newParent.ChildNodes[2], Is.EqualTo(newParent));
+        Assert.That(newParent.ChildNodes[2], Is.EqualTo(sibling1));
         Assert.That(newParent.ChildNodes[3], Is.EqualTo(sibling2));
 
         using (Assert.EnterMultipleScope())
