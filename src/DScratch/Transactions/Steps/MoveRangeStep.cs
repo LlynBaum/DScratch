@@ -8,116 +8,140 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
     public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
     {
         if (start is null && end is null) return [];
-        
-        var steps = new List<StepDiff?>();
 
         var existingFirstChild = targetOrigin is null ? targetParent.FirstChild : null;
         
         if (end is null)
         {
-            var previousOrigin = targetOrigin;
-            var current = start;
-            while (current is not null)
-            {
-                if (!current.IsDeleted)
-                {
-                    current.Delete();
-                    steps.Add(current.ToDeleteSteps());
-                    transaction.NotifyNodeChange(current);
+            return MoveFrom(transaction, document, existingFirstChild);
+        }
+        
+        if (start is null)
+        {
+            return MoveTo(transaction, document, existingFirstChild);
+        }
 
-                    var newNode = transaction.NodeFactory.Recreate(
-                        node: current, 
-                        origin: previousOrigin,
-                        rightOrigin: previousOrigin?.NextSibling() ?? existingFirstChild);
+        return start.Parent!.Id == end.Parent!.Id 
+            ? MoveFromTo(transaction, document, existingFirstChild) 
+            : throw new ArgumentException("Start and End node must be of the same parent.");
+    }
+
+    private IReadOnlyList<StepDiff?> MoveFromTo(IRunningTransaction transaction, DScratchDocument document, DNode? existingFirstChild)
+    {
+        var steps = new List<StepDiff?>();
+            
+        var previousOrigin = targetOrigin;
+        var current = start;
+        while (current is not null && current.Id != end.Id)
+        {
+            if (!current.IsDeleted)
+            {
+                current.Delete();
+                steps.Add(current.ToDeleteSteps());
+                transaction.NotifyNodeChange(current);
                     
-                    document.AddNode(newNode);
-                    targetParent.InsertChild(newNode);
-                    transaction.NotifyNodeChange(newNode);
-                    steps.AddRange(current.ToInsertSteps());
+                var newNode = transaction.NodeFactory.Recreate(
+                    node: current, 
+                    origin: previousOrigin, 
+                    rightOrigin: previousOrigin?.NextSibling() ?? existingFirstChild);
                     
-                    previousOrigin = newNode;
-                }
+                document.AddNode(newNode);
+                targetParent.InsertChild(newNode);
+                transaction.NotifyNodeChange(newNode);
+                steps.AddRange(current.ToInsertSteps());
+                    
+                previousOrigin = newNode;
+            }
                 
-                current = current.NextSibling();
+            current = current.NextSibling();
+        }
+
+        if (current is not null)
+        {
+            if (!current.IsDeleted)
+            {
+                current.Delete();
+                steps.Add(current.ToDeleteSteps());
+                transaction.NotifyNodeChange(current);
+                    
+                var newNode = transaction.NodeFactory.Recreate(
+                    node: current, 
+                    origin: previousOrigin, 
+                    rightOrigin: previousOrigin?.NextSibling() ?? existingFirstChild);
+                    
+                document.AddNode(newNode);
+                targetParent.InsertChild(newNode);
+                transaction.NotifyNodeChange(newNode);
+                steps.AddRange(current.ToInsertSteps());
             }
         }
-        else if (start is null)
+
+        return steps;
+    }
+
+    private List<StepDiff?> MoveTo(IRunningTransaction transaction, DScratchDocument document, DNode? existingFirstChild)
+    {
+        var steps = new List<StepDiff?>();
+            
+        var previousOrigin = targetOrigin?.NextSibling();
+        var current = end;
+        while (current is not null)
         {
-            var previousOrigin = targetOrigin?.NextSibling();
-            var current = end;
-            while (current is not null)
+            var rightOrigin = previousOrigin ?? existingFirstChild;
+
+            if (!current.IsDeleted)
             {
-                var rightOrigin = previousOrigin ?? existingFirstChild;
-
-                if (!current.IsDeleted)
-                {
-                    current.Delete();
-                    steps.Add(current.ToDeleteSteps());
-                    transaction.NotifyNodeChange(current);
+                current.Delete();
+                steps.Add(current.ToDeleteSteps());
+                transaction.NotifyNodeChange(current);
                     
-                    var newNode = transaction.NodeFactory.Recreate(
-                        node: current, 
-                        origin: rightOrigin, 
-                        rightOrigin: rightOrigin?.PreviousSibling());
+                var newNode = transaction.NodeFactory.Recreate(
+                    node: current, 
+                    origin: rightOrigin, 
+                    rightOrigin: rightOrigin?.PreviousSibling());
                     
-                    document.AddNode(newNode);
-                    targetParent.InsertChild(newNode);
-                    transaction.NotifyNodeChange(newNode);
-                    steps.AddRange(current.ToInsertSteps());
+                document.AddNode(newNode);
+                targetParent.InsertChild(newNode);
+                transaction.NotifyNodeChange(newNode);
+                steps.AddRange(current.ToInsertSteps());
                     
-                    previousOrigin = newNode;
-                }
-
-                current = current.NextSibling();
+                previousOrigin = newNode;
             }
+
+            current = current.NextSibling();
         }
-        else
-        {
-            var previousOrigin = targetOrigin;
-            var current = start;
-            while (current is not null && current.Id != end.Id)
-            {
-                if (!current.IsDeleted)
-                {
-                    current.Delete();
-                    steps.Add(current.ToDeleteSteps());
-                    transaction.NotifyNodeChange(current);
-                    
-                    var newNode = transaction.NodeFactory.Recreate(
-                        node: current, 
-                        origin: previousOrigin, 
-                        rightOrigin: previousOrigin?.NextSibling() ?? existingFirstChild);
-                    
-                    document.AddNode(newNode);
-                    targetParent.InsertChild(newNode);
-                    transaction.NotifyNodeChange(newNode);
-                    steps.AddRange(current.ToInsertSteps());
-                    
-                    previousOrigin = newNode;
-                }
-                
-                current = current.NextSibling();
-            }
+        
+        return steps;
+    }
 
-            if (current is not null)
+    private List<StepDiff?> MoveFrom(IRunningTransaction transaction, DScratchDocument document, DNode? existingFirstChild)
+    {
+        var steps = new List<StepDiff?>();
+        
+        var previousOrigin = targetOrigin;
+        var current = start;
+        while (current is not null)
+        {
+            if (!current.IsDeleted)
             {
-                if (!current.IsDeleted)
-                {
-                    current.Delete();
-                    steps.Add(current.ToDeleteSteps());
-                    transaction.NotifyNodeChange(current);
+                current.Delete();
+                steps.Add(current.ToDeleteSteps());
+                transaction.NotifyNodeChange(current);
+
+                var newNode = transaction.NodeFactory.Recreate(
+                    node: current, 
+                    origin: previousOrigin,
+                    rightOrigin: previousOrigin?.NextSibling() ?? existingFirstChild);
                     
-                    var newNode = transaction.NodeFactory.Recreate(
-                        node: current, 
-                        origin: previousOrigin, 
-                        rightOrigin: previousOrigin?.NextSibling() ?? existingFirstChild);
+                document.AddNode(newNode);
+                targetParent.InsertChild(newNode);
+                transaction.NotifyNodeChange(newNode);
+                steps.AddRange(current.ToInsertSteps());
                     
-                    document.AddNode(newNode);
-                    targetParent.InsertChild(newNode);
-                    transaction.NotifyNodeChange(newNode);
-                    steps.AddRange(current.ToInsertSteps());
-                }
+                previousOrigin = newNode;
             }
+                
+            current = current.NextSibling();
         }
         
         return steps;
