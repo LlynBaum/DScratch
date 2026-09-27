@@ -29,51 +29,33 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
     private IReadOnlyList<StepDiff?> MoveFromTo(IRunningTransaction transaction, DScratchDocument document, DNode? existingFirstChild)
     {
         var steps = new List<StepDiff?>();
-            
+        
         var previousOrigin = targetOrigin;
         var current = start;
-        while (current is not null && current.Id != end.Id)
+        while (current is not null && current.Id != end!.Id)
         {
             if (!current.IsDeleted)
             {
-                current.Delete();
-                steps.Add(current.ToDeleteSteps());
-                transaction.NotifyNodeChange(current);
-                    
-                var newNode = transaction.NodeFactory.Recreate(
-                    node: current, 
+                previousOrigin = MoveNode(
+                    current: current, 
                     origin: previousOrigin, 
-                    rightOrigin: previousOrigin?.NextSibling() ?? existingFirstChild);
-                    
-                document.AddNode(newNode);
-                targetParent.InsertChild(newNode);
-                transaction.NotifyNodeChange(newNode);
-                steps.AddRange(current.ToInsertSteps());
-                    
-                previousOrigin = newNode;
+                    rightOrigin: previousOrigin?.NextSibling() ?? existingFirstChild,
+                    transaction: transaction, 
+                    steps: steps,
+                    document: document);
             }
-                
             current = current.NextSibling();
         }
 
-        if (current is not null)
+        if (current is not null && !current.IsDeleted)
         {
-            if (!current.IsDeleted)
-            {
-                current.Delete();
-                steps.Add(current.ToDeleteSteps());
-                transaction.NotifyNodeChange(current);
-                    
-                var newNode = transaction.NodeFactory.Recreate(
-                    node: current, 
-                    origin: previousOrigin, 
-                    rightOrigin: previousOrigin?.NextSibling() ?? existingFirstChild);
-                    
-                document.AddNode(newNode);
-                targetParent.InsertChild(newNode);
-                transaction.NotifyNodeChange(newNode);
-                steps.AddRange(current.ToInsertSteps());
-            }
+            MoveNode(
+                current: current, 
+                origin: previousOrigin, 
+                rightOrigin: previousOrigin?.NextSibling() ?? existingFirstChild,
+                transaction: transaction, 
+                steps: steps,
+                document: document);
         }
 
         return steps;
@@ -82,32 +64,23 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
     private List<StepDiff?> MoveTo(IRunningTransaction transaction, DScratchDocument document, DNode? existingFirstChild)
     {
         var steps = new List<StepDiff?>();
-            
+        
         var previousOrigin = targetOrigin?.NextSibling();
         var current = end;
         while (current is not null)
         {
-            var rightOrigin = previousOrigin ?? existingFirstChild;
+            var origin = previousOrigin ?? existingFirstChild;
 
             if (!current.IsDeleted)
             {
-                current.Delete();
-                steps.Add(current.ToDeleteSteps());
-                transaction.NotifyNodeChange(current);
-                    
-                var newNode = transaction.NodeFactory.Recreate(
-                    node: current, 
-                    origin: rightOrigin, 
-                    rightOrigin: rightOrigin?.PreviousSibling());
-                    
-                document.AddNode(newNode);
-                targetParent.InsertChild(newNode);
-                transaction.NotifyNodeChange(newNode);
-                steps.AddRange(current.ToInsertSteps());
-                    
-                previousOrigin = newNode;
+                previousOrigin = MoveNode(
+                    current: current, 
+                    origin: origin,
+                    rightOrigin: origin?.PreviousSibling(),
+                    transaction: transaction, 
+                    steps: steps,
+                    document: document);
             }
-
             current = current.NextSibling();
         }
         
@@ -124,27 +97,43 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
         {
             if (!current.IsDeleted)
             {
-                current.Delete();
-                steps.Add(current.ToDeleteSteps());
-                transaction.NotifyNodeChange(current);
-
-                var newNode = transaction.NodeFactory.Recreate(
-                    node: current, 
+                previousOrigin = MoveNode(
+                    current: current, 
                     origin: previousOrigin,
-                    rightOrigin: previousOrigin?.NextSibling() ?? existingFirstChild);
-                    
-                document.AddNode(newNode);
-                targetParent.InsertChild(newNode);
-                transaction.NotifyNodeChange(newNode);
-                steps.AddRange(current.ToInsertSteps());
-                    
-                previousOrigin = newNode;
+                    rightOrigin: previousOrigin?.NextSibling() ?? existingFirstChild,
+                    transaction: transaction, 
+                    steps: steps,
+                    document: document);
             }
-                
             current = current.NextSibling();
         }
         
         return steps;
+    }
+
+    private DNode MoveNode(
+        DNode current, 
+        DNode? origin,
+        DNode? rightOrigin,
+        IRunningTransaction transaction,
+        List<StepDiff?> steps, 
+        DScratchDocument document)
+    {
+        current.Delete();
+        steps.Add(current.ToDeleteSteps());
+        transaction.NotifyNodeChange(current);
+
+        var newNode = transaction.NodeFactory.Recreate(
+            node: current, 
+            origin: origin,
+            rightOrigin: rightOrigin);
+        
+        document.AddNode(newNode);
+        targetParent.InsertChild(newNode);
+        transaction.NotifyNodeChange(newNode);
+        steps.AddRange(current.ToInsertSteps());
+        
+        return newNode;
     }
 
     public IReadOnlyList<StepDiff> Revert(DScratchDocument document)
