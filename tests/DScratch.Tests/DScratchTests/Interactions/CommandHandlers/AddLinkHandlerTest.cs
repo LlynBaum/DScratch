@@ -222,7 +222,7 @@ public class AddLinkHandlerTest
         var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href, "_self"));
         
         // Assert
-        Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(7));
         using (Assert.EnterMultipleScope())
         {
             Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
@@ -230,17 +230,21 @@ public class AddLinkHandlerTest
             Assert.That(parent.ChildNodes[2], Is.TypeOf<LinkNode>());
             Assert.That(parent.ChildNodes[3], Is.TypeOf<TextNode>());
             Assert.That(parent.ChildNodes[4], Is.TypeOf<TextNode>());
+            Assert.That(parent.ChildNodes[5], Is.TypeOf<TextNode>());
+            Assert.That(parent.ChildNodes[6], Is.TypeOf<TextNode>());
         }
 
         using (Assert.EnterMultipleScope())
         {
             Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
             Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("c"));
-            Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("f"));
-            Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("gh"));
+            Assert.That(parent.ChildNodes[2].IsDeleted, Is.True);
+            Assert.That(parent.ChildNodes[4].IsDeleted, Is.True);
+            Assert.That(((TextNode)parent.ChildNodes[5]).TextContent, Is.EqualTo("f"));
+            Assert.That(((TextNode)parent.ChildNodes[6]).TextContent, Is.EqualTo("gh"));
         }
 
-        var linkNode = (LinkNode)parent.ChildNodes[2];
+        var linkNode = (LinkNode)parent.ChildNodes[3];
         using (Assert.EnterMultipleScope())
         {
             Assert.That(linkNode.Href, Is.EqualTo(Href));
@@ -274,27 +278,34 @@ public class AddLinkHandlerTest
         // Act
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(originTarget.Id, 1, rightOriginTarget.Id, 1);
         var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href, "_self"));
-        builder.Print();
         
         // Assert
-        Assert.That(parent1.ChildNodes, Has.Count.EqualTo(2));
-        Assert.That(parent2.ChildNodes, Has.Count.EqualTo(1));
-        Assert.That(parent3.ChildNodes, Has.Count.EqualTo(2));
+        Assert.That(parent1.ChildNodes, Has.Count.EqualTo(3));
+        Assert.That(parent2.ChildNodes, Has.Count.EqualTo(2));
+        Assert.That(parent3.ChildNodes, Has.Count.EqualTo(3));
         using (Assert.EnterMultipleScope())
         {
             Assert.That(parent1.ChildNodes[0], Is.TypeOf<TextNode>());
             Assert.That(parent1.ChildNodes[1], Is.TypeOf<LinkNode>());
+            Assert.That(parent1.ChildNodes[2], Is.TypeOf<TextNode>());
             
             Assert.That(parent2.ChildNodes[0], Is.TypeOf<LinkNode>());
+            Assert.That(parent2.ChildNodes[1], Is.TypeOf<TextNode>());
             
             Assert.That(parent3.ChildNodes[0], Is.TypeOf<LinkNode>());
             Assert.That(parent3.ChildNodes[1], Is.TypeOf<TextNode>());
+            Assert.That(parent3.ChildNodes[2], Is.TypeOf<TextNode>());
         }
 
         using (Assert.EnterMultipleScope())
         {
             Assert.That(((TextNode)parent1.ChildNodes[0]).TextContent, Is.EqualTo("a"));
+            Assert.That(parent1.ChildNodes[2].IsDeleted, Is.True);
+            
+            Assert.That(parent2.ChildNodes[1].IsDeleted, Is.True);
+            
             Assert.That(((TextNode)parent3.ChildNodes[1]).TextContent, Is.EqualTo("f"));
+            Assert.That(parent3.ChildNodes[1].IsDeleted, Is.True);
         }
 
         var linkNode1 = (LinkNode)parent1.ChildNodes[1];

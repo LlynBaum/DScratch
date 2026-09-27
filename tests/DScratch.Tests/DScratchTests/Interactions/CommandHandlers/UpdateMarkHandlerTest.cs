@@ -150,9 +150,9 @@ public class UpdateMarkHandlerTest
         }
 
         Assert.That(command.ExecuteCall, Is.EquivalentTo([
-            start,
-            mid,
-            end
+            start.Id,
+            mid.Id,
+            end.Id
         ]));
 
         AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
@@ -196,7 +196,7 @@ public class UpdateMarkHandlerTest
         var result = handler.Execute(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(block.Id, 0).Selection!, command);
             
         // Assert
-        Assert.That(command.ExecuteCall, Is.EquivalentTo([block]));
+        Assert.That(command.ExecuteCall, Is.EquivalentTo([block.Id]));
         Assert.That(result.CursorPosition, Is.Null);
     }
 
