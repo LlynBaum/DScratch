@@ -33,7 +33,7 @@ public class DTransactionCleanUpTests
             // Arrange
             TextNode node = null!;
             TextNode modifiedNode = null!;
-            TreeBuilder.Paragraph(t =>
+            var parent = TreeBuilder.Paragraph(t =>
             {
                 node = t.Text("abc");
                 modifiedNode = t.Text("def");
@@ -52,13 +52,8 @@ public class DTransactionCleanUpTests
             var result = Transaction.Commit();
 
             // Assert
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(modifiedNode.Parent, Is.Null);
-                Assert.That(modifiedNode.Origin, Is.Null);
-                Assert.That(modifiedNode.RightOrigin, Is.Null);
-                Assert.That(node.TextContent, Is.EqualTo("abcdef"));
-            }
+            Assert.That(parent.ChildNodes, Is.EquivalentTo([node]));
+            Assert.That(node.TextContent, Is.EqualTo("abcdef"));
 
             if (!deleted)
             {
@@ -90,7 +85,7 @@ public class DTransactionCleanUpTests
             // Arrange
             TextNode node = null!;
             TextNode modifiedNode = null!;
-            TreeBuilder.Paragraph(t =>
+            var parent = TreeBuilder.Paragraph(t =>
             {
                 modifiedNode = t.Text("abc");
                 node = t.Text("def");
@@ -109,13 +104,8 @@ public class DTransactionCleanUpTests
             var result = Transaction.Commit();
 
             // Assert
-            using (Assert.EnterMultipleScope())
-            {
-                Assert.That(node.Parent, Is.Null);
-                Assert.That(node.Origin, Is.Null);
-                Assert.That(node.RightOrigin, Is.Null);
-                Assert.That(modifiedNode.TextContent, Is.EqualTo("abcdef"));
-            }
+            Assert.That(parent.ChildNodes, Is.EquivalentTo([modifiedNode]));
+            Assert.That(modifiedNode.TextContent, Is.EqualTo("abcdef"));
 
             if (!deleted)
             {

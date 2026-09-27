@@ -18,16 +18,6 @@
 - when pulling stuff up, first check the start of a node, if not enough space, skip. If enough space check end of node.
   If enough space, same for next node. Else binary search within. Speeds things probably a lot up.
 
-### TextNodes CRDT Fix
-
-TextNodes are currently not CRDT ready... if you merge nodes and the take one by its id, and you get a node with a different id
-because the given id was in the range of that Node, it should take that into account and adjust the given offset.
-Else the offset is wrong, because it was calculated based on a node that started at another id.
-
-Also, inserting doesn't work if the TextNodes are not split already... so it has to be made sure that the TextNodes are already correctly split before InsertChild
-or InsertChild can split TextNodes. Nodes should use a method `HasId()` and TextNode overrides to a "containsId" like method.
-However when i use a TextNode as a Origin, it must use the LatId, but currently it uses Id.
-
 ### Cursor
 
 Cursor feels broken right now. There are a few weird things:
