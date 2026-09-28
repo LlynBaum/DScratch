@@ -5,7 +5,9 @@ namespace DScratch.Transactions.Steps;
 
 public class SplitTextStep(TextNode node, TextNode splitNode, int offset) : IStep
 {
-    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
+    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction _, DScratchDocument __) => GenerateSplitSteps(node, splitNode, offset);
+    
+    internal static IReadOnlyList<StepDiff?> GenerateSplitSteps(TextNode node, TextNode splitNode, int offset)
     {
         return
         [
