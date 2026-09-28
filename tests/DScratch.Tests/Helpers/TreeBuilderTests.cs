@@ -85,12 +85,12 @@ public class TreeBuilderTests
             
             Assert.That(text2P2.TextContent, Is.EqualTo("t2"));
             Assert.That(text2P2.Parent, Is.EqualTo(paragraph2));
-            Assert.That(text2P2.Origin, Is.EqualTo(text1P2.Id));
+            Assert.That(text2P2.Origin, Is.EqualTo(text1P2.LastId));
             Assert.That(text2P2.RightOrigin, Is.Null);
             
             Assert.That(text3P2.TextContent, Is.EqualTo("t3"));
             Assert.That(text3P2.Parent, Is.EqualTo(paragraph2));
-            Assert.That(text3P2.Origin, Is.EqualTo(text2P2.Id));
+            Assert.That(text3P2.Origin, Is.EqualTo(text2P2.LastId));
             Assert.That(text3P2.RightOrigin, Is.Null);
         }
         
