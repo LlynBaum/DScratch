@@ -10,6 +10,8 @@ public abstract class DNode(NodeId id, NodeId? origin, NodeId? rightOrigin, List
     private readonly Dictionary<MarkKey, string> marks = new Dictionary<MarkKey, string>();
     
     public NodeId Id { get; } = id;
+
+    public virtual NodeId LastId => Id;
     
     public NodeId? Origin { get; } = origin;
 
@@ -47,7 +49,7 @@ public abstract class DNode(NodeId id, NodeId? origin, NodeId? rightOrigin, List
     {
         node.Parent = this;
 
-        var originIdx = node.Origin is not null ? allChildNodes.FindIndex(n => n.Id == node.Origin) : -1;
+        var originIdx = node.Origin is not null ? allChildNodes.FindIndex(n => n.LastId == node.Origin) : -1;
         var rightOriginIdx = node.RightOrigin is not null ? allChildNodes.FindIndex(n => n.Id == node.RightOrigin) : allChildNodes.Count;
 
         var index = originIdx + 1;
