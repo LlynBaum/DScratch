@@ -23,7 +23,7 @@ public class DeleteContentForwardHandlerTests
     {
         idGenerator = new TestNodeIdGenerator();
         builder = new TreeBuilder(idGenerator);
-        document = builder.CreateDocument();
+        document = builder.Document;
         service = new DScratchService(document, new DNodeFactory(idGenerator), new UserStateService()) { DisableCleanUp = true };
         handler = new DeleteContentForwardHandler(service);
     }

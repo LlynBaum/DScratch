@@ -23,7 +23,7 @@ public class DeleteContentBackwardHandlerTests
     {
         idGenerator = new TestNodeIdGenerator();
         builder = new TreeBuilder(idGenerator);
-        document = builder.CreateDocument();
+        document = builder.Document;
         service = new DScratchService(document, new DNodeFactory(idGenerator), new UserStateService());
         handler = new DeleteContentBackwardHandler(service);
     }

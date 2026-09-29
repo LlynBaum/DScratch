@@ -33,16 +33,15 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute(transactionFake, null!);
+        step.Execute(transactionFake, builder.Document);
         
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(node.Parent?.Id.Clock, Is.EqualTo(1));
-            Assert.That(node2.ChildNodes[1].Id.Clock, Is.EqualTo(-1));
+            Assert.That(node2.ChildNodes[1], Is.EqualTo(node));
             
-            Assert.That(node3.NextSibling()!.Id.Clock, Is.EqualTo(-1));
-            Assert.That(node4.PreviousSibling()?.Id.Clock, Is.EqualTo(-1));
+            Assert.That(node3.NextSibling(), Is.EqualTo(node));
+            Assert.That(node4.PreviousSibling(), Is.EqualTo(node));
             
             Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
@@ -65,7 +64,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute(transactionFake, null!);
+        step.Execute(transactionFake, builder.Document);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -96,7 +95,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node5);
-        step.Execute(transactionFake, null!);
+        step.Execute(transactionFake, builder.Document);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -123,7 +122,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute(transactionFake, null!);
+        step.Execute(transactionFake, builder.Document);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -151,7 +150,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute(transactionFake, null!);
+        step.Execute(transactionFake, builder.Document);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -179,7 +178,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute(transactionFake, null!);
+        step.Execute(transactionFake, builder.Document);
         
         // Assert
         using (Assert.EnterMultipleScope())

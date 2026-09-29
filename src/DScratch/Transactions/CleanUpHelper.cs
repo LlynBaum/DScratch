@@ -3,7 +3,7 @@ using DScratch.Nodes;
 
 namespace DScratch.Transactions;
 
-public static class CleanUpHelper // TODO: test the merge also for the new RightOrigin and Origin check
+public static class CleanUpHelper
 {
     public static bool CanMergeWithPrevious(TextNode node, out TextNode origin)
     {

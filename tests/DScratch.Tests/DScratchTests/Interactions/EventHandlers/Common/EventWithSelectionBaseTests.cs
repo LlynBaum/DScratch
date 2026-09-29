@@ -19,7 +19,7 @@ public class EventWithSelectionBaseTests
     public void SetUp()
     {
         builder = new TreeBuilder();
-        testee = new Testee(new DScratchService(builder.CreateDocument(), new DNodeFactory(builder.IdGenerator), new UserStateService()));
+        testee = new Testee(new DScratchService(builder.Document, new DNodeFactory(builder.IdGenerator), new UserStateService()));
     }
 
     [Test]

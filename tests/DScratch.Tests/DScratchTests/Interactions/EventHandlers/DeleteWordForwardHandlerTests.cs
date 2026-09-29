@@ -10,7 +10,6 @@ namespace DScratch.Tests.DScratchTests.Interactions.EventHandlers;
 [TestFixture]
 public class DeleteWordForwardHandlerTests
 {
-    private DScratchDocument document = null!;
     private IDScratchService service;
 
     private DeleteWordForwardHandler handler;
@@ -23,8 +22,7 @@ public class DeleteWordForwardHandlerTests
     {
         idGenerator = new TestNodeIdGenerator();
         builder = new TreeBuilder(idGenerator);
-        document = builder.CreateDocument();
-        service = new DScratchService(document, new DNodeFactory(idGenerator), new UserStateService()) { DisableCleanUp = true };
+        service = new DScratchService(builder.Document, new DNodeFactory(idGenerator), new UserStateService()) { DisableCleanUp = true };
         handler = new DeleteWordForwardHandler(service);
     }
     

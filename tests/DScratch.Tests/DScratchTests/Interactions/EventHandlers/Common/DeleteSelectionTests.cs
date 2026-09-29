@@ -18,7 +18,7 @@ public class DeleteSelectionTests
     {
         builder = new TreeBuilder();
         transaction = new DTransaction(
-            document: builder.CreateDocument(), 
+            document: builder.Document, 
             nodeFactory: new DNodeFactory(builder.IdGenerator),
             userStateService: new UserStateService(), 
             disableCleanUp: true);

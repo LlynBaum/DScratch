@@ -23,8 +23,7 @@ public class InsertTextHandlerTest
         builder = new TreeBuilder(idGenerator);
         userStateService = new UserStateService();
         
-        var document = builder.CreateDocument();
-        var service = new DScratchService(document, new DNodeFactory(idGenerator), userStateService) { DisableCleanUp = true };
+        var service = new DScratchService(builder.Document, new DNodeFactory(idGenerator), userStateService) { DisableCleanUp = true };
         
         handler = new InsertTextHandler(service);
     }

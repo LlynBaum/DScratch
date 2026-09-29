@@ -11,7 +11,6 @@ namespace DScratch.Tests.DScratchTests.Transactions;
 public class DTransactionTests
 {
     private TreeBuilder TreeBuilder { get; set; }
-    private DScratchDocument Document { get; set; }
     private UserStateService UserStateService { get; set; }
     private DTransaction Transaction { get; set; }
 
@@ -19,9 +18,8 @@ public class DTransactionTests
     public void SetUp()
     {
         TreeBuilder = new TreeBuilder();
-        Document = TreeBuilder.CreateDocument();
         UserStateService = new UserStateService();
-        Transaction = new DTransaction(Document, new DNodeFactory(TreeBuilder.IdGenerator), UserStateService, true);
+        Transaction = new DTransaction(TreeBuilder.Document, new DNodeFactory(TreeBuilder.IdGenerator), UserStateService, true);
     }
 
     [Test]
@@ -63,7 +61,7 @@ public class DTransactionTests
         Assert.That(step, Is.TypeOf<InsertStep>());
         
         Transaction.Commit();
-        Assert.That(Document.FindNode(nodeId), Is.EqualTo(node));
+        Assert.That(TreeBuilder.Document.FindNode(nodeId), Is.EqualTo(node));
     }
     
     [Test]
@@ -78,7 +76,7 @@ public class DTransactionTests
         Assert.That(Transaction.Steps.Single(), Is.TypeOf<DeleteStep>());
         
         Transaction.Commit();
-        Assert.That(Document.FindNode(node.Id), Is.EqualTo(node));
+        Assert.That(TreeBuilder.Document.FindNode(node.Id), Is.EqualTo(node));
     }
     
     [Test]
@@ -96,8 +94,8 @@ public class DTransactionTests
         Assert.That(Transaction.Steps.Single(), Is.TypeOf<DeleteRangeStep>());
         
         Transaction.Commit();
-        Assert.That(Document.FindNode(node.Id), Is.EqualTo(node));
-        Assert.That(Document.FindNode(node2.Id), Is.EqualTo(node2));
+        Assert.That(TreeBuilder.Document.FindNode(node.Id), Is.EqualTo(node));
+        Assert.That(TreeBuilder.Document.FindNode(node2.Id), Is.EqualTo(node2));
     }
     
     [Test]

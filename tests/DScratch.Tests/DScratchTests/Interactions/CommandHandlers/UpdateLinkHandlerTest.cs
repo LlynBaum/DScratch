@@ -19,7 +19,7 @@ public class UpdateLinkHandlerTest
         builder = new TreeBuilder();
         var userStateServiceFake = new UserStateServiceFake();
         dScratchService = new DScratchService(
-            document: builder.CreateDocument(), 
+            document: builder.Document, 
             nodeFactory: new DNodeFactory(builder.IdGenerator), 
             userStateService: userStateServiceFake)
         {

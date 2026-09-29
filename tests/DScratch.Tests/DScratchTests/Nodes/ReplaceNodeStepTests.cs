@@ -27,7 +27,7 @@ public class ReplaceNodeStepTests
         
         // Act
         new ReplaceNodeStep(nodeToReplace, n => nodeFactory.HeadingFrom(n, HeadingLevel.Level1))
-            .Execute(new TestTransactionFake(), builder.CreateDocument());
+            .Execute(new TestTransactionFake(), builder.Document);
         
         // Assert
         Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(3));

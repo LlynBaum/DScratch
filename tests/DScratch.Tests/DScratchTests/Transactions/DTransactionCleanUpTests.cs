@@ -10,7 +10,6 @@ namespace DScratch.Tests.DScratchTests.Transactions;
 public class DTransactionCleanUpTests
 {
     private TreeBuilder TreeBuilder { get; set; }
-    private DScratchDocument Document { get; set; }
     private UserStateService UserStateService { get; set; }
     private DTransaction Transaction { get; set; }
     
@@ -18,9 +17,8 @@ public class DTransactionCleanUpTests
     public void SetUp()
     {
         TreeBuilder = new TreeBuilder();
-        Document = TreeBuilder.CreateDocument();
         UserStateService = new UserStateService();
-        Transaction = new DTransaction(Document, new DNodeFactory(TreeBuilder.IdGenerator), UserStateService, false);
+        Transaction = new DTransaction(TreeBuilder.Document, new DNodeFactory(TreeBuilder.IdGenerator), UserStateService, false);
     }
 
     private class MergeContinuesTextNodes : DTransactionCleanUpTests

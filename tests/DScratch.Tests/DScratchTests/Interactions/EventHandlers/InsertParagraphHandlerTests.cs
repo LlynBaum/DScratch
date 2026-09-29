@@ -11,7 +11,6 @@ namespace DScratch.Tests.DScratchTests.Interactions.EventHandlers;
 [TestFixture]
 public class InsertParagraphHandlerTests
 {
-    private DScratchDocument document = null!;
     private IDScratchService service;
 
     private InsertParagraphHandler handler;
@@ -24,8 +23,7 @@ public class InsertParagraphHandlerTests
     {
         idGenerator = new TestNodeIdGenerator();
         builder = new TreeBuilder(idGenerator);
-        document = builder.CreateDocument();
-        service = new DScratchService(document, new DNodeFactory(idGenerator), new UserStateService()) { DisableCleanUp = true };
+        service = new DScratchService(builder.Document, new DNodeFactory(idGenerator), new UserStateService()) { DisableCleanUp = true };
         handler = new InsertParagraphHandler(service);
     }
 

@@ -18,7 +18,7 @@ public class RemoveLinkHandlerTest
     {
         builder = new TreeBuilder();
         dScratchService = new DScratchService(
-            document: builder.CreateDocument(), 
+            document: builder.Document, 
             nodeFactory: new DNodeFactory(builder.IdGenerator), 
             userStateService: new UserStateService()) { DisableCleanUp = true };
         

@@ -10,7 +10,6 @@ namespace DScratch.Tests.DScratchTests.Interactions.EventHandlers;
 [TestFixture]
 public class DeleteWordBackwardHandlerTests
 {
-    private DScratchDocument document = null!;
     private IDScratchService service;
 
     private DeleteWordBackwardHandler handler;
@@ -23,8 +22,7 @@ public class DeleteWordBackwardHandlerTests
     {
         idGenerator = new TestNodeIdGenerator();
         builder = new TreeBuilder(idGenerator);
-        document = builder.CreateDocument();
-        service = new DScratchService(document, new DNodeFactory(idGenerator), new UserStateService()) { DisableCleanUp = true };
+        service = new DScratchService(builder.Document, new DNodeFactory(idGenerator), new UserStateService()) { DisableCleanUp = true };
         handler = new DeleteWordBackwardHandler(service);
     }
     

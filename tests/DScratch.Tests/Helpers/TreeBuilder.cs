@@ -8,9 +8,9 @@ public class TreeBuilder : TreeBuilder.ITextTreeBuilder
 {
     public RootNode Root { get; }
 
+    public DScratchDocument Document { get; }
+    
     public DNode FirstChild => Root.FirstChild!;
-
-    public event Action<DNode>? NodeAdded; 
 
     private readonly DNode parent;
     private DNode? previousChild;
@@ -24,21 +24,16 @@ public class TreeBuilder : TreeBuilder.ITextTreeBuilder
         parent = Root;
         IdGenerator = testNodeIdGenerator ?? new TestNodeIdGenerator();
         factory =  new DNodeFactory(IdGenerator);
+        Document = new DScratchDocument(Root);
     }
     
-    private TreeBuilder(DNode parent, TestNodeIdGenerator idGenerator, RootNode rootNode)
+    private TreeBuilder(DNode parent, TestNodeIdGenerator idGenerator, RootNode rootNode, DScratchDocument document)
     {
         Root = rootNode;
         this.parent = parent;
         IdGenerator = idGenerator;
         factory = new DNodeFactory(idGenerator);
-    }
-
-    public DScratchDocument CreateDocument()
-    {
-        var document = new DScratchDocument(Root);
-        NodeAdded += document.AddNode;
-        return document;
+        Document = document;
     }
 
     public void Print()
@@ -105,13 +100,12 @@ public class TreeBuilder : TreeBuilder.ITextTreeBuilder
     {
         parent.InsertChild(node);
         previousChild = node;
-        NodeAdded?.Invoke(node);
+        Document.AddNode(node);
     }
 
     private TreeBuilder GetChildTreeBuilder(DNode parentNode)
     {
-        var builder = new TreeBuilder(parentNode, IdGenerator, Root);
-        builder.NodeAdded = NodeAdded;
+        var builder = new TreeBuilder(parentNode, IdGenerator, Root, Document);
         return builder;
     }
     
