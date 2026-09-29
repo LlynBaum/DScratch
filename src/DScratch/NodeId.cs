@@ -26,10 +26,7 @@ public readonly record struct NodeId
 
     public bool IsRoot => this == Root;
 
-    public override string ToString()
-    {
-        return Value;
-    }
+    public override string ToString() => Value;
 
     public static NodeId FromString(string anchorId)
     {
