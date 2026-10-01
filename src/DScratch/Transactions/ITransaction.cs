@@ -16,7 +16,7 @@ public interface ITransaction
 
     void Insert(DNode node, DNode parent);
 
-    void Delete(DNode node);
+    void Delete(NodeId nodeId);
     
     void DeleteRange(DNode? start, DNode? end);
     

@@ -8,6 +8,8 @@ public class DeleteRangeStep(DNode? start, DNode? end) : IStep
     public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
     {
         if (start is null && end is null) return [];
+        
+        // TODO: split start and node as necessary. Then start deleting in between.
 
         var steps = new List<StepDiff?>();
         
