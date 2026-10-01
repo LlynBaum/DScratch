@@ -17,7 +17,6 @@ internal class DTransaction(
     private readonly List<IStep> steps = [];
     
     private readonly List<DNode> modifiedNodes = [];
-    private readonly List<DNode> addedNodes = [];
     private SelectionInfo? cursorPosition;
 
     public IReadOnlyList<IStep> Steps => steps;
@@ -32,12 +31,10 @@ internal class DTransaction(
     {
         var stepDiffs = steps.SelectMany(s => s.Execute(this, document)).ToList();
         
-        addedNodes.ForEach(document.AddNode);
         var cleanUpSteps = CleanupTree(modifiedNodes);
         stepDiffs = [..stepDiffs, ..cleanUpSteps];
         
         modifiedNodes.Clear();
-        addedNodes.Clear();
         
         return new TransactionResult(stepDiffs, cursorPosition);
     }
@@ -45,7 +42,6 @@ internal class DTransaction(
     public void Insert(DNode node, DNode parent)
     {
         steps.Add(new InsertStep(node, parent));
-        addedNodes.Add(node);
     }
     
     public void Delete(DNode node)
@@ -101,7 +97,6 @@ internal class DTransaction(
         
         if (splitNode is not null && splitNode.Id != node.Id)
         {
-            addedNodes.Add(splitNode);
             steps.Add(new SplitTextStep(node, splitNode, offset));
         }
         

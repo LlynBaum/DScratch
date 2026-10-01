@@ -190,4 +190,72 @@ public class InsertStepTests
             Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
     }
+    
+    [Test]
+    public void TextNode_SplitExistingNode_AndInsertBetween()
+    {
+        // Arrange
+        var builder = new TreeBuilder();
+        TextNode textNode = null!;
+        var parent = builder.Paragraph(t =>
+        {
+            textNode = t.Text("ac");
+        });
+
+        var node = new TextNode(new NodeId(textNode.LastId.Client, textNode.LastId.Clock + 1), textNode.Id, textNode.LastId, "b");
+        
+        // Act
+        var step = new InsertStep(node, parent);
+        step.Execute(transactionFake, builder.Document);
+        
+        // Assert
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ChildNodes[0], Is.EqualTo(textNode));
+            Assert.That(parent.ChildNodes[1], Is.EqualTo(node));
+            
+            Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("a"));
+            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("b"));
+            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("c"));
+            
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
+        }
+    }
+    
+    [Test]
+    public void TextNode_SplitExistingNode_AndInsertBetween_WithThreeCharacters()
+    {
+        // Arrange
+        var builder = new TreeBuilder();
+        TextNode textNode = null!;
+        var parent = builder.Paragraph(t =>
+        {
+            textNode = t.Text("abd");
+        });
+
+        var node = new TextNode(
+            id: new NodeId(textNode.LastId.Client, textNode.LastId.Clock + 1),
+            origin: new NodeId(textNode.Id.Client, textNode.Id.Clock + 1),
+            rightOrigin: textNode.LastId,
+            content: "c");
+        
+        // Act
+        var step = new InsertStep(node, parent);
+        step.Execute(transactionFake, builder.Document);
+        
+        // Assert
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parent.ChildNodes[0], Is.EqualTo(textNode));
+            Assert.That(parent.ChildNodes[1], Is.EqualTo(node));
+            
+            Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
+            Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("c"));
+            Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("d"));
+            
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
+        }
+    }
 }

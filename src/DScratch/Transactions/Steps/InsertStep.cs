@@ -36,10 +36,10 @@ internal class InsertStep(DNode node, DNode parent) : IStep
             return [];
         }
 
-        var offset = (int)(node.Origin.Value.Clock - textNode.Id.Clock);
+        var offset = (int)(node.Origin.Value.Clock - textNode.Id.Clock + 1);
         var splitNode = textNode.Split(offset, transaction.NodeFactory.NodeIdGenerator.TakeIds);
         return splitNode is not null 
-            ? SplitTextStep.GenerateSplitSteps(textNode, splitNode, offset) 
+            ? SplitTextStep.GenerateSplitSteps(document, textNode, splitNode, offset)
             : [];
     }
 
