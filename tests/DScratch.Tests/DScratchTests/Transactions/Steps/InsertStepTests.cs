@@ -118,7 +118,7 @@ public class InsertStepTests
             node4 = t.Text("ab"); // ID "1"
         });
 
-        var node = new TextNode(new NodeId(node4.LastId.Client, node4.LastId.Clock + 2), node4.Id, null, "c");
+        var node = new TextNode(new NodeId(node4.LastId.Client, node4.LastId.Clock + 2), node4.LastId, null, "c");
         
         // Act
         var step = new InsertStep(node, node2);
@@ -146,7 +146,7 @@ public class InsertStepTests
             node4 = t.Text("ab"); // ID "1"
         });
 
-        var node = new TextNode(new NodeId("whatever", node4.LastId.Clock + 1), node4.Id, null, "c");
+        var node = new TextNode(new NodeId("whatever", node4.LastId.Clock + 1), node4.LastId, null, "c");
         
         // Act
         var step = new InsertStep(node, node2);

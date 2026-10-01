@@ -10,6 +10,7 @@ internal class InsertStep(DNode node, DNode parent) : IStep
         var splitSteps = EnsureOriginExists(transaction, document);
         parent.InsertChild(node);
         transaction.NotifyNodeChange(node);
+        document.AddNode(node);
         return [..splitSteps, ..node.ToInsertSteps()];
     }
 
