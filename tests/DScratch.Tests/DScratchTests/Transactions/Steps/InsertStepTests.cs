@@ -1,5 +1,6 @@
 using DScratch.Nodes;
 using DScratch.Tests.Helpers;
+using DScratch.Transactions;
 using DScratch.Transactions.Steps;
 
 namespace DScratch.Tests.DScratchTests.Transactions.Steps;
@@ -33,7 +34,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute(transactionFake, builder.Document);
+        var result = step.Execute(transactionFake, builder.Document);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -45,6 +46,8 @@ public class InsertStepTests
             
             Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
+        
+        AssertHelper.ThatStepsEqualTo(result, [..AssertStepDiffHelper.InsertTextNodeTypes]);
     }
     
     [Test]
@@ -64,7 +67,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute(transactionFake, builder.Document);
+        var result = step.Execute(transactionFake, builder.Document);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -75,6 +78,8 @@ public class InsertStepTests
             
             Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
+        
+        AssertHelper.ThatStepsEqualTo(result, [..AssertStepDiffHelper.InsertTextNodeTypes]);
     }
 
     [Test]
@@ -95,7 +100,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node5);
-        step.Execute(transactionFake, builder.Document);
+        var result = step.Execute(transactionFake, builder.Document);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -105,6 +110,8 @@ public class InsertStepTests
             
             Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
+        
+        AssertHelper.ThatStepsEqualTo(result, [..AssertStepDiffHelper.InsertTextNodeTypes]);
     }
     
     [Test]
@@ -122,7 +129,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute(transactionFake, builder.Document);
+        var result = step.Execute(transactionFake, builder.Document);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -133,6 +140,8 @@ public class InsertStepTests
             
             Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
+        
+        AssertHelper.ThatStepsEqualTo(result, [..AssertStepDiffHelper.InsertTextNodeTypes]);
     }
     
     [Test]
@@ -150,7 +159,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute(transactionFake, builder.Document);
+        var result = step.Execute(transactionFake, builder.Document);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -161,6 +170,8 @@ public class InsertStepTests
             
             Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
+        
+        AssertHelper.ThatStepsEqualTo(result, [..AssertStepDiffHelper.InsertTextNodeTypes]);
     }
     
     [Test]
@@ -178,7 +189,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, node2);
-        step.Execute(transactionFake, builder.Document);
+        var result = step.Execute(transactionFake, builder.Document);
         
         // Assert
         using (Assert.EnterMultipleScope())
@@ -189,6 +200,8 @@ public class InsertStepTests
             
             Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
+        
+        AssertHelper.ThatStepsEqualTo(result, [..AssertStepDiffHelper.InsertTextNodeTypes]);
     }
     
     [Test]
@@ -206,7 +219,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, parent);
-        step.Execute(transactionFake, builder.Document);
+        var result = step.Execute(transactionFake, builder.Document);
         
         // Assert
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
@@ -221,6 +234,11 @@ public class InsertStepTests
             
             Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
+        
+        AssertHelper.ThatStepsEqualTo(result, [
+            ..AssertStepDiffHelper.SplitTextTypes,
+            ..AssertStepDiffHelper.InsertTextNodeTypes
+        ]);
     }
     
     [Test]
@@ -242,7 +260,7 @@ public class InsertStepTests
         
         // Act
         var step = new InsertStep(node, parent);
-        step.Execute(transactionFake, builder.Document);
+        var result = step.Execute(transactionFake, builder.Document);
         
         // Assert
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
@@ -257,5 +275,10 @@ public class InsertStepTests
             
             Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
         }
+        
+        AssertHelper.ThatStepsEqualTo(result, [
+            ..AssertStepDiffHelper.SplitTextTypes,
+            ..AssertStepDiffHelper.InsertTextNodeTypes
+        ]);
     }
 }
