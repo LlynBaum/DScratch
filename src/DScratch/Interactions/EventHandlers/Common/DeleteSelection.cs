@@ -6,68 +6,37 @@ namespace DScratch.Interactions.EventHandlers.Common;
 
 internal static class DeleteSelection
 {
-    public static DNodeSearchResult Handle(KeyPressInfo keyPressInfo, ITransaction transaction)
+    public static void Handle(KeyPressInfo keyPressInfo, ITransaction transaction, EventHandlerContext context)
     {
-        var result = SearchSelectedNodes(keyPressInfo, transaction);
-        return result.Origin.Node?.Parent == result.RightOrigin.Node?.Parent 
-            ? DeleteContentInParent(result, transaction) 
-            : DeleteAndMerge(result, transaction);
+        var nodeSelection = SearchSelectedNodes(keyPressInfo, transaction);
+        context.SetAnchors(nodeSelection.AnchorNode, nodeSelection.AnchorNodeId);
+        if (nodeSelection.IsInSameBlock())
+        {
+            transaction.DeleteRange(nodeSelection.AnchorNodeId, nodeSelection.RightAnchorNodeId); // TODO: delete range working with ids
+        }
+        else
+        {
+            DeleteAndMerge(nodeSelection, transaction); // TODO: Delete range at start and end, delete everything in between, move tail start para to merge them
+        }
     }
     
-    private static NodeSearchResult<TextNode> SearchSelectedNodes(KeyPressInfo keyPressInfo, ITransaction transaction)
+    private static NodeSelection SearchSelectedNodes(KeyPressInfo keyPressInfo, ITransaction transaction)
     {
-        var (originOffset, rightOriginOffset) = keyPressInfo.Selection!.GetConvertedOffsets();
-        var (originId, rightOriginId) = keyPressInfo.Selection.GetConvertedNodeIds();
-        var origin = transaction.Document.FindNode(originId);
-        var rightOrigin = transaction.Document.FindNode(rightOriginId);
-
-        if (origin is not TextNode originTextNode || rightOrigin is not TextNode rightOriginTextNode)
+        var (anchorOffset, rightAnchorOffset) = keyPressInfo.Selection!.GetConvertedOffsets();
+        var (anchorId, rightAnchorId) = keyPressInfo.Selection.GetConvertedNodeIds();
+        var anchorNode = transaction.Document.FindNode(anchorId) ?? throw new InvalidOperationException($"Could not find a node for {anchorId}");
+        var rightAnchorNode = transaction.Document.FindNode(rightAnchorId) ?? throw new InvalidOperationException($"Could not find a node for {rightAnchorId}");
+        
+        return new NodeSelection
         {
-            throw new ArgumentException($"Expected TextNodes for {originId} and {rightOriginId}");
-        }
-
-        return new NodeSearchResult<TextNode>(
-            Origin: new NodeInfo<TextNode>(originTextNode, originOffset),
-            RightOrigin: new NodeInfo<TextNode>(rightOriginTextNode, rightOriginOffset));
+            AnchorNode = anchorNode,
+            AnchorNodeId = new NodeId(anchorId.Client, anchorId.Clock + anchorOffset),
+            RightAnchorNode = rightAnchorNode,
+            RightAnchorNodeId = new NodeId(rightAnchorId.Client, rightAnchorId.Clock + rightAnchorOffset)
+        };
     }
 
-    private static DNodeSearchResult DeleteContentInParent(NodeSearchResult<TextNode> nodeSearchResult, ITransaction transaction)
-    {
-        var deleteStart = nodeSearchResult.Origin.HasFoundNode 
-            ? transaction.SplitText(nodeSearchResult.Origin.Node, nodeSearchResult.Origin.Offset) 
-            : null;
-
-        var rightOrigin = nodeSearchResult.RightOrigin.Node;
-        var relativeRightOriginOffset = nodeSearchResult.RightOrigin.Offset;
-        
-        if (nodeSearchResult.Origin.HasFoundNode 
-            && nodeSearchResult.RightOrigin.HasFoundNode
-            && nodeSearchResult.Origin.Node.Id == nodeSearchResult.RightOrigin.Node.Id)
-        {
-            rightOrigin = deleteStart;
-            relativeRightOriginOffset -= nodeSearchResult.Origin.Offset;
-        }
-
-        DNode? deleteEnd = rightOrigin;
-        if (rightOrigin != null)
-        {
-            if (relativeRightOriginOffset > 0)
-            {
-                transaction.SplitText(rightOrigin, relativeRightOriginOffset);
-            }
-            else
-            {
-                deleteEnd = rightOrigin.PreviousSibling();
-            }
-        }
-        
-        transaction.DeleteRange(deleteStart ?? nodeSearchResult.Origin.Node?.NextSibling(), deleteEnd);
-        return new DNodeSearchResult(
-            Origin: new DNodeInfo(nodeSearchResult.Origin.Node, nodeSearchResult.Origin.Offset), 
-            RightOrigin: new DNodeInfo(rightOrigin?.NextSibling(), relativeRightOriginOffset));
-    }
-
-    private static DNodeSearchResult DeleteAndMerge(NodeSearchResult<TextNode> nodeSearchResult, ITransaction transaction)
+    private static void DeleteAndMerge(NodeSearchResult<TextNode> nodeSearchResult, ITransaction transaction)
     {
         var deleteStart = nodeSearchResult.Origin.HasFoundNode 
             ? transaction.SplitText(nodeSearchResult.Origin.Node, nodeSearchResult.Origin.Offset) 
@@ -80,9 +49,31 @@ internal static class DeleteSelection
         
         transaction.MoveRange(nodeSearchResult.RightOrigin.Node?.NextSibling(), null, deleteStart?.Parent!, deleteStart?.Parent?.LastChild);
         transaction.DeleteRange(deleteStart?.Parent?.NextSibling(), nodeSearchResult.RightOrigin.Node?.Parent);
+    }
+    
+    private class NodeSelection
+    {
+        public required NodeId AnchorNodeId { get; init; }
         
-        return new DNodeSearchResult(
-            Origin: new DNodeInfo(deleteStart?.PreviousSibling(), nodeSearchResult.Origin.AbsoluteOffsetIfPresent ?? 0), 
-            RightOrigin: new DNodeInfo(nodeSearchResult.RightOrigin.Node?.NextSibling(), nodeSearchResult.RightOrigin.AbsoluteOffsetIfPresent ?? 0));
+        public required DNode AnchorNode { get; init; }
+        
+        public required NodeId RightAnchorNodeId { get; init; }
+        
+        public required DNode RightAnchorNode { get; init; }
+
+        public bool IsInSameBlock()
+        {
+            return AnchorNode.GetNearestBlock() == RightAnchorNode.GetNearestBlock();
+        }
+
+        public IEnumerable<DNode> GetBlocksInBetween()
+        {
+            var current = AnchorNode.NextSibling();
+            while (current is not null && current != RightAnchorNode)
+            {
+                yield return current;
+                current = current.NextSibling();
+            }
+        }
     }
 }

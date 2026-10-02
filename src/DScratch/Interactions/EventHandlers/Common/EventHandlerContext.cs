@@ -59,14 +59,4 @@ internal class EventHandlerContext
         RightAnchorNodeId = rightAnchor?.Id;
         RightAnchorNode = rightAnchor;
     }
-
-    // TODO: remove when DeleteSelection is using the Context as well
-    [Obsolete("Should be removed soon")]
-    public void FromSearchResultTemp(DNodeSearchResult searchResult)
-    {
-        AnchorNode = searchResult.Origin.Node;
-        AnchorNodeId = searchResult.Origin.Node?.Id;
-        RightAnchorNode = searchResult.RightOrigin.Node;
-        RightAnchorNodeId = searchResult.RightOrigin.Node?.Id;
-    }
 }

@@ -19,16 +19,16 @@ internal class InsertTextHandler(IDScratchService dScratchService) : EventWithSe
         var marks = GetMarks(transaction);
         var textNode = transaction.NodeFactory.String(
             value: keyPressInfo.Data,
-            origin: HandlerContext.AnchorNodeId,
-            rightOrigin: HandlerContext.RightAnchorNodeId,
+            origin: Context.AnchorNodeId,
+            rightOrigin: Context.RightAnchorNodeId,
             initMarks: marks);
-        transaction.Insert(textNode, HandlerContext.GetParent());
+        transaction.Insert(textNode, Context.GetParent());
         transaction.AddCursorPosition(textNode.Id, textNode.Length);
     }
 
     private IReadOnlyDictionary<MarkKey, string> GetMarks(ITransaction transaction)
     {
-        var referenceNode = HandlerContext.AnchorNode ?? HandlerContext.RightAnchorNode ?? HandlerContext.GetParent().FirstChild;
+        var referenceNode = Context.AnchorNode ?? Context.RightAnchorNode ?? Context.GetParent().FirstChild;
         return transaction.CalculateMarks(referenceNode?.Marks ?? FrozenDictionary<MarkKey, string>.Empty);
     }
 }

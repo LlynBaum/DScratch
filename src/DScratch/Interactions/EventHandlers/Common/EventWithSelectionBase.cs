@@ -5,7 +5,7 @@ namespace DScratch.Interactions.EventHandlers.Common;
 
 internal abstract class EventWithSelectionBase(IDScratchService dScratchService) : IEditorEventHandler
 {
-    protected readonly EventHandlerContext HandlerContext = new EventHandlerContext();
+    protected readonly EventHandlerContext Context = new EventHandlerContext();
 
     protected abstract void HandleEvent(KeyPressInfo keyPressInfo, ITransaction transaction);
     
@@ -27,11 +27,11 @@ internal abstract class EventWithSelectionBase(IDScratchService dScratchService)
                     var anchorId = new NodeId(
                         client: targetTextNode.Id.Client, 
                         clock: targetTextNode.Id.Clock + keyPressInfo.Selection.FocusOffset);
-                    HandlerContext.SetAnchors(targetTextNode, anchorId);
+                    Context.SetAnchors(targetTextNode, anchorId);
                 }
                 else
                 {
-                    HandlerContext.SetRightAnchor(targetTextNode);
+                    Context.SetRightAnchor(targetTextNode);
                 }
             }
             else if (SearchTextNode(targetNode, keyPressInfo.Selection) is { Node: not null } result)
@@ -41,24 +41,23 @@ internal abstract class EventWithSelectionBase(IDScratchService dScratchService)
                     var anchorId = new NodeId(
                         client: result.Node.Id.Client, 
                         clock: result.Node.Id.Clock + keyPressInfo.Selection.FocusOffset - result.Offset);
-                    HandlerContext.SetAnchors(result.Node, anchorId);
+                    Context.SetAnchors(result.Node, anchorId);
                 }
                 else
                 {
-                    HandlerContext.SetRightAnchor(result.Node);
+                    Context.SetRightAnchor(result.Node);
                 }
             }
             else
             {
                 // In case FirstChild is null, we need to set the parent manually
-                HandlerContext.SetCustomParent(targetNode);
-                HandlerContext.SetRightAnchor(targetNode.FirstChild);
+                Context.SetCustomParent(targetNode);
+                Context.SetRightAnchor(targetNode.FirstChild);
             }
         }
         else
         {
-            var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction);
-            HandlerContext.FromSearchResultTemp(nodeSearchResult);
+            DeleteSelection.Handle(keyPressInfo, transaction, Context);
         }
         
         HandleEvent(keyPressInfo, transaction);
