@@ -1,11 +1,14 @@
-using DScratch.Interactions.EventHandlers.Models;
 using DScratch.Nodes;
 using DScratch.Transactions;
 
 namespace DScratch.Interactions.EventHandlers.Common;
 
-public abstract class EventWithSelectionBase(IDScratchService dScratchService) : IEditorEventHandler
+internal abstract class EventWithSelectionBase(IDScratchService dScratchService) : IEditorEventHandler
 {
+    protected readonly EventHandlerContext HandlerContext = new EventHandlerContext();
+
+    protected abstract void HandleEvent(KeyPressInfo keyPressInfo, ITransaction transaction);
+    
     public TransactionResult Handle(KeyPressInfo keyPressInfo)
     {
         var transaction = dScratchService.StartTransaction();
@@ -15,38 +18,54 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
             throw new ArgumentException($"Node not found: {keyPressInfo.Selection.AnchorId}");
         }
 
-        DNodeSearchResult nodeSearchResult;
         if (keyPressInfo.Selection.Direction is SelectionDirection.None)
         {
             if (targetNode is TextNode targetTextNode)
             {
-                nodeSearchResult = HandleNoneSelection(keyPressInfo, transaction, targetTextNode);
+                if (keyPressInfo.Selection.FocusOffset > 0)
+                {
+                    var anchorId = new NodeId(
+                        client: targetTextNode.Id.Client, 
+                        clock: targetTextNode.Id.Clock + keyPressInfo.Selection.FocusOffset);
+                    HandlerContext.SetAnchors(targetTextNode, anchorId);
+                }
+                else
+                {
+                    HandlerContext.SetRightAnchor(targetTextNode);
+                }
             }
-            else if (SearchTextNode(targetNode, keyPressInfo.Selection) is { } textNode)
+            else if (SearchTextNode(targetNode, keyPressInfo.Selection) is { Node: not null } result)
             {
-                nodeSearchResult = HandleNoneSelection(keyPressInfo, transaction, textNode);
+                if (keyPressInfo.Selection.FocusOffset > 0)
+                {
+                    var anchorId = new NodeId(
+                        client: result.Node.Id.Client, 
+                        clock: result.Node.Id.Clock + keyPressInfo.Selection.FocusOffset - result.Offset);
+                    HandlerContext.SetAnchors(result.Node, anchorId);
+                }
+                else
+                {
+                    HandlerContext.SetRightAnchor(result.Node);
+                }
             }
             else
             {
-                HandleEmptyBlock(keyPressInfo, transaction, targetNode);
-                return dScratchService.Apply(transaction);
+                // In case FirstChild is null, we need to set the parent manually
+                HandlerContext.SetCustomParent(targetNode);
+                HandlerContext.SetRightAnchor(targetNode.FirstChild);
             }
         }
         else
         {
-            nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction);
-            
-            var cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent ?? 0;
-            var cursorTarget = nodeSearchResult.Origin.Node ?? targetNode;
-            transaction.AddCursorPosition(cursorTarget.Id, cursorPosition);
+            var nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction);
+            HandlerContext.FromSearchResultTemp(nodeSearchResult);
         }
         
-        OnAfterSelection(keyPressInfo, transaction, targetNode, nodeSearchResult);
-        
+        HandleEvent(keyPressInfo, transaction);
         return dScratchService.Apply(transaction);
     }
 
-    private static TextNode? SearchTextNode(DNode targetNode, SelectionInfo selection)
+    private static (TextNode? Node, int Offset) SearchTextNode(DNode targetNode, SelectionInfo selection)
     {
         var walker = new TreeWalker<TextNode>(targetNode);
 
@@ -64,20 +83,6 @@ public abstract class EventWithSelectionBase(IDScratchService dScratchService) :
             walker.NextNode();
         }
 
-        return node;
+        return (node, offset);
     }
-
-    protected abstract DNodeSearchResult HandleNoneSelection(KeyPressInfo keyPressInfo,
-        ITransaction transaction,
-        TextNode anchorTextNode);
-
-    protected abstract void HandleEmptyBlock(
-        KeyPressInfo keyPressInfo,
-        ITransaction transaction,
-        DNode anchorNode);
-
-    protected virtual void OnAfterSelection(KeyPressInfo keyPressInfo,
-        ITransaction transaction,
-        DNode anchorNode,
-        DNodeSearchResult nodeSearchResult) { }
 }

@@ -4,7 +4,7 @@ using DScratch.Transactions;
 
 namespace DScratch.Interactions.EventHandlers.Common;
 
-public static class DeleteSelection
+internal static class DeleteSelection
 {
     public static DNodeSearchResult Handle(KeyPressInfo keyPressInfo, ITransaction transaction)
     {

@@ -1,108 +1,34 @@
 using System.Collections.Frozen;
 using DScratch.Interactions.EventHandlers.Common;
-using DScratch.Interactions.EventHandlers.Models;
 using DScratch.Marks;
-using DScratch.Nodes;
 using DScratch.Transactions;
 
 namespace DScratch.Interactions.EventHandlers.Events;
 
-public class InsertTextHandler(IDScratchService dScratchService) : EventWithSelectionBase(dScratchService)
+internal class InsertTextHandler(IDScratchService dScratchService) : EventWithSelectionBase(dScratchService)
 {
     public const string EventName = "insertText";
 
-    protected override DNodeSearchResult HandleNoneSelection(
-        KeyPressInfo keyPressInfo,
-        ITransaction transaction,
-        TextNode anchorTextNode)
-    {
-        if (string.IsNullOrEmpty(keyPressInfo.Data))
-        {
-            return DNodeSearchResult.Empty;
-        }
-
-        if (keyPressInfo.Selection!.AnchorOffset is 0)
-        {
-            return new DNodeSearchResult(DNodeInfo.NotFound(), DNodeInfo.From(anchorTextNode, 0));
-        }
-        
-        var rightOrigin = transaction.SplitText(anchorTextNode, keyPressInfo.Selection.AnchorOffset);
-        return new DNodeSearchResult(
-            Origin: new DNodeInfo(anchorTextNode, anchorTextNode.Length), 
-            RightOrigin: DNodeInfo.From(rightOrigin, 0));
-    }
-
-    protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
+    protected override void HandleEvent(KeyPressInfo keyPressInfo, ITransaction transaction)
     {
         if (string.IsNullOrEmpty(keyPressInfo.Data))
         {
             return;
         }
-
-        var marks = transaction.CalculateMarks(FrozenDictionary<MarkKey, string>.Empty);
-        // When we get a block element as anchor, we assume there are no TextNode within the block. So we just insert the text.
-        // To prevent any broken Trees we insert it before the FirstChild, in case there are child nodes.
-        var textNode = transaction.NodeFactory.String(keyPressInfo.Data, anchorNode.FirstChild, null, marks);
-        transaction.Insert(textNode, anchorNode);
+        
+        var marks = GetMarks(transaction);
+        var textNode = transaction.NodeFactory.String(
+            value: keyPressInfo.Data,
+            origin: HandlerContext.AnchorNodeId,
+            rightOrigin: HandlerContext.RightAnchorNodeId,
+            initMarks: marks);
+        transaction.Insert(textNode, HandlerContext.GetParent());
         transaction.AddCursorPosition(textNode.Id, textNode.Length);
     }
 
-    protected override void OnAfterSelection(KeyPressInfo keyPressInfo,
-        ITransaction transaction,
-        DNode anchorNode,
-        DNodeSearchResult nodeSearchResult)
+    private IReadOnlyDictionary<MarkKey, string> GetMarks(ITransaction transaction)
     {
-        if (string.IsNullOrEmpty(keyPressInfo.Data))
-        {
-            return;
-        }
-        
-        if (nodeSearchResult.Origin.HasFoundNode)
-        {
-            var originNode = nodeSearchResult.Origin.Node;
-            var marks = GetMarksFrom(originNode);
-            var textNode = transaction.NodeFactory.String(
-                value: keyPressInfo.Data,
-                origin: originNode,
-                rightOrigin: originNode.NextSibling(),
-                initMarks: marks);
-
-            var parent = originNode.Parent;
-            transaction.Insert(textNode, parent!);
-            transaction.AddCursorPosition(textNode.Id, textNode.Length);
-        }
-        else if (nodeSearchResult.RightOrigin.HasFoundNode)
-        {
-            var rightNode = nodeSearchResult.RightOrigin.Node;
-            var marks = GetMarksFrom(rightNode);
-            var textNode = transaction.NodeFactory.String(
-                value: keyPressInfo.Data,
-                origin: rightNode.PreviousSibling(),
-                rightOrigin: rightNode,
-                initMarks: marks);
-
-            var parent = rightNode.Parent;
-            transaction.Insert(textNode, parent!);
-            transaction.AddCursorPosition(textNode.Id, textNode.Length);
-        }
-        else if (anchorNode.Parent is not null)
-        {
-            var marks = GetMarksFrom(anchorNode.Parent.FirstChild);
-            var textNode = transaction.NodeFactory.String(
-                value: keyPressInfo.Data, 
-                origin: null, 
-                rightOrigin: anchorNode.FirstChild,
-                initMarks: marks);
-
-            var parent = anchorNode.Parent;
-            transaction.Insert(textNode, parent);
-            transaction.AddCursorPosition(textNode.Id, textNode.Length);
-        }
-        return;
-        
-        IReadOnlyDictionary<MarkKey, string> GetMarksFrom(DNode? node)
-        {
-            return transaction.CalculateMarks(node?.Marks ?? FrozenDictionary<MarkKey, string>.Empty);
-        }
+        var referenceNode = HandlerContext.AnchorNode ?? HandlerContext.RightAnchorNode ?? HandlerContext.GetParent().FirstChild;
+        return transaction.CalculateMarks(referenceNode?.Marks ?? FrozenDictionary<MarkKey, string>.Empty);
     }
 }

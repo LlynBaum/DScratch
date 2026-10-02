@@ -10,7 +10,7 @@ using DScratch.Transactions;
 namespace DScratch.Tests.DScratchTests.Interactions.EventHandlers.Common;
 
 [TestFixture]
-public class EventWithSelectionBaseTests
+public class EventWithSelectionBaseLegacyTests
 {
     private Testee testee;
     private TreeBuilder builder;
@@ -67,7 +67,7 @@ public class EventWithSelectionBaseTests
         testee.AssertEmptyBlockHandled(paragraph);
     }
 
-    private class Testee(IDScratchService dScratchService) : EventWithSelectionBase(dScratchService)
+    private class Testee(IDScratchService dScratchService) : EventWithSelectionBaseLegacy(dScratchService)
     {
         private bool noneSelectionHandled;
         private TextNode? noneSelectionTextNode;

@@ -1,99 +1,38 @@
-using System.Collections.Frozen;
 using DScratch.Interactions.EventHandlers.Common;
-using DScratch.Interactions.EventHandlers.Models;
 using DScratch.Marks;
-using DScratch.Nodes;
 using DScratch.Transactions;
 
 namespace DScratch.Interactions.EventHandlers.Events;
 
-public class InsertParagraphHandler(IDScratchService dScratchService) : EventWithSelectionBase(dScratchService)
+internal class InsertParagraphHandler(IDScratchService dScratchService) : EventWithSelectionBase(dScratchService)
 {
     public const string EventName = "insertParagraph";
 
-    protected override DNodeSearchResult HandleNoneSelection(
-        KeyPressInfo keyPressInfo,
-        ITransaction transaction,
-        TextNode anchorTextNode)
+    protected override void HandleEvent(KeyPressInfo keyPressInfo, ITransaction transaction)
     {
-        DNode? rightOrigin = transaction.SplitText(anchorTextNode, keyPressInfo.Selection!.AnchorOffset);
-        if (rightOrigin?.Id == anchorTextNode.Id)
-        {
-            rightOrigin = rightOrigin.PreviousSibling();
-        }
+        var currentParent = HandlerContext.GetParent();
+        var marks = GetMarksForParagraph();
         
-        return new DNodeSearchResult(
-            Origin: new DNodeInfo(anchorTextNode, anchorTextNode.Length), 
-            RightOrigin: DNodeInfo.From(rightOrigin, 0));
+        // Cursor at the very start of the paragraph
+        if (!HandlerContext.HasAnchor)
+        {
+            var previousSibling = currentParent.PreviousSibling();
+            var newPreviousParagraph = transaction.NodeFactory.Paragraph(previousSibling, currentParent, marks);
+            transaction.Insert(newPreviousParagraph, currentParent.Parent!);
+            transaction.AddCursorPosition(currentParent.Id, 0);
+            return;
+        }
+
+        var nextSibling = currentParent.NextSibling();
+        var newNextParagraph = transaction.NodeFactory.Paragraph(currentParent, nextSibling, marks);
+        transaction.Insert(newNextParagraph, currentParent.Parent!);
+        transaction.MoveRange(HandlerContext.RightAnchorNode, null, newNextParagraph, null);
+        transaction.AddCursorPosition(newNextParagraph.Id, 0);
     }
     
-    protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
+    private IReadOnlyDictionary<MarkKey, string> GetMarksForParagraph()
     {
-        if (anchorNode.Parent is null)
-        {
-            throw new ArgumentException("Expected node to have a parent.");
-        }
-        
-        var nextSibling = anchorNode.NextSibling();
-        var paragraph = transaction.NodeFactory.Paragraph(anchorNode, nextSibling, anchorNode.Marks);
-        transaction.Insert(paragraph, anchorNode.Parent);
-        transaction.AddCursorPosition(paragraph.Id, 0);
-    }
-
-    protected override void OnAfterSelection(KeyPressInfo keyPressInfo,
-        ITransaction transaction,
-        DNode anchorNode,
-        DNodeSearchResult nodeSearchResult)
-    {
-        var siblingBlock = nodeSearchResult.Origin.Node?.GetNearestBlock()
-                           ?? nodeSearchResult.RightOrigin.Node?.GetNearestBlock() 
-                           ?? anchorNode.GetNearestBlock();
-        
-        if (siblingBlock.Parent is null)
-        {
-            // Even blocks at least have to have root as a parent.
-            throw new ArgumentException($"Expected an block at {keyPressInfo.Selection!.AnchorId} with a parent node.");
-        }
-        
-        var (origin, rightOrigin) = GetOrigins(keyPressInfo, siblingBlock);
-        var marks = GetMarksForParagraph(nodeSearchResult, siblingBlock);
-        var paragraph = transaction.NodeFactory.Paragraph(origin, rightOrigin, marks);
-        transaction.Insert(paragraph, siblingBlock.Parent!);
-        
-        if (keyPressInfo.Selection!.AnchorOffset > 0 && nodeSearchResult.Origin.HasFoundNode)
-        {
-            var originNode = nodeSearchResult.Origin.Node;
-            transaction.MoveRange(originNode.NextSibling(), null, paragraph, null);
-        }
-        
-        var cursorTarget = keyPressInfo.Selection.AnchorOffset > 0 ? paragraph : rightOrigin!;
-        transaction.AddCursorPosition(cursorTarget.Id, 0);
-    }
-
-    private static IReadOnlyDictionary<MarkKey, string> GetMarksForParagraph(DNodeSearchResult nodeSearchResult, DNode siblingBlock)
-    {
-        if (nodeSearchResult.Origin.HasFoundNode && nodeSearchResult.RightOrigin.HasFoundNode)
-        {
-            return siblingBlock.GetComputedMarks();
-        }
-
-        if (nodeSearchResult.Origin.HasFoundNode)
-        {
-            return nodeSearchResult.Origin.Node.GetComputedMarks();
-        }
-
-        if (nodeSearchResult.RightOrigin.HasFoundNode)
-        {
-            return nodeSearchResult.RightOrigin.Node.GetComputedMarks();
-        }
-        
-        return FrozenDictionary<MarkKey, string>.Empty;
-    }
-
-    private static (DNode? origin, DNode? rightOrigin) GetOrigins(KeyPressInfo keyPressInfo, DNode sibling)
-    {
-        return keyPressInfo.Selection!.AnchorOffset <= 0 
-            ? (sibling.PreviousSibling(), sibling) 
-            : (sibling, sibling.NextSibling());
+        var referenceNode = HandlerContext.RightAnchorNode ?? HandlerContext.AnchorNode ?? HandlerContext.GetParent();
+        return referenceNode.GetComputedMarks();
     }
 }

@@ -5,7 +5,7 @@ using DScratch.Transactions;
 
 namespace DScratch.Interactions.EventHandlers.Events;
 
-public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventWithSelectionBase(dScratchService)
+public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventWithSelectionBaseLegacy(dScratchService)
 {
     public const string EventName = "deleteWordForward";
     

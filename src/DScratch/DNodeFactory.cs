@@ -38,7 +38,7 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
         return node;
     }
 
-    public TextNode String(string value, DNode? origin, DNode? rightOrigin, IReadOnlyDictionary<MarkKey, string>? initMarks = null)
+    public TextNode String(string value, NodeId? origin, NodeId? rightOrigin, IReadOnlyDictionary<MarkKey, string>? initMarks = null)
     {
         if (value.Length == 0)
         {
@@ -46,7 +46,7 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
         }
         
         var nodeId = nodeIdGenerator.TakeIds(value.Length);
-        var textNode = new TextNode(nodeId, origin?.LastId, rightOrigin?.Id);
+        var textNode = new TextNode(nodeId, origin, rightOrigin);
         textNode.AddText(value);
         if(initMarks is not null) textNode.CopyMarks(initMarks);
         return textNode;
@@ -59,7 +59,7 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
             ParagraphNode => Paragraph(origin, rightOrigin, node.Marks),
             HeadingNode headingNode => Heading(headingNode.HeadingLevel, origin, rightOrigin, node.Marks),
             LinkNode linkNode => LinkNode(origin, rightOrigin, linkNode.Href, linkNode.Target, node.Marks),
-            TextNode textNode => String(textNode.TextContent, origin, rightOrigin, node.Marks),
+            TextNode textNode => String(textNode.TextContent, origin?.LastId, rightOrigin?.Id, node.Marks), // TODO: this won't work with MoveRange...
             _ => throw new ArgumentOutOfRangeException(nameof(node), node, $"Can not recreate a Node of type '{node.GetType().Name}'.")
         };
     }
