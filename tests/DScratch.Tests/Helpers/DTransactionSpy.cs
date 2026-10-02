@@ -12,7 +12,7 @@ public class DTransactionSpy : ITransaction, IRunningTransaction
     public INodeFactory NodeFactory { get; set; } = null!;
 
     public List<(DNode Node, DNode Parent)> InsertCalls { get; } = [];
-    public List<DNode> DeleteCalls { get; } = [];
+    public List<NodeId> DeleteCalls { get; } = [];
     public List<(DNode? Start, DNode? End)> DeleteRangeCalls { get; } = [];
     public List<(DNode? Start, DNode? End, DNode TargetParent, DNode? TargetOrigin)> MoveRangeCalls { get; } = [];
     public List<(DNode Node, Func<DNode, DNode> CopyFactory)> ReplaceNodeCalls { get; } = [];
@@ -50,9 +50,9 @@ public class DTransactionSpy : ITransaction, IRunningTransaction
         InsertCalls.Add((node, parent));
     }
 
-    public void Delete(DNode node)
+    public void Delete(NodeId nodeId)
     {
-        DeleteCalls.Add(node);
+        DeleteCalls.Add(nodeId);
     }
 
     public void DeleteRange(DNode? start, DNode? end)

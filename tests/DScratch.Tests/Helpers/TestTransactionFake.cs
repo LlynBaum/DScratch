@@ -37,7 +37,7 @@ internal class TestTransactionFake : ITransaction, IRunningTransaction
         throw new NotImplementedException();
     }
 
-    public void Delete(DNode node)
+    public void Delete(NodeId nodeId)
     {
         throw new NotImplementedException();
     }

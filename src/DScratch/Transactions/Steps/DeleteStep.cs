@@ -7,7 +7,7 @@ public class DeleteStep(NodeId nodeId) : IStep
 {
     public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
     {
-        var node = document.FindNode(nodeId) ?? throw new ArgumentException($"Could not find node {nodeId}");;
+        var node = document.FindNode(nodeId) ?? throw new ArgumentException($"Could not find node {nodeId}");
 
         var stepDiffs = new List<StepDiff?>();
         if (node is TextNode textNode)
@@ -47,9 +47,11 @@ public class DeleteStep(NodeId nodeId) : IStep
         }
 
         var splitNode2 = splitNode.Split(1, transaction.NodeFactory.NodeIdGenerator.TakeIds);
-        var steps2 = splitNode2 is not null ? SplitTextStep.GenerateSplitSteps(transaction, document, splitNode, splitNode2, 1) : [];
+        var steps2 = splitNode2 is not null 
+            ? SplitTextStep.GenerateSplitSteps(transaction, document, splitNode, splitNode2, 1) 
+            : [];
 
-        return (splitNode, [.. steps1, .. steps2]); // TODO: test scenario
+        return (splitNode, [.. steps1, .. steps2]);
     }
 
     public IReadOnlyList<StepDiff> Revert(DScratchDocument document)
