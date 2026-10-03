@@ -22,7 +22,7 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventW
         {
             transaction.AddCursorPosition(anchorTextNode.Id, anchorTextNode.Length); 
             transaction.MoveRange(nextBlock.FirstChild, null, parent, parent.LastChild);
-            transaction.Delete(nextBlock);
+            transaction.Delete(nextBlock.Id);
         }
 
         return DNodeSearchResult.Empty;
@@ -33,7 +33,7 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventW
         var nextSibling = anchorNode.NextSibling();
         if (nextSibling is null) return;
         
-        transaction.Delete(anchorNode);
+        transaction.Delete(anchorNode.Id);
         transaction.AddCursorPosition(nextSibling.Id, 0);
     }
 
@@ -69,7 +69,7 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventW
             if (characterOffset == walker.Node.Length - 1)
             {
                 hasFoundNoe = true;
-                transaction.Delete(walker.Node);
+                transaction.Delete(walker.Node.Id);
                 walker.NextNode();
                 characterOffset = 0;
             }
@@ -81,7 +81,7 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventW
             if (characterOffset == walker.Node.Length - 1)
             {
                 hasFoundNoe = true;
-                transaction.Delete(walker.Node);
+                transaction.Delete(walker.Node.Id);
                 walker.NextNode();
                 characterOffset = 0;
             }
@@ -94,7 +94,7 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventW
             return DNodeInfo.NotFound();
         }
 
-        if (walker.Node is not null) transaction.Delete(walker.Node);
+        if (walker.Node is not null) transaction.Delete(walker.Node.Id);
         return word is not null
             ? new DNodeInfo(word, 0)
             : new DNodeInfo(walker.Parent, 0);

@@ -8,9 +8,9 @@ public class TreeWalker<TFilter>(DNode parent, bool includeDeleted = false)
 {
     public TFilter? Node;
     
-    public TFilter? NextNode()
+    public TFilter? NextNode(bool preventStepDown = false)
     {
-        var next = Next(Current);
+        var next = Next(Current, preventStepDown);
         while (next is not null)
         {
             if (next is TFilter filteredNode)
@@ -20,7 +20,7 @@ public class TreeWalker<TFilter>(DNode parent, bool includeDeleted = false)
                 return filteredNode;
             }
 
-            next = Next(next);
+            next = Next(next, preventStepDown);
         }
 
         Node = default;
@@ -99,9 +99,9 @@ public class TreeWalker<TFilter>(DNode parent, bool includeDeleted = false)
 public class TreeWalker<TFilter1, TFilter2>(DNode parent, bool includeDeleted = false) 
     : TreeWalkerBase(parent, includeDeleted) where TFilter1 : IDNode where TFilter2 : IDNode
 {
-    public (TFilter1?, TFilter2?) NextNode()
+    public (TFilter1?, TFilter2?) NextNode(bool preventStepDown = false)
     {
-        var next = Next(Current);
+        var next = Next(Current, preventStepDown);
         while (next is not null)
         {
             switch (next)
@@ -113,7 +113,7 @@ public class TreeWalker<TFilter1, TFilter2>(DNode parent, bool includeDeleted = 
                     Current = next;
                     return (default, filter2);
                 default:
-                    next = Next(next);
+                    next = Next(next, preventStepDown);
                     break;
             }
         }
@@ -152,12 +152,11 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
     
     public DNode? Current { get; protected set; } = parent;
     
-    protected DNode? Next(DNode? current)
+    protected DNode? Next(DNode? current, bool preventStepDown)
     {
-        var firstChild = FirstChildOrDefault(current);
-        if (firstChild is not null)
+        if (!preventStepDown && FirstChildOrDefault(current) is { } firstChild)
         {
-            return NextIfDeleted(firstChild);
+            return NextIfDeleted(firstChild, preventStepDown);
         }
         
         if (current?.Id == Parent.Id)
@@ -183,7 +182,7 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
             }
         }
 
-        return NextIfDeleted(node);
+        return NextIfDeleted(node, preventStepDown);
     }
     
     protected DNode? Previous(DNode? current)
@@ -197,27 +196,19 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
         var node = prevSibling;
         while (node is not null)
         {
-            var lastChild = LastChildOrDefault(node);
-            if (lastChild is not null)
-            {
-                node = lastChild;
-            }
-            else
-            {
-                break;
-            }
+            node = LastChildOrDefault(node);
         }
         
         return PreviousIfDeleted(node);
     }
 
-    private DNode? NextIfDeleted(DNode? node)
+    private DNode? NextIfDeleted(DNode? node, bool preventStepDown)
     {
         if (includeDeleted)
         {
             return node;
         }
-        return node?.IsDeleted ?? false ? Next(node) : node;
+        return node?.IsDeleted ?? false ? Next(node, preventStepDown) : node;
     }
     
     private DNode? PreviousIfDeleted(DNode? node)
@@ -231,7 +222,7 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
 
     private DNode? FirstChildOrDefault(DNode? node)
     {
-        return includeDeleted ? node?.ChildNodes.FirstOrDefault() : node?.FirstChild;
+        return includeDeleted ? node?.FirstChild : node?.ActiveChildNodes.FirstOrDefault();
     }
     
     private DNode? LastChildOrDefault(DNode? node)

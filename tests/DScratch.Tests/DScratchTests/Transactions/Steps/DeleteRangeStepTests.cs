@@ -46,7 +46,7 @@ public class DeleteRangeStepTests
         });
         
         // Act
-        var step = new DeleteRangeStep(node2, node4);
+        var step = new DeleteRangeStep(node2.Id, node4.Id);
         step.Execute(transactionFake, null!);
 
         // Assert
@@ -82,7 +82,7 @@ public class DeleteRangeStepTests
         });
         
         // Act
-        var step = new DeleteRangeStep(node2, null);
+        var step = new DeleteRangeStep(node2.Id, null);
         step.Execute(transactionFake, null!);
         
         // Assert
@@ -118,7 +118,7 @@ public class DeleteRangeStepTests
         });
         
         // Act
-        var step = new DeleteRangeStep(null, node3);
+        var step = new DeleteRangeStep(null, node3.Id);
         step.Execute(transactionFake, null!);
         
         // Assert

@@ -27,9 +27,9 @@ public abstract class DNode(NodeId id, NodeId? origin, NodeId? rightOrigin, List
     
     public IEnumerable<DNode> ActiveChildNodes => allChildNodes.Where(c => !c.IsDeleted);
 
-    public DNode? FirstChild => ActiveChildNodes.FirstOrDefault();
+    public DNode? FirstChild => allChildNodes.FirstOrDefault();
 
-    public DNode? LastChild => ActiveChildNodes.LastOrDefault();
+    public DNode? LastChild => allChildNodes.LastOrDefault();
 
     public IReadOnlyDictionary<MarkKey, string> Marks => marks;
     

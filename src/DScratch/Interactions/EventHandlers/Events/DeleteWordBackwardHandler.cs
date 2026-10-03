@@ -22,7 +22,7 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : Event
         {
             transaction.AddCursorPosition(anchorTextNode.Id, 0); 
             transaction.MoveRange(parent.FirstChild, null, prevParent, prevParent.LastChild);
-            transaction.Delete(parent);
+            transaction.Delete(parent.Id);
         }
 
         return DNodeSearchResult.Empty;
@@ -33,7 +33,7 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : Event
         var prevSibling = anchorNode.PreviousSibling();
         if (prevSibling is null) return;
 
-        transaction.Delete(anchorNode);
+        transaction.Delete(anchorNode.Id);
         if (SelectionHelper.NearestTextNode(prevSibling) is { HasFoundNode: true } nodeInfo)
         {
             transaction.AddCursorPosition(nodeInfo.Node.Id, nodeInfo.Offset);
@@ -73,7 +73,7 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : Event
             if (index == 0)
             {
                 hasFoundNoe = true;
-                transaction.Delete(walker.Node);
+                transaction.Delete(walker.Node.Id);
                 walker.MovePrevious();
                 index = walker.Node?.Length ?? 0;
             }
@@ -85,7 +85,7 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : Event
             if (index == 0)
             {
                 hasFoundNoe = true;
-                transaction.Delete(walker.Node);
+                transaction.Delete(walker.Node.Id);
                 walker.MovePrevious();
                 index = walker.Node?.Length ?? 0;
             }
@@ -98,7 +98,7 @@ public class DeleteWordBackwardHandler(IDScratchService dScratchService) : Event
             return DNodeInfo.NotFound();
         }
 
-        if (word is not null) transaction.Delete(word);
+        if (word is not null) transaction.Delete(word.Id);
         var prevWord = word?.PreviousSibling();
         return prevWord is not null
             ? SelectionHelper.NearestTextNode(prevWord)

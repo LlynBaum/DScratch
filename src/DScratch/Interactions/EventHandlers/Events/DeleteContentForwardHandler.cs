@@ -21,7 +21,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : Eve
         {
             transaction.AddCursorPosition(anchorTextNode.Id, anchorTextNode.Length); 
             transaction.MoveRange(nextBlock.FirstChild, null, parent, parent.LastChild);
-            transaction.Delete(nextBlock);
+            transaction.Delete(nextBlock.Id);
         }
 
         return DNodeSearchResult.Empty;
@@ -32,7 +32,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : Eve
         var nextSibling = anchorNode.NextSibling();
         if (nextSibling is null) return;
         
-        transaction.Delete(anchorNode);
+        transaction.Delete(anchorNode.Id);
         transaction.AddCursorPosition(nextSibling.Id, 0);
     }
 
@@ -45,7 +45,7 @@ public class DeleteContentForwardHandler(IDScratchService dScratchService) : Eve
         }
      
         transaction.SplitText(noteToDelete, 1);
-        transaction.Delete(noteToDelete);
+        transaction.Delete(noteToDelete.Id);
         return new DNodeInfo(targetTextNode, keyPressInfo.Selection.AnchorOffset);
     }
 }

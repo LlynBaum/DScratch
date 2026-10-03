@@ -26,7 +26,7 @@ public class DeleteStep(NodeId nodeId) : IStep
 
     private static (DNode Node, IReadOnlyList<StepDiff?> StepDiffs) SplitTextNode(IRunningTransaction transaction, DScratchDocument document, TextNode textNode, NodeId nodeId)
     {
-        if (textNode.Length == 1) // TODO: test scenario
+        if (textNode.Length == 1)
         {
             return (textNode, []);
         }
@@ -41,7 +41,7 @@ public class DeleteStep(NodeId nodeId) : IStep
 
         var steps1 = SplitTextStep.GenerateSplitSteps(transaction, document, textNode, splitNode, offset);
         
-        if (splitNode.Length == 1) // TODO: test scenario
+        if (splitNode.Length == 1)
         {
             return (splitNode, steps1);
         }

@@ -42,7 +42,7 @@ internal class TestTransactionFake : ITransaction, IRunningTransaction
         throw new NotImplementedException();
     }
 
-    public void DeleteRange(DNode? start, DNode? end)
+    public void DeleteRange(NodeId? start, NodeId? end)
     {
         throw new NotImplementedException();
     }

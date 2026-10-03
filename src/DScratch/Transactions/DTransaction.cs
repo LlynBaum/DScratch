@@ -49,7 +49,7 @@ internal class DTransaction(
         steps.Add(new DeleteStep(nodeId));
     }
     
-    public void DeleteRange(DNode? start, DNode? end)
+    public void DeleteRange(NodeId? start, NodeId? end)
     {
         steps.Add(new DeleteRangeStep(start, end));
     }

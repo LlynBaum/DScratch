@@ -87,7 +87,7 @@ public class DTransactionTests
         var node2 = TreeBuilder.TestInlineElementNode();
         
         
-        Transaction.DeleteRange(node, node2);
+        Transaction.DeleteRange(node.Id, node2.Id);
         
         // Assert
         Assert.That(Transaction.Steps, Has.Count.EqualTo(1));

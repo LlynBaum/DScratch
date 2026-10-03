@@ -21,7 +21,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : Ev
         {
             transaction.AddCursorPosition(anchorTextNode.Id, 0); 
             transaction.MoveRange(parent.FirstChild, null, prevParent, prevParent.LastChild);
-            transaction.Delete(parent);
+            transaction.Delete(parent.Id);
         }
 
         return DNodeSearchResult.Empty;
@@ -32,7 +32,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : Ev
         var prevSibling = anchorNode.PreviousSibling();
         if (prevSibling is null) return;
 
-        transaction.Delete(anchorNode);
+        transaction.Delete(anchorNode.Id);
         if (SelectionHelper.NearestTextNode(prevSibling) is { HasFoundNode: true } nodeInfo)
         {
             transaction.AddCursorPosition(nodeInfo.Node.Id, nodeInfo.Offset);
@@ -52,7 +52,7 @@ public class DeleteContentBackwardHandler(IDScratchService dScratchService) : Ev
 
         transaction.SplitText(targetTextNode, keyPressInfo.Selection.AnchorOffset);
         var nodeToDelete = transaction.SplitText(targetTextNode, targetTextNode.Length - 1)!;
-        transaction.Delete(nodeToDelete);
+        transaction.Delete(nodeToDelete.Id);
 
         var prevNode = nodeToDelete.PreviousSibling();
         return prevNode is not null

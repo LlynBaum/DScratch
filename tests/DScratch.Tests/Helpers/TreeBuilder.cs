@@ -43,7 +43,7 @@ public class TreeBuilder : TreeBuilder.ITextTreeBuilder
     
     public TextNode Text(string value)
     {
-        var text = factory.String(value, previousChild, null);
+        var text = factory.String(value, previousChild?.LastId, null);
         Append(text);
         return text;
     }

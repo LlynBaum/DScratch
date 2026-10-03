@@ -18,7 +18,7 @@ public interface ITransaction
 
     void Delete(NodeId nodeId);
     
-    void DeleteRange(DNode? start, DNode? end);
+    void DeleteRange(NodeId? start, NodeId? end);
     
     void MoveRange(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin);
 
