@@ -101,7 +101,7 @@ public class DNodeFactoryTests
         var nodeIdGen = new TestNodeIdGenerator();
         var factory = new DNodeFactory(nodeIdGen);
 
-        var result = factory.String("abc", testNode, testNode2);
+        var result = factory.String("abc", testNode.Id, testNode2.Id);
         
         using (Assert.EnterMultipleScope())
         {
@@ -126,7 +126,7 @@ public class DNodeFactoryTests
         Assert.Throws<InvalidOperationException>(Act);
         return;
         
-        void Act() => factory.String("", testNode, testNode2);
+        void Act() => factory.String("", testNode.Id, testNode2.Id);
     }
 
     [Test]

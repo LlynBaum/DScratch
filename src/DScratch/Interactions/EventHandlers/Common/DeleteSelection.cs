@@ -1,4 +1,3 @@
-using DScratch.Interactions.EventHandlers.Models;
 using DScratch.Nodes;
 using DScratch.Transactions;
 
@@ -34,21 +33,21 @@ internal static class DeleteSelection
             RightAnchorNode = rightAnchorNode,
             RightAnchorNodeId = new NodeId(rightAnchorId.Client, rightAnchorId.Clock + rightAnchorOffset)
         };
-    }
+    } 
 
-    private static void DeleteAndMerge(NodeSearchResult<TextNode> nodeSearchResult, ITransaction transaction)
+    private static void DeleteAndMerge(NodeSelection nodeSelection, ITransaction transaction)
     {
-        var deleteStart = nodeSearchResult.Origin.HasFoundNode 
-            ? transaction.SplitText(nodeSearchResult.Origin.Node, nodeSearchResult.Origin.Offset) 
-            : null;
-        
-        if(nodeSearchResult.RightOrigin.HasFoundNode) transaction.SplitText(nodeSearchResult.RightOrigin.Node, nodeSearchResult.RightOrigin.Offset);
+        var startBlock = nodeSelection.AnchorParentBlock;
+        transaction.DeleteRange(nodeSelection.AnchorNodeId, startBlock.LastChild?.LastId);
 
-        transaction.DeleteRange(deleteStart, null);
-        transaction.DeleteRange(null, nodeSearchResult.RightOrigin.Node);
-        
-        transaction.MoveRange(nodeSearchResult.RightOrigin.Node?.NextSibling(), null, deleteStart?.Parent!, deleteStart?.Parent?.LastChild);
-        transaction.DeleteRange(deleteStart?.Parent?.NextSibling(), nodeSearchResult.RightOrigin.Node?.Parent);
+        foreach (var node in nodeSelection.GetBlocksInBetween())
+        {
+            transaction.Delete(node.Id);
+        }
+
+        var endParent = nodeSelection.RightAnchorParentBlock;
+        transaction.DeleteRange(endParent.FirstChild?.Id, nodeSelection.RightAnchorNodeId);
+        transaction.MoveRange(nodeSelection.RightAnchorNodeId, endParent.LastChild?.LastId, startBlock, startBlock.LastChild?.LastId);
     }
     
     private class NodeSelection
@@ -61,15 +60,34 @@ internal static class DeleteSelection
         
         public required DNode RightAnchorNode { get; init; }
 
+        public DNode AnchorParentBlock
+        {
+            get
+            {
+                field ??= AnchorNode.GetNearestBlock();
+                return field;
+            }
+        }
+        
+        public DNode RightAnchorParentBlock
+        {
+            get
+            {
+                field ??= RightAnchorNode.GetNearestBlock();
+                return field;
+            }
+        }
+
         public bool IsInSameBlock()
         {
-            return AnchorNode.GetNearestBlock() == RightAnchorNode.GetNearestBlock();
+            return AnchorParentBlock == RightAnchorParentBlock;
         }
 
         public IEnumerable<DNode> GetBlocksInBetween()
         {
-            var current = AnchorNode.NextSibling();
-            while (current is not null && current != RightAnchorNode)
+            var current = AnchorParentBlock.NextSibling();
+            var endParent = RightAnchorParentBlock;
+            while (current is not null && current != endParent)
             {
                 yield return current;
                 current = current.NextSibling();
