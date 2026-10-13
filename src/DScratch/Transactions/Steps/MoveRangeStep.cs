@@ -43,6 +43,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
         var current = startNode;
         while (current is not null && current.Id != endNode!.Id)
         {
+            var next = current.NextSibling();
             if (!current.IsDeleted)
             {
                 MoveNode(
@@ -52,7 +53,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
                     transaction: transaction, 
                     steps: steps);
             }
-            current = current.NextSibling();
+            current = next;
         }
 
         if (current is not null && !current.IsDeleted)
@@ -75,7 +76,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
         IRunningTransaction transaction,
         List<StepDiff?> steps)
     {
-        current.Move(origin?.Id, rightOrigin?.Id);
+        current.Relink(origin?.Id, rightOrigin?.Id);
         targetParent.InsertChild(current);
         transaction.NotifyNodeChange(current);
         steps.AddRange(current.ToMoveStep());

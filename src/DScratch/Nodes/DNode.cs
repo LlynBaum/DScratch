@@ -42,10 +42,9 @@ public abstract class DNode(NodeId id, NodeId? origin, NodeId? rightOrigin, List
     internal void Delete()
     {
         IsDeleted = true;
-        allChildNodes.ForEach(n => n.Delete());
     }
     
-    public void Move(NodeId? origin, NodeId? rightOrigin)
+    public void Relink(NodeId? origin, NodeId? rightOrigin)
     {
         Parent?.RemoveChild(this);
         Parent = null;

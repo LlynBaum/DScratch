@@ -34,7 +34,7 @@ public abstract class EventWithSelectionBaseLegacy(IDScratchService dScratchServ
         }
         else
         {
-            nodeSearchResult = DeleteSelection.Handle(keyPressInfo, transaction);
+            nodeSearchResult = new DNodeSearchResult(new DNodeInfo(), new DNodeInfo());
             
             var cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent ?? 0;
             var cursorTarget = nodeSearchResult.Origin.Node ?? targetNode;

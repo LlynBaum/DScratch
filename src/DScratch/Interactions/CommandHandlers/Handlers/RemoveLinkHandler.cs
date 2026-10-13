@@ -21,7 +21,7 @@ public class RemoveLinkHandler(IDScratchService dScratchService) : CommandBase<R
         }
         
         transaction.MoveRange(linkNode.FirstChild, linkNode.LastChild, linkNode.Parent!, linkNode.PreviousSibling());
-        transaction.Delete(linkNode);
+        transaction.Delete(linkNode.Id);
         transaction.AddCursorPosition(selectionInfo.AnchorNodeId, selectionInfo.AnchorOffset);
     }
 

@@ -109,8 +109,8 @@ public class DNodeTests
         Assert.Multiple(() =>
         {
             Assert.That(nodes[0].IsDeleted, Is.True);
-            Assert.That(nodes[1].IsDeleted, Is.True);
-            Assert.That(nodes[2].IsDeleted, Is.True);
+            Assert.That(nodes[1].IsDeleted, Is.False);
+            Assert.That(nodes[2].IsDeleted, Is.False);
         });
     }
 
