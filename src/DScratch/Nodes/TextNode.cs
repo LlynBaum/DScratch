@@ -19,7 +19,7 @@ public class TextNode(NodeId id, NodeId? origin, NodeId? rightOrigin, string con
         TextContent += value;
     }
 
-    internal TextNode? Split(int offset, Func<int, NodeId> takeId)
+    internal TextNode? Split(int offset)
     {
         if (offset is 0) return this;
         if (offset == Length) return null;
@@ -29,12 +29,13 @@ public class TextNode(NodeId id, NodeId? origin, NodeId? rightOrigin, string con
 
         TextContent = remainingText;
         
-        var newNode = new TextNode(takeId.Invoke(otherText.Length), LastId, RightOrigin)
+        var newNode = new TextNode(new NodeId(LastId.Client, LastId.Clock + 1), LastId, RightOrigin)
         {
             TextContent = otherText
         };
         newNode.CopyMarks(Marks);
-        
+
+        RightOrigin = newNode.Id;
         Parent?.InsertChild(newNode);
         return newNode;
     }

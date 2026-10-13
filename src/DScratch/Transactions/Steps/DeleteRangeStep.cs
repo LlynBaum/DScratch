@@ -100,7 +100,7 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
         }
         
         var offset = (int)(nodeId.Clock - textNode.Id.Clock);
-        var splitNode = textNode.Split(offset, transaction.NodeFactory.NodeIdGenerator.TakeIds);
+        var splitNode = textNode.Split(offset);
 
         if (splitNode is null)
         {
@@ -119,7 +119,7 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
         }
         
         var offset = (int)(nodeId.Clock - textNode.Id.Clock + 1);
-        var splitNode = textNode.Split(offset, transaction.NodeFactory.NodeIdGenerator.TakeIds);
+        var splitNode = textNode.Split(offset);
 
         if (splitNode is null)
         {

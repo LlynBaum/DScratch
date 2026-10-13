@@ -93,7 +93,7 @@ internal class DTransaction(
     
     public TextNode? SplitText(TextNode node, int offset)
     {
-        var splitNode = node.Split(offset, nodeFactory.NodeIdGenerator.TakeIds);
+        var splitNode = node.Split(offset);
         
         if (splitNode is not null && splitNode.Id != node.Id)
         {

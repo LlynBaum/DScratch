@@ -60,14 +60,14 @@ public class TextNodeTests
         textNode.SetMark(MarkKey.FontWeight, "bold");
         
         // Act
-        var result = textNode.Split(1, _ => new NodeId("Test", -1));
+        var result = textNode.Split(1);
 
         // Assert
         Assert.That(testNode.ChildNodes, Has.Count.EqualTo(4));
         Assert.That(result, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(result.Id.Clock, Is.EqualTo(-1));
+            Assert.That(result.Id.Clock, Is.EqualTo(textNode.Id.Clock + 1));
 
             Assert.That(textNode.Length, Is.EqualTo(1));
             Assert.That(result.Length, Is.EqualTo(2));
@@ -82,8 +82,8 @@ public class TextNodeTests
             Assert.That(testNode.FirstChild.RightOrigin, Is.Null);
             
             Assert.That(textNode.Origin, Is.EqualTo(testNode.FirstChild.Id));
-            Assert.That(textNode.RightOrigin, Is.Null);
-            Assert.That(result.Origin, Is.EqualTo(textNode.Id));
+            Assert.That(textNode.RightOrigin, Is.EqualTo(result.Id));
+            Assert.That(result.Origin, Is.EqualTo(textNode.LastId));
             Assert.That(result.RightOrigin, Is.Null);
             
             Assert.That(testNode.LastChild!.Origin, Is.EqualTo(textNode.Id));
@@ -108,7 +108,7 @@ public class TextNodeTests
         var textNode = (TextNode)testNode.ChildNodes[1];
         
         // Act
-        var result = textNode.Split(0, _ => new NodeId("Test", -1));
+        var result = textNode.Split(0);
 
         // Assert
         Assert.That(testNode.ChildNodes, Has.Count.EqualTo(3));
@@ -133,7 +133,7 @@ public class TextNodeTests
             });
         
         // Act
-        var result = textNode.Split(3, _ => new NodeId("Test", -1));
+        var result = textNode.Split(3);
 
         // Assert
         Assert.That(testNode.ChildNodes, Has.Count.EqualTo(3));

@@ -13,9 +13,9 @@ public abstract class DNode(NodeId id, NodeId? origin, NodeId? rightOrigin, List
 
     public virtual NodeId LastId => Id;
     
-    public NodeId? Origin { get; private set; } = origin;
+    public NodeId? Origin { get; protected set; } = origin;
 
-    public NodeId? RightOrigin { get; private set; } = rightOrigin;
+    public NodeId? RightOrigin { get; protected set; } = rightOrigin;
 
     public bool IsDeleted { get; private set; }
 

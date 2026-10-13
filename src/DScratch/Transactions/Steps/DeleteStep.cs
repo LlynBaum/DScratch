@@ -32,7 +32,7 @@ public class DeleteStep(NodeId nodeId) : IStep
         }
         
         var offset = (int)(nodeId.Clock - textNode.Id.Clock);
-        var splitNode = textNode.Split(offset, transaction.NodeFactory.NodeIdGenerator.TakeIds);
+        var splitNode = textNode.Split(offset);
 
         if (splitNode is null)
         {
@@ -46,7 +46,7 @@ public class DeleteStep(NodeId nodeId) : IStep
             return (splitNode, steps1);
         }
 
-        var splitNode2 = splitNode.Split(1, transaction.NodeFactory.NodeIdGenerator.TakeIds);
+        var splitNode2 = splitNode.Split(1);
         var steps2 = splitNode2 is not null 
             ? SplitTextStep.GenerateSplitSteps(transaction, document, splitNode, splitNode2, 1) 
             : [];

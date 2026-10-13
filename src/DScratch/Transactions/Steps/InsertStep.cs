@@ -38,7 +38,7 @@ internal class InsertStep(DNode node, DNode parent) : IStep
         }
 
         var offset = (int)(node.Origin.Value.Clock - textNode.Id.Clock + 1);
-        var splitNode = textNode.Split(offset, transaction.NodeFactory.NodeIdGenerator.TakeIds);
+        var splitNode = textNode.Split(offset);
         return splitNode is not null 
             ? SplitTextStep.GenerateSplitSteps(transaction, document, textNode, splitNode, offset)
             : [];
