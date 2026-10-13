@@ -13,9 +13,9 @@ public abstract class DNode(NodeId id, NodeId? origin, NodeId? rightOrigin, List
 
     public virtual NodeId LastId => Id;
     
-    public NodeId? Origin { get; } = origin;
+    public NodeId? Origin { get; private set; } = origin;
 
-    public NodeId? RightOrigin { get; } = rightOrigin;
+    public NodeId? RightOrigin { get; private set; } = rightOrigin;
 
     public bool IsDeleted { get; private set; }
 
@@ -43,6 +43,14 @@ public abstract class DNode(NodeId id, NodeId? origin, NodeId? rightOrigin, List
     {
         IsDeleted = true;
         allChildNodes.ForEach(n => n.Delete());
+    }
+    
+    public void Move(NodeId? origin, NodeId? rightOrigin)
+    {
+        Parent?.RemoveChild(this);
+        Parent = null;
+        Origin = origin;
+        RightOrigin = rightOrigin;
     }
 
     internal virtual void InsertChild(DNode node)

@@ -51,16 +51,4 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
         if(initMarks is not null) textNode.CopyMarks(initMarks);
         return textNode;
     }
-
-    public DNode Recreate(DNode node, DNode? origin, DNode? rightOrigin)
-    {
-        return node switch
-        {
-            ParagraphNode => Paragraph(origin, rightOrigin, node.Marks),
-            HeadingNode headingNode => Heading(headingNode.HeadingLevel, origin, rightOrigin, node.Marks),
-            LinkNode linkNode => LinkNode(origin, rightOrigin, linkNode.Href, linkNode.Target, node.Marks),
-            TextNode textNode => String(textNode.TextContent, origin?.LastId, rightOrigin?.Id, node.Marks), // TODO: this won't work with MoveRange...
-            _ => throw new ArgumentOutOfRangeException(nameof(node), node, $"Can not recreate a Node of type '{node.GetType().Name}'.")
-        };
-    }
 }

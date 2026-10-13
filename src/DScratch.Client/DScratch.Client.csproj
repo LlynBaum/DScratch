@@ -40,15 +40,5 @@
       <AdditionalFiles Include="Pages\Editor\Debugging\DebugTransaction.razor" />
       <AdditionalFiles Include="Pages\Editor\Debugging\DebugTreePanel.razor" />
     </ItemGroup>
-    
-    <ItemGroup>
-      <None Remove="BrowserInteractions\Scripts\tests\vitest.config.ts" />
-      <None Remove="BrowserInteractions\Scripts\tests\transactions\nodeHelper.test.ts" />
-      <None Remove="BrowserInteractions\Scripts\tests\transactions\selection.test.ts" />
-      <None Remove="BrowserInteractions\Scripts\tests\nodeHelper.test.ts" />
-      <None Remove="BrowserInteractions\Scripts\tests\selection.test.ts" />
-      <None Remove="BrowserInteractions\Scripts\tests\transactions\pagingMock.ts" />
-      <None Remove="BrowserInteractions\Scripts\tests\transactions\move.test.ts" />
-    </ItemGroup>
 
 </Project>
