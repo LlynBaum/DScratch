@@ -29,7 +29,7 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
         {
             var (node, stepDiffs) = SplitStartTextNode(transaction, document, startTextNode, start!.Value);
             steps.AddRange(stepDiffs);
-            firstNodeToDelete = node.PreviousSibling()!;
+            firstNodeToDelete = node;
         }
         else
         {
@@ -39,7 +39,7 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
         DNode lastNodeToDelete;
         if (endNode is TextNode endTextNode)
         {
-            var (node, stepDiffs) = SplitEndTextNode(transaction, document, endTextNode, start!.Value);
+            var (node, stepDiffs) = SplitEndTextNode(transaction, document, endTextNode, end!.Value);
             steps.AddRange(stepDiffs);
             lastNodeToDelete = node;
         }

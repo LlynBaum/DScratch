@@ -13,7 +13,7 @@ public abstract class DNode(NodeId id, NodeId? origin, NodeId? rightOrigin, List
 
     public virtual NodeId LastId => Id;
     
-    public NodeId? Origin { get; protected set; } = origin;
+    public NodeId? Origin { get; private set; } = origin;
 
     public NodeId? RightOrigin { get; protected set; } = rightOrigin;
 
@@ -50,6 +50,12 @@ public abstract class DNode(NodeId id, NodeId? origin, NodeId? rightOrigin, List
         Parent = null;
         Origin = origin;
         RightOrigin = rightOrigin;
+    }
+    
+    public void InsertAt(int index, TextNode node)
+    {
+        node.Parent = this;
+        allChildNodes.Insert(index, node);
     }
 
     internal virtual void InsertChild(DNode node)

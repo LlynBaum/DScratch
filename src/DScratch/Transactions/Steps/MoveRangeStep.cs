@@ -5,7 +5,7 @@ namespace DScratch.Transactions.Steps;
 
 public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin) : IStep
 {
-    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
+    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document) // TODO: work like DeleteRangeStep
     {
         if (start is null && end is null) return [];
 
@@ -80,6 +80,44 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
         targetParent.InsertChild(current);
         transaction.NotifyNodeChange(current);
         steps.AddRange(current.ToMoveStep());
+    }
+    
+    private static (DNode Node, IReadOnlyList<StepDiff?> StepDiffs) SplitStartTextNode(IRunningTransaction transaction, DScratchDocument document, TextNode textNode, NodeId nodeId)
+    {
+        if (textNode.Length == 1) // TODO: test scenario
+        {
+            return (textNode, []);
+        }
+        
+        var offset = (int)(nodeId.Clock - textNode.Id.Clock);
+        var splitNode = textNode.Split(offset);
+
+        if (splitNode is null)
+        {
+            throw new InvalidOperationException($"NodeId {nodeId} was outside of TextNode range.");
+        }
+
+        var steps = SplitTextStep.GenerateSplitSteps(transaction, document, textNode, splitNode, offset);
+        return (splitNode, steps); // TODO: test scenario
+    }
+    
+    private static (DNode Node, IReadOnlyList<StepDiff?> StepDiffs) SplitEndTextNode(IRunningTransaction transaction, DScratchDocument document, TextNode textNode, NodeId nodeId)
+    {
+        if (textNode.Length == 1 || textNode.LastId == nodeId) // TODO: test scenario
+        {
+            return (textNode, []);
+        }
+        
+        var offset = (int)(nodeId.Clock - textNode.Id.Clock + 1);
+        var splitNode = textNode.Split(offset);
+
+        if (splitNode is null)
+        {
+            throw new InvalidOperationException($"NodeId {nodeId} was outside of TextNode range.");
+        }
+
+        var steps = SplitTextStep.GenerateSplitSteps(transaction, document, textNode, splitNode, offset);
+        return (textNode, steps); // TODO: test scenario
     }
 
     public IReadOnlyList<StepDiff> Revert(DScratchDocument document)

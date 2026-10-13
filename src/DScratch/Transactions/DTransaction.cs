@@ -16,7 +16,7 @@ internal class DTransaction(
 {
     private readonly List<IStep> steps = [];
     
-    private readonly List<DNode> modifiedNodes = [];
+    private readonly HashSet<DNode> modifiedNodes = [];
     private SelectionInfo? cursorPosition;
 
     public IReadOnlyList<IStep> Steps => steps;
@@ -114,7 +114,7 @@ internal class DTransaction(
 
     public void NotifyNodeChange(DNode node) => modifiedNodes.Add(node);
 
-    private List<StepDiff?> CleanupTree(IReadOnlyList<DNode> nodes)
+    private List<StepDiff?> CleanupTree(IReadOnlySet<DNode> nodes)
     {
         List<StepDiff?> result = [];
         if(disableCleanUp)

@@ -36,7 +36,13 @@ public class TextNode(NodeId id, NodeId? origin, NodeId? rightOrigin, string con
         newNode.CopyMarks(Marks);
 
         RightOrigin = newNode.Id;
-        Parent?.InsertChild(newNode);
+        
+        var index = Parent!.ChildNodes
+            .Index()
+            .FirstOrDefault(n => n.Item.Id == Id)
+            .Index;
+        
+        Parent.InsertAt(index + 1, newNode);
         return newNode;
     }
 }

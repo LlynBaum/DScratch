@@ -48,6 +48,7 @@ internal static class DeleteSelection
         var endParent = nodeSelection.RightAnchorParentBlock;
         transaction.DeleteRange(endParent.FirstChild?.Id, nodeSelection.RightAnchorNodeId);
         transaction.MoveRange(nodeSelection.RightAnchorNode, endParent.LastChild, startBlock, startBlock.LastChild);
+        transaction.Delete(nodeSelection.RightAnchorNode.GetNearestBlock().Id);
     }
     
     private class NodeSelection

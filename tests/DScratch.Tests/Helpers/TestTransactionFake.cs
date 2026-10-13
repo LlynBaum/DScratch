@@ -17,9 +17,9 @@ internal class TestTransactionFake : ITransaction, IRunningTransaction
         NodeFactory = new DNodeFactory(nodeIdGenerator);
     }
     
-    public IReadOnlyList<DNode> ChangedNodes => changedNodes;
+    public IReadOnlySet<DNode> ChangedNodes => changedNodes;
 
-    private readonly List<DNode> changedNodes = [];
+    private readonly HashSet<DNode> changedNodes = [];
 
     public DScratchDocument Document { get; } = null!;
     

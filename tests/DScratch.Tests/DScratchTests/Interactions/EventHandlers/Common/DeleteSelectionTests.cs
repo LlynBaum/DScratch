@@ -289,7 +289,7 @@ public class DeleteSelectionTests
             
             Assert.That(startParent.ChildNodes, Has.Count.EqualTo(6));
             Assert.That(midParent.ChildNodes, Has.Count.EqualTo(1));
-            Assert.That(endParent.ChildNodes, Has.Count.EqualTo(4));
+            Assert.That(endParent.ChildNodes, Has.Count.EqualTo(2));
         }
         
         using (Assert.EnterMultipleScope())
@@ -307,19 +307,13 @@ public class DeleteSelectionTests
             Assert.That(((TextNode)startParent.ChildNodes[3]).TextContent, Is.EqualTo("d"));
             
             Assert.That(startParent.ChildNodes[4].IsDeleted, Is.False);
-            Assert.That(((TextNode)startParent.ChildNodes[4]).TextContent, Is.EqualTo("h"));
+            Assert.That(((TextNode)startParent.ChildNodes[4]).TextContent, Is.EqualTo("f"));
             
             Assert.That(startParent.ChildNodes[5].IsDeleted, Is.False);
-            Assert.That(((TextNode)startParent.ChildNodes[5]).TextContent, Is.EqualTo("i"));
+            Assert.That(((TextNode)startParent.ChildNodes[5]).TextContent, Is.EqualTo("g"));
             
-            Assert.That(endParent.ChildNodes[0].IsDeleted, Is.True);
-            Assert.That(((TextNode)endParent.ChildNodes[0]).TextContent, Is.EqualTo("f"));
-            
-            Assert.That(endParent.ChildNodes[1].IsDeleted, Is.True);
-            Assert.That(((TextNode)endParent.ChildNodes[1]).TextContent, Is.EqualTo("g"));
-            
-            Assert.That(endParent.ChildNodes[2].IsDeleted, Is.True);
-            Assert.That(endParent.ChildNodes[3].IsDeleted, Is.True);
+            Assert.That(((TextNode)endParent.ChildNodes[0]).TextContent, Is.EqualTo("h"));
+            Assert.That(((TextNode)endParent.ChildNodes[1]).TextContent, Is.EqualTo("i"));
         }
 
         using (Assert.EnterMultipleScope())
