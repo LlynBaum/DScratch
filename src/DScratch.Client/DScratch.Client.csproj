@@ -21,7 +21,7 @@
     </ItemGroup>
     
     <ItemGroup>
-        <PackageReference Include="Swallow.MSBuild.Node" Version="0.3.0">
+        <PackageReference Include="Swallow.MSBuild.Node" Version="0.3.2">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>
