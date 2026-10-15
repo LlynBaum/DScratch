@@ -194,9 +194,9 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
         }
         
         var node = prevSibling;
-        while (node is not null)
+        while (LastChildOrDefault(node) is { } lastChild)
         {
-            node = LastChildOrDefault(node);
+            node = lastChild;
         }
         
         return PreviousIfDeleted(node);
@@ -227,6 +227,6 @@ public abstract class TreeWalkerBase(DNode parent, bool includeDeleted = false)
     
     private DNode? LastChildOrDefault(DNode? node)
     {
-        return includeDeleted ? node?.ChildNodes.LastOrDefault() : node?.LastChild;
+        return includeDeleted ? node?.LastChild : node?.ActiveChildNodes.LastOrDefault();
     }
 }
