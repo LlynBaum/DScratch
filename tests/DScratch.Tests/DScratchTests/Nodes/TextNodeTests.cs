@@ -48,7 +48,7 @@ public class TextNodeTests
     public void Split_CreatesExpectedNode()
     {
         // Arrange
-        var testNode = new TreeBuilder()
+        var parent = new TreeBuilder()
             .Paragraph(t =>
             {
                 t.Text("a");
@@ -56,14 +56,14 @@ public class TextNodeTests
                 t.Text("a");
             });
         
-        var textNode = (TextNode)testNode.ChildNodes[1];
+        var textNode = (TextNode)parent.ChildNodes[1];
         textNode.SetMark(MarkKey.FontWeight, "bold");
         
         // Act
         var result = textNode.Split(1);
 
         // Assert
-        Assert.That(testNode.ChildNodes, Has.Count.EqualTo(4));
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
         Assert.That(result, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
@@ -75,19 +75,19 @@ public class TextNodeTests
             Assert.That(textNode.TextContent, Is.EqualTo("a"));
             Assert.That(result.TextContent, Is.EqualTo("bc"));
 
-            Assert.That(textNode.Parent, Is.EqualTo(testNode));
-            Assert.That(result.Parent, Is.EqualTo(testNode));
+            Assert.That(textNode.Parent, Is.EqualTo(parent));
+            Assert.That(result.Parent, Is.EqualTo(parent));
 
-            Assert.That(testNode.FirstChild!.Origin, Is.Null);
-            Assert.That(testNode.FirstChild.RightOrigin, Is.Null);
+            Assert.That(parent.FirstChild!.Origin, Is.Null);
+            Assert.That(parent.FirstChild.RightOrigin, Is.Null);
             
-            Assert.That(textNode.Origin, Is.EqualTo(testNode.FirstChild.Id));
+            Assert.That(textNode.Origin, Is.EqualTo(parent.FirstChild.Id));
             Assert.That(textNode.RightOrigin, Is.EqualTo(result.Id));
             Assert.That(result.Origin, Is.EqualTo(textNode.LastId));
             Assert.That(result.RightOrigin, Is.Null);
             
-            Assert.That(testNode.LastChild!.Origin, Is.EqualTo(textNode.Id));
-            Assert.That(testNode.LastChild.RightOrigin, Is.Null);
+            Assert.That(parent.LastChild!.Origin, Is.EqualTo(result.LastId));
+            Assert.That(parent.LastChild.RightOrigin, Is.Null);
             
             Assert.That(textNode.Marks, Is.EqualTo(result.Marks));
         }

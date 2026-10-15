@@ -66,7 +66,7 @@ public class DNodeTests
         var first = builder.FirstChild.FirstChild;
         
         // Assert
-        Assert.That(first?.Id.Clock, Is.EqualTo(2));
+        Assert.That(first?.Id.Clock, Is.EqualTo(1));
     }
     
     [Test]
@@ -85,7 +85,7 @@ public class DNodeTests
         var last = builder.FirstChild.LastChild;
         
         // Assert
-        Assert.That(last?.Id.Clock, Is.EqualTo(2));
+        Assert.That(last?.Id.Clock, Is.EqualTo(3));
     }
     
     [Test]
