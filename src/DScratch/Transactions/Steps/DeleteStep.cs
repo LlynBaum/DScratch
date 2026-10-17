@@ -39,7 +39,9 @@ public class DeleteStep(NodeId nodeId) : IStep
             throw new InvalidOperationException($"NodeId {nodeId} was outside of TextNode range.");
         }
 
-        var steps1 = SplitTextStep.GenerateSplitSteps(transaction, document, textNode, splitNode, offset);
+        var steps1 = splitNode.Id != textNode.Id 
+            ? SplitTextStep.GenerateSplitSteps(transaction, document, textNode, splitNode, offset) 
+            : [];
         
         if (splitNode.Length == 1)
         {

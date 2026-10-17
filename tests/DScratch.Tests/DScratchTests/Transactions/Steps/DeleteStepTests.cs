@@ -31,7 +31,7 @@ public class DeleteStepTests
         
         // Act
         var step = new DeleteStep(node3.Id);
-        var result = step.Execute(transactionFake, null!);
+        var result = step.Execute(transactionFake, builder.Document);
             
         // Assert
         Assert.That(node3.IsDeleted, Is.True);
@@ -93,7 +93,7 @@ public class DeleteStepTests
         }); 
         
         // Act
-        var steps = new DeleteStep(textNode.Id); // "a"
+        var steps = new DeleteStep(textNode.Id);
         var result = steps.Execute(transactionFake, builder.Document);
 
         // Assert

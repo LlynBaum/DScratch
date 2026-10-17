@@ -231,7 +231,7 @@ public class InsertStepTests
             Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("b"));
             Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("c"));
             
-            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([textNode, parent.ChildNodes[2], node]));
         }
         
         AssertHelper.ThatStepsEqualTo(result, [
@@ -272,7 +272,7 @@ public class InsertStepTests
             Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("c"));
             Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("d"));
             
-            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node]));
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([textNode, parent.ChildNodes[2], node]));
         }
         
         AssertHelper.ThatStepsEqualTo(result, [

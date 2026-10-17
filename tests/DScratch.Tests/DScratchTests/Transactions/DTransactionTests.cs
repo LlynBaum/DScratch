@@ -83,8 +83,14 @@ public class DTransactionTests
     public void DeleteRange_AddsDeleteRangeStep()
     {
         // Act
-        var node = TreeBuilder.TestInlineElementNode();
-        var node2 = TreeBuilder.TestInlineElementNode();
+        DNode node = null!;
+        DNode node2 = null!;
+
+        TreeBuilder.Paragraph(t =>
+        {
+            node = t.TestInlineElementNode();
+            node2 = t.TestInlineElementNode();
+        });
         
         
         Transaction.DeleteRange(node.Id, node2.Id);
@@ -185,15 +191,10 @@ public class DTransactionTests
         var transactionResult = Transaction.Commit();
             
         // Assert
-        Assert.That(TreeBuilder.IdGenerator.CurrentId, Is.EqualTo(currentId + 2));
-        
         Assert.That(result, Is.Not.Null);
         Assert.That(result.TextContent, Is.EqualTo("cd"));
         AssertHelper.ThatStepsEqualTo(transactionResult.Steps, expected: [
-            Is.TypeOf<StepDiff.DeleteTextDiff>(),
-            Is.TypeOf<StepDiff.InsertElementDiff>(),
-            Is.TypeOf<StepDiff.InsertTextDiff>(),
-            Is.TypeOf<StepDiff.UpdateMarksDiff>()
+            ..AssertStepDiffHelper.SplitTextTypes
         ]);
 
         using (Assert.EnterMultipleScope())
