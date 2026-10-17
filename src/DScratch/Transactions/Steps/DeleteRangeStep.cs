@@ -94,7 +94,7 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
     
     private static (DNode Node, IReadOnlyList<StepDiff?> StepDiffs) SplitStartTextNode(IRunningTransaction transaction, DScratchDocument document, TextNode textNode, NodeId nodeId)
     {
-        if (textNode.Length == 1) // TODO: test scenario
+        if (textNode.Length == 1)
         {
             return (textNode, []);
         }
@@ -108,12 +108,12 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
         }
 
         var steps = SplitTextStep.GenerateSplitSteps(transaction, document, textNode, splitNode, offset);
-        return (splitNode, steps); // TODO: test scenario
+        return (splitNode, steps);
     }
     
     private static (DNode Node, IReadOnlyList<StepDiff?> StepDiffs) SplitEndTextNode(IRunningTransaction transaction, DScratchDocument document, TextNode textNode, NodeId nodeId)
     {
-        if (textNode.Length == 1 || textNode.LastId == nodeId) // TODO: test scenario
+        if (textNode.Length == 1 || textNode.LastId == nodeId)
         {
             return (textNode, []);
         }
@@ -127,6 +127,6 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
         }
 
         var steps = SplitTextStep.GenerateSplitSteps(transaction, document, textNode, splitNode, offset);
-        return (textNode, steps); // TODO: test scenario
+        return (textNode, steps);
     }
 }
