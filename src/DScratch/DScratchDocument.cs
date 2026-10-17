@@ -25,7 +25,10 @@ public class DScratchDocument
         AddNode(Root);
     }
     
-    public DNode? FindNode(NodeId nodeId) => nodeLookup.LookUp(nodeId);
+    public DNode FindNode(NodeId nodeId) => Find(nodeId) 
+                                            ?? throw new ArgumentException($"Node with ID '{nodeId}' does not exist in document.");
+    
+    public DNode? Find(NodeId nodeId) => nodeLookup.LookUp(nodeId);
 
     internal void AddNode(DNode node) => nodeLookup.Add(node);
     

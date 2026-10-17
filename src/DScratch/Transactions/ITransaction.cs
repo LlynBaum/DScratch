@@ -20,7 +20,7 @@ public interface ITransaction
     
     void DeleteRange(NodeId? start, NodeId? end);
     
-    void MoveRange(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin);
+    void MoveRange(NodeId? start, NodeId? end, DNode targetParent, NodeId? targetOrigin);
 
     void ReplaceNode(DNode node, Func<DNode, DNode> copyFactory);
     

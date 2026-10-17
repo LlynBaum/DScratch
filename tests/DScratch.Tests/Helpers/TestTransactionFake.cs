@@ -47,7 +47,7 @@ internal class TestTransactionFake : ITransaction, IRunningTransaction
         throw new NotImplementedException();
     }
 
-    public void MoveRange(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin)
+    public void MoveRange(NodeId? start, NodeId? end, DNode targetParent, NodeId? targetOrigin)
     {
         throw new NotImplementedException();
     }

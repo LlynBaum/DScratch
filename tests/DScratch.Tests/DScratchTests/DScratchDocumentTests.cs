@@ -28,8 +28,8 @@ public class DScratchDocumentTests
         // Act
         Document.AddNode(textNode1);
         Document.AddNode(textNode2);
-        var result1 = Document.FindNode(new NodeId(ClientName, 2));
-        var result2 = Document.FindNode(new NodeId(ClientName, 3));
+        var result1 = Document.Find(new NodeId(ClientName, 2));
+        var result2 = Document.Find(new NodeId(ClientName, 3));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -53,9 +53,9 @@ public class DScratchDocumentTests
         Document.AddNode(textNode);
         
         // Act
-        var result1 = Document.FindNode(new NodeId(ClientName, 2));
-        var result2 = Document.FindNode(new NodeId(ClientName, 3));
-        var result3 = Document.FindNode(new NodeId(ClientName, 4));
+        var result1 = Document.Find(new NodeId(ClientName, 2));
+        var result2 = Document.Find(new NodeId(ClientName, 3));
+        var result3 = Document.Find(new NodeId(ClientName, 4));
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -76,7 +76,7 @@ public class DScratchDocumentTests
     public void FindNode_FindExpectedNode()
     {
         // Act
-        var result = Document.FindNode(new NodeId(ClientName, 1));
+        var result = Document.Find(new NodeId(ClientName, 1));
         
         // Assert
         Assert.That(result, Is.Not.Null);
@@ -87,7 +87,7 @@ public class DScratchDocumentTests
     public void FindNode_ReturnsNullWhenNodeDoesNotExist()
     {
         // Act
-        var result = Document.FindNode(new NodeId("abc", -2));
+        var result = Document.Find(new NodeId("abc", -2));
         
         // Assert
         Assert.That(result, Is.Null);

@@ -3,38 +3,53 @@ using DScratch.Rendering;
 
 namespace DScratch.Transactions.Steps;
 
-public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin) : IStep
+public class MoveRangeStep(NodeId? start, NodeId? end, DNode targetParent, NodeId? targetOriginId) : IStep
 {
-    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document) // TODO: work like DeleteRangeStep
+    public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
     {
         if (start is null && end is null) return [];
 
-        var existingFirstChild = targetOrigin is null ? targetParent.FirstChild : null;
-        var startNode = start;
-        var endNode = end;
+        var existingFirstChild = targetOriginId is null ? targetParent.FirstChild : null;
+        var targetOrigin = GetNodeOrDefault(targetOriginId);
         
-        if (end is null)
+        var startNode = GetNodeOrDefault(start);
+        var endNode = GetNodeOrDefault(end) ?? startNode?.Parent?.LastChild;
+        startNode ??= endNode?.Parent?.FirstChild;
+
+        if (startNode is null)
         {
-            endNode = startNode!.Parent!.LastChild;
-        }
-        
-        if (start is null)
-        {
-            startNode = end!.Parent!.FirstChild;
+            throw new ArgumentException($"Could not infer a start node for move step: Start: '{start}' - End: '{end}'");
         }
 
-        return startNode!.Parent!.Id != endNode!.Parent!.Id 
-            ? throw new ArgumentException("Start and End node must be of the same parent.") 
-            : MoveNodes(
-                startNode: startNode, 
-                endNode: endNode,
-                transaction: transaction,
-                existingFirstChild: existingFirstChild);
+        if (endNode is null)
+        {
+            throw new ArgumentException($"Could not infer a end node for move step: Start: '{start}' - End: '{end}'");
+        }
+
+        if (startNode.Parent!.Id != endNode.Parent!.Id)
+        {
+            throw new ArgumentException("Start and End node must be of the same parent.");
+        }
+
+        return MoveNodes(
+            startNode: startNode,
+            endNode: endNode,
+            targetOrigin: targetOrigin,
+            transaction: transaction,
+            existingFirstChild: existingFirstChild);
+        
+        DNode? GetNodeOrDefault(NodeId? nodeId)
+        {
+            return nodeId.HasValue
+                ? document.FindNode(nodeId.Value)
+                : null;
+        }
     }
 
     private List<StepDiff?> MoveNodes(
         DNode? startNode,
         DNode? endNode,
+        DNode? targetOrigin,
         IRunningTransaction transaction,
         DNode? existingFirstChild)
     {
@@ -59,7 +74,7 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
         if (current is not null && !current.IsDeleted)
         {
             MoveNode(
-                current: current, 
+                current: current,
                 origin: targetOrigin, 
                 rightOrigin: targetOrigin?.NextSibling() ?? existingFirstChild,
                 transaction: transaction, 
@@ -80,44 +95,6 @@ public class MoveRangeStep(DNode? start, DNode? end, DNode targetParent, DNode? 
         targetParent.InsertChild(current);
         transaction.NotifyNodeChange(current);
         steps.AddRange(current.ToMoveStep());
-    }
-    
-    private static (DNode Node, IReadOnlyList<StepDiff?> StepDiffs) SplitStartTextNode(IRunningTransaction transaction, DScratchDocument document, TextNode textNode, NodeId nodeId)
-    {
-        if (textNode.Length == 1) // TODO: test scenario
-        {
-            return (textNode, []);
-        }
-        
-        var offset = (int)(nodeId.Clock - textNode.Id.Clock);
-        var splitNode = textNode.Split(offset);
-
-        if (splitNode is null)
-        {
-            throw new InvalidOperationException($"NodeId {nodeId} was outside of TextNode range.");
-        }
-
-        var steps = SplitTextStep.GenerateSplitSteps(transaction, document, textNode, splitNode, offset);
-        return (splitNode, steps); // TODO: test scenario
-    }
-    
-    private static (DNode Node, IReadOnlyList<StepDiff?> StepDiffs) SplitEndTextNode(IRunningTransaction transaction, DScratchDocument document, TextNode textNode, NodeId nodeId)
-    {
-        if (textNode.Length == 1 || textNode.LastId == nodeId) // TODO: test scenario
-        {
-            return (textNode, []);
-        }
-        
-        var offset = (int)(nodeId.Clock - textNode.Id.Clock + 1);
-        var splitNode = textNode.Split(offset);
-
-        if (splitNode is null)
-        {
-            throw new InvalidOperationException($"NodeId {nodeId} was outside of TextNode range.");
-        }
-
-        var steps = SplitTextStep.GenerateSplitSteps(transaction, document, textNode, splitNode, offset);
-        return (textNode, steps); // TODO: test scenario
     }
 
     public IReadOnlyList<StepDiff> Revert(DScratchDocument document)

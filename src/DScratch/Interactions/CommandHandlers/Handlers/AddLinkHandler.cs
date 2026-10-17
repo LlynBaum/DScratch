@@ -16,8 +16,8 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         }
         
         var (originId, rightOriginId) = selectionInfo.GetConvertedNodeIds();
-        var origin = transaction.Document.FindNode(originId);
-        var rightOrigin = transaction.Document.FindNode(rightOriginId);
+        var origin = transaction.Document.Find(originId);
+        var rightOrigin = transaction.Document.Find(rightOriginId);
         
         if (origin is null || rightOrigin is null)
         {
@@ -41,7 +41,7 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
             throw new ArgumentException("Expected to have a DisplayText with SelectionDirection None.");
         }
         
-        var target = transaction.Document.FindNode(selectionInfo.AnchorNodeId);
+        var target = transaction.Document.Find(selectionInfo.AnchorNodeId);
         if (target is null)
         {
             throw new ArgumentException($"Node with given id not found: {selectionInfo.AnchorId}");
@@ -97,7 +97,7 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         
         var startLink = transaction.NodeFactory.LinkNode(startNode?.PreviousSibling(), null, command.Href, command.Target);
         transaction.Insert(startLink, origin.Parent!);
-        transaction.MoveRange(startNode, null, startLink, null);
+        transaction.MoveRange(startNode?.Id, null, startLink, null);
         
         var currentBlock = origin.GetNearestBlock().NextSibling();
         var endBlock = rightOrigin.GetNearestBlock();
@@ -106,7 +106,7 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         {
             var link = transaction.NodeFactory.LinkNode(null, null, command.Href, command.Target);
             transaction.Insert(link, currentBlock);
-            transaction.MoveRange(currentBlock.FirstChild, null, link, null);
+            transaction.MoveRange(currentBlock.FirstChild?.Id, null, link, null);
             
             currentBlock = currentBlock.NextSibling();
         }
@@ -129,7 +129,7 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         
         var endLink = transaction.NodeFactory.LinkNode(endNode, endNode?.NextSibling(), command.Href, command.Target);
         transaction.Insert(endLink, endBlock);
-        transaction.MoveRange(null, endNode, endLink, null);
+        transaction.MoveRange(null, endNode?.Id, endLink, null);
 
         if (endNode is null || SelectionHelper.NearestTextNode(endNode) is not { HasFoundNode: true } endTextNode)
         {
@@ -156,7 +156,7 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         var linkNode = transaction.NodeFactory.LinkNode(nodes.Origin.Node?.PreviousSibling(), nodes.RightOrigin.Node?.NextSibling(), command.Href, command.Target);
         var parent = nodes.Origin.Node?.Parent ?? nodes.RightOrigin.Node?.Parent!;
         transaction.Insert(linkNode, parent);
-        transaction.MoveRange(nodes.Origin.Node, nodes.RightOrigin.Node, linkNode, null);
+        transaction.MoveRange(nodes.Origin.Node?.Id, nodes.RightOrigin.Node?.Id, linkNode, null);
         
         transaction.AddCursorPosition(new SelectionInfo
         {

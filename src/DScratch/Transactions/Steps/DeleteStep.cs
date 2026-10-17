@@ -7,7 +7,7 @@ public class DeleteStep(NodeId nodeId) : IStep
 {
     public IReadOnlyList<StepDiff?> Execute(IRunningTransaction transaction, DScratchDocument document)
     {
-        var node = document.FindNode(nodeId) ?? throw new ArgumentException($"Could not find node {nodeId}");
+        var node = document.Find(nodeId) ?? throw new ArgumentException($"Could not find node {nodeId}");
 
         var stepDiffs = new List<StepDiff?>();
         if (node is TextNode textNode)

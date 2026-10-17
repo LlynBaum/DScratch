@@ -21,7 +21,7 @@ internal class InsertStep(DNode node, DNode parent) : IStep
             return [];
         }
         
-        var originNode = document.FindNode(node.Origin.Value);
+        var originNode = document.Find(node.Origin.Value);
         if (originNode is null)
         {
             throw new ArgumentException($"Could not find node {node.Origin}");

@@ -21,7 +21,7 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventW
         else if (anchorTextNode.GetNearestBlock() is { } parent && parent.NextSibling() is { } nextBlock)
         {
             transaction.AddCursorPosition(anchorTextNode.Id, anchorTextNode.Length); 
-            transaction.MoveRange(nextBlock.FirstChild, null, parent, parent.LastChild);
+            transaction.MoveRange(nextBlock.FirstChild?.Id, null, parent, parent.LastChild?.LastId);
             transaction.Delete(nextBlock.Id);
         }
 

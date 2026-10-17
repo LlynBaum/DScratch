@@ -54,7 +54,7 @@ internal class DTransaction(
         steps.Add(new DeleteRangeStep(start, end));
     }
     
-    public void MoveRange(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin)
+    public void MoveRange(NodeId? start, NodeId? end, DNode targetParent, NodeId? targetOrigin)
     {
         steps.Add(new MoveRangeStep(start, end, targetParent, targetOrigin));
     }

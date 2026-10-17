@@ -14,7 +14,7 @@ public class DTransactionSpy : ITransaction, IRunningTransaction
     public List<(DNode Node, DNode Parent)> InsertCalls { get; } = [];
     public List<NodeId> DeleteCalls { get; } = [];
     public List<(NodeId? Start, NodeId? End)> DeleteRangeCalls { get; } = [];
-    public List<(DNode? Start, DNode? End, DNode TargetParent, DNode? TargetOrigin)> MoveRangeCalls { get; } = [];
+    public List<(NodeId? Start, NodeId? End, DNode TargetParent, NodeId? TargetOrigin)> MoveRangeCalls { get; } = [];
     public List<(DNode Node, Func<DNode, DNode> CopyFactory)> ReplaceNodeCalls { get; } = [];
     public List<(DNode Node, MarkKey Key, string Value)> UpdateMarkCalls { get; } = [];
     public List<(DNode Node, Action update)> UpdateAttributesCalls { get; } = [];
@@ -60,7 +60,7 @@ public class DTransactionSpy : ITransaction, IRunningTransaction
         DeleteRangeCalls.Add((start, end));
     }
 
-    public void MoveRange(DNode? start, DNode? end, DNode targetParent, DNode? targetOrigin)
+    public void MoveRange(NodeId? start, NodeId? end, DNode targetParent, NodeId? targetOrigin)
     {
         MoveRangeCalls.Add((start, end, targetParent, targetOrigin));
     }

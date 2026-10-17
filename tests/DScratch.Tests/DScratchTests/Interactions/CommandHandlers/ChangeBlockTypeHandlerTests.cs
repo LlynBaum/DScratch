@@ -50,7 +50,7 @@ public class ChangeBlockTypeHandlerTests
         
         // Assert
         Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(3));
-        var newBlockNode =  dScratchService.Document.FindNode(blockNode.Id);
+        var newBlockNode =  dScratchService.Document.Find(blockNode.Id);
         Assert.That(newBlockNode, Is.TypeOf<ParagraphNode>());
         
         using (Assert.EnterMultipleScope())

@@ -58,7 +58,7 @@ public class BrowserEventHelper(
             return;
         }
         
-        var node = dScratchService.Document.FindNode(selectionInfo.AnchorNodeId);
+        var node = dScratchService.Document.Find(selectionInfo.AnchorNodeId);
         userStateService.UpdateState(node);
 
         editorDebugService.NotifySelectionChange(selectionInfo);

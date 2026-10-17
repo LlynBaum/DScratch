@@ -1,14 +1,5 @@
 import {getEditorSelection, snapshotSelection} from "../selection";
 
-const handledTypes = [
-    "insertText",
-    "insertParagraph",
-    "deleteContentBackward",
-    "deleteContentForward",
-    "deleteWordBackward",
-    "deleteWordForward"
-];
-
 export function registerInput() {
     window.editor.node?.addEventListener("beforeinput", async event => await handleInput(event));
 }

@@ -65,6 +65,12 @@ public abstract class DNode(NodeId id, NodeId? origin, NodeId? rightOrigin, List
         var originIdx = node.Origin is not null ? allChildNodes.FindIndex(n => n.LastId == node.Origin) : -1;
         var rightOriginIdx = node.RightOrigin is not null ? allChildNodes.FindIndex(n => n.Id == node.RightOrigin) : allChildNodes.Count;
 
+        if (rightOriginIdx == -1)
+        {
+            // RightOrigin was moved, so we treat it like RightOrigin is null
+            rightOriginIdx = allChildNodes.Count;
+        }
+
         var index = originIdx + 1;
         while (index < rightOriginIdx)
         {

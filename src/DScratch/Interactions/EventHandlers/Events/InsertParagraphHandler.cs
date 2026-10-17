@@ -26,7 +26,7 @@ internal class InsertParagraphHandler(IDScratchService dScratchService) : EventW
         var nextSibling = currentParent.NextSibling();
         var newNextParagraph = transaction.NodeFactory.Paragraph(currentParent, nextSibling, marks);
         transaction.Insert(newNextParagraph, currentParent.Parent!);
-        transaction.MoveRange(Context.RightAnchorNode, null, newNextParagraph, null);
+        transaction.MoveRange(Context.RightAnchorNodeId, null, newNextParagraph, null);
         transaction.AddCursorPosition(newNextParagraph.Id, 0);
     }
     

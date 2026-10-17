@@ -12,7 +12,7 @@ public class UpdateMarkHandler(IDScratchService dScratchService, IUserStateServi
     {
         if (selectionInfo.Direction is SelectionDirection.None)
         {
-            var anchorNode = transaction.Document.FindNode(selectionInfo.AnchorNodeId);
+            var anchorNode = transaction.Document.Find(selectionInfo.AnchorNodeId);
             if (anchorNode is IBlockElement)
             {
                 command.Execute(transaction, anchorNode, [anchorNode]);
@@ -34,7 +34,7 @@ public class UpdateMarkHandler(IDScratchService dScratchService, IUserStateServi
         IMarkCommand command)
     {
         var selectedNodes = GetSelectedNodes(transaction, selectionInfo);
-        var anchor = transaction.Document.FindNode(selectionInfo.AnchorNodeId)!;
+        var anchor = transaction.Document.Find(selectionInfo.AnchorNodeId)!;
         command.Execute(transaction, anchor, selectedNodes);
 
         if (selectedNodes.Any())
@@ -55,8 +55,8 @@ public class UpdateMarkHandler(IDScratchService dScratchService, IUserStateServi
     {
         var (originId, rightOriginId) = selectionInfo.GetConvertedNodeIds();
         
-        var origin = transaction.Document.FindNode(originId);
-        var rightOrigin = transaction.Document.FindNode(rightOriginId);
+        var origin = transaction.Document.Find(originId);
+        var rightOrigin = transaction.Document.Find(rightOriginId);
         
         if (origin is null || rightOrigin is null)
         {

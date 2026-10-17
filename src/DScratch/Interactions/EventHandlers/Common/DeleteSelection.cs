@@ -23,8 +23,8 @@ internal static class DeleteSelection
     {
         var (anchorOffset, rightAnchorOffset) = keyPressInfo.Selection!.GetConvertedOffsets();
         var (anchorId, rightAnchorId) = keyPressInfo.Selection.GetConvertedNodeIds();
-        var anchorNode = transaction.Document.FindNode(anchorId) ?? throw new InvalidOperationException($"Could not find a node for {anchorId}");
-        var rightAnchorNode = transaction.Document.FindNode(rightAnchorId) ?? throw new InvalidOperationException($"Could not find a node for {rightAnchorId}");
+        var anchorNode = transaction.Document.Find(anchorId) ?? throw new InvalidOperationException($"Could not find a node for {anchorId}");
+        var rightAnchorNode = transaction.Document.Find(rightAnchorId) ?? throw new InvalidOperationException($"Could not find a node for {rightAnchorId}");
         
         return new NodeSelection
         {
@@ -47,7 +47,7 @@ internal static class DeleteSelection
 
         var endParent = nodeSelection.RightAnchorParentBlock;
         transaction.DeleteRange(endParent.FirstChild?.Id, nodeSelection.RightAnchorNodeId);
-        transaction.MoveRange(nodeSelection.RightAnchorNode, endParent.LastChild, startBlock, startBlock.LastChild);
+        transaction.MoveRange(nodeSelection.RightAnchorNodeId, endParent.LastChild?.LastId, startBlock, startBlock.LastChild?.LastId);
         transaction.Delete(nodeSelection.RightAnchorNode.GetNearestBlock().Id);
     }
     

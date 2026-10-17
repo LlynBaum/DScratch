@@ -13,14 +13,14 @@ public class RemoveLinkHandler(IDScratchService dScratchService) : CommandBase<R
             return;
         }
         
-        var anchor = transaction.Document.FindNode(selectionInfo.AnchorNodeId);
+        var anchor = transaction.Document.Find(selectionInfo.AnchorNodeId);
         var linkNode = FindLinkNode(anchor);
         if (linkNode is null)
         {
             return;
         }
         
-        transaction.MoveRange(linkNode.FirstChild, linkNode.LastChild, linkNode.Parent!, linkNode.PreviousSibling());
+        transaction.MoveRange(linkNode.FirstChild?.Id, linkNode.LastChild?.LastId, linkNode.Parent!, linkNode.PreviousSibling()?.LastId);
         transaction.Delete(linkNode.Id);
         transaction.AddCursorPosition(selectionInfo.AnchorNodeId, selectionInfo.AnchorOffset);
     }

@@ -9,13 +9,13 @@ namespace DScratch.Tests.DScratchTests.Transactions.Steps;
 public class MoveRangeStepTests
 {
     private TreeBuilder builder;
-    private TestTransactionFake transactionFake;
+    private TestTransactionFake transactionDummy;
 
     [SetUp]
     public void SetUp()
     {
         builder = new TreeBuilder();
-        transactionFake = new TestTransactionFake(builder.IdGenerator);
+        transactionDummy = new TestTransactionFake(builder.IdGenerator);
     }
     
     [Test]
@@ -47,60 +47,52 @@ public class MoveRangeStepTests
         });
         
         // Act
-        var step = new MoveRangeStep(text2, text4, newParent, newSibling);
-        var result = step.Execute(transactionFake, builder.Document);
+        var step = new MoveRangeStep(text2.Id, text4.Id, newParent, newSibling.LastId);
+        var result = step.Execute(transactionDummy, builder.Document);
 
         // Assert
-        AssertUnchanged(parent);
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(text1.IsDeleted, Is.False);
-            Assert.That(text2.IsDeleted, Is.True);
-            Assert.That(text3.IsDeleted, Is.True);
-            Assert.That(text4.IsDeleted, Is.True);
-            Assert.That(text5.IsDeleted, Is.False);
-        }
+        Assert.That(parent.ChildNodes, Is.EquivalentTo([text1, text5]));
         
         Assert.That(newParent.ChildNodes, Has.Count.EqualTo(5));
-        Assert.That(newParent.ChildNodes[0], Is.EqualTo(newSibling));
-        Assert.That(newParent.ChildNodes[4], Is.EqualTo(sibling2));
-        
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(newParent.ChildNodes[0], Is.EqualTo(newSibling));
+            Assert.That(newParent.ChildNodes[1], Is.EqualTo(text2));
+            Assert.That(newParent.ChildNodes[2], Is.EqualTo(text3));
+            Assert.That(newParent.ChildNodes[3], Is.EqualTo(text4));
+            Assert.That(newParent.ChildNodes[4], Is.EqualTo(sibling2));
+        }
+
         using (Assert.EnterMultipleScope())
         {
             Assert.That(newSibling.Parent, Is.EqualTo(newParent));
             Assert.That(newSibling.Origin, Is.Null);
             Assert.That(newSibling.RightOrigin, Is.Null);
 
-            var node1 = (TextNode)newParent.ChildNodes[1];
-            Assert.That(node1.Parent, Is.EqualTo(newParent));
-            Assert.That(node1.Origin, Is.EqualTo(newSibling.Id));
-            Assert.That(node1.RightOrigin, Is.EqualTo(sibling2.Id));
-            Assert.That(node1.TextContent, Is.EqualTo("b"));
+            Assert.That(text2.Parent, Is.EqualTo(newParent));
+            Assert.That(text2.Origin, Is.EqualTo(newSibling.Id));
+            Assert.That(text2.RightOrigin, Is.EqualTo(sibling2.Id));
+            Assert.That(text2.TextContent, Is.EqualTo("b"));
             
-            var node2 = (TextNode)newParent.ChildNodes[2];
-            Assert.That(node2.Parent, Is.EqualTo(newParent));
-            Assert.That(node2.Origin, Is.EqualTo(newParent.ChildNodes[1].Id));
-            Assert.That(node2.RightOrigin, Is.EqualTo(sibling2.Id));
-            Assert.That(node2.TextContent, Is.EqualTo("c"));
+            Assert.That(text3.Parent, Is.EqualTo(newParent));
+            Assert.That(text3.Origin, Is.EqualTo(text2.Id));
+            Assert.That(text3.RightOrigin, Is.EqualTo(sibling2.Id));
+            Assert.That(text3.TextContent, Is.EqualTo("c"));
         
-            var node3 = (TextNode)newParent.ChildNodes[3];
-            Assert.That(node3.Parent, Is.EqualTo(newParent));
-            Assert.That(node3.Origin, Is.EqualTo(newParent.ChildNodes[2].Id));
-            Assert.That(node3.RightOrigin, Is.EqualTo(sibling2.Id));
-            Assert.That(node3.TextContent, Is.EqualTo("d"));
+            Assert.That(text4.Parent, Is.EqualTo(newParent));
+            Assert.That(text4.Origin, Is.EqualTo(text3.Id));
+            Assert.That(text4.RightOrigin, Is.EqualTo(sibling2.Id));
+            Assert.That(text4.TextContent, Is.EqualTo("d"));
             
             Assert.That(sibling2.Parent, Is.EqualTo(newParent));
             Assert.That(sibling2.Origin, Is.EqualTo(newSibling.Id));
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
             
-        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+        Assert.That(transactionDummy.ChangedNodes, Is.EquivalentTo([
             text2, 
-            newParent.ChildNodes[1],
             text3,
-            newParent.ChildNodes[2], 
-            text4,
-            newParent.ChildNodes[3]
+            text4
         ]));
 
         AssertSteps(result, 3);
@@ -135,23 +127,21 @@ public class MoveRangeStepTests
         });
         
         // Act
-        var step = new MoveRangeStep(text3, null, newParent, newSibling);
-        var result = step.Execute(transactionFake, builder.Document);
+        var step = new MoveRangeStep(text3.Id, null, newParent, newSibling.LastId);
+        var result = step.Execute(transactionDummy, builder.Document);
 
         // Assert
-        AssertUnchanged(parent);
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(text1.IsDeleted, Is.False);
-            Assert.That(text2.IsDeleted, Is.False);
-            Assert.That(text3.IsDeleted, Is.True);
-            Assert.That(text4.IsDeleted, Is.True);
-            Assert.That(text5.IsDeleted, Is.True);
-        }
+        Assert.That(parent.ChildNodes, Is.EquivalentTo([text1, text2]));
         
         Assert.That(newParent.ChildNodes, Has.Count.EqualTo(5));
-        Assert.That(newParent.ChildNodes[0], Is.EqualTo(newSibling));
-        Assert.That(newParent.ChildNodes[4], Is.EqualTo(sibling2));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(newParent.ChildNodes[0], Is.EqualTo(newSibling));
+            Assert.That(newParent.ChildNodes[1], Is.EqualTo(text3));
+            Assert.That(newParent.ChildNodes[2], Is.EqualTo(text4));
+            Assert.That(newParent.ChildNodes[3], Is.EqualTo(text5));
+            Assert.That(newParent.ChildNodes[4], Is.EqualTo(sibling2));
+        }
 
         using (Assert.EnterMultipleScope())
         {
@@ -159,30 +149,27 @@ public class MoveRangeStepTests
             Assert.That(newSibling.Origin, Is.Null);
             Assert.That(newSibling.RightOrigin, Is.Null);
             
-            var node2 = (TextNode)newParent.ChildNodes[1];
-            Assert.That(node2.Parent, Is.EqualTo(newParent));
-            Assert.That(node2.Origin, Is.EqualTo(newSibling.Id));
-            Assert.That(node2.RightOrigin, Is.EqualTo(sibling2.Id));
-            Assert.That(node2.TextContent, Is.EqualTo("c"));
+            Assert.That(text3.Parent, Is.EqualTo(newParent));
+            Assert.That(text3.Origin, Is.EqualTo(newSibling.Id));
+            Assert.That(text3.RightOrigin, Is.EqualTo(sibling2.Id));
+            Assert.That(text3.TextContent, Is.EqualTo("c"));
             
-            var node3 = (TextNode)newParent.ChildNodes[2];
-            Assert.That(node3.Parent, Is.EqualTo(newParent));
-            Assert.That(node3.Origin, Is.EqualTo(node2.Id));
-            Assert.That(node3.RightOrigin, Is.EqualTo(sibling2.Id));
-            Assert.That(node3.TextContent, Is.EqualTo("d"));
+            Assert.That(text4.Parent, Is.EqualTo(newParent));
+            Assert.That(text4.Origin, Is.EqualTo(text3.Id));
+            Assert.That(text4.RightOrigin, Is.EqualTo(sibling2.Id));
+            Assert.That(text4.TextContent, Is.EqualTo("d"));
         
-            var node4 = (TextNode)newParent.ChildNodes[3];
-            Assert.That(node4.Parent, Is.EqualTo(newParent));
-            Assert.That(node4.Origin, Is.EqualTo(node3.Id));
-            Assert.That(node4.RightOrigin, Is.EqualTo(sibling2.Id));
-            Assert.That(node4.TextContent, Is.EqualTo("e"));
+            Assert.That(text5.Parent, Is.EqualTo(newParent));
+            Assert.That(text5.Origin, Is.EqualTo(text4.Id));
+            Assert.That(text5.RightOrigin, Is.EqualTo(sibling2.Id));
+            Assert.That(text5.TextContent, Is.EqualTo("e"));
             
             Assert.That(sibling2.Parent, Is.EqualTo(newParent));
             Assert.That(sibling2.Origin, Is.EqualTo(newSibling.Id));
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
             
-        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+        Assert.That(transactionDummy.ChangedNodes, Is.EquivalentTo([
             text3,
             newParent.ChildNodes[1],
             text4, 
@@ -222,23 +209,21 @@ public class MoveRangeStepTests
         });
         
         // Act
-        var step = new MoveRangeStep(null, text3, newParent, newSibling);
-        var result = step.Execute(transactionFake, builder.Document);
+        var step = new MoveRangeStep(null, text3.Id, newParent, newSibling.LastId);
+        var result = step.Execute(transactionDummy, builder.Document);
 
         // Assert
-        AssertUnchanged(parent);
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(text1.IsDeleted, Is.True);
-            Assert.That(text2.IsDeleted, Is.True);
-            Assert.That(text3.IsDeleted, Is.True);
-            Assert.That(text4.IsDeleted, Is.False);
-            Assert.That(text5.IsDeleted, Is.False);
-        }
+        Assert.That(parent.ChildNodes, Is.EquivalentTo([text4, text5]));
         
         Assert.That(newParent.ChildNodes, Has.Count.EqualTo(5));
-        Assert.That(newParent.ChildNodes[0], Is.EqualTo(newSibling));
-        Assert.That(newParent.ChildNodes[4], Is.EqualTo(sibling2));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(newParent.ChildNodes[0], Is.EqualTo(newSibling));
+            Assert.That(newParent.ChildNodes[1], Is.EqualTo(text1));
+            Assert.That(newParent.ChildNodes[2], Is.EqualTo(text2));
+            Assert.That(newParent.ChildNodes[3], Is.EqualTo(text3));
+            Assert.That(newParent.ChildNodes[4], Is.EqualTo(sibling2));
+        }
 
         using (Assert.EnterMultipleScope())
         {
@@ -246,36 +231,30 @@ public class MoveRangeStepTests
             Assert.That(newSibling.Origin, Is.Null);
             Assert.That(newSibling.RightOrigin, Is.Null);
             
-            var node1 = (TextNode)newParent.ChildNodes[1];
-            Assert.That(node1.Parent, Is.EqualTo(newParent));
-            Assert.That(node1.Origin, Is.EqualTo(newSibling.Id));
-            Assert.That(node1.RightOrigin, Is.EqualTo(sibling2.Id));
-            Assert.That(node1.TextContent, Is.EqualTo("a"));
+            Assert.That(text1.Parent, Is.EqualTo(newParent));
+            Assert.That(text1.Origin, Is.EqualTo(newSibling.Id));
+            Assert.That(text1.RightOrigin, Is.EqualTo(sibling2.Id));
+            Assert.That(text1.TextContent, Is.EqualTo("a"));
         
-            var node2 = (TextNode)newParent.ChildNodes[2];
-            Assert.That(node2.Parent, Is.EqualTo(newParent));
-            Assert.That(node2.Origin, Is.EqualTo(node1.Id));
-            Assert.That(node2.RightOrigin, Is.EqualTo(sibling2.Id));
-            Assert.That(node2.TextContent, Is.EqualTo("b"));
+            Assert.That(text2.Parent, Is.EqualTo(newParent));
+            Assert.That(text2.Origin, Is.EqualTo(text1.Id));
+            Assert.That(text2.RightOrigin, Is.EqualTo(sibling2.Id));
+            Assert.That(text2.TextContent, Is.EqualTo("b"));
             
-            var node3 = (TextNode)newParent.ChildNodes[3];
-            Assert.That(node3.Parent, Is.EqualTo(newParent));
-            Assert.That(node3.Origin, Is.EqualTo(node2.Id));
-            Assert.That(node3.RightOrigin, Is.EqualTo(sibling2.Id));
-            Assert.That(node3.TextContent, Is.EqualTo("c"));
+            Assert.That(text3.Parent, Is.EqualTo(newParent));
+            Assert.That(text3.Origin, Is.EqualTo(text2.Id));
+            Assert.That(text3.RightOrigin, Is.EqualTo(sibling2.Id));
+            Assert.That(text3.TextContent, Is.EqualTo("c"));
             
             Assert.That(sibling2.Parent, Is.EqualTo(newParent));
             Assert.That(sibling2.Origin, Is.EqualTo(newSibling.Id));
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
         
-        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+        Assert.That(transactionDummy.ChangedNodes, Is.EquivalentTo([
             text1,
-            newParent.ChildNodes[1],
-            text2, 
-            newParent.ChildNodes[2],
-            text3, 
-            newParent.ChildNodes[3]
+            text2,
+            text3
         ]));
         
         AssertSteps(result, 3);
@@ -310,43 +289,38 @@ public class MoveRangeStepTests
         });
         
         // Act
-        var step = new MoveRangeStep(text2, text4, newParent, null);
-        var result = step.Execute(transactionFake, builder.Document);
+        var step = new MoveRangeStep(text2.Id, text4.Id, newParent, null);
+        var result = step.Execute(transactionDummy, builder.Document);
 
         // Assert
-        AssertUnchanged(parent);
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(text1.IsDeleted, Is.False);
-            Assert.That(text2.IsDeleted, Is.True);
-            Assert.That(text3.IsDeleted, Is.True);
-            Assert.That(text4.IsDeleted, Is.True);
-            Assert.That(text5.IsDeleted, Is.False);
-        }
+        Assert.That(parent.ChildNodes, Is.EquivalentTo([text1, text5]));
         
         Assert.That(newParent.ChildNodes, Has.Count.EqualTo(5));
-        Assert.That(newParent.ChildNodes[3], Is.EqualTo(sibling1));
-        Assert.That(newParent.ChildNodes[4], Is.EqualTo(sibling2));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(newParent.ChildNodes[0], Is.EqualTo(text2));
+            Assert.That(newParent.ChildNodes[1], Is.EqualTo(text3));
+            Assert.That(newParent.ChildNodes[2], Is.EqualTo(text4));
+            Assert.That(newParent.ChildNodes[3], Is.EqualTo(sibling1));
+            Assert.That(newParent.ChildNodes[4], Is.EqualTo(sibling2));
+        }
 
         using (Assert.EnterMultipleScope())
         {
-            var node1 = (TextNode)newParent.ChildNodes[0];
-            Assert.That(node1.Parent, Is.EqualTo(newParent));
-            Assert.That(node1.Origin, Is.Null);
-            Assert.That(node1.RightOrigin, Is.EqualTo(sibling1.Id));
-            Assert.That(node1.TextContent, Is.EqualTo("b"));
+            Assert.That(text2.Parent, Is.EqualTo(newParent));
+            Assert.That(text2.Origin, Is.Null);
+            Assert.That(text2.RightOrigin, Is.EqualTo(sibling1.Id));
+            Assert.That(text2.TextContent, Is.EqualTo("b"));
             
-            var node2 = (TextNode)newParent.ChildNodes[1];
-            Assert.That(node2.Parent, Is.EqualTo(newParent));
-            Assert.That(node2.Origin, Is.EqualTo(node1.Id));
-            Assert.That(node2.RightOrigin, Is.EqualTo(sibling1.Id));
-            Assert.That(node2.TextContent, Is.EqualTo("c"));
+            Assert.That(text3.Parent, Is.EqualTo(newParent));
+            Assert.That(text3.Origin, Is.EqualTo(text2.Id));
+            Assert.That(text3.RightOrigin, Is.EqualTo(sibling1.Id));
+            Assert.That(text3.TextContent, Is.EqualTo("c"));
         
-            var node3 = (TextNode)newParent.ChildNodes[2];
-            Assert.That(node3.Parent, Is.EqualTo(newParent));
-            Assert.That(node3.Origin, Is.EqualTo(node2.Id));
-            Assert.That(node3.RightOrigin, Is.EqualTo(sibling1.Id));
-            Assert.That(node3.TextContent, Is.EqualTo("d"));
+            Assert.That(text4.Parent, Is.EqualTo(newParent));
+            Assert.That(text4.Origin, Is.EqualTo(text3.Id));
+            Assert.That(text4.RightOrigin, Is.EqualTo(sibling1.Id));
+            Assert.That(text4.TextContent, Is.EqualTo("d"));
             
             Assert.That(sibling1.Parent, Is.EqualTo(newParent));
             Assert.That(sibling1.Origin, Is.Null);
@@ -357,13 +331,11 @@ public class MoveRangeStepTests
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
 
-        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+        Assert.That(transactionDummy.ChangedNodes, Is.EquivalentTo([
             text2,
-            newParent.ChildNodes[0],
-            text3, 
-            newParent.ChildNodes[1], 
-            text4, 
-            newParent.ChildNodes[2]]));
+            text3,
+            text4
+        ]));
         
         AssertSteps(result, 3);
     }
@@ -398,37 +370,32 @@ public class MoveRangeStepTests
         });
         
         // Act
-        var step = new MoveRangeStep(text3, null, newParent, null);
-        var result = step.Execute(transactionFake, builder.Document);
+        var step = new MoveRangeStep(text3.Id, null, newParent, null);
+        var result = step.Execute(transactionDummy, builder.Document);
 
         // Assert
-        AssertUnchanged(parent);
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(text1.IsDeleted, Is.False);
-            Assert.That(text2.IsDeleted, Is.False);
-            Assert.That(text3.IsDeleted, Is.True);
-            Assert.That(text4.IsDeleted, Is.True);
-            Assert.That(text5.IsDeleted, Is.True);
-        }
+        Assert.That(parent.ChildNodes, Is.EquivalentTo([text1, text2, text4]));
         
         Assert.That(newParent.ChildNodes, Has.Count.EqualTo(4));
-        Assert.That(newParent.ChildNodes[2], Is.EqualTo(sibling1));
-        Assert.That(newParent.ChildNodes[3], Is.EqualTo(sibling2));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(newParent.ChildNodes[0], Is.EqualTo(text3));
+            Assert.That(newParent.ChildNodes[1], Is.EqualTo(text5));
+            Assert.That(newParent.ChildNodes[2], Is.EqualTo(sibling1));
+            Assert.That(newParent.ChildNodes[3], Is.EqualTo(sibling2));
+        }
 
         using (Assert.EnterMultipleScope())
         {
-            var node0 = (TextNode)newParent.ChildNodes[0];
-            Assert.That(node0.Parent, Is.EqualTo(newParent));
-            Assert.That(node0.Origin, Is.Null);
-            Assert.That(node0.RightOrigin, Is.EqualTo(sibling1.Id));
-            Assert.That(node0.TextContent, Is.EqualTo("c"));
+            Assert.That(text3.Parent, Is.EqualTo(newParent));
+            Assert.That(text3.Origin, Is.Null);
+            Assert.That(text3.RightOrigin, Is.EqualTo(sibling1.Id));
+            Assert.That(text3.TextContent, Is.EqualTo("c"));
         
-            var node1 = (TextNode)newParent.ChildNodes[1];
-            Assert.That(node1.Parent, Is.EqualTo(newParent));
-            Assert.That(node1.Origin, Is.EqualTo(node0.Id));
-            Assert.That(node1.RightOrigin, Is.EqualTo(sibling1.Id));
-            Assert.That(node1.TextContent, Is.EqualTo("e"));
+            Assert.That(text5.Parent, Is.EqualTo(newParent));
+            Assert.That(text5.Origin, Is.EqualTo(text3.Id));
+            Assert.That(text5.RightOrigin, Is.EqualTo(sibling1.Id));
+            Assert.That(text5.TextContent, Is.EqualTo("e"));
             
             Assert.That(sibling1.Parent, Is.EqualTo(newParent));
             Assert.That(sibling1.Origin, Is.Null);
@@ -439,11 +406,9 @@ public class MoveRangeStepTests
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
         
-        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+        Assert.That(transactionDummy.ChangedNodes, Is.EquivalentTo([
             text3,
-            newParent.ChildNodes[0],
-            text5, 
-            newParent.ChildNodes[1]
+            text5
         ]));
         
         AssertSteps(result, 2);
@@ -479,23 +444,20 @@ public class MoveRangeStepTests
         });
         
         // Act
-        var step = new MoveRangeStep(text3, null, newParent, sibling2);
-        var result = step.Execute(transactionFake, builder.Document);
+        var step = new MoveRangeStep(text3.Id, null, newParent, sibling2.LastId);
+        var result = step.Execute(transactionDummy, builder.Document);
 
         // Assert
-        AssertUnchanged(parent);
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(text1.IsDeleted, Is.False);
-            Assert.That(text2.IsDeleted, Is.False);
-            Assert.That(text3.IsDeleted, Is.True);
-            Assert.That(text4.IsDeleted, Is.True);
-            Assert.That(text5.IsDeleted, Is.True);
-        }
+        Assert.That(parent.ChildNodes, Is.EquivalentTo([text1, text2, text4]));
         
         Assert.That(newParent.ChildNodes, Has.Count.EqualTo(4));
-        Assert.That(newParent.ChildNodes[0], Is.EqualTo(sibling1));
-        Assert.That(newParent.ChildNodes[1], Is.EqualTo(sibling2));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(newParent.ChildNodes[0], Is.EqualTo(sibling1));
+            Assert.That(newParent.ChildNodes[1], Is.EqualTo(sibling2));
+            Assert.That(newParent.ChildNodes[2], Is.EqualTo(text3));
+            Assert.That(newParent.ChildNodes[3], Is.EqualTo(text5));
+        }
 
         using (Assert.EnterMultipleScope())
         {
@@ -507,24 +469,20 @@ public class MoveRangeStepTests
             Assert.That(sibling2.Origin, Is.EqualTo(sibling1.Id));
             Assert.That(sibling2.RightOrigin, Is.Null);
             
-            var node3 = (TextNode)newParent.ChildNodes[2];
-            Assert.That(node3.Parent, Is.EqualTo(newParent));
-            Assert.That(node3.Origin, Is.EqualTo(sibling2.Id));
-            Assert.That(node3.RightOrigin, Is.Null);
-            Assert.That(node3.TextContent, Is.EqualTo("c"));
+            Assert.That(text3.Parent, Is.EqualTo(newParent));
+            Assert.That(text3.Origin, Is.EqualTo(sibling2.Id));
+            Assert.That(text3.RightOrigin, Is.Null);
+            Assert.That(text3.TextContent, Is.EqualTo("c"));
         
-            var node4 = (TextNode)newParent.ChildNodes[3];
-            Assert.That(node4.Parent, Is.EqualTo(newParent));
-            Assert.That(node4.Origin, Is.EqualTo(node3.Id));
-            Assert.That(node4.RightOrigin, Is.Null);
-            Assert.That(node4.TextContent, Is.EqualTo("e"));
+            Assert.That(text5.Parent, Is.EqualTo(newParent));
+            Assert.That(text5.Origin, Is.EqualTo(text3.Id));
+            Assert.That(text5.RightOrigin, Is.Null);
+            Assert.That(text5.TextContent, Is.EqualTo("e"));
         }
         
-        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+        Assert.That(transactionDummy.ChangedNodes, Is.EquivalentTo([
             text3,
-            newParent.ChildNodes[2],
-            text5, 
-            newParent.ChildNodes[3]
+            text5
         ]));
         
         AssertSteps(result, 2);
@@ -541,8 +499,7 @@ public class MoveRangeStepTests
         TextNode text5 = null!;
         TextNode sibling1 = null!;
         TextNode sibling2 = null!;
-            
-        // 0: Parent Element
+        
         var parent = builder.TestInlineElementNode(t =>
         {
             text1 = t.Text("a");
@@ -560,37 +517,32 @@ public class MoveRangeStepTests
         });
         
         // Act
-        var step = new MoveRangeStep(null, text3, newParent, null);
-        var result = step.Execute(transactionFake, builder.Document);
+        var step = new MoveRangeStep(null, text3.Id, newParent, null);
+        var result = step.Execute(transactionDummy, builder.Document);
 
         // Assert
-        AssertUnchanged(parent);
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(text1.IsDeleted, Is.True);
-            Assert.That(text2.IsDeleted, Is.True);
-            Assert.That(text3.IsDeleted, Is.True);
-            Assert.That(text4.IsDeleted, Is.False);
-            Assert.That(text5.IsDeleted, Is.False);
-        }
+        Assert.That(parent.ChildNodes, Is.EquivalentTo([text2, text4, text5]));
         
         Assert.That(newParent.ChildNodes, Has.Count.EqualTo(4));
-        Assert.That(newParent.ChildNodes[2], Is.EqualTo(sibling1));
-        Assert.That(newParent.ChildNodes[3], Is.EqualTo(sibling2));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(newParent.ChildNodes[0], Is.EqualTo(text1));
+            Assert.That(newParent.ChildNodes[1], Is.EqualTo(text3));
+            Assert.That(newParent.ChildNodes[2], Is.EqualTo(sibling1));
+            Assert.That(newParent.ChildNodes[3], Is.EqualTo(sibling2));
+        }
 
         using (Assert.EnterMultipleScope())
         {
-            var node0 = (TextNode)newParent.ChildNodes[0];
-            Assert.That(node0.Parent, Is.EqualTo(newParent));
-            Assert.That(node0.Origin, Is.Null);
-            Assert.That(node0.RightOrigin, Is.EqualTo(sibling1.Id));
-            Assert.That(node0.TextContent, Is.EqualTo("a"));
+            Assert.That(text1.Parent, Is.EqualTo(newParent));
+            Assert.That(text1.Origin, Is.Null);
+            Assert.That(text1.RightOrigin, Is.EqualTo(sibling1.Id));
+            Assert.That(text1.TextContent, Is.EqualTo("a"));
         
-            var node1 = (TextNode)newParent.ChildNodes[1];
-            Assert.That(node1.Parent, Is.EqualTo(newParent));
-            Assert.That(node1.Origin, Is.EqualTo(node0.Id));
-            Assert.That(node1.RightOrigin, Is.EqualTo(sibling1.Id));
-            Assert.That(node1.TextContent, Is.EqualTo("c"));
+            Assert.That(text3.Parent, Is.EqualTo(newParent));
+            Assert.That(text3.Origin, Is.EqualTo(text1.Id));
+            Assert.That(text3.RightOrigin, Is.EqualTo(sibling1.Id));
+            Assert.That(text3.TextContent, Is.EqualTo("c"));
             
             Assert.That(sibling1.Parent, Is.EqualTo(newParent));
             Assert.That(sibling1.Origin, Is.Null);
@@ -601,58 +553,172 @@ public class MoveRangeStepTests
             Assert.That(sibling2.RightOrigin, Is.Null);
         }
 
-        Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([
+        Assert.That(transactionDummy.ChangedNodes, Is.EquivalentTo([
             text1,
-            newParent.ChildNodes[0],
-            text3, 
-            newParent.ChildNodes[1]
+            text3
         ]));
         
-        AssertSteps(result, 2);
-    }
-    
-    private static readonly IResolveConstraint[] OneMoveSteps = [
-        Is.TypeOf<StepDiff.DeleteElementDiff>(),
-        Is.TypeOf<StepDiff.InsertElementDiff>(),
-        Is.TypeOf<StepDiff.InsertTextDiff>(),
-        Is.TypeOf<StepDiff.UpdateMarksDiff>()
-    ];
-    
-    private static void AssertSteps(IReadOnlyList<StepDiff?> result, int elementsMovedCount)
-    {
-        var steps = Enumerable.Range(0, elementsMovedCount).SelectMany(_ => OneMoveSteps);
-        AssertHelper.ThatStepsEqualTo(result, expected: [.. steps]);
+        AssertSteps(result, 1);
     }
 
-    private static void AssertUnchanged(DNode parent)
+    [Test]
+    public void GivenNode_IsSplitNodeMovedToNewParent_AndTargetSiblingIsSplit()
     {
-        Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
+        // Arrange
+        TextNode text = null!;
+        TextNode sibling = null!;
+        
+        var parent = builder.TestInlineElementNode(t =>
+        {
+            text = t.Text("abcd");
+        });
+        
+        var newParent = builder.TestInlineElementNode(t =>
+        {
+            sibling = t.Text("12");
+        });
+        
+        // Act
+        var step = new MoveRangeStep(
+            start: new NodeId(text.Id.Client, text.Id.Clock + 1), 
+            end: new NodeId(text.Id.Client, text.Id.Clock + 2), 
+            targetParent: newParent, 
+            targetOriginId: sibling.Id);
+        
+        var result = step.Execute(transactionDummy, builder.Document);
+        
+        // Assert
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+        Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("a"));
+        Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("d"));
+        
+        Assert.That(newParent.ChildNodes, Has.Count.EqualTo(4));
         using (Assert.EnterMultipleScope())
         {
-            var node0 = parent.ChildNodes[0];
-            Assert.That(node0.Parent, Is.EqualTo(parent));
-            Assert.That(node0.Origin, Is.Null);
-            Assert.That(node0.RightOrigin, Is.Null);
-            
-            var node1 = parent.ChildNodes[1];
-            Assert.That(node1.Parent, Is.EqualTo(parent));
-            Assert.That(node1.Origin, Is.EqualTo(node0.Id));
-            Assert.That(node1.RightOrigin, Is.Null);
-            
-            var node2 = parent.ChildNodes[2];
-            Assert.That(node2.Parent, Is.EqualTo(parent));
-            Assert.That(node2.Origin, Is.EqualTo(node1.Id));
-            Assert.That(node2.RightOrigin, Is.Null);
-        
-            var node3 = parent.ChildNodes[3];
-            Assert.That(node3.Parent, Is.EqualTo(parent));
-            Assert.That(node3.Origin, Is.EqualTo(node2.Id));
-            Assert.That(node3.RightOrigin, Is.Null);
-        
-            var node4 = parent.ChildNodes[4];
-            Assert.That(node4.Parent, Is.EqualTo(parent));
-            Assert.That(node4.Origin, Is.EqualTo(node3.Id));
-            Assert.That(node4.RightOrigin, Is.Null);
+            Assert.That(((TextNode)newParent.ChildNodes[0]).TextContent, Is.EqualTo("1"));
+            Assert.That(((TextNode)newParent.ChildNodes[1]).TextContent, Is.EqualTo("b"));
+            Assert.That(((TextNode)newParent.ChildNodes[2]).TextContent, Is.EqualTo("c"));
+            Assert.That(((TextNode)newParent.ChildNodes[3]).TextContent, Is.EqualTo("2"));
         }
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(newParent.ChildNodes[0].Parent, Is.EqualTo(newParent));
+            Assert.That(newParent.ChildNodes[0].Origin, Is.Null);
+            Assert.That(newParent.ChildNodes[0].RightOrigin, Is.EqualTo(newParent.ChildNodes[2].Id));
+        
+            Assert.That(newParent.ChildNodes[1].Parent, Is.EqualTo(newParent));
+            Assert.That(newParent.ChildNodes[1].Origin, Is.EqualTo(newParent.ChildNodes[0].Id));
+            Assert.That(newParent.ChildNodes[1].RightOrigin, Is.EqualTo(newParent.ChildNodes[2].Id));
+            
+            Assert.That(newParent.ChildNodes[2].Parent, Is.EqualTo(newParent));
+            Assert.That(newParent.ChildNodes[2].Origin, Is.Null);
+            Assert.That(newParent.ChildNodes[2].RightOrigin, Is.Null);
+            
+            Assert.That(newParent.ChildNodes[3].Parent, Is.EqualTo(newParent));
+            Assert.That(newParent.ChildNodes[3].Origin, Is.EqualTo(newParent.ChildNodes[2].Id));
+            Assert.That(newParent.ChildNodes[3].RightOrigin, Is.Null);
+        }
+
+        Assert.That(transactionDummy.ChangedNodes, Is.EquivalentTo([
+            text,
+            sibling,
+            newParent.ChildNodes[1],
+            newParent.ChildNodes[2]
+        ]));
+        
+        AssertSteps(result, 2, [
+            ..AssertStepDiffHelper.SplitTextTypes,
+            ..AssertStepDiffHelper.SplitTextTypes
+        ]);
+    }
+    
+    [Test]
+    public void GivenNodes_AreSplitAndMovedToNewParent_AndTargetSiblingIsSplit()
+    {
+        // Arrange
+        TextNode text1 = null!;
+        TextNode text3 = null!;
+        TextNode sibling = null!;
+        
+        var parent = builder.TestInlineElementNode(t =>
+        {
+            text1 = t.Text("ab");
+            t.Text("cd");
+            text3 = t.Text("ef");
+        });
+        
+        var newParent = builder.TestInlineElementNode(t =>
+        {
+            sibling = t.Text("12");
+        });
+        
+        // Act
+        var step = new MoveRangeStep(
+            start: new NodeId(text1.Id.Client, text1.Id.Clock + 1), 
+            end: new NodeId(text3.Id.Client, text3.Id.Clock + 1), 
+            targetParent: newParent, 
+            targetOriginId: sibling.Id);
+        
+        var result = step.Execute(transactionDummy, builder.Document);
+        
+        // Assert
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+        Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("a"));
+        Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("d"));
+        
+        Assert.That(newParent.ChildNodes, Has.Count.EqualTo(5));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(((TextNode)newParent.ChildNodes[0]).TextContent, Is.EqualTo("1"));
+            Assert.That(((TextNode)newParent.ChildNodes[1]).TextContent, Is.EqualTo("b"));
+            Assert.That(((TextNode)newParent.ChildNodes[2]).TextContent, Is.EqualTo("cd"));
+            Assert.That(((TextNode)newParent.ChildNodes[3]).TextContent, Is.EqualTo("e"));
+            Assert.That(((TextNode)newParent.ChildNodes[4]).TextContent, Is.EqualTo("2"));
+        }
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(newParent.ChildNodes[0].Parent, Is.EqualTo(newParent));
+            Assert.That(newParent.ChildNodes[0].Origin, Is.Null);
+            Assert.That(newParent.ChildNodes[0].RightOrigin, Is.EqualTo(newParent.ChildNodes[2].Id));
+        
+            Assert.That(newParent.ChildNodes[1].Parent, Is.EqualTo(newParent));
+            Assert.That(newParent.ChildNodes[1].Origin, Is.EqualTo(newParent.ChildNodes[0].Id));
+            Assert.That(newParent.ChildNodes[1].RightOrigin, Is.EqualTo(newParent.ChildNodes[2].Id));
+            
+            Assert.That(newParent.ChildNodes[2].Parent, Is.EqualTo(newParent));
+            Assert.That(newParent.ChildNodes[2].Origin, Is.EqualTo(newParent.ChildNodes[1].Id));
+            Assert.That(newParent.ChildNodes[2].RightOrigin, Is.EqualTo(newParent.ChildNodes[2].Id));
+            
+            Assert.That(newParent.ChildNodes[3].Parent, Is.EqualTo(newParent));
+            Assert.That(newParent.ChildNodes[3].Origin, Is.Null);
+            Assert.That(newParent.ChildNodes[3].RightOrigin, Is.Null);
+            
+            Assert.That(newParent.ChildNodes[4].Parent, Is.EqualTo(newParent));
+            Assert.That(newParent.ChildNodes[4].Origin, Is.EqualTo(newParent.ChildNodes[2].Id));
+            Assert.That(newParent.ChildNodes[4].RightOrigin, Is.Null);
+        }
+
+        Assert.That(transactionDummy.ChangedNodes, Is.EquivalentTo([
+            text1,
+            text3,
+            sibling,
+            newParent.ChildNodes[1],
+            newParent.ChildNodes[2]
+        ]));
+        
+        AssertSteps(result, 3, [
+            ..AssertStepDiffHelper.SplitTextTypes,
+            ..AssertStepDiffHelper.SplitTextTypes,
+            ..AssertStepDiffHelper.SplitTextTypes
+        ]);
+    }
+    
+    private static void AssertSteps(IReadOnlyList<StepDiff?> result, int elementsMovedCount, IEnumerable<IResolveConstraint>? additionalAsserts = null)
+    {
+        var steps = AssertStepDiffHelper.Repeat<StepDiff.MoveDiff>(elementsMovedCount);
+        if (additionalAsserts is not null) steps = [..additionalAsserts, ..steps];
+        AssertHelper.ThatStepsEqualTo(result, expected: [.. steps]);
     }
 }

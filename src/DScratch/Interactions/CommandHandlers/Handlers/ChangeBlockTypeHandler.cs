@@ -43,15 +43,15 @@ public class ChangeBlockTypeHandler(IDScratchService dScratchService) : CommandB
     {
         if (selectionInfo.Direction is SelectionDirection.None)
         {
-            var node = transaction.Document.FindNode(selectionInfo.AnchorNodeId)?.GetNearestBlock()
+            var node = transaction.Document.Find(selectionInfo.AnchorNodeId)?.GetNearestBlock()
                    ?? throw new ArgumentException($"Node with given id not found: {selectionInfo.AnchorId}");
             return [node];
         }
         
         var (originId, rightOriginId) = selectionInfo.GetConvertedNodeIds();
         
-        var origin = transaction.Document.FindNode(originId)?.GetNearestBlock();
-        var rightOrigin = transaction.Document.FindNode(rightOriginId)?.GetNearestBlock();
+        var origin = transaction.Document.Find(originId)?.GetNearestBlock();
+        var rightOrigin = transaction.Document.Find(rightOriginId)?.GetNearestBlock();
         
         if (origin is null || rightOrigin is null)
         {

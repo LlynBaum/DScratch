@@ -61,7 +61,7 @@ public class DTransactionTests
         Assert.That(step, Is.TypeOf<InsertStep>());
         
         Transaction.Commit();
-        Assert.That(TreeBuilder.Document.FindNode(nodeId), Is.EqualTo(node));
+        Assert.That(TreeBuilder.Document.Find(nodeId), Is.EqualTo(node));
     }
     
     [Test]
@@ -76,7 +76,7 @@ public class DTransactionTests
         Assert.That(Transaction.Steps.Single(), Is.TypeOf<DeleteStep>());
         
         Transaction.Commit();
-        Assert.That(TreeBuilder.Document.FindNode(node.Id), Is.EqualTo(node));
+        Assert.That(TreeBuilder.Document.Find(node.Id), Is.EqualTo(node));
     }
     
     [Test]
@@ -94,15 +94,15 @@ public class DTransactionTests
         Assert.That(Transaction.Steps.Single(), Is.TypeOf<DeleteRangeStep>());
         
         Transaction.Commit();
-        Assert.That(TreeBuilder.Document.FindNode(node.Id), Is.EqualTo(node));
-        Assert.That(TreeBuilder.Document.FindNode(node2.Id), Is.EqualTo(node2));
+        Assert.That(TreeBuilder.Document.Find(node.Id), Is.EqualTo(node));
+        Assert.That(TreeBuilder.Document.Find(node2.Id), Is.EqualTo(node2));
     }
     
     [Test]
     public void MoveRange_AddsMoveRangeStep()
     {
         // Act
-        Transaction.MoveRange(TestNode.Empty(), TestNode.Empty(), TestNode.Empty(), null);
+        Transaction.MoveRange(new NodeId(), new NodeId(), TestNode.Empty(), null);
         
         // Assert
         Assert.That(Transaction.Steps, Has.Count.EqualTo(1));
