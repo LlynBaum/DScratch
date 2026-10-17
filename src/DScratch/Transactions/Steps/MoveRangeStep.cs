@@ -67,7 +67,10 @@ public class MoveRangeStep(NodeId? start, NodeId? end, DNode targetParent, NodeI
                     rightOrigin: targetOrigin?.NextSibling() ?? existingFirstChild,
                     transaction: transaction, 
                     steps: steps);
+                
+                targetOrigin = current;
             }
+
             current = next;
         }
 

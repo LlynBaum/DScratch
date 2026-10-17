@@ -19,7 +19,7 @@ public class MoveRangeStepTests
     }
     
     [Test]
-    public void GivenNode_IsMovedToNewParent_AndSiblingsAreUpdated()
+    public void GivenNode_IsMovedToNewParent()
     {
         // Arrange
         TextNode text1 = null!;
@@ -49,6 +49,8 @@ public class MoveRangeStepTests
         // Act
         var step = new MoveRangeStep(text2.Id, text4.Id, newParent, newSibling.LastId);
         var result = step.Execute(transactionDummy, builder.Document);
+        
+        builder.Print();
 
         // Assert
         Assert.That(parent.ChildNodes, Is.EquivalentTo([text1, text5]));
@@ -99,7 +101,7 @@ public class MoveRangeStepTests
     }
 
     [Test]
-    public void GivenNode_IsMovedToNewParent_AndSiblingsAreUpdated_WithNoEnd()
+    public void GivenNode_IsMovedToNewParent_WithNoEnd()
     {
         // Arrange
         TextNode text1 = null!;
@@ -171,17 +173,15 @@ public class MoveRangeStepTests
             
         Assert.That(transactionDummy.ChangedNodes, Is.EquivalentTo([
             text3,
-            newParent.ChildNodes[1],
-            text4, 
-            newParent.ChildNodes[2], 
-            text5, 
-            newParent.ChildNodes[3]]));
+            text4,
+            text5
+        ]));
         
         AssertSteps(result, 3);
     }
     
     [Test]
-    public void GivenNode_IsMovedToNewParent_AndSiblingsAreUpdated_WithNoStart()
+    public void GivenNode_IsMovedToNewParent_WithNoStart()
     {
         // Arrange
         TextNode text1 = null!;
@@ -261,7 +261,7 @@ public class MoveRangeStepTests
     }
     
         [Test]
-    public void GivenNode_IsMovedToNewParent_AndSiblingsAreUpdated_NoTargetSibling()
+    public void GivenNode_IsMovedToNewParent_NoTargetSibling()
     {
         // Arrange
         TextNode text1 = null!;
@@ -341,7 +341,7 @@ public class MoveRangeStepTests
     }
     
     [Test]
-    public void GivenNode_IsMovedToNewParent_AndSiblingsAreUpdated_WithNoEnd_NoTargetSibling()
+    public void GivenNode_IsMovedToNewParent_WithNoEnd_NoTargetSibling()
     {
         // Arrange
         TextNode text1 = null!;
@@ -415,7 +415,7 @@ public class MoveRangeStepTests
     }
     
     [Test]
-    public void GivenNode_IsMovedToNewParent_AndSiblingsAreUpdated_WithNoEnd_AndTargetSibling()
+    public void GivenNode_IsMovedToNewParent_WithNoEnd_AndTargetSibling()
     {
         // Arrange
         TextNode text1 = null!;
@@ -489,7 +489,7 @@ public class MoveRangeStepTests
     }
     
     [Test]
-    public void GivenNode_IsMovedToNewParent_AndSiblingsAreUpdated_WithNoStart_NoTargetSibling()
+    public void GivenNode_IsMovedToNewParent_WithNoStart_NoTargetSibling()
     {
         // Arrange
         TextNode text1 = null!;
@@ -558,7 +558,7 @@ public class MoveRangeStepTests
             text3
         ]));
         
-        AssertSteps(result, 1);
+        AssertSteps(result, 2);
     }
 
     [Test]
