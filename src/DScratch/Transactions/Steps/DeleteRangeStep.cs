@@ -27,7 +27,7 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
         DNode firstNodeToDelete;
         if (startNode is TextNode startTextNode)
         {
-            var (node, stepDiffs) = SplitStartTextNode(transaction, document, startTextNode, start!.Value);
+            var (node, stepDiffs) = SplitTextNode(transaction, document, startTextNode, start!.Value);
             steps.AddRange(stepDiffs);
             firstNodeToDelete = node;
         }
@@ -36,21 +36,23 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
             firstNodeToDelete = startNode ?? nearestBlockEnd!.FirstChild!;
         }
 
-        DNode lastNodeToDelete;
+        DNode? lastNodeToDelete;
         if (endNode is TextNode endTextNode)
         {
-            var (node, stepDiffs) = SplitEndTextNode(transaction, document, endTextNode, end!.Value);
+            var (node, stepDiffs) = SplitTextNode(transaction, document, endTextNode, end!.Value);
             steps.AddRange(stepDiffs);
             lastNodeToDelete = node;
         }
         else
         {
-            lastNodeToDelete = endNode ?? nearestBlockStart!.LastChild!;
+            lastNodeToDelete = endNode;
         }
 
         var walker = TreeWalker<DNode>.StartFrom(firstNodeToDelete!, nearestBlock);
 
-        var endParent = GetEndParent(lastNodeToDelete, nearestBlock);
+        var endParent = lastNodeToDelete is not null 
+            ? GetEndParent(lastNodeToDelete, nearestBlock)
+            : firstNodeToDelete.Parent;
         
         while (walker.Node is not null && walker.Node != endParent)
         {
@@ -68,11 +70,6 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
             walker.NextNode();
         }
 
-        if (walker.Node is null) return steps;
-        
-        walker.Node.Delete();
-        steps.Add(walker.Node.ToDeleteSteps());
-        transaction.NotifyNodeChange(walker.Node);
         return steps;
     }
 
@@ -92,7 +89,7 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
         return current;
     }
     
-    private static (DNode Node, IReadOnlyList<StepDiff?> StepDiffs) SplitStartTextNode(IRunningTransaction transaction, DScratchDocument document, TextNode textNode, NodeId nodeId)
+    private static (DNode Node, IReadOnlyList<StepDiff?> StepDiffs) SplitTextNode(IRunningTransaction transaction, DScratchDocument document, TextNode textNode, NodeId nodeId)
     {
         if (textNode.Length == 1)
         {
@@ -109,24 +106,5 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
 
         var steps = SplitTextStep.GenerateSplitSteps(transaction, document, textNode, splitNode, offset);
         return (splitNode, steps);
-    }
-    
-    private static (DNode Node, IReadOnlyList<StepDiff?> StepDiffs) SplitEndTextNode(IRunningTransaction transaction, DScratchDocument document, TextNode textNode, NodeId nodeId)
-    {
-        if (textNode.Length == 1 || textNode.LastId == nodeId)
-        {
-            return (textNode, []);
-        }
-        
-        var offset = (int)(nodeId.Clock - textNode.Id.Clock + 1);
-        var splitNode = textNode.Split(offset);
-
-        if (splitNode is null)
-        {
-            throw new InvalidOperationException($"NodeId {nodeId} was outside of TextNode range.");
-        }
-
-        var steps = SplitTextStep.GenerateSplitSteps(transaction, document, textNode, splitNode, offset);
-        return (textNode, steps);
     }
 }
