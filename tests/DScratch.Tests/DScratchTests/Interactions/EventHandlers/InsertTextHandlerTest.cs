@@ -109,10 +109,11 @@ public class InsertTextHandlerTest
         public void Handle_CreatesExpectedChanges_WithInsertingAtStart()
         {
             // Arrange
+            TextNode origin = null!;
             TextNode textNode = null!;
             var parent = builder.TestBlockElementNode(t =>
             {
-                t.Text("a");
+                origin = t.Text("a");
                 textNode = t.Text("b");
             });
 
@@ -123,6 +124,9 @@ public class InsertTextHandlerTest
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
+                Assert.That(parent.ChildNodes[1].Origin, Is.EqualTo(origin.LastId));
+                Assert.That(parent.ChildNodes[1].RightOrigin, Is.EqualTo(textNode.Id));
+                
                 Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
                 Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("abc"));
             }
@@ -130,7 +134,7 @@ public class InsertTextHandlerTest
             using (Assert.EnterMultipleScope())
             {
                 var text1 = (TextNode)parent.ChildNodes[0];
-                var text2 = parent.ChildNodes[1];
+                var text2 = parent.ChildNodes[2];
                 
                 Assert.That(text1.Origin, Is.Null);
                 Assert.That(text1.RightOrigin, Is.Null);
@@ -303,12 +307,12 @@ public class InsertTextHandlerTest
                 var text3 = (TextNode)parent.ChildNodes[2];
                 
                 Assert.That(text1.Origin, Is.Null);
-                Assert.That(text1.RightOrigin, Is.Null);
+                Assert.That(text1.RightOrigin, Is.EqualTo(text3.Id));
                 
                 Assert.That(text2.Origin, Is.EqualTo(text1.LastId));
-                Assert.That(text2.RightOrigin, Is.Null);
+                Assert.That(text2.RightOrigin, Is.EqualTo(text3.Id));
                 
-                Assert.That(text3.Origin, Is.EqualTo(text2.LastId));
+                Assert.That(text3.Origin, Is.EqualTo(text1.LastId));
                 Assert.That(text3.RightOrigin, Is.Null);
             }
 
@@ -375,7 +379,7 @@ public class InsertTextHandlerTest
                 var text6 = (TextNode)parent.ChildNodes[5];
                 
                 Assert.That(text1.Origin, Is.Null);
-                Assert.That(text1.RightOrigin, Is.Null);
+                Assert.That(text1.RightOrigin, Is.EqualTo(text3.Id));
                 
                 Assert.That(text2.Origin, Is.EqualTo(text1.LastId));
                 Assert.That(text2.RightOrigin, Is.EqualTo(text3.Id));
@@ -384,7 +388,7 @@ public class InsertTextHandlerTest
                 Assert.That(text3.RightOrigin, Is.Null);
                 
                 Assert.That(text4.Origin, Is.EqualTo(text3.LastId));
-                Assert.That(text4.RightOrigin, Is.Null);
+                Assert.That(text4.RightOrigin, Is.EqualTo(text5.Id));
                 
                 Assert.That(text5.Origin, Is.EqualTo(text4.LastId));
                 Assert.That(text5.RightOrigin, Is.Null);
@@ -418,8 +422,11 @@ public class InsertTextHandlerTest
             {
                 Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
 
+                Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
+                Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("xyz"));
+                
                 Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
-                Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("xyz"));
+                Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("abc"));
 
                 Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("def"));
@@ -436,19 +443,19 @@ public class InsertTextHandlerTest
                 var text4 = parent.ChildNodes[3];
                 
                 Assert.That(text1.Origin, Is.Null);
-                Assert.That(text1.RightOrigin, Is.Null);
+                Assert.That(text1.RightOrigin, Is.EqualTo(text2.Id));
                 
-                Assert.That(text2.Origin, Is.EqualTo(text1.Id));
-                Assert.That(text2.RightOrigin, Is.EqualTo(text3.LastId));
+                Assert.That(text2.Origin, Is.Null);
+                Assert.That(text2.RightOrigin, Is.Null);
                 
-                Assert.That(text3.Origin, Is.EqualTo(text1.LastId));
+                Assert.That(text3.Origin, Is.EqualTo(text2.LastId));
                 Assert.That(text3.RightOrigin, Is.Null);
                 
                 Assert.That(text4.Origin, Is.EqualTo(text3.LastId));
                 Assert.That(text4.RightOrigin, Is.Null);
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[0].Id, 3);
         }
 
         [Test]
@@ -486,13 +493,13 @@ public class InsertTextHandlerTest
                 var text4 = parent.ChildNodes[3];
                 
                 Assert.That(text1.Origin, Is.Null);
-                Assert.That(text1.RightOrigin, Is.Null);
+                Assert.That(text1.RightOrigin, Is.EqualTo(text3.Id));
                 
                 Assert.That(text2.Origin, Is.EqualTo(text1.LastId));
                 Assert.That(text2.RightOrigin, Is.EqualTo(text3.Id));
                 
                 Assert.That(text3.Origin, Is.EqualTo(text1.LastId));
-                Assert.That(text3.RightOrigin, Is.Null);
+                Assert.That(text3.RightOrigin, Is.EqualTo(text4.Id));
                 
                 Assert.That(text4.Origin, Is.EqualTo(text3.LastId));
                 Assert.That(text4.RightOrigin, Is.Null);
@@ -779,7 +786,7 @@ public class InsertTextHandlerTest
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1));
             
             // Assert
-            Assert.That(node.RightOrigin, Is.TypeOf<TextNode>());
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[1]).Marks, Is.EquivalentTo(node.Marks));
         }
         
@@ -802,7 +809,7 @@ public class InsertTextHandlerTest
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1));
             
             // Assert
-            Assert.That(node.RightOrigin, Is.TypeOf<TextNode>());
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[1]).Marks, Is.EquivalentTo(node.Marks));
         }
 
@@ -822,7 +829,7 @@ public class InsertTextHandlerTest
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 0));
             
             // Assert
-            Assert.That(node.Origin, Is.TypeOf<TextNode>());
+            Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[0]).Marks, Is.EquivalentTo(new Dictionary<MarkKey, string> { { MarkKey.FontWeight, "bold" } }));
         }
         
@@ -881,7 +888,7 @@ public class InsertTextHandlerTest
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1));
             
             // Assert
-            Assert.That(node.RightOrigin, Is.TypeOf<TextNode>());
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[1]).Marks, Is.EquivalentTo(new Dictionary<MarkKey, string> { { MarkKey.FontStyle, "italic" }, { MarkKey.FontWeight, "bold" } }));
         }
         
@@ -902,7 +909,7 @@ public class InsertTextHandlerTest
             handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(node.Id, 1));
             
             // Assert
-            Assert.That(node.RightOrigin, Is.TypeOf<TextNode>());
+            Assert.That(parent.ChildNodes[1], Is.TypeOf<TextNode>());
             Assert.That(((TextNode)parent.ChildNodes[1]).Marks, Is.EquivalentTo(new Dictionary<MarkKey, string> { { MarkKey.Color, "b" } }));
         }
     }

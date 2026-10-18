@@ -13,7 +13,7 @@ public class UpdateLinkHandler(IDScratchService dScratchService) : CommandBase<U
             return;
         }
         
-        var anchor = transaction.Document.Find(selectionInfo.AnchorNodeId);
+        var anchor = transaction.Document.FindNodeOrDefault(selectionInfo.AnchorNodeId);
         var linkNode = FindLinkNode(anchor);
         if (linkNode is null)
         {

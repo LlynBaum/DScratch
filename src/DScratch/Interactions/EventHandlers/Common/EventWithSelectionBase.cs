@@ -12,7 +12,7 @@ internal abstract class EventWithSelectionBase(IDScratchService dScratchService)
     public TransactionResult Handle(KeyPressInfo keyPressInfo)
     {
         var transaction = dScratchService.StartTransaction();
-        var targetNode = transaction.Document.Find(keyPressInfo.Selection!.AnchorNodeId);
+        var targetNode = transaction.Document.FindNodeOrDefault(keyPressInfo.Selection!.AnchorNodeId);
         if (targetNode is null)
         {
             throw new ArgumentException($"Node not found: {keyPressInfo.Selection.AnchorId}");
@@ -26,12 +26,20 @@ internal abstract class EventWithSelectionBase(IDScratchService dScratchService)
                 {
                     var anchorId = new NodeId(
                         client: targetTextNode.Id.Client, 
-                        clock: targetTextNode.Id.Clock + keyPressInfo.Selection.FocusOffset);
+                        clock: targetTextNode.Id.Clock + keyPressInfo.Selection.FocusOffset - 1);
                     Context.SetAnchors(targetTextNode, anchorId);
                 }
                 else
                 {
-                    Context.SetRightAnchor(targetTextNode);
+                    var previousNode = targetTextNode.PreviousSibling();
+                    if (previousNode is not null)
+                    {
+                        Context.SetAnchors(previousNode, previousNode.LastId);
+                    }
+                    else
+                    {
+                        Context.SetRightAnchor(targetTextNode);
+                    }
                 }
             }
             else if (SearchTextNode(targetNode, keyPressInfo.Selection) is { Node: not null } result)

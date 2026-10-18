@@ -16,8 +16,8 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         }
         
         var (originId, rightOriginId) = selectionInfo.GetConvertedNodeIds();
-        var origin = transaction.Document.Find(originId);
-        var rightOrigin = transaction.Document.Find(rightOriginId);
+        var origin = transaction.Document.FindNodeOrDefault(originId);
+        var rightOrigin = transaction.Document.FindNodeOrDefault(rightOriginId);
         
         if (origin is null || rightOrigin is null)
         {
@@ -41,7 +41,7 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
             throw new ArgumentException("Expected to have a DisplayText with SelectionDirection None.");
         }
         
-        var target = transaction.Document.Find(selectionInfo.AnchorNodeId);
+        var target = transaction.Document.FindNodeOrDefault(selectionInfo.AnchorNodeId);
         if (target is null)
         {
             throw new ArgumentException($"Node with given id not found: {selectionInfo.AnchorId}");

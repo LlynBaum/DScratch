@@ -11,8 +11,8 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
         
         var steps = new List<StepDiff?>();
 
-        var startNode = start.HasValue ? document.Find(start.Value) : null;
-        var endNode = end.HasValue ? document.Find(end.Value) : null;
+        var startNode = start.HasValue ? document.FindNodeOrDefault(start.Value) : null;
+        var endNode = end.HasValue ? document.FindNodeOrDefault(end.Value) : null;
 
         var nearestBlockStart = startNode?.GetNearestBlock();
         var nearestBlockEnd = endNode?.GetNearestBlock();
