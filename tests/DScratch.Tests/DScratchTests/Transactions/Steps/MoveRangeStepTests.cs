@@ -47,7 +47,7 @@ public class MoveRangeStepTests
         });
         
         // Act
-        var step = new MoveRangeStep(text2.Id, text4.Id, newParent, newSibling.LastId);
+        var step = new MoveRangeStep(text2.Id, text5.Id, newParent, newSibling.LastId);
         var result = step.Execute(transactionDummy, builder.Document);
 
         // Assert
@@ -207,7 +207,7 @@ public class MoveRangeStepTests
         });
         
         // Act
-        var step = new MoveRangeStep(null, text3.Id, newParent, newSibling.LastId);
+        var step = new MoveRangeStep(null, text4.Id, newParent, newSibling.LastId);
         var result = step.Execute(transactionDummy, builder.Document);
 
         // Assert
@@ -287,7 +287,7 @@ public class MoveRangeStepTests
         });
         
         // Act
-        var step = new MoveRangeStep(text2.Id, text4.Id, newParent, null);
+        var step = new MoveRangeStep(text2.Id, text5.Id, newParent, null);
         var result = step.Execute(transactionDummy, builder.Document);
 
         // Assert
@@ -515,7 +515,7 @@ public class MoveRangeStepTests
         });
         
         // Act
-        var step = new MoveRangeStep(null, text3.Id, newParent, null);
+        var step = new MoveRangeStep(null, text4.Id, newParent, null);
         var result = step.Execute(transactionDummy, builder.Document);
 
         // Assert
@@ -579,7 +579,7 @@ public class MoveRangeStepTests
         // Act
         var step = new MoveRangeStep(
             start: new NodeId(text.Id.Client, text.Id.Clock + 1), 
-            end: new NodeId(text.Id.Client, text.Id.Clock + 2), 
+            end: new NodeId(text.Id.Client, text.Id.Clock + 3), 
             targetParent: newParent, 
             targetOriginId: sibling.Id);
         
@@ -651,7 +651,7 @@ public class MoveRangeStepTests
         // Act
         var step = new MoveRangeStep(
             start: new NodeId(text1.Id.Client, text1.Id.Clock + 1), 
-            end: text3.Id, 
+            end: text3.LastId,
             targetParent: newParent, 
             targetOriginId: sibling.Id);
         

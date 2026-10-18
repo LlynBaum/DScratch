@@ -29,24 +29,18 @@ public class MoveRangeStep(NodeId? start, NodeId? end, DNode targetParent, NodeI
         var endNode = GetNodeOrDefault(end);
         if (endNode is TextNode endTextNode)
         {
-            (endNode, var stepDiffs) = GetLeftSplitPart(transaction, document, endTextNode, end!.Value);
+            (endNode, var stepDiffs) = GetRightSplitPart(transaction, document, endTextNode, end!.Value);
             steps.AddRange(stepDiffs);
         }
-        
-        endNode ??= startNode?.Parent?.LastChild;
-        startNode ??= endNode?.Parent?.FirstChild;
 
+        startNode ??= endNode?.Parent?.FirstChild;
+        
         if (startNode is null)
         {
             throw new ArgumentException($"Could not infer a start node for move step: Start: '{start}' - End: '{end}'");
         }
-
-        if (endNode is null)
-        {
-            throw new ArgumentException($"Could not infer a end node for move step: Start: '{start}' - End: '{end}'");
-        }
-
-        if (startNode.Parent!.Id != endNode.Parent!.Id)
+        
+        if (endNode is not null && startNode.Parent!.Id != endNode.Parent!.Id)
         {
             throw new ArgumentException("Start and End node must be of the same parent.");
         }
@@ -78,7 +72,7 @@ public class MoveRangeStep(NodeId? start, NodeId? end, DNode targetParent, NodeI
         DNode? existingFirstChild)
     {
         var current = startNode;
-        while (current is not null && current.Id != endNode!.Id)
+        while (current is not null && current.Id != endNode?.Id)
         {
             var next = current.NextSibling();
             if (!current.IsDeleted)
@@ -94,16 +88,6 @@ public class MoveRangeStep(NodeId? start, NodeId? end, DNode targetParent, NodeI
             }
 
             current = next;
-        }
-
-        if (current is not null && !current.IsDeleted)
-        {
-            MoveNode(
-                current: current,
-                origin: targetOrigin, 
-                rightOrigin: targetOrigin?.NextSibling() ?? existingFirstChild,
-                transaction: transaction, 
-                steps: steps);
         }
     }
 
