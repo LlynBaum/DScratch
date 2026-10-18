@@ -183,8 +183,6 @@ public class DTransactionTests
     {
         // Arrange
         var node = TreeBuilder.Text("abcd");
-
-        var currentId = TreeBuilder.IdGenerator.CurrentId;
         
         // Act
         var result = Transaction.SplitText(node, 2);

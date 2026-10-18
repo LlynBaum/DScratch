@@ -8,14 +8,15 @@ internal static class DeleteSelection
     public static void Handle(KeyPressInfo keyPressInfo, ITransaction transaction, EventHandlerContext context)
     {
         var nodeSelection = SearchSelectedNodes(keyPressInfo, transaction);
-        context.SetAnchors(nodeSelection.AnchorNode, nodeSelection.AnchorNodeId);
+        SetContextAnchors(context, nodeSelection);
+        
         if (nodeSelection.IsInSameBlock())
         {
-            transaction.DeleteRange(nodeSelection.AnchorNodeId, nodeSelection.RightAnchorNodeId); // TODO: delete range working with ids
+            transaction.DeleteRange(nodeSelection.DeleteStartId, nodeSelection.DeleteEndId);
         }
         else
         {
-            DeleteAndMerge(nodeSelection, transaction); // TODO: Delete range at start and end, delete everything in between, move tail start para to merge them
+            DeleteAndMerge(nodeSelection, transaction);
         }
     }
     
@@ -28,66 +29,87 @@ internal static class DeleteSelection
         
         return new NodeSelection
         {
-            AnchorNode = anchorNode,
-            AnchorNodeId = new NodeId(anchorId.Client, anchorId.Clock + anchorOffset),
-            RightAnchorNode = rightAnchorNode,
-            RightAnchorNodeId = new NodeId(rightAnchorId.Client, rightAnchorId.Clock + rightAnchorOffset)
+            DeleteStartNode = anchorNode,
+            DeleteStartId = new NodeId(anchorId.Client, anchorId.Clock + anchorOffset),
+            DeleteEndNode = rightAnchorNode,
+            DeleteEndId = new NodeId(rightAnchorId.Client, rightAnchorId.Clock + rightAnchorOffset)
         };
-    } 
+    }
 
     private static void DeleteAndMerge(NodeSelection nodeSelection, ITransaction transaction)
     {
-        var startBlock = nodeSelection.AnchorParentBlock;
-        transaction.DeleteRange(nodeSelection.AnchorNodeId, startBlock.LastChild?.LastId);
+        var startBlock = nodeSelection.StartNodeParentBlock;
+        transaction.DeleteRange(nodeSelection.DeleteStartId, startBlock.LastChild?.LastId);
 
         foreach (var node in nodeSelection.GetBlocksInBetween())
         {
             transaction.Delete(node.Id);
         }
 
-        var endParent = nodeSelection.RightAnchorParentBlock;
-        transaction.DeleteRange(endParent.FirstChild?.Id, nodeSelection.RightAnchorNodeId);
-        transaction.MoveRange(nodeSelection.RightAnchorNodeId, endParent.LastChild?.LastId, startBlock, startBlock.LastChild?.LastId);
-        transaction.Delete(nodeSelection.RightAnchorNode.GetNearestBlock().Id);
+        var endParent = nodeSelection.EndNodeParentBlock;
+        transaction.DeleteRange(endParent.FirstChild?.Id, nodeSelection.DeleteEndId);
+        transaction.MoveRange(nodeSelection.DeleteEndId, endParent.LastChild?.LastId, startBlock, startBlock.LastChild?.LastId);
+        transaction.Delete(nodeSelection.DeleteEndNode.GetNearestBlock().Id);
+    }
+    
+    private static void SetContextAnchors(EventHandlerContext context, NodeSelection nodeSelection)
+    {
+        if (nodeSelection.DeleteStartNode.Id != nodeSelection.DeleteStartId)
+        {
+            var contextAnchorId = new NodeId(nodeSelection.DeleteStartId.Client, nodeSelection.DeleteStartId.Clock - 1);
+            context.SetAnchors(nodeSelection.DeleteStartNode, contextAnchorId);
+        }
+        else
+        {
+            var previousNode = nodeSelection.DeleteStartNode.PreviousSibling();
+            if (previousNode is not null)
+            {
+                context.SetAnchors(previousNode, previousNode.LastId);
+            }
+            else
+            {
+                context.SetRightAnchor(nodeSelection.DeleteStartNode);
+            }
+        }
     }
     
     private class NodeSelection
     {
-        public required NodeId AnchorNodeId { get; init; }
+        public required NodeId DeleteStartId { get; init; }
         
-        public required DNode AnchorNode { get; init; }
+        public required DNode DeleteStartNode { get; init; }
         
-        public required NodeId RightAnchorNodeId { get; init; }
+        public required NodeId DeleteEndId { get; init; }
         
-        public required DNode RightAnchorNode { get; init; }
+        public required DNode DeleteEndNode { get; init; }
 
-        public DNode AnchorParentBlock
+        public DNode StartNodeParentBlock
         {
             get
             {
-                field ??= AnchorNode.GetNearestBlock();
+                field ??= DeleteStartNode.GetNearestBlock();
                 return field;
             }
         }
         
-        public DNode RightAnchorParentBlock
+        public DNode EndNodeParentBlock
         {
             get
             {
-                field ??= RightAnchorNode.GetNearestBlock();
+                field ??= DeleteEndNode.GetNearestBlock();
                 return field;
             }
         }
 
         public bool IsInSameBlock()
         {
-            return AnchorParentBlock == RightAnchorParentBlock;
+            return StartNodeParentBlock == EndNodeParentBlock;
         }
 
         public IEnumerable<DNode> GetBlocksInBetween()
         {
-            var current = AnchorParentBlock.NextSibling();
-            var endParent = RightAnchorParentBlock;
+            var current = StartNodeParentBlock.NextSibling();
+            var endParent = EndNodeParentBlock;
             while (current is not null && current != endParent)
             {
                 yield return current;

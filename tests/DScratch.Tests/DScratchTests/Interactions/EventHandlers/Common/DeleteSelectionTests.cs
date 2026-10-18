@@ -85,6 +85,8 @@ public class DeleteSelectionTests
         DeleteSelection.Handle(keyPressInfo, transaction, eventHandlerContext);
         transaction.Commit();
 
+        builder.Print();
+        
         // Assert
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
         using (Assert.EnterMultipleScope())
