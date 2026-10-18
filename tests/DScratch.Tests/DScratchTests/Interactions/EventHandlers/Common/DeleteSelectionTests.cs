@@ -81,13 +81,23 @@ public class DeleteSelectionTests
 
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(node.Id, 1, node.Id, 3);
         
-        // Act
+        // Act 1
         DeleteSelection.Handle(keyPressInfo, transaction, eventHandlerContext);
-        transaction.Commit();
-
-        builder.Print();
         
-        // Assert
+        // Assert 1
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(eventHandlerContext.AnchorNode, Is.EqualTo(parent.ChildNodes[0]));
+            Assert.That(eventHandlerContext.AnchorNodeId, Is.EqualTo(parent.ChildNodes[0].Id));
+            Assert.That(eventHandlerContext.RightAnchorNode, Is.EqualTo(parent.ChildNodes[0]));
+            Assert.That(eventHandlerContext.RightAnchorNodeId, Is.EqualTo(new NodeId(parent.ChildNodes[0].Id.Client, parent.ChildNodes[0].Id.Clock + 1)));
+            Assert.That(eventHandlerContext.GetParent(), Is.EqualTo(parent));
+        }
+        
+        // Act 2
+        transaction.Commit();
+        
+        // Assert 2
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(3));
         using (Assert.EnterMultipleScope())
         {
@@ -99,15 +109,6 @@ public class DeleteSelectionTests
             
             Assert.That(parent.ChildNodes[2].IsDeleted, Is.False);
             Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("d"));
-        }
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(eventHandlerContext.AnchorNode, Is.EqualTo(parent.ChildNodes[0]));
-            Assert.That(eventHandlerContext.AnchorNodeId, Is.EqualTo(parent.ChildNodes[0].Id));
-            Assert.That(eventHandlerContext.RightAnchorNode, Is.EqualTo(parent.ChildNodes[1]));
-            Assert.That(eventHandlerContext.RightAnchorNodeId, Is.EqualTo(parent.ChildNodes[1].Id));
-            Assert.That(eventHandlerContext.GetParent(), Is.EqualTo(parent));
         }
     }
     
@@ -164,11 +165,23 @@ public class DeleteSelectionTests
 
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
         
-        // Act
+        // Act 1
         DeleteSelection.Handle(keyPressInfo, transaction, eventHandlerContext);
+        
+        // Assert 1
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(eventHandlerContext.AnchorNode, Is.EqualTo(parent.ChildNodes[0]));
+            Assert.That(eventHandlerContext.AnchorNodeId, Is.EqualTo(parent.ChildNodes[0].Id));
+            Assert.That(eventHandlerContext.RightAnchorNode, Is.EqualTo(parent.ChildNodes[0]));
+            Assert.That(eventHandlerContext.RightAnchorNodeId, Is.EqualTo(parent.ChildNodes[0].LastId));
+            Assert.That(eventHandlerContext.GetParent(), Is.EqualTo(parent));
+        }
+        
+        // Act 2
         transaction.Commit();
 
-        // Assert
+        // Assert 2
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(4));
         using (Assert.EnterMultipleScope())
         {
@@ -183,15 +196,6 @@ public class DeleteSelectionTests
             
             Assert.That(parent.ChildNodes[3].IsDeleted, Is.False);
             Assert.That(((TextNode)parent.ChildNodes[3]).TextContent, Is.EqualTo("d"));
-        }
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(eventHandlerContext.AnchorNode, Is.EqualTo(parent.ChildNodes[0]));
-            Assert.That(eventHandlerContext.AnchorNodeId, Is.EqualTo(parent.ChildNodes[0].Id));
-            Assert.That(eventHandlerContext.RightAnchorNode, Is.EqualTo(parent.ChildNodes[1]));
-            Assert.That(eventHandlerContext.RightAnchorNodeId, Is.EqualTo(parent.ChildNodes[1].Id));
-            Assert.That(eventHandlerContext.GetParent(), Is.EqualTo(parent));
         }
     }
     
@@ -212,11 +216,23 @@ public class DeleteSelectionTests
 
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
         
-        // Act
+        // Act 1
         DeleteSelection.Handle(keyPressInfo, transaction, eventHandlerContext);
+        
+        // Assert 1
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(eventHandlerContext.AnchorNode, Is.EqualTo(parent.ChildNodes[1]));
+            Assert.That(eventHandlerContext.AnchorNodeId, Is.EqualTo(parent.ChildNodes[1].Id));
+            Assert.That(eventHandlerContext.RightAnchorNode, Is.EqualTo(parent.ChildNodes[1]));
+            Assert.That(eventHandlerContext.RightAnchorNodeId, Is.EqualTo(parent.ChildNodes[1].LastId));
+            Assert.That(eventHandlerContext.GetParent(), Is.EqualTo(parent));
+        }
+        
+        // Act 2 
         transaction.Commit();
 
-        // Assert
+        // Assert 2
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(7));
         using (Assert.EnterMultipleScope())
         {
@@ -240,15 +256,6 @@ public class DeleteSelectionTests
             
             Assert.That(parent.ChildNodes[6].IsDeleted, Is.False);
             Assert.That(((TextNode)parent.ChildNodes[6]).TextContent, Is.EqualTo("g"));
-        }
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(eventHandlerContext.AnchorNode, Is.EqualTo(parent.ChildNodes[1]));
-            Assert.That(eventHandlerContext.AnchorNodeId, Is.EqualTo(parent.ChildNodes[1].Id));
-            Assert.That(eventHandlerContext.RightAnchorNode, Is.EqualTo(parent.ChildNodes[2]));
-            Assert.That(eventHandlerContext.RightAnchorNodeId, Is.EqualTo(parent.ChildNodes[2].Id));
-            Assert.That(eventHandlerContext.GetParent(), Is.EqualTo(parent));
         }
     }
     
@@ -277,11 +284,23 @@ public class DeleteSelectionTests
 
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(start.Id, 1, end.Id, 1);
         
-        // Act
+        // Act 1
         DeleteSelection.Handle(keyPressInfo, transaction, eventHandlerContext);
+        
+        // Assert 1
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(eventHandlerContext.AnchorNode, Is.EqualTo(startParent.ChildNodes[1]));
+            Assert.That(eventHandlerContext.AnchorNodeId, Is.EqualTo(startParent.ChildNodes[1].Id));
+            Assert.That(eventHandlerContext.RightAnchorNode, Is.EqualTo(startParent.ChildNodes[1]));
+            Assert.That(eventHandlerContext.RightAnchorNodeId, Is.EqualTo(startParent.ChildNodes[1].LastId));
+            Assert.That(eventHandlerContext.GetParent(), Is.EqualTo(startParent));
+        }
+        
+        // Act 2
         transaction.Commit();
 
-        // Assert
+        // Assert 2
         Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(3));
         using (Assert.EnterMultipleScope())
         {
@@ -309,22 +328,13 @@ public class DeleteSelectionTests
             Assert.That(((TextNode)startParent.ChildNodes[3]).TextContent, Is.EqualTo("d"));
             
             Assert.That(startParent.ChildNodes[4].IsDeleted, Is.False);
-            Assert.That(((TextNode)startParent.ChildNodes[4]).TextContent, Is.EqualTo("f"));
+            Assert.That(((TextNode)startParent.ChildNodes[4]).TextContent, Is.EqualTo("h"));
             
             Assert.That(startParent.ChildNodes[5].IsDeleted, Is.False);
-            Assert.That(((TextNode)startParent.ChildNodes[5]).TextContent, Is.EqualTo("g"));
+            Assert.That(((TextNode)startParent.ChildNodes[5]).TextContent, Is.EqualTo("i"));
             
-            Assert.That(((TextNode)endParent.ChildNodes[0]).TextContent, Is.EqualTo("h"));
-            Assert.That(((TextNode)endParent.ChildNodes[1]).TextContent, Is.EqualTo("i"));
-        }
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(eventHandlerContext.AnchorNode, Is.EqualTo(startParent.ChildNodes[1]));
-            Assert.That(eventHandlerContext.AnchorNodeId, Is.EqualTo(startParent.ChildNodes[1].Id));
-            Assert.That(eventHandlerContext.RightAnchorNode, Is.EqualTo(startParent.ChildNodes[2]));
-            Assert.That(eventHandlerContext.RightAnchorNodeId, Is.EqualTo(startParent.ChildNodes[2].Id));
-            Assert.That(eventHandlerContext.GetParent(), Is.EqualTo(startParent));
+            Assert.That(((TextNode)endParent.ChildNodes[0]).TextContent, Is.EqualTo("f"));
+            Assert.That(((TextNode)endParent.ChildNodes[1]).TextContent, Is.EqualTo("g"));
         }
     }
     
@@ -353,11 +363,23 @@ public class DeleteSelectionTests
 
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(end.Id, 1, start.Id, 1, SelectionDirection.Backward);
         
-        // Act
+        // Act 1
         DeleteSelection.Handle(keyPressInfo, transaction, eventHandlerContext);
+        
+        // Assert 1
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(eventHandlerContext.AnchorNode, Is.EqualTo(startParent.ChildNodes[1]));
+            Assert.That(eventHandlerContext.AnchorNodeId, Is.EqualTo(startParent.ChildNodes[1].Id));
+            Assert.That(eventHandlerContext.RightAnchorNode, Is.EqualTo(startParent.ChildNodes[1]));
+            Assert.That(eventHandlerContext.RightAnchorNodeId, Is.EqualTo(startParent.ChildNodes[1].LastId));
+            Assert.That(eventHandlerContext.GetParent(), Is.EqualTo(startParent));
+        }
+        
+        // Act 2
         transaction.Commit();
 
-        // Assert
+        // Assert 2
         Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(3));
         using (Assert.EnterMultipleScope())
         {
@@ -367,7 +389,7 @@ public class DeleteSelectionTests
             
             Assert.That(startParent.ChildNodes, Has.Count.EqualTo(6));
             Assert.That(midParent.ChildNodes, Has.Count.EqualTo(1));
-            Assert.That(endParent.ChildNodes, Has.Count.EqualTo(4));
+            Assert.That(endParent.ChildNodes, Has.Count.EqualTo(2));
         }
         
         using (Assert.EnterMultipleScope())
@@ -395,18 +417,6 @@ public class DeleteSelectionTests
             
             Assert.That(endParent.ChildNodes[1].IsDeleted, Is.True);
             Assert.That(((TextNode)endParent.ChildNodes[1]).TextContent, Is.EqualTo("g"));
-            
-            Assert.That(endParent.ChildNodes[2].IsDeleted, Is.True);
-            Assert.That(endParent.ChildNodes[3].IsDeleted, Is.True);
-        }
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(eventHandlerContext.AnchorNode, Is.EqualTo(startParent.ChildNodes[1]));
-            Assert.That(eventHandlerContext.AnchorNodeId, Is.EqualTo(startParent.ChildNodes[1].Id));
-            Assert.That(eventHandlerContext.RightAnchorNode, Is.EqualTo(startParent.ChildNodes[2]));
-            Assert.That(eventHandlerContext.RightAnchorNodeId, Is.EqualTo(startParent.ChildNodes[2].Id));
-            Assert.That(eventHandlerContext.GetParent(), Is.EqualTo(startParent));
         }
     }
 }

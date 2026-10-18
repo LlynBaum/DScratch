@@ -30,6 +30,11 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
             var (node, stepDiffs) = SplitTextNode(transaction, document, startTextNode, start!.Value);
             steps.AddRange(stepDiffs);
             firstNodeToDelete = node;
+
+            if (endNode is not null && endNode.Id == startTextNode.Id)
+            {
+                endNode = node;
+            }
         }
         else
         {

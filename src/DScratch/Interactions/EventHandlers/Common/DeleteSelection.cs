@@ -39,7 +39,7 @@ internal static class DeleteSelection
     private static void DeleteAndMerge(NodeSelection nodeSelection, ITransaction transaction)
     {
         var startBlock = nodeSelection.StartNodeParentBlock;
-        transaction.DeleteRange(nodeSelection.DeleteStartId, startBlock.LastChild?.LastId);
+        transaction.DeleteRange(nodeSelection.DeleteStartId, null);
 
         foreach (var node in nodeSelection.GetBlocksInBetween())
         {
@@ -48,7 +48,7 @@ internal static class DeleteSelection
 
         var endParent = nodeSelection.EndNodeParentBlock;
         transaction.DeleteRange(endParent.FirstChild?.Id, nodeSelection.DeleteEndId);
-        transaction.MoveRange(nodeSelection.DeleteEndId, endParent.LastChild?.LastId, startBlock, startBlock.LastChild?.LastId);
+        transaction.MoveRange(nodeSelection.DeleteEndId, null, startBlock, startBlock.LastChild?.LastId);
         transaction.Delete(nodeSelection.DeleteEndNode.GetNearestBlock().Id);
     }
     
