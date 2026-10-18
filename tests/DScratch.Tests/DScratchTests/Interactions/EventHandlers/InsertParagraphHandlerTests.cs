@@ -351,22 +351,35 @@ public class InsertParagraphHandlerTests
             Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(3));
             Assert.That(builder.Root.ChildNodes[0], Is.EqualTo(parent));
             Assert.That(builder.Root.ChildNodes[2], Is.EqualTo(parent2));
+            
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(parent.Origin, Is.Null);
+                Assert.That(parent.RightOrigin, Is.Null);
+                Assert.That(builder.Root.ChildNodes[1].Origin, Is.EqualTo(parent.LastId));
+                Assert.That(builder.Root.ChildNodes[1].RightOrigin, Is.EqualTo(parent2.Id));
+                Assert.That(parent2.Origin, Is.EqualTo(parent.LastId));
+                Assert.That(parent2.RightOrigin, Is.Null);
+            }
+            
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(parent2.IsDeleted, Is.True);
                 Assert.That(parent2.ChildNodes, Has.Count.EqualTo(1));
                 
-                Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+                Assert.That(parent.ChildNodes[0].IsDeleted, Is.False);
                 Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
+                Assert.That(parent.ChildNodes[1].IsDeleted, Is.True);
+                Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("c"));
 
                 var newParagraph = builder.Root.ChildNodes[1];
                 Assert.That(newParagraph.Origin, Is.EqualTo(parent.Id));
-                Assert.That(newParagraph.ChildNodes, Has.Count.EqualTo(2));
-                Assert.That(newParagraph.ChildNodes[0].IsDeleted, Is.True);
-                Assert.That(((TextNode)newParagraph.ChildNodes[1]).TextContent, Is.EqualTo("ef"));
+                Assert.That(newParagraph.ChildNodes, Has.Count.EqualTo(1));
+                Assert.That(((TextNode)newParagraph.ChildNodes[0]).TextContent, Is.EqualTo("ef"));
             }
             
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin!.Value, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, builder.Root.ChildNodes[1].Id, 0);
         }
         
         [Test]
@@ -402,8 +415,10 @@ public class InsertParagraphHandlerTests
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(parent.Origin, Is.Null);
-                Assert.That(parent.RightOrigin, Is.Not.Null);
-                Assert.That(parent2.Origin, Is.Not.Null);
+                Assert.That(parent.RightOrigin, Is.Null);
+                Assert.That(builder.Root.ChildNodes[1].Origin, Is.EqualTo(parent.LastId));
+                Assert.That(builder.Root.ChildNodes[1].RightOrigin, Is.EqualTo(parent2.Id));
+                Assert.That(parent2.Origin, Is.EqualTo(parent.LastId));
                 Assert.That(parent2.RightOrigin, Is.Null);
             }
             
@@ -412,17 +427,19 @@ public class InsertParagraphHandlerTests
                 Assert.That(parent2.IsDeleted, Is.True);
                 Assert.That(parent2.ChildNodes, Has.Count.EqualTo(1));
                 
-                Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
+                Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+                Assert.That(parent.ChildNodes[0].IsDeleted, Is.False);
                 Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
-                
+                Assert.That(parent.ChildNodes[1].IsDeleted, Is.True);
+                Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("c"));
+
                 var newParagraph = builder.Root.ChildNodes[1];
-                Assert.That(newParagraph, Is.Not.Null);
-                Assert.That(newParagraph.ChildNodes, Has.Count.EqualTo(2));
-                Assert.That(newParagraph.ChildNodes[0].IsDeleted, Is.True);
-                Assert.That(((TextNode)newParagraph.ChildNodes[1]).TextContent, Is.EqualTo("ef"));
+                Assert.That(newParagraph.Origin, Is.EqualTo(parent.Id));
+                Assert.That(newParagraph.ChildNodes, Has.Count.EqualTo(1));
+                Assert.That(((TextNode)newParagraph.ChildNodes[0]).TextContent, Is.EqualTo("ef"));
             }
             
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin!.Value, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, builder.Root.ChildNodes[1].Id, 0);
         }
         
         [Test]
@@ -454,28 +471,50 @@ public class InsertParagraphHandlerTests
             var result = handler.Handle(keyPressInfo);
 
             // Assert
-            Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(3));
+            Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(4));
             Assert.That(builder.Root.ChildNodes[0], Is.EqualTo(parent));
-            Assert.That(builder.Root.ChildNodes[2], Is.EqualTo(parent3));
+            Assert.That(builder.Root.ChildNodes[2], Is.EqualTo(parent2));
+            Assert.That(builder.Root.ChildNodes[3], Is.EqualTo(parent3));
+
+            var newParent = builder.Root.ChildNodes[1];
+
             using (Assert.EnterMultipleScope())
             {
+                Assert.That(parent.IsDeleted, Is.False);
+                Assert.That(parent.Origin, Is.Null);
+                Assert.That(parent.RightOrigin, Is.Null);
+                
+                Assert.That(newParent.IsDeleted, Is.False);
+                Assert.That(newParent.Origin, Is.EqualTo(parent.LastId));
+                Assert.That(newParent.RightOrigin, Is.EqualTo(parent2.Id));
+                
                 Assert.That(parent2.IsDeleted, Is.True);
-                Assert.That(parent2.ChildNodes, Has.Count.EqualTo(1));
+                Assert.That(parent2.Origin, Is.EqualTo(parent.LastId));
+                Assert.That(parent2.RightOrigin, Is.Null);
+                
                 Assert.That(parent3.IsDeleted, Is.True);
-                Assert.That(parent3.ChildNodes, Has.Count.EqualTo(1));
-                
-                Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
-                Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
-                
-                var newParagraph = builder.Root.ChildNodes[1];
-                Assert.That(newParagraph, Is.Not.Null);
-                Assert.That(newParagraph.Origin, Is.EqualTo(parent.Id));
-                Assert.That(newParagraph.ChildNodes, Has.Count.EqualTo(2));
-                Assert.That(newParagraph.ChildNodes[0].IsDeleted, Is.True);
-                Assert.That(((TextNode)newParagraph.ChildNodes[1]).TextContent, Is.EqualTo("hi"));
+                Assert.That(parent3.Origin, Is.EqualTo(parent2.LastId));
+                Assert.That(parent3.RightOrigin, Is.Null);
             }
             
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin!.Value, 0);
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+            Assert.That(newParent.ChildNodes, Has.Count.EqualTo(1));
+            Assert.That(parent2.ChildNodes, Has.Count.EqualTo(1));
+            Assert.That(parent3.ChildNodes, Has.Count.EqualTo(1));
+            
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
+                Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("c"));
+                
+                Assert.That(((TextNode)parent2.ChildNodes[0]).TextContent, Is.EqualTo("def"));
+                
+                Assert.That(((TextNode)newParent.ChildNodes[0]).TextContent, Is.EqualTo("hi"));
+                
+                Assert.That(((TextNode)parent3.ChildNodes[0]).TextContent, Is.EqualTo("g"));
+            }
+            
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, newParent.Id, 0);
         }
         
         [Test]
@@ -508,38 +547,50 @@ public class InsertParagraphHandlerTests
             var result = handler.Handle(keyPressInfo);
             
             // Assert
-            Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(3));
+            Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(4));
             Assert.That(builder.Root.ChildNodes[0], Is.EqualTo(parent));
-            Assert.That(builder.Root.ChildNodes[2], Is.EqualTo(parent3));
-            
-            using (Assert.EnterMultipleScope()) 
+            Assert.That(builder.Root.ChildNodes[2], Is.EqualTo(parent2));
+            Assert.That(builder.Root.ChildNodes[3], Is.EqualTo(parent3));
+
+            var newParent = builder.Root.ChildNodes[1];
+
+            using (Assert.EnterMultipleScope())
             {
+                Assert.That(parent.IsDeleted, Is.False);
                 Assert.That(parent.Origin, Is.Null);
-                Assert.That(parent.RightOrigin, Is.Not.Null);
-                Assert.That(parent2.Origin, Is.Not.Null);
-                Assert.That(parent2.RightOrigin, Is.EqualTo(parent3.Id));
-                Assert.That(parent3.Origin, Is.EqualTo(parent2.Id));
+                Assert.That(parent.RightOrigin, Is.Null);
+                
+                Assert.That(newParent.IsDeleted, Is.False);
+                Assert.That(newParent.Origin, Is.EqualTo(parent.LastId));
+                Assert.That(newParent.RightOrigin, Is.EqualTo(parent2.Id));
+                
+                Assert.That(parent2.IsDeleted, Is.True);
+                Assert.That(parent2.Origin, Is.EqualTo(parent.LastId));
+                Assert.That(parent2.RightOrigin, Is.Null);
+                
+                Assert.That(parent3.IsDeleted, Is.True);
+                Assert.That(parent3.Origin, Is.EqualTo(parent2.LastId));
                 Assert.That(parent3.RightOrigin, Is.Null);
             }
             
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+            Assert.That(newParent.ChildNodes, Has.Count.EqualTo(1));
+            Assert.That(parent2.ChildNodes, Has.Count.EqualTo(1));
+            Assert.That(parent3.ChildNodes, Has.Count.EqualTo(1));
+            
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(parent2.IsDeleted, Is.True);
-                Assert.That(parent2.ChildNodes, Has.Count.EqualTo(1));
-                Assert.That(parent3.IsDeleted, Is.True);
-                Assert.That(parent3.ChildNodes, Has.Count.EqualTo(1));
-                
-                Assert.That(parent.ChildNodes, Has.Count.EqualTo(1));
                 Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
+                Assert.That(((TextNode)parent.ChildNodes[1]).TextContent, Is.EqualTo("c"));
                 
-                var newParagraph = builder.Root.ChildNodes[1];
-                Assert.That(newParagraph, Is.Not.Null);
-                Assert.That(newParagraph.ChildNodes, Has.Count.EqualTo(2));
-                Assert.That(newParagraph.ChildNodes[0].IsDeleted, Is.True);
-                Assert.That(((TextNode)newParagraph.ChildNodes[1]).TextContent, Is.EqualTo("hi"));
+                Assert.That(((TextNode)parent2.ChildNodes[0]).TextContent, Is.EqualTo("def"));
+                
+                Assert.That(((TextNode)newParent.ChildNodes[0]).TextContent, Is.EqualTo("hi"));
+                
+                Assert.That(((TextNode)parent3.ChildNodes[0]).TextContent, Is.EqualTo("g"));
             }
             
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.RightOrigin!.Value, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, newParent.Id, 0);
         }
     }
     

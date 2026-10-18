@@ -570,7 +570,7 @@ public class InsertTextHandlerTest
         }
     }
     
-    private class MergeParagraphs : InsertTextHandlerTest // TODO: assert origin ids
+    private class MergeParagraphs : InsertTextHandlerTest
     {
         [Test]
         public void Handle_CreatesExpectedChanges_WhenTextIsSelectedOverTwoParagraphs()
