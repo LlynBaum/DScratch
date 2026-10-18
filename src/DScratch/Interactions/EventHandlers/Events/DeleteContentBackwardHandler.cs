@@ -1,62 +1,57 @@
 using DScratch.Interactions.EventHandlers.Common;
-using DScratch.Interactions.EventHandlers.Models;
 using DScratch.Nodes;
 using DScratch.Transactions;
 
 namespace DScratch.Interactions.EventHandlers.Events;
 
-public class DeleteContentBackwardHandler(IDScratchService dScratchService) : EventWithSelectionBaseLegacy(dScratchService)
+internal class DeleteContentBackwardHandler(IDScratchService dScratchService) : EventWithSelectionBase(dScratchService)
 {
     public const string EventName = "deleteContentBackward";
-
-    protected override DNodeSearchResult HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction,
-        TextNode anchorTextNode)
+    
+    protected override void HandleEvent(KeyPressInfo keyPressInfo, ITransaction transaction)
     {
-        var targetSelection = SimpleDeleteBackwards(keyPressInfo, transaction, anchorTextNode);
-        if (targetSelection.HasFoundNode)
+        var parent = Context.GetParent();
+        if (parent.Id.IsRoot) return; // Protect against inputs where Anchor Nodes are already a Block Element
+        
+        if (!Context.HasAnchor)
         {
-            transaction.AddCursorPosition(targetSelection.Node!.Id, targetSelection.Offset);
-        }
-        else if (anchorTextNode.GetNearestBlock() is { } parent && parent.PreviousSibling() is { } prevParent)
-        {
-            transaction.AddCursorPosition(anchorTextNode.Id, 0); 
+            if (parent.PreviousActiveSibling() is not { } prevParent) return;
+            
             transaction.MoveRange(parent.FirstChild?.Id, null, prevParent, prevParent.LastChild?.LastId);
             transaction.Delete(parent.Id);
+            
+            if (SelectionHelper.NearestTextNode(prevParent) is { HasFoundNode: true } nodeInfo)
+            {
+                transaction.AddCursorPosition(nodeInfo.Node.Id, nodeInfo.Offset);
+            }
+            else
+            {
+                transaction.AddCursorPosition(prevParent.Id, 0);
+            }
+            
+            return;
         }
+        
+        transaction.Delete(Context.AnchorNodeId.Value);
 
-        return DNodeSearchResult.Empty;
-    }
-
-    protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
-    {
-        var prevSibling = anchorNode.PreviousSibling();
-        if (prevSibling is null) return;
-
-        transaction.Delete(anchorNode.Id);
-        if (SelectionHelper.NearestTextNode(prevSibling) is { HasFoundNode: true } nodeInfo)
+        if (Context.AnchorNode is TextNode textNode && textNode.Id != Context.AnchorNodeId)
         {
-            transaction.AddCursorPosition(nodeInfo.Node.Id, nodeInfo.Offset);
+            var targetId = new NodeId(Context.AnchorNodeId.Value.Client, Context.AnchorNodeId.Value.Clock - 1);
+            
+            transaction.AddCursorPosition(
+                nodeId: textNode.Id,
+                offset: (int)(targetId.Clock - textNode.Id.Clock));
+        }
+        
+        if (Context.AnchorNode.PreviousActiveSibling() is { } previousActiveSibling)
+        {
+            transaction.AddCursorPosition(
+                nodeId: previousActiveSibling.Id,
+                offset: (int)(previousActiveSibling.LastId.Clock - previousActiveSibling.Id.Clock));
         }
         else
         {
-            transaction.AddCursorPosition(prevSibling.Id, 0);
+            transaction.AddCursorPosition(parent.Id, 0);
         }
-    }
-
-    private static DNodeInfo SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
-    {
-        if (keyPressInfo.Selection!.AnchorOffset is 0)
-        {
-            return new DNodeInfo(null, 0);
-        }
-
-        transaction.SplitText(targetTextNode, keyPressInfo.Selection.AnchorOffset);
-        var nodeToDelete = transaction.SplitText(targetTextNode, targetTextNode.Length - 1)!;
-        transaction.Delete(nodeToDelete.Id);
-
-        var prevNode = nodeToDelete.PreviousSibling();
-        return prevNode is not null
-            ? SelectionHelper.NearestTextNode(prevNode)
-            : new DNodeInfo(nodeToDelete.Parent, 0);
     }
 }

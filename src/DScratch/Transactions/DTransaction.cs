@@ -76,6 +76,8 @@ internal class DTransaction(
 
     public void AddCursorPosition(NodeId nodeId, int offset)
     {
+        // TODO: if TextNode, recalculate offset
+        
         cursorPosition = new SelectionInfo
         {
             Direction = SelectionDirection.None,
