@@ -24,7 +24,10 @@ public class DeleteContentBackwardHandlerTests
         idGenerator = new TestNodeIdGenerator();
         builder = new TreeBuilder(idGenerator);
         document = builder.Document;
-        service = new DScratchService(document, new DNodeFactory(idGenerator), new UserStateService());
+        service = new DScratchService(document, new DNodeFactory(idGenerator), new UserStateService())
+        {
+            DisableCleanUp = true
+        };
         handler = new DeleteContentBackwardHandler(service);
     }
     
@@ -35,7 +38,7 @@ public class DeleteContentBackwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            builder.TestInlineElementNode(t => 
+            var parent = builder.Paragraph(t => 
             {
                 t.Text("ab");
                 textNode = t.Text("a");
@@ -46,7 +49,7 @@ public class DeleteContentBackwardHandlerTests
 
             // Assert
             Assert.That(textNode.IsDeleted, Is.True);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Origin!.Value, 2);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.FirstChild!.Id, 2);
         }
 
         [Test]
@@ -54,7 +57,7 @@ public class DeleteContentBackwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            var parent = builder.TestInlineElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 textNode = t.Text("abc");
                 t.Text("d").Delete();
@@ -85,7 +88,7 @@ public class DeleteContentBackwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            var parent = builder.TestInlineElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 textNode = t.Text("abcd");
             });
@@ -115,7 +118,7 @@ public class DeleteContentBackwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            var parent = builder.TestInlineElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 textNode = t.Text("ab");
                 t.Text("c");
@@ -141,7 +144,7 @@ public class DeleteContentBackwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            var parent = builder.TestInlineElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 textNode = t.Text("a");
                 t.Text("bc");
@@ -200,7 +203,7 @@ public class DeleteContentBackwardHandlerTests
             // Arrange
             TextNode startNode = null!;
             TextNode endNode = null!;
-            var parent = builder.TestInlineElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 startNode = t.Text("abc");
                 endNode = t.Text("def");
@@ -216,10 +219,9 @@ public class DeleteContentBackwardHandlerTests
             var result = handler.Handle(keyPressInfo);
 
             // Assert
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
-
                 Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
                 Assert.That(((TextNode)parent.ChildNodes[0]).TextContent, Is.EqualTo("ab"));
 
@@ -240,7 +242,7 @@ public class DeleteContentBackwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            var parent = builder.TestInlineElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 textNode = t.Text("abc");
                 t.Text("def");
@@ -272,7 +274,7 @@ public class DeleteContentBackwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            var parent = builder.TestInlineElementNode(t => { textNode = t.Text("abcdef"); });
+            var parent = builder.Paragraph(t => { textNode = t.Text("abcdef"); });
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end));
@@ -300,7 +302,7 @@ public class DeleteContentBackwardHandlerTests
             // Arrange
             TextNode startNode = null!;
             TextNode endNode = null!;
-            var parent = builder.TestInlineElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 t.Text("abc");
                 startNode = t.Text("def");
@@ -372,7 +374,7 @@ public class DeleteContentBackwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ghi"));
             }
         
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, oldTextNode.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
         
         [Test]
@@ -572,8 +574,8 @@ public class DeleteContentBackwardHandlerTests
         public void Handle_CreatesExpectedChanges()
         {
             // Arrange
-            var parent = builder.TestBlockElementNode(t => t.Text("abc"));
-            var target = builder.TestBlockElementNode();
+            var parent = builder.Paragraph(t => t.Text("abc"));
+            var target = builder.Paragraph();
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0));
@@ -587,8 +589,8 @@ public class DeleteContentBackwardHandlerTests
         public void Handle_FocusToOrigin_WhenNoTextNodeIsPresent()
         {
             // Arrange
-            var parent = builder.TestBlockElementNode();
-            var target = builder.TestBlockElementNode();
+            var parent = builder.Paragraph();
+            var target = builder.Paragraph();
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0));
@@ -602,7 +604,7 @@ public class DeleteContentBackwardHandlerTests
         public void Handle_DoesNothing_WhenNoOriginIsPresent()
         {
             // Arrange
-            var target = builder.TestBlockElementNode();
+            var target = builder.Paragraph();
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0));

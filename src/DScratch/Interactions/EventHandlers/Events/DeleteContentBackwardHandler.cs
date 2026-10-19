@@ -10,6 +10,23 @@ internal class DeleteContentBackwardHandler(IDScratchService dScratchService) : 
     
     protected override void HandleEvent(KeyPressInfo keyPressInfo, ITransaction transaction)
     {
+        // Already handled by DeleteSelection
+        if (keyPressInfo.Selection!.Direction is not SelectionDirection.None)
+        {
+            if (Context.HasAnchor)
+            {
+                transaction.AddCursorPosition(
+                    nodeId: Context.AnchorNode.Id,
+                    offset: (int)(Context.AnchorNode.LastId.Clock - Context.AnchorNodeId.Value.Clock + 1));
+            }
+            else
+            {
+                transaction.AddCursorPosition(nodeId: Context.GetParent().Id, offset: 0);
+            }
+            
+            return;
+        }
+        
         var parent = Context.GetParent();
         if (parent.Id.IsRoot) return; // Protect against inputs where Anchor Nodes are already a Block Element
         
@@ -40,14 +57,13 @@ internal class DeleteContentBackwardHandler(IDScratchService dScratchService) : 
             
             transaction.AddCursorPosition(
                 nodeId: textNode.Id,
-                offset: (int)(targetId.Clock - textNode.Id.Clock));
+                offset: (int)(targetId.Clock - textNode.Id.Clock + 1));
         }
-        
-        if (Context.AnchorNode.PreviousActiveSibling() is { } previousActiveSibling)
+        else if (Context.AnchorNode.PreviousActiveSibling() is { } previousActiveSibling)
         {
             transaction.AddCursorPosition(
                 nodeId: previousActiveSibling.Id,
-                offset: (int)(previousActiveSibling.LastId.Clock - previousActiveSibling.Id.Clock));
+                offset: (int)(previousActiveSibling.LastId.Clock - previousActiveSibling.Id.Clock + 1));
         }
         else
         {
