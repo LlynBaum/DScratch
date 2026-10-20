@@ -34,7 +34,7 @@ public class DeleteWordBackwardHandlerTests
             // Arrange
             TextNode text1 = null!;
             TextNode text2 = null!;
-            var parent = builder.TestBlockElementNode(t => 
+            var parent = builder.Paragraph(t => 
             {
                 text1 = t.Text("ab");
                 text2 = t.Text("c");
@@ -58,7 +58,7 @@ public class DeleteWordBackwardHandlerTests
         {
             // Arrange
             TextNode text = null!;
-            var parent = builder.TestBlockElementNode(t => 
+            var parent = builder.Paragraph(t => 
             {
                 text = t.Text("ab  ");
             });
@@ -90,7 +90,7 @@ public class DeleteWordBackwardHandlerTests
         {
             // Arrange
             TextNode text = null!;
-            var parent = builder.TestBlockElementNode(t => 
+            var parent = builder.Paragraph(t => 
             {
                 text = t.Text(" ab ");
             });
@@ -122,7 +122,7 @@ public class DeleteWordBackwardHandlerTests
         {
             // Arrange
             TextNode text = null!;
-            var parent = builder.TestBlockElementNode(t => 
+            var parent = builder.Paragraph(t => 
             {
                 text = t.Text("bc");
                 t.Text("a");
@@ -141,7 +141,7 @@ public class DeleteWordBackwardHandlerTests
         {
             // Arrange
             TextNode text = null!;
-            var parent = builder.TestBlockElementNode(t => 
+            var parent = builder.Paragraph(t => 
             {
                 text = t.Text("a");
                 t.Text("bc");
@@ -200,7 +200,7 @@ public class DeleteWordBackwardHandlerTests
             // Arrange
             TextNode startNode = null!;
             TextNode endNode = null!;
-            var parent = builder.TestBlockElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 startNode = t.Text("abc");
                 endNode = t.Text("def");
@@ -240,7 +240,7 @@ public class DeleteWordBackwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            var parent = builder.TestBlockElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 textNode = t.Text("abc");
                 t.Text("def");
@@ -262,7 +262,7 @@ public class DeleteWordBackwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ghi"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
 
         [Test]
@@ -272,7 +272,7 @@ public class DeleteWordBackwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            var parent = builder.TestBlockElementNode(t => { textNode = t.Text("abcdef"); });
+            var parent = builder.Paragraph(t => { textNode = t.Text("abcdef"); });
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end));
@@ -300,7 +300,7 @@ public class DeleteWordBackwardHandlerTests
             // Arrange
             TextNode startNode = null!;
             TextNode endNode = null!;
-            var parent = builder.TestBlockElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 t.Text("abc");
                 startNode = t.Text("def");
@@ -372,7 +372,7 @@ public class DeleteWordBackwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ghi"));
             }
         
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, oldTextNode.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.ChildNodes[1].Id, 3);
         }
         
         [Test]
@@ -572,8 +572,8 @@ public class DeleteWordBackwardHandlerTests
         public void Handle_CreatesExpectedChanges()
         {
             // Arrange
-            var parent = builder.TestBlockElementNode(t => t.Text("abc"));
-            var target = builder.TestBlockElementNode();
+            var parent = builder.Paragraph(t => t.Text("abc"));
+            var target = builder.Paragraph();
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0));
@@ -587,8 +587,8 @@ public class DeleteWordBackwardHandlerTests
         public void Handle_FocusToOrigin_WhenNoTextNodeIsPresent()
         {
             // Arrange
-            var parent = builder.TestBlockElementNode();
-            var target = builder.TestBlockElementNode();
+            var parent = builder.Paragraph();
+            var target = builder.Paragraph();
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0));
@@ -602,7 +602,7 @@ public class DeleteWordBackwardHandlerTests
         public void Handle_DoesNothing_WhenNoOriginIsPresent()
         {
             // Arrange
-            var target = builder.TestBlockElementNode();
+            var target = builder.Paragraph();
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0));
