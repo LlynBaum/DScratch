@@ -17,7 +17,7 @@ internal class DeleteContentBackwardHandler(IDScratchService dScratchService) : 
             {
                 transaction.AddCursorPosition(
                     nodeId: Context.AnchorNode.Id,
-                    offset: (int)(Context.AnchorNode.LastId.Clock - Context.AnchorNodeId.Value.Clock + 1));
+                    offset: (int)(Context.AnchorNodeId.Value.Clock - Context.AnchorNode.Id.Clock + 1));
             }
             else
             {

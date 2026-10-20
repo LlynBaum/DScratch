@@ -264,7 +264,7 @@ public class DeleteContentBackwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ghi"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
 
         [Test]
@@ -290,7 +290,7 @@ public class DeleteContentBackwardHandlerTests
                 Assert.That(parent.ChildNodes[2], Is.TypeOf<TextNode>());
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ef"));
             }
-
+            
             AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 2);
         }
 
