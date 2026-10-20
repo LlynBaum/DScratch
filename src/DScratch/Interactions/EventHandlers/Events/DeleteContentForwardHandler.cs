@@ -1,51 +1,63 @@
 using DScratch.Interactions.EventHandlers.Common;
-using DScratch.Interactions.EventHandlers.Models;
-using DScratch.Nodes;
 using DScratch.Transactions;
 
 namespace DScratch.Interactions.EventHandlers.Events;
 
-public class DeleteContentForwardHandler(IDScratchService dScratchService) : EventWithSelectionBaseLegacy(dScratchService)
+internal class DeleteContentForwardHandler(IDScratchService dScratchService) : EventWithSelectionBase(dScratchService)
 {
     public const string EventName = "deleteContentForward";
-    
-    protected override DNodeSearchResult HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction,
-        TextNode anchorTextNode)
-    {
-        var targetSelection = SimpleDeleteForward(keyPressInfo, transaction, anchorTextNode);
-        if (targetSelection.HasFoundNode)
-        {
-            transaction.AddCursorPosition(targetSelection.Node.Id, targetSelection.Offset);
-        }
-        else if (anchorTextNode.GetNearestBlock() is { } parent && parent.NextSibling() is { } nextBlock)
-        {
-            transaction.AddCursorPosition(anchorTextNode.Id, anchorTextNode.Length); 
-            transaction.MoveRange(nextBlock.FirstChild?.Id, null, parent, parent.LastChild?.LastId);
-            transaction.Delete(nextBlock.Id);
-        }
 
-        return DNodeSearchResult.Empty;
-    }
-
-    protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
+    protected override void HandleEvent(KeyPressInfo keyPressInfo, ITransaction transaction)
     {
-        var nextSibling = anchorNode.NextSibling();
-        if (nextSibling is null) return;
+        if (keyPressInfo.Selection!.Direction is not SelectionDirection.None)
+        {
+            if (Context.HasAnchor)
+            {
+                transaction.AddCursorPosition(
+                    nodeId: Context.AnchorNode.Id,
+                    offset: (int)(Context.AnchorNodeId.Value.Clock - Context.AnchorNode.Id.Clock + 1));
+            }
+            else
+            {
+                transaction.AddCursorPosition(nodeId: Context.GetParent().Id, offset: 0);
+            }
+            
+            return;
+        }
         
-        transaction.Delete(anchorNode.Id);
-        transaction.AddCursorPosition(nextSibling.Id, 0);
-    }
+        var parent = Context.GetParent();
+        if (parent.Id.IsRoot) return; // Protect against inputs where Anchor Nodes are already a Block Element
 
-    private static DNodeInfo SimpleDeleteForward(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
-    {
-        var noteToDelete = transaction.SplitText(targetTextNode, keyPressInfo.Selection!.AnchorOffset);
-        if (noteToDelete is null)
+        if (!Context.HasRightAnchor)
         {
-            return DNodeInfo.NotFound();
+            if (parent.NextActiveSibling() is not { } nextParent) return;
+            
+            transaction.MoveRange(nextParent.FirstChild?.Id, null, parent, parent.LastChild?.LastId);
+            transaction.Delete(nextParent.Id);
+            
+            if (SelectionHelper.NearestTextNode(parent) is { HasFoundNode: true } nodeInfo)
+            {
+                transaction.AddCursorPosition(nodeInfo.Node.Id, nodeInfo.Offset);
+            }
+            else
+            {
+                transaction.AddCursorPosition(parent.Id, 0);
+            }
+            
+            return;
         }
-     
-        transaction.SplitText(noteToDelete, 1);
-        transaction.Delete(noteToDelete.Id);
-        return new DNodeInfo(targetTextNode, keyPressInfo.Selection.AnchorOffset);
+        
+        transaction.Delete(Context.RightAnchorNodeId.Value);
+
+        if (Context.HasAnchor)
+        {
+            transaction.AddCursorPosition(
+                nodeId: Context.AnchorNode.Id,
+                offset: (int)(Context.AnchorNodeId.Value.Clock - Context.AnchorNode.Id.Clock + 1));
+        }
+        else
+        {
+            transaction.AddCursorPosition(parent.Id, 0);
+        }
     }
 }

@@ -54,7 +54,7 @@ public class DeleteContentForwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            builder.TestInlineElementNode(t =>
+            builder.Paragraph(t =>
             {
                 t.Text("ab");
                 textNode = t.Text("c");
@@ -65,7 +65,7 @@ public class DeleteContentForwardHandlerTests
 
             // Assert
             Assert.That(textNode.IsDeleted, Is.True);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.PreviousSibling()!.Id, 2);
         }
 
         [Test]
@@ -73,7 +73,7 @@ public class DeleteContentForwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            var parent = builder.TestInlineElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 textNode = t.Text("ab");
                 t.Text("c");
@@ -99,7 +99,7 @@ public class DeleteContentForwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            var parent = builder.TestInlineElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 textNode = t.Text("abc");
             });
@@ -129,7 +129,7 @@ public class DeleteContentForwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            builder.TestInlineElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 textNode = t.Text("a");
                 t.Text("bc");
@@ -140,7 +140,7 @@ public class DeleteContentForwardHandlerTests
 
             // Assert
             Assert.That(textNode.IsDeleted, Is.True);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
 
         [Test]
@@ -188,7 +188,7 @@ public class DeleteContentForwardHandlerTests
             // Arrange
             TextNode startNode = null!;
             TextNode endNode = null!;
-            var parent = builder.TestInlineElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 startNode = t.Text("abc");
                 endNode = t.Text("def");
@@ -228,7 +228,7 @@ public class DeleteContentForwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            var parent = builder.TestInlineElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 textNode = t.Text("abc");
                 t.Text("def");
@@ -250,7 +250,7 @@ public class DeleteContentForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ghi"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
 
         [Test]
@@ -260,7 +260,7 @@ public class DeleteContentForwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            var parent = builder.TestInlineElementNode(t => { textNode = t.Text("abcdef"); });
+            var parent = builder.Paragraph(t => { textNode = t.Text("abcdef"); });
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end));
@@ -288,7 +288,7 @@ public class DeleteContentForwardHandlerTests
             // Arrange
             TextNode startNode = null!;
             TextNode endNode = null!;
-            var parent = builder.TestInlineElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 t.Text("abc");
                 startNode = t.Text("def");
@@ -566,8 +566,10 @@ public class DeleteContentForwardHandlerTests
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0));
 
             // Assert
-            Assert.That(target.IsDeleted, Is.True);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
+            Assert.That(target.IsDeleted, Is.False);
+            Assert.That(parent.IsDeleted, Is.True);
+            Assert.That(target.ChildNodes, Has.Count.EqualTo(1));
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, target.Id, 0);
         }
         
         [Test]

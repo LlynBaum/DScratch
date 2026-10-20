@@ -104,6 +104,15 @@ public abstract class DNode(NodeId id, NodeId? origin, NodeId? rightOrigin, List
         var idx = Parent.allChildNodes.FindIndex(n => n.Id == Id);
         return idx + 1 < Parent.allChildNodes.Count ? Parent.allChildNodes[idx + 1] : null;
     }
+    
+    public DNode? NextActiveSibling()
+    {
+        var next = NextSibling();
+        if (next is null) return null;
+        return !next.IsDeleted 
+            ? next 
+            : next.NextSibling();
+    }
 
     public DNode? PreviousSibling()
     {
