@@ -1,5 +1,4 @@
 using DScratch.Interactions.EventHandlers.Common;
-using DScratch.Interactions.EventHandlers.Models;
 using DScratch.Nodes;
 using DScratch.Transactions;
 
@@ -50,20 +49,19 @@ internal class DeleteWordBackwardHandler(IDScratchService dScratchService) : Eve
             return;
         }
         
-        var endNode = SimpleDeleteBackwards();
-        var endNodeId = new NodeId(endNode.Node!.Id.Client, endNode.Node.Id.Clock + endNode.Offset);
+        var (startNode, startNodeId) = SimpleDeleteBackwards();
         
-        transaction.DeleteRange(endNodeId, Context.AnchorNodeId);
+        transaction.DeleteRange(startNodeId, Context.RightAnchorNodeId);
         
-        if (endNode.Node is TextNode textNode && textNode.Id != endNodeId)
+        if (startNode.Id != startNodeId)
         {
-            var targetId = new NodeId(endNodeId.Client, endNodeId.Clock - 1);
+            var targetId = new NodeId(startNodeId.Client, startNodeId.Clock - 1);
             
             transaction.AddCursorPosition(
-                nodeId: textNode.Id,
-                offset: (int)(targetId.Clock - textNode.Id.Clock + 1));
+                nodeId: startNode.Id,
+                offset: (int)(targetId.Clock - startNode.Id.Clock + 1));
         }
-        else if (endNode.Node.PreviousActiveSibling() is { } previousActiveSibling)
+        else if (startNode.PreviousActiveSibling() is { } previousActiveSibling)
         {
             transaction.AddCursorPosition(
                 nodeId: previousActiveSibling.Id,
@@ -71,25 +69,27 @@ internal class DeleteWordBackwardHandler(IDScratchService dScratchService) : Eve
         }
         else
         {
-            transaction.AddCursorPosition(endNode.Node.Parent!.Id, 0);
+            transaction.AddCursorPosition(startNode.Parent!.Id, 0);
         }
     }
 
-    private DNodeInfo SimpleDeleteBackwards()
+    private (DNode Node, NodeId nodeId) SimpleDeleteBackwards()
     {
         // TODO: I mean in theory we always get a TextNode at that point, but you never know, maybe it would be better to check that
         var walker = TreeWalker<TextNode>.StartFrom((TextNode)Context.AnchorNode!, Context.AnchorNode!.GetNearestBlock());
         return DeleteWord(walker);
     }
 
-    private static DNodeInfo DeleteWord(TreeWalker<TextNode> walker)
+    private static (TextNode Node, NodeId nodeId) DeleteWord(TreeWalker<TextNode> walker)
     {
+        TextNode? prevNode = null;
         var index = walker.Node!.Length - 1;
         
         while (index >= 0 && walker.Node is not null && char.IsWhiteSpace(walker.Node.TextContent[index]))
         {
             if (index == 0)
             {
+                prevNode = walker.Node;
                 walker.MovePrevious();
                 index = walker.Node?.Length ?? 0;
             }
@@ -100,15 +100,15 @@ internal class DeleteWordBackwardHandler(IDScratchService dScratchService) : Eve
         {
             if (index == 0)
             {
+                prevNode = walker.Node;
                 walker.MovePrevious();
                 index = walker.Node?.Length ?? 0;
             }
             index--;
         }
 
-        var prevWord = walker.Node?.PreviousSibling();
-        return prevWord is not null
-            ? SelectionHelper.NearestTextNode(prevWord)
-            : new DNodeInfo(walker.Node?.Parent ?? walker.Parent, 0);
+        return walker.Node is not null
+            ? (walker.Node, new NodeId(walker.Node.Id.Client, walker.Node.Id.Clock + index + 1))
+            : (prevNode!, prevNode!.Id);
     }
 }
