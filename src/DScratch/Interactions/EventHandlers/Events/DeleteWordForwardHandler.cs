@@ -1,75 +1,95 @@
 using DScratch.Interactions.EventHandlers.Common;
-using DScratch.Interactions.EventHandlers.Models;
 using DScratch.Nodes;
 using DScratch.Transactions;
 
 namespace DScratch.Interactions.EventHandlers.Events;
 
-public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventWithSelectionBaseLegacy(dScratchService)
+internal class DeleteWordForwardHandler(IDScratchService dScratchService) : EventWithSelectionBase(dScratchService)
 {
     public const string EventName = "deleteWordForward";
-    
-    protected override DNodeSearchResult HandleNoneSelection(KeyPressInfo keyPressInfo, ITransaction transaction,
-        TextNode anchorTextNode)
+
+    protected override void HandleEvent(KeyPressInfo keyPressInfo, ITransaction transaction)
     {
-        var deletedNodeInfo = SimpleDeleteBackwards(keyPressInfo, transaction, anchorTextNode);
+        // Already handled by DeleteSelection
+        if (keyPressInfo.Selection!.Direction is not SelectionDirection.None)
+        {
+            if (Context.HasAnchor)
+            {
+                transaction.AddCursorPosition(
+                    nodeId: Context.AnchorNode.Id,
+                    offset: (int)(Context.AnchorNodeId.Value.Clock - Context.AnchorNode.Id.Clock + 1));
+            }
+            else
+            {
+                transaction.AddCursorPosition(nodeId: Context.GetParent().Id, offset: 0);
+            }
             
-        if (deletedNodeInfo.HasFoundNode)
-        {
-            transaction.AddCursorPosition(deletedNodeInfo.Node.Id, deletedNodeInfo.Offset);
-        }
-        else if (anchorTextNode.GetNearestBlock() is { } parent && parent.NextSibling() is { } nextBlock)
-        {
-            transaction.AddCursorPosition(anchorTextNode.Id, anchorTextNode.Length); 
-            transaction.MoveRange(nextBlock.FirstChild?.Id, null, parent, parent.LastChild?.LastId);
-            transaction.Delete(nextBlock.Id);
-        }
-
-        return DNodeSearchResult.Empty;
-    }
-
-    protected override void HandleEmptyBlock(KeyPressInfo keyPressInfo, ITransaction transaction, DNode anchorNode)
-    {
-        var nextSibling = anchorNode.NextSibling();
-        if (nextSibling is null) return;
-        
-        transaction.Delete(anchorNode.Id);
-        transaction.AddCursorPosition(nextSibling.Id, 0);
-    }
-
-    private static DNodeInfo SimpleDeleteBackwards(KeyPressInfo keyPressInfo, ITransaction transaction, TextNode targetTextNode)
-    {
-        var walker = TreeWalker<TextNode>.StartFrom(targetTextNode, targetTextNode.GetNearestBlock());
-        if (walker.Node is null)
-        {
-            return DNodeInfo.NotFound();
+            return;
         }
         
-        var rightNode = transaction.SplitText(walker.Node, keyPressInfo.Selection!.AnchorOffset);
-        if (rightNode is null || keyPressInfo.Selection.AnchorOffset > 0)
+        var parent = Context.GetParent();
+        if (parent.Id.IsRoot) return; // Protect against inputs where Anchor Nodes are already a Block Element
+        
+        if (!Context.HasRightAnchor)
         {
-            walker.NextNode();
+            if (parent.NextActiveSibling() is not { } nextParent) return;
+            
+            transaction.MoveRange(nextParent.FirstChild?.Id, null, parent, parent.LastChild?.LastId);
+            transaction.Delete(nextParent.Id);
+            
+            if (SelectionHelper.NearestTextNode(parent) is { HasFoundNode: true } nodeInfo)
+            {
+                transaction.AddCursorPosition(nodeInfo.Node.Id, nodeInfo.Offset);
+            }
+            else
+            {
+                transaction.AddCursorPosition(parent.Id, 0);
+            }
+            
+            return;
         }
-
-        var prevNode = walker.Node?.PreviousSibling();
-        var beforeDelete = prevNode is not null 
-            ? SelectionHelper.NearestTextNode(prevNode) 
-            : DNodeInfo.NotFound();
-
-        var afterDelete = DeleteWord(transaction, walker);
-        return beforeDelete.HasFoundNode ? beforeDelete : afterDelete;
+        
+        var (endNode, endNodeId) = SimpleDeleteForwards();
+        
+        transaction.DeleteRange(Context.RightAnchorNodeId, endNodeId);
+        
+        if (endNode.Id != endNodeId)
+        {
+            var targetId = new NodeId(endNodeId.Client, endNodeId.Clock - 1);
+            
+            transaction.AddCursorPosition(
+                nodeId: endNode.Id,
+                offset: (int)(targetId.Clock - endNode.Id.Clock + 1));
+        }
+        else if (endNode.PreviousActiveSibling() is { } previousActiveSibling)
+        {
+            transaction.AddCursorPosition(
+                nodeId: previousActiveSibling.Id,
+                offset: (int)(previousActiveSibling.LastId.Clock - previousActiveSibling.Id.Clock + 1));
+        }
+        else
+        {
+            transaction.AddCursorPosition(endNode.Parent!.Id, 0);
+        }
     }
 
-    private static DNodeInfo DeleteWord(ITransaction transaction, TreeWalker<TextNode> walker)
+    private (TextNode Node, NodeId nodeId) SimpleDeleteForwards()
     {
-        var hasFoundNoe = false;
+        // TODO: I mean in theory we always get a TextNode at that point, but you never know, maybe it would be better to check that
+        var walker = TreeWalker<TextNode>.StartFrom((TextNode)Context.RightAnchorNode!, Context.RightAnchorNode!.GetNearestBlock());
+        return DeleteWord(walker);
+    }
+
+    private static (TextNode Node, NodeId nodeId) DeleteWord(TreeWalker<TextNode> walker)
+    {
+        TextNode? prevNode = null;
         var characterOffset = 0;
+        
         while (walker.Node is not null && characterOffset < walker.Node.Length && char.IsWhiteSpace(walker.Node.TextContent[characterOffset]))
         {
             if (characterOffset == walker.Node.Length - 1)
             {
-                hasFoundNoe = true;
-                transaction.Delete(walker.Node.Id);
+                prevNode = walker.Node;
                 walker.NextNode();
                 characterOffset = 0;
             }
@@ -80,23 +100,15 @@ public class DeleteWordForwardHandler(IDScratchService dScratchService) : EventW
         {
             if (characterOffset == walker.Node.Length - 1)
             {
-                hasFoundNoe = true;
-                transaction.Delete(walker.Node.Id);
+                prevNode = walker.Node;
                 walker.NextNode();
                 characterOffset = 0;
             }
             characterOffset++;
         }
-        
-        var word = walker.Node is not null ? transaction.SplitText(walker.Node, characterOffset) : null;
-        if (!hasFoundNoe && word is null)
-        {
-            return DNodeInfo.NotFound();
-        }
 
-        if (walker.Node is not null) transaction.Delete(walker.Node.Id);
-        return word is not null
-            ? new DNodeInfo(word, 0)
-            : new DNodeInfo(walker.Parent, 0);
+        return walker.Node is not null
+            ? (walker.Node, new NodeId(walker.Node.Id.Client, walker.Node.Id.Clock + characterOffset + 1))
+            : (prevNode!, prevNode!.LastId);
     }
 }

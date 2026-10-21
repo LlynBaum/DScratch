@@ -73,7 +73,7 @@ internal class DeleteWordBackwardHandler(IDScratchService dScratchService) : Eve
         }
     }
 
-    private (DNode Node, NodeId nodeId) SimpleDeleteBackwards()
+    private (TextNode Node, NodeId nodeId) SimpleDeleteBackwards()
     {
         // TODO: I mean in theory we always get a TextNode at that point, but you never know, maybe it would be better to check that
         var walker = TreeWalker<TextNode>.StartFrom((TextNode)Context.AnchorNode!, Context.AnchorNode!.GetNearestBlock());
@@ -83,32 +83,32 @@ internal class DeleteWordBackwardHandler(IDScratchService dScratchService) : Eve
     private static (TextNode Node, NodeId nodeId) DeleteWord(TreeWalker<TextNode> walker)
     {
         TextNode? prevNode = null;
-        var index = walker.Node!.Length - 1;
+        var characterOffset = walker.Node!.Length - 1;
         
-        while (index >= 0 && walker.Node is not null && char.IsWhiteSpace(walker.Node.TextContent[index]))
+        while (characterOffset >= 0 && walker.Node is not null && char.IsWhiteSpace(walker.Node.TextContent[characterOffset]))
         {
-            if (index == 0)
+            if (characterOffset == 0)
             {
                 prevNode = walker.Node;
                 walker.MovePrevious();
-                index = walker.Node?.Length ?? 0;
+                characterOffset = walker.Node?.Length ?? 0;
             }
-            index--;
+            characterOffset--;
         }
 
-        while (index >= 0 && walker.Node is not null && !char.IsWhiteSpace(walker.Node.TextContent[index]))
+        while (characterOffset >= 0 && walker.Node is not null && !char.IsWhiteSpace(walker.Node.TextContent[characterOffset]))
         {
-            if (index == 0)
+            if (characterOffset == 0)
             {
                 prevNode = walker.Node;
                 walker.MovePrevious();
-                index = walker.Node?.Length ?? 0;
+                characterOffset = walker.Node?.Length ?? 0;
             }
-            index--;
+            characterOffset--;
         }
 
         return walker.Node is not null
-            ? (walker.Node, new NodeId(walker.Node.Id.Client, walker.Node.Id.Clock + index + 1))
+            ? (walker.Node, new NodeId(walker.Node.Id.Client, walker.Node.Id.Clock + characterOffset + 1))
             : (prevNode!, prevNode!.Id);
     }
 }

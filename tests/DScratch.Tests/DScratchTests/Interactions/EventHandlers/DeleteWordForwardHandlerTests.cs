@@ -33,7 +33,7 @@ public class DeleteWordForwardHandlerTests
         {
             // Arrange
             TextNode text = null!;
-            var parent = builder.TestBlockElementNode(t => 
+            var parent = builder.Paragraph(t => 
             {
                 text = t.Text("abc");
             });
@@ -57,7 +57,7 @@ public class DeleteWordForwardHandlerTests
             // Arrange
             TextNode text1 = null!;
             TextNode text2 = null!;
-            var parent = builder.TestBlockElementNode(t => 
+            var parent = builder.Paragraph(t => 
             {
                 text1 = t.Text("ab");
                 text2 = t.Text("c");
@@ -80,7 +80,7 @@ public class DeleteWordForwardHandlerTests
         {
             // Arrange
             TextNode text = null!;
-            var parent = builder.TestBlockElementNode(t => 
+            var parent = builder.Paragraph(t => 
             {
                 text = t.Text("  ab");
             });
@@ -112,7 +112,7 @@ public class DeleteWordForwardHandlerTests
         {
             // Arrange
             TextNode text = null!;
-            var parent = builder.TestBlockElementNode(t => 
+            var parent = builder.Paragraph(t => 
             {
                 text = t.Text(" ab ");
             });
@@ -144,7 +144,7 @@ public class DeleteWordForwardHandlerTests
         {
             // Arrange
             TextNode text = null!;
-            builder.TestBlockElementNode(t => 
+            builder.Paragraph(t => 
             {
                 t.Text("a");
                 text = t.Text("bc");
@@ -163,7 +163,7 @@ public class DeleteWordForwardHandlerTests
         {
             // Arrange
             TextNode text = null!;
-            builder.TestBlockElementNode(t => 
+            builder.Paragraph(t => 
             {
                 t.Text("bc");
                 text = t.Text("a");
@@ -225,7 +225,7 @@ public class DeleteWordForwardHandlerTests
             // Arrange
             TextNode startNode = null!;
             TextNode endNode = null!;
-            var parent = builder.TestBlockElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 startNode = t.Text("abc");
                 endNode = t.Text("def");
@@ -265,7 +265,7 @@ public class DeleteWordForwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            var parent = builder.TestBlockElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 textNode = t.Text("abc");
                 t.Text("def");
@@ -287,7 +287,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(((TextNode)parent.ChildNodes[2]).TextContent, Is.EqualTo("ghi"));
             }
 
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, textNode.Id, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
 
         [Test]
@@ -297,7 +297,7 @@ public class DeleteWordForwardHandlerTests
         {
             // Arrange
             TextNode textNode = null!;
-            var parent = builder.TestBlockElementNode(t => { textNode = t.Text("abcdef"); });
+            var parent = builder.Paragraph(t => { textNode = t.Text("abcdef"); });
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfo(textNode.Id, start, end));
@@ -325,7 +325,7 @@ public class DeleteWordForwardHandlerTests
             // Arrange
             TextNode startNode = null!;
             TextNode endNode = null!;
-            var parent = builder.TestBlockElementNode(t =>
+            var parent = builder.Paragraph(t =>
             {
                 t.Text("abc");
                 startNode = t.Text("def");
@@ -596,22 +596,24 @@ public class DeleteWordForwardHandlerTests
         public void Handle_CreatesExpectedChanges()
         {
             // Arrange
-            var target = builder.TestBlockElementNode();
-            var parent = builder.TestBlockElementNode(t => t.Text("abc"));
+            var target = builder.Paragraph();
+            var parent = builder.Paragraph(t => t.Text("abc"));
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0));
 
             // Assert
-            Assert.That(target.IsDeleted, Is.True);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
+            Assert.That(target.IsDeleted, Is.False);
+            Assert.That(parent.IsDeleted, Is.True);
+            Assert.That(target.ChildNodes, Has.Count.EqualTo(1));
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, target.Id, 0);
         }
         
         [Test]
         public void Handle_DoesNothing_WhenNoOriginIsPresent()
         {
             // Arrange
-            var target = builder.TestBlockElementNode();
+            var target = builder.Paragraph();
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(target.Id, 0));
