@@ -140,7 +140,7 @@ public class DeleteWordForwardHandlerTests
                 Assert.That(remainingText.TextContent, Is.EqualTo(" "));
             }
             
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.RightOrigin!.Value, 0);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.Id, 0);
         }
         
         [Test]
@@ -167,7 +167,7 @@ public class DeleteWordForwardHandlerTests
         {
             // Arrange
             TextNode text = null!;
-            builder.Paragraph(t => 
+            var parent = builder.Paragraph(t => 
             {
                 t.Text("bc");
                 text = t.Text("a");
@@ -178,7 +178,7 @@ public class DeleteWordForwardHandlerTests
 
             // Assert
             Assert.That(text.IsDeleted, Is.True);
-            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, text.Origin!.Value, 2);
+            AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, parent.FirstChild!.Id, 2);
         }
         
         [Test]

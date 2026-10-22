@@ -56,7 +56,7 @@ internal class DeleteWordForwardHandler(IDScratchService dScratchService) : Even
         {
             transaction.AddCursorPosition(
                 node: Context.AnchorNode,
-                offset: (int)(Context.AnchorNodeId.Value.Clock - Context.AnchorNodeId.Value.Clock + 1));
+                offset: (int)(Context.AnchorNodeId.Value.Clock - Context.AnchorNode.Id.Clock + 1));
         }
         else
         {
@@ -110,6 +110,6 @@ internal class DeleteWordForwardHandler(IDScratchService dScratchService) : Even
             return nextNode?.Id ?? prevNode.Parent!.LastId;
         }
 
-        return new NodeId(walker.Node.Id.Client, walker.Node.Id.Clock + characterOffset + 1);
+        return new NodeId(walker.Node.Id.Client, walker.Node.Id.Clock + characterOffset);
     }
 }

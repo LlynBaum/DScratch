@@ -8,7 +8,6 @@ internal static class DeleteSelection
     public static void Handle(KeyPressInfo keyPressInfo, ITransaction transaction, EventHandlerContext context)
     {
         var nodeSelection = SearchSelectedNodes(keyPressInfo, transaction);
-        SetContextAnchors(context, nodeSelection);
         
         if (nodeSelection.IsInSameBlock())
         {
@@ -18,22 +17,33 @@ internal static class DeleteSelection
         {
             DeleteAndMerge(nodeSelection, transaction);
         }
+        
+        SetContextAnchors(context, nodeSelection);
     }
     
     private static NodeSelection SearchSelectedNodes(KeyPressInfo keyPressInfo, ITransaction transaction)
     {
         var (anchorOffset, rightAnchorOffset) = keyPressInfo.Selection!.GetConvertedOffsets();
         var (anchorId, rightAnchorId) = keyPressInfo.Selection.GetConvertedNodeIds();
-        var anchorNode = transaction.Document.FindNodeOrDefault(anchorId) ?? throw new InvalidOperationException($"Could not find a node for {anchorId}");
-        var rightAnchorNode = transaction.Document.FindNodeOrDefault(rightAnchorId) ?? throw new InvalidOperationException($"Could not find a node for {rightAnchorId}");
+        var anchorNode = transaction.Document.FindNode(anchorId);
+        var rightAnchorNode = transaction.Document.FindNode(rightAnchorId);
+
+        var anchor = GetAnchor(anchorNode, anchorOffset);
+        var rightAnchor = GetAnchor(rightAnchorNode, rightAnchorOffset);
         
         return new NodeSelection
         {
-            DeleteStartNode = anchorNode,
-            DeleteStartId = new NodeId(anchorId.Client, anchorId.Clock + anchorOffset),
-            DeleteEndNode = rightAnchorNode,
-            DeleteEndId = new NodeId(rightAnchorId.Client, rightAnchorId.Clock + rightAnchorOffset)
+            DeleteStartNode = anchor.node,
+            DeleteStartId = anchor.nodeId,
+            DeleteEndNode = rightAnchor.node,
+            DeleteEndId = rightAnchor.nodeId
         };
+
+        // TODO: we can not have null here, so we have to do it the hard way, and find the previous/next Node or set it's parent as anchor. Tho then IsSameParent and BlocksInBetween have to take this inot account as well
+        static (DNode? node, NodeId? nodeId) GetAnchor(DNode node, int offset)
+        {
+            return offset <= 0 ? (null, null) : (node, new NodeId(node.Id.Client, node.Id.Clock + offset - 1));
+        }
     }
 
     private static void DeleteAndMerge(NodeSelection nodeSelection, ITransaction transaction)

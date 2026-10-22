@@ -12,8 +12,8 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
         
         var steps = new List<StepDiff?>();
 
-        var startNode = start.HasValue ? document.FindNodeOrDefault(start.Value) : null;
-        var endNode = end.HasValue ? document.FindNodeOrDefault(end.Value) : null;
+        var startNode = start.HasValue ? document.FindNode(start.Value) : null;
+        var endNode = end.HasValue ? document.FindNode(end.Value) : null;
 
         // if the start or end is the parent of the other node, we know that we can just delete from that node until the end of that parent.
         if (startNode?.Parent == endNode)
