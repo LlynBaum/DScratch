@@ -18,7 +18,7 @@ public class DTransactionSpy : ITransaction, IRunningTransaction
     public List<(DNode Node, Func<DNode, DNode> CopyFactory)> ReplaceNodeCalls { get; } = [];
     public List<(DNode Node, MarkKey Key, string Value)> UpdateMarkCalls { get; } = [];
     public List<(DNode Node, Action update)> UpdateAttributesCalls { get; } = [];
-    public List<(NodeId NodeId, int Offset)> AddCursorPositionNodeIdCalls { get; } = [];
+    public List<(DNode Node, int Offset)> AddCursorPositionNodeIdCalls { get; } = [];
     public List<SelectionInfo> AddCursorPositionSelectionCalls { get; } = [];
     public List<(TextNode Node, int Offset)> SplitTextCalls { get; } = [];
     public List<IReadOnlyDictionary<MarkKey, string>> CalculateMarksCalls { get; } = [];
@@ -80,9 +80,9 @@ public class DTransactionSpy : ITransaction, IRunningTransaction
         UpdateAttributesCalls.Add((node, update));
     }
 
-    public void AddCursorPosition(NodeId nodeId, int offset)
+    public void AddCursorPosition(DNode node, int offset)
     {
-        AddCursorPositionNodeIdCalls.Add((nodeId, offset));
+        AddCursorPositionNodeIdCalls.Add((node, offset));
     }
 
     public void AddCursorPosition(SelectionInfo selectionInfo)

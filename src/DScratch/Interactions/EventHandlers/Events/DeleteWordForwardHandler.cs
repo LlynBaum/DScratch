@@ -16,12 +16,12 @@ internal class DeleteWordForwardHandler(IDScratchService dScratchService) : Even
             if (Context.HasAnchor)
             {
                 transaction.AddCursorPosition(
-                    nodeId: Context.AnchorNode.Id,
+                    node: Context.AnchorNode,
                     offset: (int)(Context.AnchorNodeId.Value.Clock - Context.AnchorNode.Id.Clock + 1));
             }
             else
             {
-                transaction.AddCursorPosition(nodeId: Context.GetParent().Id, offset: 0);
+                transaction.AddCursorPosition(node: Context.GetParent(), offset: 0);
             }
             
             return;
@@ -39,11 +39,11 @@ internal class DeleteWordForwardHandler(IDScratchService dScratchService) : Even
             
             if (SelectionHelper.NearestTextNode(parent) is { HasFoundNode: true } nodeInfo)
             {
-                transaction.AddCursorPosition(nodeInfo.Node.Id, nodeInfo.Offset);
+                transaction.AddCursorPosition(nodeInfo.Node, nodeInfo.Offset);
             }
             else
             {
-                transaction.AddCursorPosition(parent.Id, 0);
+                transaction.AddCursorPosition(parent, 0);
             }
             
             return;
@@ -53,34 +53,26 @@ internal class DeleteWordForwardHandler(IDScratchService dScratchService) : Even
         
         transaction.DeleteRange(Context.RightAnchorNodeId, endNodeId);
         
-        if (endNode.Id != endNodeId)
-        {
-            var targetId = new NodeId(endNodeId.Client, endNodeId.Clock - 1);
-            
-            transaction.AddCursorPosition(
-                nodeId: endNode.Id,
-                offset: (int)(targetId.Clock - endNode.Id.Clock + 1));
-        }
-        else if (endNode.PreviousActiveSibling() is { } previousActiveSibling)
+        if (Context.HasAnchor)
         {
             transaction.AddCursorPosition(
-                nodeId: previousActiveSibling.Id,
-                offset: (int)(previousActiveSibling.LastId.Clock - previousActiveSibling.Id.Clock + 1));
+                node: Context.AnchorNode,
+                offset: (int)(Context.AnchorNodeId.Value.Clock - Context.AnchorNodeId.Value.Clock + 1));
         }
         else
         {
-            transaction.AddCursorPosition(endNode.Parent!.Id, 0);
+            transaction.AddCursorPosition(Context.RightAnchorNode.Parent!, 0);
         }
     }
 
-    private (TextNode Node, NodeId nodeId) SimpleDeleteForwards()
+    private (DNode Node, NodeId nodeId) SimpleDeleteForwards()
     {
         // TODO: I mean in theory we always get a TextNode at that point, but you never know, maybe it would be better to check that
         var walker = TreeWalker<TextNode>.StartFrom((TextNode)Context.RightAnchorNode!, Context.RightAnchorNode!.GetNearestBlock());
         return DeleteWord(walker);
     }
 
-    private static (TextNode Node, NodeId nodeId) DeleteWord(TreeWalker<TextNode> walker)
+    private static (DNode Node, NodeId nodeId) DeleteWord(TreeWalker<TextNode> walker)
     {
         TextNode? prevNode = null;
         var characterOffset = 0;
@@ -107,8 +99,20 @@ internal class DeleteWordForwardHandler(IDScratchService dScratchService) : Even
             characterOffset++;
         }
 
-        return walker.Node is not null
-            ? (walker.Node, new NodeId(walker.Node.Id.Client, walker.Node.Id.Clock + characterOffset + 1))
-            : (prevNode!, prevNode!.LastId);
+        if (walker.Node is null)
+        {
+            return (prevNode!.Parent!, prevNode.Parent!.LastId);
+        }
+        
+        if (walker.Node.Length == characterOffset)
+        {
+            prevNode = walker.Node;
+            var nextNode = walker.NextNode();
+            return nextNode is not null 
+                ? (nextNode, nextNode.Id)
+                : (prevNode.Parent!, prevNode.Parent!.LastId);
+        }
+
+        return (walker.Node, new NodeId(walker.Node.Id.Client, walker.Node.Id.Clock + characterOffset + 1));
     }
 }

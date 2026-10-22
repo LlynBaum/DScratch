@@ -77,7 +77,7 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         var text = transaction.NodeFactory.String(command.DisplayText, null, null);
         transaction.Insert(linkNode, parent);
         transaction.Insert(text, linkNode);
-        transaction.AddCursorPosition(text.Id, text.TextContent.Length);
+        transaction.AddCursorPosition(text, text.TextContent.Length);
     }
 
     private static void HandleSelection(

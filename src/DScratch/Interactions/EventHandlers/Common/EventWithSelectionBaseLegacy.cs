@@ -38,7 +38,7 @@ public abstract class EventWithSelectionBaseLegacy(IDScratchService dScratchServ
             
             var cursorPosition = nodeSearchResult.Origin.AbsoluteOffsetIfPresent ?? 0;
             var cursorTarget = nodeSearchResult.Origin.Node ?? targetNode;
-            transaction.AddCursorPosition(cursorTarget.Id, cursorPosition);
+            transaction.AddCursorPosition(cursorTarget, cursorPosition);
         }
         
         OnAfterSelection(keyPressInfo, transaction, targetNode, nodeSearchResult);

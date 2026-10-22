@@ -19,7 +19,7 @@ internal class InsertParagraphHandler(IDScratchService dScratchService) : EventW
             var previousSibling = currentParent.PreviousSibling();
             var newPreviousParagraph = transaction.NodeFactory.Paragraph(previousSibling, currentParent, marks);
             transaction.Insert(newPreviousParagraph, currentParent.Parent!);
-            transaction.AddCursorPosition(currentParent.Id, 0);
+            transaction.AddCursorPosition(currentParent, 0);
             return;
         }
 
@@ -27,7 +27,7 @@ internal class InsertParagraphHandler(IDScratchService dScratchService) : EventW
         var newNextParagraph = transaction.NodeFactory.Paragraph(currentParent, nextSibling, marks);
         transaction.Insert(newNextParagraph, currentParent.Parent!);
         transaction.MoveRange(Context.RightAnchorNodeId, null, newNextParagraph, null);
-        transaction.AddCursorPosition(newNextParagraph.Id, 0);
+        transaction.AddCursorPosition(newNextParagraph, 0);
     }
     
     private IReadOnlyDictionary<MarkKey, string> GetMarksForParagraph()

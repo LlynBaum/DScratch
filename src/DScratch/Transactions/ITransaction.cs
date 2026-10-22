@@ -28,7 +28,7 @@ public interface ITransaction
     
     void UpdateAttributes(DNode node, Action update);
     
-    void AddCursorPosition(NodeId nodeId, int offset);
+    void AddCursorPosition(DNode node, int offset);
     
     void AddCursorPosition(SelectionInfo selectionInfo);
 

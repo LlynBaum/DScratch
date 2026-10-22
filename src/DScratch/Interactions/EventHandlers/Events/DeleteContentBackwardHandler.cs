@@ -16,12 +16,12 @@ internal class DeleteContentBackwardHandler(IDScratchService dScratchService) : 
             if (Context.HasAnchor)
             {
                 transaction.AddCursorPosition(
-                    nodeId: Context.AnchorNode.Id,
+                    node: Context.AnchorNode,
                     offset: (int)(Context.AnchorNodeId.Value.Clock - Context.AnchorNode.Id.Clock + 1));
             }
             else
             {
-                transaction.AddCursorPosition(nodeId: Context.GetParent().Id, offset: 0);
+                transaction.AddCursorPosition(node: Context.GetParent(), offset: 0);
             }
             
             return;
@@ -39,11 +39,11 @@ internal class DeleteContentBackwardHandler(IDScratchService dScratchService) : 
             
             if (SelectionHelper.NearestTextNode(prevParent) is { HasFoundNode: true } nodeInfo)
             {
-                transaction.AddCursorPosition(nodeInfo.Node.Id, nodeInfo.Offset);
+                transaction.AddCursorPosition(nodeInfo.Node, nodeInfo.Offset);
             }
             else
             {
-                transaction.AddCursorPosition(prevParent.Id, 0);
+                transaction.AddCursorPosition(prevParent, 0);
             }
             
             return;
@@ -56,18 +56,18 @@ internal class DeleteContentBackwardHandler(IDScratchService dScratchService) : 
             var targetId = new NodeId(Context.AnchorNodeId.Value.Client, Context.AnchorNodeId.Value.Clock - 1);
             
             transaction.AddCursorPosition(
-                nodeId: textNode.Id,
+                node: textNode,
                 offset: (int)(targetId.Clock - textNode.Id.Clock + 1));
         }
         else if (Context.AnchorNode.PreviousActiveSibling() is { } previousActiveSibling)
         {
             transaction.AddCursorPosition(
-                nodeId: previousActiveSibling.Id,
+                node: previousActiveSibling,
                 offset: (int)(previousActiveSibling.LastId.Clock - previousActiveSibling.Id.Clock + 1));
         }
         else
         {
-            transaction.AddCursorPosition(parent.Id, 0);
+            transaction.AddCursorPosition(parent, 0);
         }
     }
 }

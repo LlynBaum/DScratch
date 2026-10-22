@@ -1,4 +1,5 @@
 using DScratch.Nodes;
+using DScratch.Nodes.NodeTypes;
 using DScratch.Rendering;
 
 namespace DScratch.Transactions.Steps;
@@ -14,8 +15,19 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
         var startNode = start.HasValue ? document.FindNodeOrDefault(start.Value) : null;
         var endNode = end.HasValue ? document.FindNodeOrDefault(end.Value) : null;
 
-        var nearestBlockStart = startNode?.GetNearestBlock();
-        var nearestBlockEnd = endNode?.GetNearestBlock();
+        // if the start or end is the parent of the other node, we know that we can just delete from that node until the end of that parent.
+        if (startNode?.Parent == endNode)
+        {
+            startNode = null;
+        }
+
+        if (endNode?.Parent == startNode)
+        {
+            endNode = null;
+        }
+
+        var nearestBlockStart = startNode is IBlockElement ? startNode : startNode?.GetNearestBlock();
+        var nearestBlockEnd = endNode is IBlockElement ? endNode : endNode?.GetNearestBlock();
 
         if (nearestBlockStart is not null && nearestBlockEnd is not null && nearestBlockStart != nearestBlockEnd)
         {
@@ -85,6 +97,8 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
 
     private static DNode GetEndParent(DNode lastNodeToDelete, DNode nearestBlock)
     {
+        if (lastNodeToDelete == nearestBlock) return lastNodeToDelete;
+        
         var current = lastNodeToDelete;
         while (current.Parent != nearestBlock)
         {

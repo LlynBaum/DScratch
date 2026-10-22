@@ -23,7 +23,7 @@ internal class InsertTextHandler(IDScratchService dScratchService) : EventWithSe
             rightOrigin: Context.RightAnchorNodeId,
             initMarks: marks);
         transaction.Insert(textNode, Context.GetParent());
-        transaction.AddCursorPosition(textNode.Id, textNode.Length);
+        transaction.AddCursorPosition(textNode, textNode.Length);
     }
 
     private IReadOnlyDictionary<MarkKey, string> GetMarks(ITransaction transaction)

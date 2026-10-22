@@ -40,6 +40,8 @@ public class DeleteWordForwardHandlerTests
 
             // Act
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(text.Id, 0));
+            
+            builder.Print();
 
             // Assert
             using (Assert.EnterMultipleScope())

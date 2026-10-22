@@ -43,7 +43,7 @@ public class DTransactionCleanUpTests
                 modifiedNode.Delete();
             }
 
-            Transaction.AddCursorPosition(modifiedNode.Id, 2);
+            Transaction.AddCursorPosition(modifiedNode, 2);
         
             // Act
             Transaction.NotifyNodeChange(modifiedNode);
@@ -95,7 +95,7 @@ public class DTransactionCleanUpTests
                 modifiedNode.Delete();
             }
             
-            Transaction.AddCursorPosition(node.Id, 2);
+            Transaction.AddCursorPosition(node, 2);
         
             // Act
             Transaction.NotifyNodeChange(modifiedNode);
@@ -237,7 +237,7 @@ public class DTransactionCleanUpTests
             node.SetMark(MarkKey.Color, "a");
             modifiedNode.SetMark(MarkKey.Color, "b");
 
-            Transaction.AddCursorPosition(modifiedNode.Id, 2);
+            Transaction.AddCursorPosition(modifiedNode, 2);
         
             // Act
             Transaction.NotifyNodeChange(modifiedNode);
@@ -271,7 +271,7 @@ public class DTransactionCleanUpTests
             node.SetMark(MarkKey.Color, "a");
             modifiedNode.SetMark(MarkKey.Color, "b");
             
-            Transaction.AddCursorPosition(node.Id, 2);
+            Transaction.AddCursorPosition(node, 2);
         
             // Act
             Transaction.NotifyNodeChange(modifiedNode);

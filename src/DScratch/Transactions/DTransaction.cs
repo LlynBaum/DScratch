@@ -74,16 +74,14 @@ internal class DTransaction(
         steps.Add(new UpdateAttributeStep(node, update));
     }
 
-    public void AddCursorPosition(NodeId nodeId, int offset)
+    public void AddCursorPosition(DNode node, int offset)
     {
-        // TODO: if TextNode, recalculate offset
-        
         cursorPosition = new SelectionInfo
         {
             Direction = SelectionDirection.None,
-            AnchorId = nodeId.Value,
+            AnchorId = node.Id.Value,
             AnchorOffset = offset,
-            FocusId = nodeId.Value,
+            FocusId = node.Id.Value,
             FocusOffset = offset
         };
     }

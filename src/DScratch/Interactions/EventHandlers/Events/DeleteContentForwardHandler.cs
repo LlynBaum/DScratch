@@ -14,12 +14,12 @@ internal class DeleteContentForwardHandler(IDScratchService dScratchService) : E
             if (Context.HasAnchor)
             {
                 transaction.AddCursorPosition(
-                    nodeId: Context.AnchorNode.Id,
+                    node: Context.AnchorNode,
                     offset: (int)(Context.AnchorNodeId.Value.Clock - Context.AnchorNode.Id.Clock + 1));
             }
             else
             {
-                transaction.AddCursorPosition(nodeId: Context.GetParent().Id, offset: 0);
+                transaction.AddCursorPosition(node: Context.GetParent(), offset: 0);
             }
             
             return;
@@ -37,11 +37,11 @@ internal class DeleteContentForwardHandler(IDScratchService dScratchService) : E
             
             if (SelectionHelper.NearestTextNode(parent) is { HasFoundNode: true } nodeInfo)
             {
-                transaction.AddCursorPosition(nodeInfo.Node.Id, nodeInfo.Offset);
+                transaction.AddCursorPosition(nodeInfo.Node, nodeInfo.Offset);
             }
             else
             {
-                transaction.AddCursorPosition(parent.Id, 0);
+                transaction.AddCursorPosition(parent, 0);
             }
             
             return;
@@ -52,12 +52,12 @@ internal class DeleteContentForwardHandler(IDScratchService dScratchService) : E
         if (Context.HasAnchor)
         {
             transaction.AddCursorPosition(
-                nodeId: Context.AnchorNode.Id,
+                node: Context.AnchorNode,
                 offset: (int)(Context.AnchorNodeId.Value.Clock - Context.AnchorNode.Id.Clock + 1));
         }
         else
         {
-            transaction.AddCursorPosition(parent.Id, 0);
+            transaction.AddCursorPosition(parent, 0);
         }
     }
 }

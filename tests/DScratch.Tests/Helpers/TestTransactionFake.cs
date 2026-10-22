@@ -67,7 +67,7 @@ internal class TestTransactionFake : ITransaction, IRunningTransaction
         throw new NotImplementedException();
     }
 
-    public void AddCursorPosition(NodeId nodeId, int offset)
+    public void AddCursorPosition(DNode node, int offset)
     {
         throw new NotImplementedException();
     }
