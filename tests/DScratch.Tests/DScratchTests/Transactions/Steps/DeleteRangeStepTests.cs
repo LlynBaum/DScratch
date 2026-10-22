@@ -187,4 +187,75 @@ public class DeleteRangeStepTests
         
         Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo(parent.ChildNodes));
     }
+    
+    [Test]
+    public void DeletesNode_DeletesAllNodesInParent_FromGivenStartNode()
+    {
+        // Arrange
+        var builder = new TreeBuilder();
+        DNode node1 = null!;
+        DNode node2 = null!;
+        DNode node3 = null!;
+        DNode node4 = null!;
+        DNode node5 = null!;
+        var parent = builder.Paragraph(t =>
+        {
+            node1 = t.TestInlineElementNode();
+            node2 = t.TestInlineElementNode();
+            node3 = t.TestInlineElementNode();
+            node4 = t.TestInlineElementNode();
+            node5 = t.TestInlineElementNode();
+        });
+        
+        // Act
+        var step = new DeleteRangeStep(node2.Id, parent.Id);
+        step.Execute(transactionFake, builder.Document);
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(node1.IsDeleted, Is.False);
+            Assert.That(node2.IsDeleted, Is.True);
+            Assert.That(node3.IsDeleted, Is.True);
+            Assert.That(node4.IsDeleted, Is.True);
+            Assert.That(node5.IsDeleted, Is.True);
+            
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node2, node3, node4, node5]));
+        }
+    }
+    [Test]
+    public void DeletesNode_DeletesAllNodesInParent_FromGivenEndNode()
+    {
+        // Arrange
+        var builder = new TreeBuilder();
+        DNode node1 = null!;
+        DNode node2 = null!;
+        DNode node3 = null!;
+        DNode node4 = null!;
+        DNode node5 = null!;
+        var parent = builder.Paragraph(t =>
+        {
+            node1 = t.TestInlineElementNode();
+            node2 = t.TestInlineElementNode();
+            node3 = t.TestInlineElementNode();
+            node4 = t.TestInlineElementNode();
+            node5 = t.TestInlineElementNode();
+        });
+        
+        // Act
+        var step = new DeleteRangeStep(parent.Id, node4.Id);
+        step.Execute(transactionFake, builder.Document);
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(node1.IsDeleted, Is.True);
+            Assert.That(node2.IsDeleted, Is.True);
+            Assert.That(node3.IsDeleted, Is.True);
+            Assert.That(node4.IsDeleted, Is.False);
+            Assert.That(node5.IsDeleted, Is.False);
+            
+            Assert.That(transactionFake.ChangedNodes, Is.EquivalentTo([node1, node2, node3]));
+        }
+    }
 }

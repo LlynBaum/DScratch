@@ -49,8 +49,7 @@ internal class DeleteWordForwardHandler(IDScratchService dScratchService) : Even
             return;
         }
         
-        var (endNode, endNodeId) = SimpleDeleteForwards();
-        
+        var endNodeId = GetDeleteEnd();
         transaction.DeleteRange(Context.RightAnchorNodeId, endNodeId);
         
         if (Context.HasAnchor)
@@ -65,14 +64,14 @@ internal class DeleteWordForwardHandler(IDScratchService dScratchService) : Even
         }
     }
 
-    private (DNode Node, NodeId nodeId) SimpleDeleteForwards()
+    private NodeId GetDeleteEnd()
     {
         // TODO: I mean in theory we always get a TextNode at that point, but you never know, maybe it would be better to check that
         var walker = TreeWalker<TextNode>.StartFrom((TextNode)Context.RightAnchorNode!, Context.RightAnchorNode!.GetNearestBlock());
         return DeleteWord(walker);
     }
 
-    private static (DNode Node, NodeId nodeId) DeleteWord(TreeWalker<TextNode> walker)
+    private static NodeId DeleteWord(TreeWalker<TextNode> walker)
     {
         TextNode? prevNode = null;
         var characterOffset = 0;
@@ -101,18 +100,16 @@ internal class DeleteWordForwardHandler(IDScratchService dScratchService) : Even
 
         if (walker.Node is null)
         {
-            return (prevNode!.Parent!, prevNode.Parent!.LastId);
+            return prevNode!.Parent!.LastId;
         }
         
         if (walker.Node.Length == characterOffset)
         {
             prevNode = walker.Node;
             var nextNode = walker.NextNode();
-            return nextNode is not null 
-                ? (nextNode, nextNode.Id)
-                : (prevNode.Parent!, prevNode.Parent!.LastId);
+            return nextNode?.Id ?? prevNode.Parent!.LastId;
         }
 
-        return (walker.Node, new NodeId(walker.Node.Id.Client, walker.Node.Id.Clock + characterOffset + 1));
+        return new NodeId(walker.Node.Id.Client, walker.Node.Id.Clock + characterOffset + 1);
     }
 }

@@ -18,12 +18,12 @@ public class DeleteRangeStep(NodeId? start, NodeId? end) : IStep
         // if the start or end is the parent of the other node, we know that we can just delete from that node until the end of that parent.
         if (startNode?.Parent == endNode)
         {
-            startNode = null;
+            endNode = null;
         }
 
         if (endNode?.Parent == startNode)
         {
-            endNode = null;
+            startNode = null;
         }
 
         var nearestBlockStart = startNode is IBlockElement ? startNode : startNode?.GetNearestBlock();

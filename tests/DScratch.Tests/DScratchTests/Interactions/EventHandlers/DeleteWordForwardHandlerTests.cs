@@ -91,6 +91,8 @@ public class DeleteWordForwardHandlerTests
             var result = handler.Handle(KeyPressInfoHelper.GetKeyPressInfoDirectionNone(text.Id, 1));
 
             // Assert
+            Assert.That(parent.ChildNodes, Has.Count.EqualTo(2));
+            
             using (Assert.EnterMultipleScope())
             {
                 Assert.That(text.IsDeleted, Is.False);
