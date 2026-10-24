@@ -299,6 +299,8 @@ public class DeleteSelectionTests
         
         // Act 2
         transaction.Commit();
+        
+        builder.Print();
 
         // Assert 2
         Assert.That(builder.Root.ChildNodes, Has.Count.EqualTo(3));

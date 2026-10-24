@@ -1,4 +1,5 @@
 using DScratch.Nodes;
+using DScratch.Nodes.NodeTypes;
 using DScratch.Transactions;
 
 namespace DScratch.Interactions.EventHandlers.Common;
@@ -29,7 +30,7 @@ internal static class DeleteSelection
         var rightAnchorNode = transaction.Document.FindNode(rightAnchorId);
 
         var anchor = GetAnchor(anchorNode, anchorOffset);
-        var rightAnchor = GetAnchor(rightAnchorNode, rightAnchorOffset);
+        var rightAnchor = GetRightAnchor(rightAnchorNode, rightAnchorOffset);
         
         return new NodeSelection
         {
@@ -39,10 +40,22 @@ internal static class DeleteSelection
             DeleteEndId = rightAnchor.nodeId
         };
 
-        // TODO: we can not have null here, so we have to do it the hard way, and find the previous/next Node or set it's parent as anchor. Tho then IsSameParent and BlocksInBetween have to take this inot account as well
-        static (DNode? node, NodeId? nodeId) GetAnchor(DNode node, int offset)
+        static (DNode node, NodeId nodeId) GetAnchor(DNode node, int offset)
         {
-            return offset <= 0 ? (null, null) : (node, new NodeId(node.Id.Client, node.Id.Clock + offset - 1));
+            return (node, new NodeId(node.Id.Client, node.Id.Clock + offset));
+        }
+        
+        static (DNode node, NodeId nodeId) GetRightAnchor(DNode node, int offset)
+        {
+            var targetId = new NodeId(node.Id.Client, node.Id.Clock + offset);
+            if (targetId.Clock <= node.LastId.Clock)
+            {
+                return (node, targetId);
+            }
+
+            return node.NextSibling() is { } nextSibling
+                ? (nextSibling, nextSibling.Id)
+                : (node.Parent!, node.Parent!.Id);
         }
     }
 
@@ -97,7 +110,7 @@ internal static class DeleteSelection
         {
             get
             {
-                field ??= DeleteStartNode.GetNearestBlock();
+                field ??= DeleteStartNode is IBlockElement ? DeleteStartNode : DeleteStartNode.GetNearestBlock();
                 return field;
             }
         }
@@ -106,7 +119,7 @@ internal static class DeleteSelection
         {
             get
             {
-                field ??= DeleteEndNode.GetNearestBlock();
+                field ??= DeleteEndNode is IBlockElement ? DeleteEndNode : DeleteEndNode.GetNearestBlock();
                 return field;
             }
         }
