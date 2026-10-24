@@ -8,7 +8,7 @@ public class ChangeBlockTypeHandler(IDScratchService dScratchService) : CommandB
 {
     protected override void Handle(ITransaction transaction, SelectionInfo selectionInfo, ChangeBlockTypeCommand command)
     {
-        var selectedNodes = GetSelectedNodes(transaction, selectionInfo);
+        var selectedNodes = GetSelectedNodes(transaction.Document, selectionInfo);
         if (!selectedNodes.Any())
         {
             throw new ArgumentException($"No nodes found for anchor {selectionInfo.AnchorId} and focus {selectionInfo.FocusId}");
@@ -39,19 +39,19 @@ public class ChangeBlockTypeHandler(IDScratchService dScratchService) : CommandB
         }
     }
 
-    private static IReadOnlyList<DNode> GetSelectedNodes(ITransaction transaction, SelectionInfo selectionInfo)
+    private static IReadOnlyList<DNode> GetSelectedNodes(DScratchDocument document, SelectionInfo selectionInfo)
     {
         if (selectionInfo.Direction is SelectionDirection.None)
         {
-            var node = transaction.Document.FindNodeOrDefault(selectionInfo.AnchorNodeId)?.GetNearestBlock()
-                   ?? throw new ArgumentException($"Node with given id not found: {selectionInfo.AnchorId}");
+            var node = document.FindNode(selectionInfo.AnchorNodeId).GetNearestBlock()
+                       ?? throw new ArgumentException($"Node {selectionInfo.AnchorId} is not in a Block.");
             return [node];
         }
         
         var (originId, rightOriginId) = selectionInfo.GetConvertedNodeIds();
         
-        var origin = transaction.Document.FindNodeOrDefault(originId)?.GetNearestBlock();
-        var rightOrigin = transaction.Document.FindNodeOrDefault(rightOriginId)?.GetNearestBlock();
+        var origin = document.FindNode(originId).GetNearestBlock();
+        var rightOrigin = document.FindNode(rightOriginId).GetNearestBlock();
         
         if (origin is null || rightOrigin is null)
         {

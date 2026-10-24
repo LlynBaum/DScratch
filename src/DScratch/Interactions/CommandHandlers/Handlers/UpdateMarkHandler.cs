@@ -34,7 +34,7 @@ public class UpdateMarkHandler(IDScratchService dScratchService, IUserStateServi
         IMarkCommand command)
     {
         var selectedNodes = GetSelectedNodes(transaction, selectionInfo);
-        var anchor = transaction.Document.FindNodeOrDefault(selectionInfo.AnchorNodeId)!;
+        var anchor = transaction.Document.FindNode(selectionInfo.AnchorNodeId);
         command.Execute(transaction, anchor, selectedNodes);
 
         if (selectedNodes.Any())
@@ -55,13 +55,8 @@ public class UpdateMarkHandler(IDScratchService dScratchService, IUserStateServi
     {
         var (originId, rightOriginId) = selectionInfo.GetConvertedNodeIds();
         
-        var origin = transaction.Document.FindNodeOrDefault(originId);
-        var rightOrigin = transaction.Document.FindNodeOrDefault(rightOriginId);
-        
-        if (origin is null || rightOrigin is null)
-        {
-            throw new ArgumentException($"Node with given id not found: {selectionInfo.AnchorId} or {selectionInfo.FocusId}");
-        }
+        var origin = transaction.Document.FindNode(originId);
+        var rightOrigin = transaction.Document.FindNode(rightOriginId);
 
         if (origin is not TextNode originText || rightOrigin is not TextNode)
         {
