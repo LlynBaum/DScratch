@@ -130,7 +130,7 @@ public class AddLinkHandlerTest
         var parent = builder.Paragraph();
         
         // Act
-        var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 2);
+        var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfoDirectionNone(parent.Id, 0);
         var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href, "_self", displayText));
         
         // Arrange

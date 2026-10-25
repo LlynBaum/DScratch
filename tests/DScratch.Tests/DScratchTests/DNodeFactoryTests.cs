@@ -138,7 +138,7 @@ public class DNodeFactoryTests
         var nodeIdGen = new TestNodeIdGenerator();
         var factory = new DNodeFactory(nodeIdGen);
         
-        var result = factory.LinkNode(testNode, testNode2, "www.ggogle.com", "_blank");
+        var result = factory.LinkNode(testNode.Id, testNode2.LastId, "www.ggogle.com", "_blank");
         
         using (Assert.EnterMultipleScope())
         {

@@ -31,9 +31,9 @@ internal class DNodeFactory(INodeIdGenerator nodeIdGenerator) : INodeFactory
         return new HeadingNode(headingLevel, node.Id, node.Origin, node.RightOrigin, [..node.ChildNodes]);
     }
 
-    public LinkNode LinkNode(DNode? origin, DNode? rightOrigin, string href, string target, IReadOnlyDictionary<MarkKey, string>? initMarks = null)
+    public LinkNode LinkNode(NodeId? origin, NodeId? rightOrigin, string href, string target, IReadOnlyDictionary<MarkKey, string>? initMarks = null)
     {
-        var node = new LinkNode(nodeIdGenerator.GetNextId(), origin?.LastId, rightOrigin?.Id, href, target);
+        var node = new LinkNode(nodeIdGenerator.GetNextId(), origin, rightOrigin, href, target);
         if(initMarks is not null) node.CopyMarks(initMarks);
         return node;
     }

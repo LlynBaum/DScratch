@@ -50,7 +50,7 @@ public class TreeBuilder : TreeBuilder.ITextTreeBuilder
 
     public LinkNode Link(string href, string target = "_self", Action<ITextTreeBuilder>? configureChildNodes = null)
     {
-        var link = factory.LinkNode(previousChild, null, href, target);
+        var link = factory.LinkNode(previousChild?.LastId, null, href, target);
         configureChildNodes?.Invoke(GetChildTreeBuilder(link));
         Append(link);
         return link;
