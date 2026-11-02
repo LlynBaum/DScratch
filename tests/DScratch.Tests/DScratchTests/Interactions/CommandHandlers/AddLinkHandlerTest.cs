@@ -224,7 +224,7 @@ public class AddLinkHandlerTest
         builder.Print();
         
         // Assert
-        Assert.That(parent.ChildNodes, Has.Count.EqualTo(6));
+        Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
         using (Assert.EnterMultipleScope())
         {
             Assert.That(parent.ChildNodes[0], Is.TypeOf<TextNode>());
@@ -242,7 +242,7 @@ public class AddLinkHandlerTest
             Assert.That(((TextNode)parent.ChildNodes[4]).TextContent, Is.EqualTo("gh"));
         }
 
-        var linkNode = (LinkNode)parent.ChildNodes[3];
+        var linkNode = (LinkNode)parent.ChildNodes[2];
         using (Assert.EnterMultipleScope())
         {
             Assert.That(linkNode.Href, Is.EqualTo(Href));
@@ -256,8 +256,8 @@ public class AddLinkHandlerTest
         
         AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
         {
-            AnchorId = linkNode.ChildNodes[1].Id.Value,
-            AnchorOffset = 1,
+            AnchorId = linkNode.ChildNodes[0].Id.Value,
+            AnchorOffset = 0,
             FocusId = linkNode.ChildNodes[1].Id.Value,
             FocusOffset = 1
         });

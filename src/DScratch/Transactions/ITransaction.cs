@@ -31,6 +31,8 @@ public interface ITransaction
     void AddCursorPosition(DNode node, int offset);
     
     void AddCursorPosition(SelectionInfo selectionInfo);
+    
+    void AddCursorPosition(Func<SelectionInfo> selectionInfo);
 
     TextNode? SplitText(TextNode node, int offset);
 

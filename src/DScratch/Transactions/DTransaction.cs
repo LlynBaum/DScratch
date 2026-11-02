@@ -17,7 +17,7 @@ internal class DTransaction(
     private readonly List<IStep> steps = [];
     
     private readonly HashSet<DNode> modifiedNodes = [];
-    private SelectionInfo? cursorPosition;
+    private Func<SelectionInfo?>? getCursorPosition;
 
     public IReadOnlyList<IStep> Steps => steps;
 
@@ -36,7 +36,7 @@ internal class DTransaction(
         
         modifiedNodes.Clear();
         
-        return new TransactionResult(stepDiffs, cursorPosition);
+        return new TransactionResult(stepDiffs, getCursorPosition?.Invoke());
     }
     
     public void Insert(DNode node, DNode parent)
@@ -76,7 +76,7 @@ internal class DTransaction(
 
     public void AddCursorPosition(DNode node, int offset)
     {
-        cursorPosition = new SelectionInfo
+        getCursorPosition = () => new SelectionInfo
         {
             Direction = SelectionDirection.None,
             AnchorId = node.Id.Value,
@@ -88,9 +88,14 @@ internal class DTransaction(
     
     public void AddCursorPosition(SelectionInfo selectionInfo)
     {
-        cursorPosition = selectionInfo;
+        getCursorPosition = () => selectionInfo;
     }
-    
+
+    public void AddCursorPosition(Func<SelectionInfo> selectionInfo)
+    {
+        getCursorPosition = selectionInfo;
+    }
+
     public TextNode? SplitText(TextNode node, int offset)
     {
         var splitNode = node.Split(offset);
@@ -137,7 +142,8 @@ internal class DTransaction(
                     result.Add(node.ToDeleteSteps());
                 }
 
-                cursorPosition = CleanUpHelper.AdjustSelection(cursorPosition, node, origin);
+                var currentPosition = CleanUpHelper.AdjustSelection(getCursorPosition?.Invoke(), node, origin);
+                getCursorPosition = () => currentPosition;
 
                 origin.AddText(node.TextContent);
                 node.Parent!.RemoveChild(node);
@@ -156,7 +162,8 @@ internal class DTransaction(
                     result.Add(rightOrigin.ToDeleteSteps());
                 }
 
-                cursorPosition = CleanUpHelper.AdjustSelection(cursorPosition, rightOrigin, node);
+                var currentPosition = CleanUpHelper.AdjustSelection(getCursorPosition?.Invoke(), rightOrigin, node);
+                getCursorPosition = () => currentPosition;
                 
                 node.AddText(rightOrigin.TextContent);
                 rightOrigin.Parent!.RemoveChild(rightOrigin);

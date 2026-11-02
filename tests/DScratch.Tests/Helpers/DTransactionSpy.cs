@@ -90,6 +90,11 @@ public class DTransactionSpy : ITransaction, IRunningTransaction
         AddCursorPositionSelectionCalls.Add(selectionInfo);
     }
 
+    public void AddCursorPosition(Func<SelectionInfo> selectionInfo)
+    {
+        AddCursorPositionSelectionCalls.Add(selectionInfo.Invoke());
+    }
+
     public TextNode? SplitText(TextNode node, int offset)
     {
         SplitTextCalls.Add((node, offset));

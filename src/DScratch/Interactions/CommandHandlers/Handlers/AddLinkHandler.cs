@@ -1,5 +1,4 @@
 using DScratch.Interactions.CommandHandlers.Commands;
-using DScratch.Interactions.EventHandlers.Models;
 using DScratch.Nodes;
 using DScratch.Nodes.NodeTypes;
 using DScratch.Transactions;
@@ -41,6 +40,7 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         if (target is IBlockElement)
         {
             CreateLink(null, null, target);
+            return;
         }
         
         var linkOrigin = GetAnchor(target, selectionInfo.AnchorOffset - 1);
@@ -156,71 +156,52 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         DNode origin,
         DNode rightOrigin)
     {
-        var nodes = GetSelectedNodes(transaction, selectionInfo, origin, rightOrigin);
-        var linkNode = transaction.NodeFactory.LinkNode(nodes.Origin.Node?.PreviousSibling()?.LastId, nodes.RightOrigin.Node?.NextSibling()?.Id, command.Href, command.Target);
-        var parent = nodes.Origin.Node?.Parent ?? nodes.RightOrigin.Node?.Parent!;
-        transaction.Insert(linkNode, parent);
-        transaction.MoveRange(nodes.Origin.Node?.Id, nodes.RightOrigin.Node?.Id, linkNode, null);
-        
-        transaction.AddCursorPosition(new SelectionInfo
-        {
-            AnchorId = nodes.RightOrigin.Node!.Id.Value,
-            AnchorOffset = nodes.RightOrigin.Offset,
-            FocusId = nodes.RightOrigin.Node!.Id.Value,
-            FocusOffset = nodes.RightOrigin.Offset
-        });
-    }
-    
-    private static DNodeSearchResult GetSelectedNodes(
-        ITransaction transaction,
-        SelectionInfo selectionInfo,
-        DNode? start,
-        DNode end)
-    {
-        if (start is not TextNode originText || end is not TextNode)
-        {
-            throw new ArgumentException("Expected TextNode at selection.");
-        }
-
-        var walker = TreeWalker<TextNode>.StartFrom(originText, transaction.Root);
-        
         var (originOffset, rightOriginOffset) = selectionInfo.GetConvertedOffsets();
-        if (originOffset > 0)
-        {
-            transaction.SplitText(originText, originOffset);
-            start = walker.NextNode();
-        }
+        var anchor = GetAnchor(origin, originOffset);
+        var rightAnchor = GetRightAnchor(rightOrigin, rightOriginOffset);
 
-        if (selectionInfo.AnchorId != selectionInfo.FocusId)
+        NodeId? leftOriginId;
+        if (anchor.node.Id.Clock != anchor.nodeId.Clock)
         {
-            while (walker.Node is not null && walker.Node.Id != end.Id)
-            {
-                walker.NextNode();
-            }
-        }
-
-        TextNode endTextNode;
-        if (walker.Node is not null && rightOriginOffset > 0)
-        {
-            endTextNode = walker.Node;
-            var offset = selectionInfo.AnchorId != selectionInfo.FocusId
-                ? rightOriginOffset
-                : rightOriginOffset - originOffset;
-            transaction.SplitText(walker.Node, offset);
+            leftOriginId = new NodeId(anchor.nodeId.Client, anchor.nodeId.Clock - 1);
         }
         else
         {
-            var prevNode = walker.Node?.PreviousSibling();
-            if (prevNode is not null && SelectionHelper.NearestTextNode(prevNode) is { HasFoundNode: true } n)
-            {
-                endTextNode = n.Node;
-            }
-            else
-            {
-                throw new ArgumentException($"Expected TextNode near {prevNode?.Id}");
-            }
+            leftOriginId = anchor.node.PreviousSibling()?.LastId;
         }
         
-        return new DNodeSearchResult(DNodeInfo.From(start, 0), DNodeInfo.From(endTextNode, endTextNode.Length));
+        var linkNode = transaction.NodeFactory.LinkNode(leftOriginId, rightAnchor.nodeId, command.Href, command.Target);
+        var parent = anchor.node.Parent ?? rightAnchor.node.Parent ?? throw new InvalidOperationException("Expected at least one node to be not null and have a parent");
+        transaction.Insert(linkNode, parent);
+        
+        // The LinkNode wil get inserted before the rightAnchor, so we must set as end node the link itself, so it doesn't get moved
+        transaction.MoveRange(anchor.nodeId, linkNode.Id, linkNode, null);
+        
+        transaction.AddCursorPosition(() => new SelectionInfo
+        {
+            AnchorId = linkNode.FirstChild!.Id.Value,
+            AnchorOffset = 0,
+            FocusId = linkNode.LastChild!.Id.Value,
+            FocusOffset = (int)(linkNode.LastChild.LastId.Clock - linkNode.LastChild.Id.Clock + 1)
+        });
+        return;
+        
+        static (DNode node, NodeId nodeId) GetAnchor(DNode node, int offset)
+        {
+            return (node, new NodeId(node.Id.Client, node.Id.Clock + offset));
+        }
+        
+        static (DNode node, NodeId nodeId) GetRightAnchor(DNode node, int offset)
+        {
+            var targetId = new NodeId(node.Id.Client, node.Id.Clock + offset);
+            if (targetId.Clock <= node.LastId.Clock)
+            {
+                return (node, targetId);
+            }
+
+            return node.NextSibling() is { } nextSibling
+                ? (nextSibling, nextSibling.Id)
+                : (node.Parent!, node.Parent!.Id);
+        }
     }
 }

@@ -77,6 +77,11 @@ internal class TestTransactionFake : ITransaction, IRunningTransaction
         throw new NotImplementedException();
     }
 
+    public void AddCursorPosition(Func<SelectionInfo> selectionInfo)
+    {
+        throw new NotImplementedException();
+    }
+
     public TextNode SplitText(TextNode node, int offset)
     {
         throw new NotImplementedException();
