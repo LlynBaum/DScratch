@@ -43,12 +43,12 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
             return;
         }
         
-        var linkOrigin = GetAnchor(target, selectionInfo.AnchorOffset - 1);
-        var linkRightOrigin = GetRightAnchor(target, selectionInfo.AnchorOffset);
+        var linkOrigin = GetLinkAnchor(target, selectionInfo.AnchorOffset - 1);
+        var linkRightOrigin = GetLinkRightAnchor(target, selectionInfo.AnchorOffset);
         CreateLink(linkOrigin, linkRightOrigin, target.Parent!);
         return;
         
-        static NodeId? GetAnchor(DNode node, int offset)
+        static NodeId? GetLinkAnchor(DNode node, int offset)
         {
             var targetId = new NodeId(node.Id.Client, node.Id.Clock + offset);
             if (targetId.Clock >= node.Id.Clock)
@@ -61,7 +61,7 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
                 : null;
         }
         
-        static NodeId? GetRightAnchor(DNode node, int offset)
+        static NodeId? GetLinkRightAnchor(DNode node, int offset)
         {
             var targetId = new NodeId(node.Id.Client, node.Id.Clock + offset);
             if (targetId.Clock <= node.LastId.Clock)
@@ -92,16 +92,22 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         DNode rightOrigin)
     {
         var (originOffset, rightOriginOffset) = selectionInfo.GetConvertedOffsets();
-
-        var startNode = originOffset > 0
-            ? origin is TextNode originText 
-                ? transaction.SplitText(originText, originOffset) 
-                : throw new ArgumentException($"Expected TextNode at {origin.Id}")
-            : origin;
+        var anchor = GetAnchor(origin, originOffset);
+        var rightAnchor = GetRightAnchor(rightOrigin, rightOriginOffset);
         
-        var startLink = transaction.NodeFactory.LinkNode(startNode?.PreviousSibling()?.LastId, null, command.Href, command.Target);
+        NodeId? leftOriginId;
+        if (anchor.node.Id.Clock != anchor.nodeId.Clock)
+        {
+            leftOriginId = new NodeId(anchor.nodeId.Client, anchor.nodeId.Clock - 1);
+        }
+        else
+        {
+            leftOriginId = anchor.node.PreviousSibling()?.LastId;
+        }
+        
+        var startLink = transaction.NodeFactory.LinkNode(leftOriginId, null, command.Href, command.Target);
         transaction.Insert(startLink, origin.Parent!);
-        transaction.MoveRange(startNode?.Id, null, startLink, null);
+        transaction.MoveRange(anchor.nodeId, startLink.Id, startLink, null);
         
         var currentBlock = origin.GetNearestBlock().NextSibling();
         var endBlock = rightOrigin.GetNearestBlock();
@@ -114,38 +120,31 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
             
             currentBlock = currentBlock.NextSibling();
         }
-
-        DNode? endNode;
-        if (rightOriginOffset > 0)
-        {
-            if (rightOrigin is not TextNode rightOriginText)
-            {
-                throw new ArgumentException($"Expected TextNode at {rightOrigin.Id}");
-            }
-            
-            transaction.SplitText(rightOriginText, rightOriginOffset);
-            endNode = rightOriginText;
-        }
-        else
-        {
-            endNode = rightOrigin.PreviousSibling();
-        }
         
-        var endLink = transaction.NodeFactory.LinkNode(endNode?.LastId, endNode?.NextSibling()?.Id, command.Href, command.Target);
+        var endLink = transaction.NodeFactory.LinkNode(null, rightAnchor.nodeId, command.Href, command.Target);
         transaction.Insert(endLink, endBlock);
-        transaction.MoveRange(null, endNode?.Id, endLink, null);
+        transaction.MoveRange(null, rightAnchor.nodeId, endLink, null);
 
-        if (endNode is null || SelectionHelper.NearestTextNode(endNode) is not { HasFoundNode: true } endTextNode)
+        transaction.AddCursorPosition(() =>
         {
-            throw new ArgumentException($"Expected TextNode near {endNode?.Id}");
-        }
-        
-        transaction.AddCursorPosition(new SelectionInfo
-        {
-            AnchorId = endTextNode.Node.Id.Value,
-            AnchorOffset = endTextNode.Node.Length,
-            FocusId = endTextNode.Node.Id.Value,
-            FocusOffset = endTextNode.Node.Length
+            if (endLink.LastChild is null)
+            {
+                return new SelectionInfo
+                {
+                    AnchorId = "",
+                    AnchorOffset = 0,
+                    FocusId = "",
+                    FocusOffset = 0
+                };
+            }
+            var offset = (int)(endLink.LastChild!.LastId.Clock - endLink.LastChild.Id.Clock + 1);
+            return new SelectionInfo
+            {
+                AnchorId = endLink.LastChild!.Id.Value,
+                AnchorOffset = offset,
+                FocusId = endLink.LastChild!.Id.Value,
+                FocusOffset = offset
+            };
         });
     }
 
@@ -173,35 +172,36 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         var linkNode = transaction.NodeFactory.LinkNode(leftOriginId, rightAnchor.nodeId, command.Href, command.Target);
         var parent = anchor.node.Parent ?? rightAnchor.node.Parent ?? throw new InvalidOperationException("Expected at least one node to be not null and have a parent");
         transaction.Insert(linkNode, parent);
+        transaction.MoveRange(anchor.nodeId, rightAnchor.nodeId, linkNode, null);
         
-        // The LinkNode wil get inserted before the rightAnchor, so we must set as end node the link itself, so it doesn't get moved
-        transaction.MoveRange(anchor.nodeId, linkNode.Id, linkNode, null);
-        
-        transaction.AddCursorPosition(() => new SelectionInfo
+        transaction.AddCursorPosition(() =>
         {
-            AnchorId = linkNode.FirstChild!.Id.Value,
-            AnchorOffset = 0,
-            FocusId = linkNode.LastChild!.Id.Value,
-            FocusOffset = (int)(linkNode.LastChild.LastId.Clock - linkNode.LastChild.Id.Clock + 1)
-        });
-        return;
-        
-        static (DNode node, NodeId nodeId) GetAnchor(DNode node, int offset)
-        {
-            return (node, new NodeId(node.Id.Client, node.Id.Clock + offset));
-        }
-        
-        static (DNode node, NodeId nodeId) GetRightAnchor(DNode node, int offset)
-        {
-            var targetId = new NodeId(node.Id.Client, node.Id.Clock + offset);
-            if (targetId.Clock <= node.LastId.Clock)
+            var offset = (int)(linkNode.LastChild!.LastId.Clock - linkNode.LastChild.Id.Clock + 1);
+            return new SelectionInfo
             {
-                return (node, targetId);
-            }
-
-            return node.NextSibling() is { } nextSibling
-                ? (nextSibling, nextSibling.Id)
-                : (node.Parent!, node.Parent!.Id);
+                AnchorId = linkNode.LastChild!.Id.Value,
+                AnchorOffset = offset,
+                FocusId = linkNode.LastChild!.Id.Value,
+                FocusOffset = offset
+            };
+        });
+    }
+    
+    private static (DNode node, NodeId nodeId) GetAnchor(DNode node, int offset)
+    {
+        return (node, new NodeId(node.Id.Client, node.Id.Clock + offset));
+    }
+        
+    private static (DNode node, NodeId nodeId) GetRightAnchor(DNode node, int offset)
+    {
+        var targetId = new NodeId(node.Id.Client, node.Id.Clock + offset);
+        if (targetId.Clock <= node.LastId.Clock)
+        {
+            return (node, targetId);
         }
+
+        return node.NextSibling() is { } nextSibling
+            ? (nextSibling, nextSibling.Id)
+            : (node.Parent!, node.Parent!.Id);
     }
 }

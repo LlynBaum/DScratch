@@ -221,8 +221,6 @@ public class AddLinkHandlerTest
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(originTarget.Id, 1, rightOriginTarget.Id, 1);
         var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href, "_self"));
         
-        builder.Print();
-        
         // Assert
         Assert.That(parent.ChildNodes, Has.Count.EqualTo(5));
         using (Assert.EnterMultipleScope())
@@ -256,8 +254,8 @@ public class AddLinkHandlerTest
         
         AssertHelper.ThatCursorPositionEqualTo(result.CursorPosition, new SelectionInfo
         {
-            AnchorId = linkNode.ChildNodes[0].Id.Value,
-            AnchorOffset = 0,
+            AnchorId = linkNode.ChildNodes[1].Id.Value,
+            AnchorOffset = 1,
             FocusId = linkNode.ChildNodes[1].Id.Value,
             FocusOffset = 1
         });
@@ -276,6 +274,8 @@ public class AddLinkHandlerTest
         // Act
         var keyPressInfo = KeyPressInfoHelper.GetKeyPressInfo(originTarget.Id, 1, rightOriginTarget.Id, 1);
         var result = handler.Execute(keyPressInfo.Selection!, new AddLinkCommand(Href, "_self"));
+        
+        builder.Print();
         
         // Assert
         Assert.That(parent1.ChildNodes, Has.Count.EqualTo(2));
