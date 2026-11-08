@@ -75,6 +75,13 @@ public class MoveRangeStep(NodeId? start, NodeId? end, DNode targetParent, NodeI
         while (current is not null && current.Id != endNode?.Id)
         {
             var next = current.NextSibling();
+            
+            if (current.Id == targetParent.Id)
+            {
+                current = next;
+                continue;
+            }
+            
             if (!current.IsDeleted)
             {
                 MoveNode(

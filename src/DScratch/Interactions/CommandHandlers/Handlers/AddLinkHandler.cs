@@ -163,6 +163,7 @@ public class AddLinkHandler(IDScratchService dScratchService) : CommandBase<AddL
         if (anchor.node.Id.Clock != anchor.nodeId.Clock)
         {
             leftOriginId = new NodeId(anchor.nodeId.Client, anchor.nodeId.Clock - 1);
+            
         }
         else
         {
