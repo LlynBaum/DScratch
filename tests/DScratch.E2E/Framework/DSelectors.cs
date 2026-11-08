@@ -34,7 +34,7 @@ public static class DSelectors
     {
         public async Task TypeAtCurrentCursorAsync(string text)
         {
-            await page.Keyboard.TypeAsync(text, new() { Delay = 100 });
+            await page.Keyboard.TypeAsync(text, new() { Delay = 50 });
         }
 
         public async Task BackspaceAsync(bool ctrl = false)
