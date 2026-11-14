@@ -14,7 +14,7 @@ internal class InsertStep(DNode node, DNode parent) : IStep
         return [..splitSteps, ..node.ToInsertSteps()];
     }
 
-    private IReadOnlyList<StepDiff?> EnsureOriginExists(IRunningTransaction transaction, DScratchDocument document)
+    private List<StepDiff?> EnsureOriginExists(IRunningTransaction transaction, DScratchDocument document)
     {
         if (!node.Origin.HasValue && !node.RightOrigin.HasValue)
         {
@@ -28,7 +28,7 @@ internal class InsertStep(DNode node, DNode parent) : IStep
             var originNode = document.FindNode(node.Origin.Value);
             if (originNode.Parent != parent)
             {
-                throw new InvalidOperationException($"Node {originNode.Id} has Parent {originNode.Parent?.Id} but expected {parent.Id}");
+                throw new InvalidOperationException($"Origin {originNode.Id} has Parent {originNode.Parent?.Id} but expected {parent.Id}");
             }
             
             if (originNode.LastId != node.Origin && originNode is TextNode textNode)
@@ -47,7 +47,7 @@ internal class InsertStep(DNode node, DNode parent) : IStep
             var rightOriginNode = document.FindNode(node.RightOrigin.Value);
             if (rightOriginNode.Parent != parent)
             {
-                throw new InvalidOperationException($"Node {rightOriginNode.Id} has Parent {rightOriginNode.Parent?.Id} but expected {parent.Id}");
+                throw new InvalidOperationException($"Right Origin {rightOriginNode.Id} has Parent {rightOriginNode.Parent?.Id} but expected {parent.Id}");
             }
             
             if (rightOriginNode.Id != node.RightOrigin && rightOriginNode is TextNode textNode)

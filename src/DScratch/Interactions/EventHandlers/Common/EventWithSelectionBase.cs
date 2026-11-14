@@ -5,12 +5,13 @@ namespace DScratch.Interactions.EventHandlers.Common;
 
 internal abstract class EventWithSelectionBase(IDScratchService dScratchService) : IEditorEventHandler
 {
-    protected readonly EventHandlerContext Context = new EventHandlerContext();
+    protected EventHandlerContext Context = null!;
 
     protected abstract void HandleEvent(KeyPressInfo keyPressInfo, ITransaction transaction);
     
     public TransactionResult Handle(KeyPressInfo keyPressInfo)
     {
+        Context = new EventHandlerContext();
         var transaction = dScratchService.StartTransaction();
         var targetNode = transaction.Document.FindNodeOrDefault(keyPressInfo.Selection!.AnchorNodeId);
         if (targetNode is null)

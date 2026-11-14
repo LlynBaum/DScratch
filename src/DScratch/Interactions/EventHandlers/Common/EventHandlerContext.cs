@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using DScratch.Interactions.EventHandlers.Models;
 using DScratch.Nodes;
 
 namespace DScratch.Interactions.EventHandlers.Common;

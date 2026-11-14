@@ -88,7 +88,7 @@ public class InsertTextTests : PlaywrightTestBase
         Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(selection.AnchorId, Is.EqualTo("Darki-5"));
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-4"));
             Assert.That(selection.AnchorOffset, Is.EqualTo(text.Length));
         }
     }
@@ -118,7 +118,7 @@ public class InsertTextTests : PlaywrightTestBase
         Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(selection.AnchorId, Is.EqualTo("Darki-10"));
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-6"));
             Assert.That(selection.AnchorOffset, Is.EqualTo(1));
         }
     }
@@ -153,7 +153,7 @@ public class InsertTextTests : PlaywrightTestBase
         Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(selection.AnchorId, Is.EqualTo("Darki-19"));
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-15"));
             Assert.That(selection.AnchorOffset, Is.EqualTo(1));
         }
     }

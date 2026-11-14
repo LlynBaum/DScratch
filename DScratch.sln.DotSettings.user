@@ -63,12 +63,10 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=58c56b00_002Df81e_002D48fd_002Da74f_002Dc8e84271fcf4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Continuous Testing" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Solution /&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=bd487319_002D1faa_002D4463_002Db1ad_002D77988fbbc6b9/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from &amp;lt;Tests&amp;gt;\&amp;lt;DScratch.Tests&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;Or&gt;
-    &lt;Project Location="/home/darki/Developement/DScratch/tests/DScratch.Tests" Presentation="&amp;lt;Tests&amp;gt;\&amp;lt;DScratch.Tests&amp;gt;" /&gt;
-    &lt;Project Location="/home/darki/Developement/DScratch/tests/DScratch.E2E" Presentation="&amp;lt;Tests&amp;gt;\&amp;lt;DScratch.E2E&amp;gt;" /&gt;
-  &lt;/Or&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=f0636db4_002Ded5e_002D437c_002D9e98_002Dca090f1ba547/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from &amp;lt;Tests&amp;gt;\&amp;lt;DScratch.E2E&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;Project Location="/home/darki/Developement/DScratch/tests/DScratch.E2E" Presentation="&amp;lt;Tests&amp;gt;\&amp;lt;DScratch.E2E&amp;gt;" /&gt;
 &lt;/SessionState&gt;</s:String>
+	
 	
 	
 	
