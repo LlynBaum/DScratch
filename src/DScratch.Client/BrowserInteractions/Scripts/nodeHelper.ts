@@ -103,7 +103,6 @@ export function findNode(nodeId: string) {
 
 export function findNodeIn(parent: Element, nodeId: string) {
     return parent.querySelector<HTMLElement>(`[${NODE_ID_ATTRIBUTE}="${nodeId}"]`);
-    
 }
 
 export function findFirstNode(nodeId: string) {

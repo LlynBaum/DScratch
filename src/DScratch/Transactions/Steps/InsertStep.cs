@@ -34,10 +34,13 @@ internal class InsertStep(DNode node, DNode parent) : IStep
             if (originNode.LastId != node.Origin && originNode is TextNode textNode)
             {
                 var offset = (int)(node.Origin.Value.Clock - textNode.Id.Clock + 1);
-                var splitNode = textNode.Split(offset);
-                if (splitNode is not null)
+                if (textNode.Length != offset)
                 {
-                    stepDiffs.AddRange(SplitTextStep.GenerateSplitSteps(transaction, document, textNode, splitNode, offset));
+                    var splitNode = textNode.Split(offset);
+                    if (splitNode is not null)
+                    {
+                        stepDiffs.AddRange(SplitTextStep.GenerateSplitSteps(transaction, document, textNode, splitNode, offset));
+                    }
                 }
             }
         }
@@ -53,10 +56,13 @@ internal class InsertStep(DNode node, DNode parent) : IStep
             if (rightOriginNode.Id != node.RightOrigin && rightOriginNode is TextNode textNode)
             {
                 var offset = (int)(node.RightOrigin.Value.Clock - textNode.Id.Clock);
-                var splitNode = textNode.Split(offset);
-                if (splitNode is not null)
+                if (textNode.Length != offset)
                 {
-                    stepDiffs.AddRange(SplitTextStep.GenerateSplitSteps(transaction, document, textNode, splitNode, offset));
+                    var splitNode = textNode.Split(offset);
+                    if (splitNode is not null)
+                    {
+                        stepDiffs.AddRange(SplitTextStep.GenerateSplitSteps(transaction, document, textNode, splitNode, offset));
+                    }
                 }
             }
         }

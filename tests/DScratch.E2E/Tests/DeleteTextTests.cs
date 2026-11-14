@@ -89,9 +89,10 @@ public class DeleteTextTests : PlaywrightTestBase
         await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync(text);
         await Expect(DefaultPage.Paragraph.TextSpan).ToHaveTextAsync(text);
-        await Page.SetCursorAsync("Darki-2", text.Length - 1);
+        await Page.SetCursorAsync("Darki-1", text.Length - 1);
 
         await Page.BackspaceAsync(true);
+        await Expect(DefaultPage.Paragraph.AllChildren).ToHaveCountAsync(3);
         await Expect(DefaultPage.Paragraph.TextSpan.First).ToHaveTextAsync("   ");
         await Expect(DefaultPage.Paragraph.TextSpan.Last).ToHaveTextAsync("d");
         
@@ -113,7 +114,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync(text);
         await Expect(DefaultPage.Paragraph.TextSpan).ToHaveTextAsync(text);
-        await Page.SetCursorAsync("Darki-2", 1);
+        await Page.SetCursorAsync("Darki-1", 1);
 
         await Page.DelAsync(true);
         await Expect(DefaultPage.Paragraph.TextSpan.First).ToHaveTextAsync("d");
@@ -162,7 +163,7 @@ public class DeleteTextTests : PlaywrightTestBase
         Assert.That(selection, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(selection.AnchorId, Is.EqualTo("Darki-1"));
+            Assert.That(selection.AnchorId, Is.EqualTo("Darki-2"));
             Assert.That(selection.AnchorOffset, Is.EqualTo(0));
         }
     }
@@ -216,7 +217,7 @@ public class DeleteTextTests : PlaywrightTestBase
     {
         await DefaultPage.ClickAsync();
         await Page.EnterAsync();
-        await Page.SetCursorAsync("Darki-1", 0);
+        await Page.SetCursorAsync("Darki-2", 0);
 
         await Page.DelAsync(ctrl);
         await Expect(DefaultPage.Paragraph).ToHaveCountAsync(1);
@@ -237,7 +238,7 @@ public class DeleteTextTests : PlaywrightTestBase
     {
         await DefaultPage.ClickAsync();
         await Page.EnterAsync();
-        await Page.SetCursorAsync("Darki-1", 0);
+        await Page.SetCursorAsync("Darki-2", 0);
         await Page.TypeAtCurrentCursorAsync("a");
 
         await Page.DelAsync(ctrl);

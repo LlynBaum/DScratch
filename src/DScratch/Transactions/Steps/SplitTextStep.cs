@@ -14,6 +14,11 @@ public class SplitTextStep(TextNode node, TextNode splitNode, int offset) : ISte
         TextNode splitNode,
         int offset)
     {
+        if (splitNode.IsDeleted)
+        {
+            return [];
+        }
+        
         document.AddNode(splitNode);
         transaction.NotifyNodeChange(node);
         transaction.NotifyNodeChange(splitNode);

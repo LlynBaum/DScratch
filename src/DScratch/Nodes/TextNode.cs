@@ -34,6 +34,10 @@ public class TextNode(NodeId id, NodeId? origin, NodeId? rightOrigin, string con
             TextContent = otherText
         };
         newNode.CopyMarks(Marks);
+        if (IsDeleted)
+        {
+            newNode.Delete();
+        }
 
         RightOrigin = newNode.Id;
         
