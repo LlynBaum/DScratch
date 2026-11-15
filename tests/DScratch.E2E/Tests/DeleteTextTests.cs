@@ -89,7 +89,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync(text);
         await Expect(DefaultPage.Paragraph.TextSpan).ToHaveTextAsync(text);
-        await Page.SetCursorAsync("Darki-1", text.Length - 1);
+        await Page.SetCursorAsync("Darki-2", text.Length - 1);
 
         await Page.BackspaceAsync(true);
         await Expect(DefaultPage.Paragraph.AllChildren).ToHaveCountAsync(3);
@@ -114,7 +114,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await DefaultPage.ClickAsync();
         await Page.TypeAtCurrentCursorAsync(text);
         await Expect(DefaultPage.Paragraph.TextSpan).ToHaveTextAsync(text);
-        await Page.SetCursorAsync("Darki-1", 1);
+        await Page.SetCursorAsync("Darki-2", 1);
 
         await Page.DelAsync(true);
         await Expect(DefaultPage.Paragraph.TextSpan.First).ToHaveTextAsync("d");

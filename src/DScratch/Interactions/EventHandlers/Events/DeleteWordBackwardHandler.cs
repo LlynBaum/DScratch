@@ -77,13 +77,13 @@ internal class DeleteWordBackwardHandler(IDScratchService dScratchService) : Eve
     {
         // TODO: I mean in theory we always get a TextNode at that point, but you never know, maybe it would be better to check that
         var walker = TreeWalker<TextNode>.StartFrom((TextNode)Context.AnchorNode!, Context.AnchorNode!.GetNearestBlock());
-        return DeleteWord(walker);
+        return DeleteWord(walker, Context.AnchorNodeId!.Value);
     }
 
-    private static (TextNode Node, NodeId nodeId) DeleteWord(TreeWalker<TextNode> walker)
+    private static (TextNode Node, NodeId nodeId) DeleteWord(TreeWalker<TextNode> walker, NodeId anchorNodeId)
     {
         TextNode? prevNode = null;
-        var characterOffset = walker.Node!.Length - 1;
+        var characterOffset = (int)(anchorNodeId.Clock - walker.Node!.Id.Clock - 1);
         
         while (characterOffset >= 0 && walker.Node is not null && char.IsWhiteSpace(walker.Node.TextContent[characterOffset]))
         {
