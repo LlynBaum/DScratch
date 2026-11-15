@@ -68,13 +68,13 @@ internal class DeleteWordForwardHandler(IDScratchService dScratchService) : Even
     {
         // TODO: I mean in theory we always get a TextNode at that point, but you never know, maybe it would be better to check that
         var walker = TreeWalker<TextNode>.StartFrom((TextNode)Context.RightAnchorNode!, Context.RightAnchorNode!.GetNearestBlock());
-        return DeleteWord(walker);
+        return DeleteWord(walker, Context.AnchorNodeId!.Value);
     }
 
-    private static NodeId DeleteWord(TreeWalker<TextNode> walker)
+    private static NodeId DeleteWord(TreeWalker<TextNode> walker, NodeId anchorNodeId)
     {
         TextNode? prevNode = null;
-        var characterOffset = 0;
+        var characterOffset = (int)(anchorNodeId.Clock - walker.Node!.Id.Clock + 1);
         
         while (walker.Node is not null && characterOffset < walker.Node.Length && char.IsWhiteSpace(walker.Node.TextContent[characterOffset]))
         {

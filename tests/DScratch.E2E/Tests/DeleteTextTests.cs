@@ -5,6 +5,8 @@ namespace DScratch.E2E.Tests;
 
 public class DeleteTextTests : PlaywrightTestBase
 {
+    protected override bool EnableTracing => true;
+
     [Test]
     public async Task DeleteBackward_DoesNothing_WithNoPreviousParagraph()
     {
@@ -92,7 +94,7 @@ public class DeleteTextTests : PlaywrightTestBase
         await Page.SetCursorAsync("Darki-2", text.Length - 1);
 
         await Page.BackspaceAsync(true);
-        await Expect(DefaultPage.Paragraph.AllChildren).ToHaveCountAsync(3);
+        await Expect(DefaultPage.Paragraph.AllChildren).ToHaveCountAsync(2);
         await Expect(DefaultPage.Paragraph.TextSpan.First).ToHaveTextAsync("   ");
         await Expect(DefaultPage.Paragraph.TextSpan.Last).ToHaveTextAsync("d");
         
